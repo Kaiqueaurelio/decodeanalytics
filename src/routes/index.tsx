@@ -1,5 +1,4 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
 import {
   ArrowRight,
   ChevronRight,
@@ -19,8 +18,11 @@ import {
   Image as ImageIcon,
   Plus,
   Star,
+  Quote,
+  Zap,
+  Users,
+  Award,
 } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
 import { StoreShell } from "@/components/storefront/StoreShell";
 import { Hero } from "@/components/storefront/Hero";
 import {
@@ -28,6 +30,7 @@ import {
   type StoreProduct,
 } from "@/components/storefront/ProductCard";
 import { STORE_CATEGORIES, STORE_CONTACT, brl, waLink } from "@/components/storefront/tokens";
+import { useStoreProducts } from "@/components/storefront/useStoreProducts";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -56,34 +59,15 @@ function HomePage() {
         <Hero />
         <FeaturedBento />
       </DarkBand>
+      <StatsStrip />
       <CategoriesSection />
+      <TestimonialsSection />
       <HowItWorks />
       <ArtTipsSection />
       <TechSecuritySection />
       <ContactSection />
     </StoreShell>
   );
-}
-
-function useStoreProducts() {
-  return useQuery({
-    queryKey: ["store-products"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("services")
-        .select(
-          "id,name,slug,category,short_description,base_price,image_url,rating,reviews_count,min_quantity,badge,specs,unit",
-        )
-        .eq("active", true)
-        .order("reviews_count", { ascending: false })
-        .limit(24);
-      if (error) throw error;
-      return (data ?? []) as StoreProduct[];
-    },
-    // Preços vêm da aba admin — refetch ao focar para refletir alterações
-    staleTime: 30_000,
-    refetchOnWindowFocus: true,
-  });
 }
 
 function DarkBand({ children }: { children: React.ReactNode }) {
@@ -101,9 +85,9 @@ function DarkBand({ children }: { children: React.ReactNode }) {
 }
 
 function FeaturedBento() {
-  const { data, isLoading } = useStoreProducts();
+  const { data, isLoading } = useStoreProducts(24);
   const items = data ?? [];
-  const featured = items.slice(0, 6);
+  const featured = items.slice(0, 10);
 
   return (
     <section className="mx-auto mt-3 w-full max-w-[1280px] px-4 sm:mt-4">
