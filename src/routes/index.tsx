@@ -1,5 +1,4 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
 import {
   ArrowRight,
   ChevronRight,
@@ -19,8 +18,11 @@ import {
   Image as ImageIcon,
   Plus,
   Star,
+  Quote,
+  Zap,
+  Users,
+  Award,
 } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
 import { StoreShell } from "@/components/storefront/StoreShell";
 import { Hero } from "@/components/storefront/Hero";
 import {
@@ -28,6 +30,7 @@ import {
   type StoreProduct,
 } from "@/components/storefront/ProductCard";
 import { STORE_CATEGORIES, STORE_CONTACT, brl, waLink } from "@/components/storefront/tokens";
+import { useStoreProducts } from "@/components/storefront/useStoreProducts";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -56,34 +59,15 @@ function HomePage() {
         <Hero />
         <FeaturedBento />
       </DarkBand>
+      <StatsStrip />
       <CategoriesSection />
+      <TestimonialsSection />
       <HowItWorks />
       <ArtTipsSection />
       <TechSecuritySection />
       <ContactSection />
     </StoreShell>
   );
-}
-
-function useStoreProducts() {
-  return useQuery({
-    queryKey: ["store-products"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("services")
-        .select(
-          "id,name,slug,category,short_description,base_price,image_url,rating,reviews_count,min_quantity,badge,specs,unit",
-        )
-        .eq("active", true)
-        .order("reviews_count", { ascending: false })
-        .limit(24);
-      if (error) throw error;
-      return (data ?? []) as StoreProduct[];
-    },
-    // Preços vêm da aba admin — refetch ao focar para refletir alterações
-    staleTime: 30_000,
-    refetchOnWindowFocus: true,
-  });
 }
 
 function DarkBand({ children }: { children: React.ReactNode }) {
@@ -101,9 +85,9 @@ function DarkBand({ children }: { children: React.ReactNode }) {
 }
 
 function FeaturedBento() {
-  const { data, isLoading } = useStoreProducts();
+  const { data, isLoading } = useStoreProducts(24);
   const items = data ?? [];
-  const featured = items.slice(0, 6);
+  const featured = items.slice(0, 10);
 
   return (
     <section className="mx-auto mt-3 w-full max-w-[1280px] px-4 sm:mt-4">
@@ -482,6 +466,110 @@ function TechSecuritySection() {
 }
 
 function ContactSection() {
+  return _ContactSection();
+}
+
+function StatsStrip() {
+  const stats = [
+    { icon: Users, value: "+12.000", label: "Clientes atendidos" },
+    { icon: Zap, value: "48h", label: "Produção média" },
+    { icon: Award, value: "4.9★", label: "Avaliação dos clientes" },
+    { icon: PackageCheck, value: "+200k", label: "Pedidos entregues" },
+  ];
+  return (
+    <section className="border-y border-[var(--store-border)] bg-white">
+      <div className="mx-auto grid max-w-[1280px] grid-cols-2 gap-4 px-4 py-8 sm:py-10 md:grid-cols-4">
+        {stats.map((s) => (
+          <div key={s.label} className="flex items-center gap-3 sm:gap-4">
+            <span className="grid h-12 w-12 shrink-0 place-items-center rounded-xl bg-[var(--store-ink)] text-[var(--store-gold)]">
+              <s.icon className="h-5 w-5" />
+            </span>
+            <div className="min-w-0">
+              <p className="font-display text-3xl leading-none text-[var(--store-primary)] sm:text-4xl">
+                {s.value}
+              </p>
+              <p className="mt-1 text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--store-text-muted)]">
+                {s.label}
+              </p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function TestimonialsSection() {
+  const items = [
+    {
+      name: "Mariana S.",
+      role: "Salão Bella Hair",
+      text: "Pedi 2 milheiros de cartão laminado fosco e chegou perfeito em 3 dias. Cores fiéis e papel pesado, recomendo demais!",
+      rating: 5,
+    },
+    {
+      name: "Rafael P.",
+      role: "Hamburgueria Bun's",
+      text: "Faço caixas de delivery aqui há meses. Preço justo, prazo cumprido e impressão sem falhas. Virei cliente fiel.",
+      rating: 5,
+    },
+    {
+      name: "Camila R.",
+      role: "Coach financeiro",
+      text: "Camisetas DTF e canecas pro meu evento. Material premium e ainda me ajudaram com a arte. Show!",
+      rating: 5,
+    },
+  ];
+  return (
+    <section className="bg-[var(--store-ink)] py-12 sm:py-16">
+      <div className="mx-auto max-w-[1280px] px-4">
+        <div className="mb-8 flex flex-col items-start gap-2 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <p className="text-[11px] font-extrabold uppercase tracking-[0.22em] text-[var(--store-gold)]">
+              Quem já imprimiu com a gente
+            </p>
+            <h2 className="font-display mt-1 text-4xl leading-none text-white sm:text-5xl">
+              MARCAS QUE CONFIAM NA ALCATEIA'S
+            </h2>
+          </div>
+          <div className="flex items-center gap-1 text-[var(--store-gold)]">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <Star key={i} className="h-5 w-5 fill-current" />
+            ))}
+            <span className="ml-2 text-sm font-bold text-white">4.9 / 5 · 1.247 avaliações</span>
+          </div>
+        </div>
+        <div className="grid gap-4 md:grid-cols-3">
+          {items.map((t, idx) => (
+            <article
+              key={t.name}
+              className="store-bento-card relative flex flex-col bg-white p-6 text-[var(--store-ink)] animate-fade-in"
+              style={{ animationDelay: `${120 + idx * 100}ms`, animationFillMode: "both" }}
+            >
+              <Quote className="h-7 w-7 text-[var(--store-gold)]" />
+              <p className="mt-3 flex-1 text-sm leading-relaxed text-[var(--store-ink)]/85">
+                "{t.text}"
+              </p>
+              <div className="mt-5 flex items-center justify-between border-t border-[var(--store-ink-line)]/15 pt-4">
+                <div>
+                  <p className="text-sm font-extrabold">{t.name}</p>
+                  <p className="text-xs text-[var(--store-text-muted)]">{t.role}</p>
+                </div>
+                <div className="flex text-[var(--store-gold)]">
+                  {Array.from({ length: t.rating }).map((_, i) => (
+                    <Star key={i} className="h-3.5 w-3.5 fill-current" />
+                  ))}
+                </div>
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function _ContactSection() {
   return (
     <section className="bg-[var(--store-primary-dark)] py-12 text-white sm:py-16">
       <div className="mx-auto grid max-w-[1280px] gap-8 px-4 lg:grid-cols-2 lg:items-center">
