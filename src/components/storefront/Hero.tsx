@@ -1,92 +1,134 @@
 import { Link } from "@tanstack/react-router";
-import { ArrowRight, Upload, Calculator, Sparkles } from "lucide-react";
+import { ArrowRight, Upload, Calculator, Sparkles, Tag } from "lucide-react";
 import { waLink } from "./tokens";
+import cartoesImg from "@/assets/products/cartoes.jpg.asset.json";
 
 export function Hero() {
   return (
     <section className="mx-auto w-full max-w-[1280px] px-4 pt-4 sm:pt-6">
-      <div className="grid gap-3 sm:gap-4 md:grid-cols-12">
-        {/* HERO YELLOW BLOCK */}
+      {/* Big bright blue hero banner — Futuraim-style */}
+      <div
+        className="relative overflow-hidden rounded-[var(--store-radius-xl)] bg-gradient-to-br from-[#1e63ff] via-[#1366ff] to-[#0a45c2] p-6 text-white shadow-[var(--store-shadow-lg)] sm:p-10 md:p-12 animate-fade-in"
+        style={{ animationDelay: "60ms", animationFillMode: "both" }}
+      >
+        {/* Decorative percent marks */}
         <div
-          className="store-bento-card store-crop-marks group relative overflow-hidden bg-[var(--store-gold)] p-6 sm:p-10 md:col-span-8 md:p-12 animate-fade-in"
-          style={{ animationDelay: "60ms", animationFillMode: "both" }}
-        >
-          <span className="inline-flex items-center gap-2 rounded-full bg-[var(--store-ink)] px-3 py-1 text-[11px] font-extrabold uppercase tracking-[0.18em] text-[var(--store-gold)]">
-            <Sparkles className="h-3 w-3" /> Produção em até 48h
-          </span>
-          <h1
-            className="font-display mt-5 text-[44px] italic leading-[0.95] text-[var(--store-ink)] sm:text-6xl md:text-7xl lg:text-8xl"
-            style={{ letterSpacing: "-0.01em" }}
-          >
-            QUALIDADE
-            <br />
-            QUE VOCÊ <span className="text-[var(--store-ink-soft)]">TOCA.</span>
-          </h1>
-          <p className="mt-5 max-w-xl text-sm font-medium text-[var(--store-ink)]/80 sm:text-base">
-            Cartões, banners, adesivos, camisetas, canecas e brindes impressos com acabamento de
-            gráfica de verdade — sem cara de loja online genérica.
-          </p>
-
-          <div className="mt-7 flex flex-wrap gap-3">
-            <Link
-              to="/produtos"
-              className="inline-flex items-center justify-center gap-2 bg-[var(--store-ink)] px-6 py-3 text-xs font-extrabold uppercase tracking-[0.18em] text-white transition-transform hover:scale-[1.03] sm:px-8 sm:py-4 sm:text-sm"
-            >
-              Ver produtos <ArrowRight className="h-4 w-4" />
-            </Link>
-            <a
-              href={waLink("Olá! Quero enviar minha arte para um orçamento.")}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-2 border-2 border-[var(--store-ink)] px-6 py-3 text-xs font-extrabold uppercase tracking-[0.18em] text-[var(--store-ink)] transition-colors hover:bg-[var(--store-ink)] hover:text-[var(--store-gold)] sm:px-8 sm:py-4 sm:text-sm"
-            >
-              <Upload className="h-4 w-4" /> Enviar minha arte
-            </a>
-          </div>
-
-          {/* Decorative giant number */}
-          <div
-            className="font-display pointer-events-none absolute -right-6 -bottom-10 select-none text-[180px] leading-none text-[var(--store-ink)]/10 transition-transform duration-700 group-hover:rotate-3 sm:text-[240px]"
-            aria-hidden="true"
-          >
-            48H
-          </div>
-        </div>
-
-        {/* SIDE BENTO COLUMN */}
-        <div className="grid gap-3 sm:gap-4 md:col-span-4 md:grid-rows-2">
-          <div
-            className="store-bento-card flex flex-col justify-between border border-[var(--store-ink-line)] bg-[var(--store-ink-soft)] p-6 text-white animate-fade-in"
-            style={{ animationDelay: "140ms", animationFillMode: "both" }}
-          >
-            <span className="w-fit rounded-full bg-[var(--store-gold)]/15 px-2 py-1 text-[10px] font-extrabold uppercase tracking-[0.18em] text-[var(--store-gold)]">
-              Acabamento
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 opacity-10"
+          style={{
+            backgroundImage:
+              "radial-gradient(circle at 20% 20%, rgba(255,255,255,0.5) 0, transparent 35%), radial-gradient(circle at 80% 80%, rgba(255,255,255,0.4) 0, transparent 40%)",
+          }}
+        />
+        <div className="relative grid items-center gap-8 md:grid-cols-2">
+          <div>
+            <span className="inline-flex items-center gap-2 rounded-full bg-white/15 px-3 py-1 text-[11px] font-extrabold uppercase tracking-[0.18em] text-white backdrop-blur">
+              <Sparkles className="h-3 w-3" /> Gráfica online · produção em 48h
             </span>
-            <h3 className="font-display mt-4 text-3xl leading-none">
-              SOFT TOUCH,<br />
-              LAMINAÇÃO &amp; VERNIZ
-            </h3>
-            <p className="mt-2 text-xs text-white/60">
-              Sinta a diferença na primeira entrega.
+            <h1 className="font-display mt-5 text-5xl leading-[0.95] sm:text-6xl md:text-7xl">
+              IMPRESSOS
+              <br />
+              <span className="rounded-md bg-[var(--store-secondary)] px-3 py-1 text-[var(--store-primary-dark)]">
+                IMBATÍVEIS
+              </span>
+            </h1>
+            <p className="mt-5 max-w-md text-base font-medium text-white/85">
+              Cartões de visita, panfletos, banners, camisetas, canecas, adesivos e brindes
+              personalizados com acabamento de gráfica de verdade.
             </p>
-          </div>
-          <Link
-            to="/calculator"
-            className="store-bento-card group flex cursor-pointer flex-col justify-between border border-[var(--store-ink-line)] bg-[var(--store-ink-soft)] p-6 text-white transition-colors hover:border-[var(--store-gold)]/60 animate-fade-in"
-            style={{ animationDelay: "220ms", animationFillMode: "both" }}
-          >
-            <Calculator className="h-6 w-6 text-[var(--store-gold)]" />
-            <div>
-              <h3 className="font-display text-3xl leading-none">ORÇAMENTO RÁPIDO</h3>
-              <div className="mt-3 inline-flex items-center gap-2 text-[var(--store-gold)]">
-                <span className="text-xs font-extrabold uppercase tracking-[0.18em]">
-                  Calcular agora
+
+            <div className="mt-6 inline-flex items-center gap-2 rounded-lg bg-white/10 px-4 py-2 text-sm font-bold backdrop-blur">
+              <Tag className="h-4 w-4 text-[var(--store-secondary)]" />
+              <span>
+                10% OFF na 1ª compra ·{" "}
+                <span className="rounded bg-[var(--store-secondary)] px-1.5 py-0.5 text-[12px] text-[var(--store-primary-dark)]">
+                  BEMVINDO10
                 </span>
-                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-              </div>
+              </span>
             </div>
-          </Link>
+
+            <div className="mt-7 flex flex-wrap gap-3">
+              <Link
+                to="/produtos"
+                className="inline-flex items-center justify-center gap-2 rounded-[var(--store-radius-md)] bg-white px-6 py-3 text-sm font-extrabold uppercase tracking-wide text-[#1366ff] shadow-md transition-transform hover:scale-[1.03] sm:px-8"
+              >
+                Ver produtos <ArrowRight className="h-4 w-4" />
+              </Link>
+              <a
+                href={waLink("Olá! Quero enviar minha arte para um orçamento.")}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center gap-2 rounded-[var(--store-radius-md)] border-2 border-white/70 bg-transparent px-6 py-3 text-sm font-extrabold uppercase tracking-wide text-white transition-colors hover:bg-white hover:text-[#1366ff] sm:px-8"
+              >
+                <Upload className="h-4 w-4" /> Enviar minha arte
+              </a>
+            </div>
+          </div>
+
+          {/* Right column: product hero photo */}
+          <div className="relative hidden md:block">
+            <div className="absolute -right-8 -top-8 h-72 w-72 rounded-full bg-white/10 blur-2xl" />
+            <div className="relative aspect-square overflow-hidden rounded-[var(--store-radius-xl)] bg-white p-4 shadow-2xl rotate-[-2deg] transition-transform hover:rotate-0">
+              <img
+                src={cartoesImg.url}
+                alt="Cartões de visita personalizados"
+                width={1024}
+                height={1024}
+                className="h-full w-full rounded-[var(--store-radius-lg)] object-cover"
+              />
+              <span className="absolute -top-3 -left-3 inline-flex items-center gap-1 rounded-full bg-[var(--store-secondary)] px-3 py-1 text-xs font-extrabold uppercase text-[var(--store-primary-dark)] shadow-md">
+                <Sparkles className="h-3 w-3" /> Acabamento premium
+              </span>
+            </div>
+          </div>
         </div>
+      </div>
+
+      {/* Quick-action strip */}
+      <div className="mt-3 grid gap-3 sm:mt-4 sm:grid-cols-3">
+        <Link
+          to="/calculator"
+          className="group flex items-center gap-3 rounded-[var(--store-radius-lg)] border border-[var(--store-border)] bg-white p-4 shadow-[var(--store-shadow-sm)] transition-all hover:-translate-y-1 hover:shadow-[var(--store-shadow-md)] animate-fade-in"
+          style={{ animationDelay: "120ms", animationFillMode: "both" }}
+        >
+          <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-[#1366ff]/10 text-[#1366ff]">
+            <Calculator className="h-5 w-5" />
+          </span>
+          <div>
+            <p className="text-sm font-extrabold text-[var(--store-text)]">Orçamento rápido</p>
+            <p className="text-xs text-[var(--store-text-muted)]">Calcule o preço em segundos</p>
+          </div>
+        </Link>
+        <a
+          href={waLink("Olá! Quero contratar a criação de uma arte.")}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="group flex items-center gap-3 rounded-[var(--store-radius-lg)] border border-[var(--store-border)] bg-white p-4 shadow-[var(--store-shadow-sm)] transition-all hover:-translate-y-1 hover:shadow-[var(--store-shadow-md)] animate-fade-in"
+          style={{ animationDelay: "180ms", animationFillMode: "both" }}
+        >
+          <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-[var(--store-secondary)]/20 text-[var(--store-secondary-dark)]">
+            <Sparkles className="h-5 w-5" />
+          </span>
+          <div>
+            <p className="text-sm font-extrabold text-[var(--store-text)]">Criamos sua arte</p>
+            <p className="text-xs text-[var(--store-text-muted)]">Designers prontos pra ajudar</p>
+          </div>
+        </a>
+        <a
+          href={waLink("Olá! Quero enviar minha arte.")}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="group flex items-center gap-3 rounded-[var(--store-radius-lg)] border border-[var(--store-border)] bg-white p-4 shadow-[var(--store-shadow-sm)] transition-all hover:-translate-y-1 hover:shadow-[var(--store-shadow-md)] animate-fade-in"
+          style={{ animationDelay: "240ms", animationFillMode: "both" }}
+        >
+          <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-[var(--store-success)]/15 text-[var(--store-success)]">
+            <Upload className="h-5 w-5" />
+          </span>
+          <div>
+            <p className="text-sm font-extrabold text-[var(--store-text)]">Envie sua arte</p>
+            <p className="text-xs text-[var(--store-text-muted)]">PDF, AI, PSD, PNG até 50MB</p>
+          </div>
+        </a>
       </div>
     </section>
   );
