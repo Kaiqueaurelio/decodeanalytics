@@ -134,10 +134,11 @@ export function AppShell({ children }: { children: ReactNode }) {
   const path = useRouterState({ select: (state) => state.location.pathname });
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
-  const [collapsed, setCollapsed] = useState(
-    () =>
-      typeof window !== "undefined" && localStorage.getItem("alcateia_sidebar_collapsed") === "1",
-  );
+  const [collapsed, setCollapsed] = useState(() => {
+    if (typeof window === "undefined") return true;
+    const saved = localStorage.getItem("alcateia_sidebar_collapsed");
+    return saved ? saved === "1" : true;
+  });
   const [search, setSearch] = useState("");
   const [searchFocused, setSearchFocused] = useState(false);
 
@@ -159,7 +160,7 @@ export function AppShell({ children }: { children: ReactNode }) {
   const userInitial = user?.email?.charAt(0).toUpperCase() ?? "A";
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen overflow-x-hidden bg-background">
       <aside
         className={cn(
           "fixed inset-y-0 left-0 z-40 flex flex-col overflow-hidden bg-sidebar text-sidebar-foreground shadow-2xl transition-[width,transform] duration-300 md:translate-x-0",
@@ -167,7 +168,31 @@ export function AppShell({ children }: { children: ReactNode }) {
           open ? "translate-x-0" : "-translate-x-full",
         )}
       >
-        <div className="app-grid-pattern border-b border-white/10 px-5 py-5">
+        <div className="app-grid-pattern border-b border-white/10 px-4 py-4">
+          <button
+            type="button"
+            onClick={() =>
+              setCollapsed((value) => {
+                const next = !value;
+                localStorage.setItem("alcateia_sidebar_collapsed", next ? "1" : "0");
+                return next;
+              })
+            }
+            className="mb-3 hidden w-full items-center justify-center gap-2 rounded-xl bg-white/10 px-3 py-2 text-xs font-bold text-white/80 hover:bg-white/15 hover:text-white md:flex"
+            aria-label={collapsed ? "Expandir menu" : "Recolher menu"}
+          >
+            {collapsed ? (
+              <>
+                <PanelLeftOpen className="h-4 w-4" />
+                <span className="sr-only">Expandir menu</span>
+              </>
+            ) : (
+              <>
+                <PanelLeftClose className="h-4 w-4" />
+                Recolher menu
+              </>
+            )}
+          </button>
           <div className="flex items-center justify-between gap-3">
             <div
               className={cn(
@@ -331,7 +356,7 @@ export function AppShell({ children }: { children: ReactNode }) {
 
       <div
         className={cn(
-          "flex min-h-screen min-w-0 flex-col transition-[margin] duration-300",
+          "flex min-h-screen min-w-0 max-w-full flex-col overflow-x-hidden transition-[margin] duration-300",
           collapsed ? "md:ml-20" : "md:ml-72",
         )}
       >
@@ -340,12 +365,12 @@ export function AppShell({ children }: { children: ReactNode }) {
           <span className="font-semibold text-brand-yellow">Alcateia's Produções Gráficas</span>
         </div>
 
-        <header className="sticky top-0 z-20 border-b border-border/80 bg-white/92 px-4 backdrop-blur-xl md:px-6 lg:top-0">
+        <header className="sticky top-0 z-20 border-b border-border/80 bg-white/92 px-3 backdrop-blur-xl md:px-4 lg:top-0">
           <div className="flex h-[72px] items-center gap-3">
             {isAdmin && (
               <Link
                 to="/ella"
-                className="hidden h-11 shrink-0 items-center gap-2 rounded-xl border border-blue-200 bg-blue-50 px-3 text-sm font-extrabold text-brand-blue hover:bg-blue-100 sm:inline-flex"
+                className="hidden h-11 shrink-0 items-center gap-2 rounded-xl border border-blue-200 bg-blue-50 px-3 text-sm font-extrabold text-brand-blue hover:bg-blue-100 xl:inline-flex"
               >
                 <Sparkles className="h-4 w-4" /> Perguntar à Ella
               </Link>
@@ -360,7 +385,7 @@ export function AppShell({ children }: { children: ReactNode }) {
               <Menu className="h-5 w-5" />
             </button>
 
-            <div className="min-w-0 shrink-0 sm:min-w-44">
+            <div className="min-w-0 flex-1 lg:flex-none lg:min-w-44">
               <p className="hidden text-[10px] font-bold uppercase tracking-[0.18em] text-brand-orange sm:block">
                 Central de gestão
               </p>
@@ -434,7 +459,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           </div>
         </header>
 
-        <main className="app-page flex-1">{children}</main>
+        <main className="app-page min-w-0 flex-1 overflow-x-hidden">{children}</main>
       </div>
     </div>
   );

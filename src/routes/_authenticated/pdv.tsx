@@ -9,6 +9,7 @@ import {
   CheckCircle2,
   ClipboardList,
   CreditCard,
+  ReceiptText,
   Minus,
   Plus,
   QrCode,
@@ -116,6 +117,21 @@ const PAYMENT_OPTIONS = [
 ];
 
 const SESSION_KEY = "alcateia_pdv_session";
+const MACHINE_PAYMENT_OPTIONS = [
+  "Cartão de débito",
+  "Cartão de crédito",
+  "PIX maquininha",
+] as const;
+const FAVORITE_TERMS = [
+  "impress",
+  "banner",
+  "adesivo",
+  "caneca",
+  "camiseta",
+  "cart",
+  "panfleto",
+  "folder",
+];
 
 function today() {
   const date = new Date();
@@ -123,6 +139,14 @@ function today() {
   const month = String(date.getMonth() + 1).padStart(2, "0");
   const day = String(date.getDate()).padStart(2, "0");
   return `${year}-${month}-${day}`;
+}
+
+function todayRange() {
+  const start = new Date();
+  start.setHours(0, 0, 0, 0);
+  const end = new Date(start);
+  end.setDate(end.getDate() + 1);
+  return { start: start.toISOString(), end: end.toISOString(), day: today() };
 }
 
 function toNumber(value: unknown) {
@@ -148,6 +172,7 @@ function PDVPage() {
   const [showCheckout, setShowCheckout] = useState(false);
   const [showFastSale, setShowFastSale] = useState(false);
   const [showSquareMeter, setShowSquareMeter] = useState(false);
+  const [showMachineEntry, setShowMachineEntry] = useState(false);
   const [showOpenCash, setShowOpenCash] = useState(false);
   const [showCloseCash, setShowCloseCash] = useState(false);
   const [fastSale, setFastSale] = useState({ description: "", value: "" });
@@ -159,6 +184,13 @@ function PDVPage() {
     pricePerSquareMeter: "100",
   });
   const [payments, setPayments] = useState([{ method: "PIX QR Code", amount: "" }]);
+  const [machineEntry, setMachineEntry] = useState({
+    date: today(),
+    method: "Cartão de débito",
+    amount: "",
+    description: "Vendas da maquininha",
+    notes: "",
+  });
   const [cashSession, setCashSession] = useState(() => {
     if (typeof window === "undefined") return null;
     try {
@@ -215,15 +247,18 @@ function PDVPage() {
     },
   });
 
-  const { data: todayEntries = [] } = useQuery({
+  const { data: todayEntries = [], error: todayEntriesError } = useQuery({
     queryKey: ["pdv_cash_entries_today"],
     queryFn: async () => {
+      const range = todayRange();
       const { data, error } = await supabase
         .from("cash_entries")
         .select("*")
-        .eq("entry_date", today())
+        .or(
+          `entry_date.eq.${range.day},and(created_at.gte.${range.start},created_at.lt.${range.end})`,
+        )
         .order("created_at", { ascending: false })
-        .limit(200);
+        .limit(1000);
       if (error) throw error;
       return data ?? [];
     },
@@ -248,6 +283,14 @@ function PDVPage() {
     const matchesCategory = category === "Todos" || product.category === category;
     return matchesQuery && matchesCategory;
   });
+  const favoriteProducts = products
+    .filter((product) => {
+      const text = `${product.name} ${product.category} ${product.detail}`.toLocaleLowerCase(
+        "pt-BR",
+      );
+      return FAVORITE_TERMS.some((term) => text.includes(term));
+    })
+    .slice(0, 8);
 
   const subtotal = cart.reduce((acc, item) => acc + item.price * item.quantity, 0);
   const total = Math.max(subtotal - discount, 0);
@@ -278,18 +321,21 @@ function PDVPage() {
   const expensesToday = todayEntries.filter((entry) => entry.type === "saida");
   const totalToday = salesToday.reduce((acc, entry) => acc + Number(entry.amount || 0), 0);
   const expenseTotal = expensesToday.reduce((acc, entry) => acc + Number(entry.amount || 0), 0);
-  const averageTicket = salesToday.length ? totalToday / salesToday.length : 0;
-  const cashExpected =
-    Number(cashSession?.initialAmount || 0) +
-    salesToday
-      .filter((entry) =>
-        String(entry.payment_method || "")
-          .toLowerCase()
-          .includes("dinheiro"),
-      )
-      .reduce((acc, entry) => acc + Number(entry.amount || 0), 0) -
-    expenseTotal;
-
+  const dayBalance = totalToday - expenseTotal;
+  const paymentTotals = salesToday.reduce(
+    (totals, entry) => {
+      const method = String(entry.payment_method || "").toLocaleLowerCase("pt-BR");
+      const amount = Number(entry.amount || 0);
+      if (method.includes("débito") || method.includes("debito")) totals.debit += amount;
+      else if (method.includes("crédito") || method.includes("credito")) totals.credit += amount;
+      else if (method.includes("pix")) totals.pix += amount;
+      else if (method.includes("dinheiro")) totals.cash += amount;
+      else totals.other += amount;
+      return totals;
+    },
+    { cash: 0, pix: 0, debit: 0, credit: 0, other: 0 },
+  );
+  const latestTodayEntries = todayEntries.slice(0, 8);
   function addToCart(product: any) {
     if (selectedOrderId) {
       toast.error("Conclua ou limpe a cobrança da OS antes de adicionar outros itens.");
@@ -416,11 +462,38 @@ function PDVPage() {
 
   function closeCash() {
     const informed = toNumber(sessionForm.informedCash);
-    const diff = informed - cashExpected;
+    const diff = informed - dayBalance;
     localStorage.removeItem(SESSION_KEY);
     setCashSession(null);
     setShowCloseCash(false);
-    toast.success(`Caixa fechado. Diferença: ${brl(diff)}.`);
+    toast.success(`Caixa do dia fechado. Diferença: ${brl(diff)}.`);
+  }
+
+  async function registerMachineEntry() {
+    const amount = toNumber(machineEntry.amount);
+    if (!machineEntry.date) return toast.error("Informe a data da venda.");
+    if (amount <= 0) return toast.error("Informe um valor maior que zero.");
+    const { error } = await supabase.from("cash_entries").insert({
+      type: "entrada",
+      description: machineEntry.description.trim() || "Vendas da maquininha",
+      amount,
+      entry_date: machineEntry.date,
+      payment_method: machineEntry.method,
+      category: "Ajuste maquininha",
+      notes: machineEntry.notes.trim() || "Lançamento manual de fechamento",
+    });
+    if (error) return toast.error(error.message);
+    setMachineEntry({
+      date: today(),
+      method: "Cartão de débito",
+      amount: "",
+      description: "Vendas da maquininha",
+      notes: "",
+    });
+    setShowMachineEntry(false);
+    qc.invalidateQueries({ queryKey: ["pdv_cash_entries_today"] });
+    qc.invalidateQueries({ queryKey: ["cash_entries"] });
+    toast.success("Valor da maquininha registrado no caixa.");
   }
 
   async function finalizeSale() {
@@ -546,7 +619,7 @@ function PDVPage() {
   }
 
   return (
-    <div className="min-h-[calc(100vh-9rem)] rounded-[2rem] bg-[#f8fafc] p-3 text-slate-950 md:p-5">
+    <div className="min-h-[calc(100vh-9rem)] max-w-full overflow-x-hidden rounded-[2rem] bg-[#f8fafc] p-2 text-slate-950 sm:p-3 md:p-4">
       <div className="mb-5 flex flex-col gap-3 rounded-[1.5rem] border border-slate-200 bg-white p-4 shadow-sm lg:flex-row lg:items-center lg:justify-between">
         <div>
           <p className="text-xs font-black uppercase tracking-[0.22em] text-brand-blue">
@@ -562,7 +635,17 @@ function PDVPage() {
             <CalendarDays className="h-4 w-4" /> {new Date().toLocaleDateString("pt-BR")}
           </span>
           {cashSession ? (
-            <Button variant="outline" className="rounded-xl" onClick={() => setShowCloseCash(true)}>
+            <Button
+              variant="outline"
+              className="rounded-xl"
+              onClick={() => {
+                setSessionForm((current) => ({
+                  ...current,
+                  informedCash: dayBalance.toFixed(2),
+                }));
+                setShowCloseCash(true);
+              }}
+            >
               Fechar caixa
             </Button>
           ) : (
@@ -576,19 +659,114 @@ function PDVPage() {
         </div>
       </div>
 
-      <div className="mb-5 rounded-[1.5rem] bg-brand-blue p-5 text-white shadow-lg shadow-blue-200">
-        <p className="text-xs font-black uppercase tracking-[0.2em] text-blue-200">
-          Saldo do caixa hoje
-        </p>
-        <p className="mt-1 text-3xl font-black">{brl(totalToday - expenseTotal)}</p>
-        <p className="mt-1 text-sm text-blue-100">
-          Entradas menos saídas registradas em {new Date().toLocaleDateString("pt-BR")}.
-        </p>
+      <div className="mb-5 flex flex-col gap-4 rounded-[1.5rem] bg-brand-blue p-5 text-white shadow-lg shadow-blue-200 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <p className="text-xs font-black uppercase tracking-[0.2em] text-blue-200">
+            Saldo somente de hoje
+          </p>
+          <p className="mt-1 text-3xl font-black">{brl(dayBalance)}</p>
+          <p className="mt-1 text-sm text-blue-100">
+            Entradas menos saídas de {new Date().toLocaleDateString("pt-BR")}.
+          </p>
+        </div>
+        <Button
+          className="h-12 w-full rounded-xl bg-white font-black text-brand-blue hover:bg-blue-50 sm:w-auto"
+          onClick={() => setShowMachineEntry(true)}
+        >
+          <ReceiptText className="mr-2 h-5 w-5" /> Lançar maquininha
+        </Button>
       </div>
 
-      <div className="grid gap-5 xl:grid-cols-[1fr_440px]">
-        <section className="space-y-4">
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-[1fr_auto_auto_auto_auto_auto]">
+      <div className="mb-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+        <Card className="rounded-2xl border-slate-200 p-4">
+          <p className="text-xs font-black uppercase tracking-wide text-slate-500">Entradas</p>
+          <p className="mt-1 text-2xl font-black text-emerald-600">{brl(totalToday)}</p>
+        </Card>
+        <Card className="rounded-2xl border-slate-200 p-4">
+          <p className="text-xs font-black uppercase tracking-wide text-slate-500">Saídas</p>
+          <p className="mt-1 text-2xl font-black text-red-600">{brl(expenseTotal)}</p>
+        </Card>
+        <Card className="rounded-2xl border-slate-200 p-4">
+          <p className="text-xs font-black uppercase tracking-wide text-slate-500">Cartões</p>
+          <p className="mt-1 text-2xl font-black text-brand-blue">
+            {brl(paymentTotals.debit + paymentTotals.credit)}
+          </p>
+        </Card>
+        <Card className="rounded-2xl border-slate-200 p-4">
+          <p className="text-xs font-black uppercase tracking-wide text-slate-500">PIX</p>
+          <p className="mt-1 text-2xl font-black text-brand-blue">{brl(paymentTotals.pix)}</p>
+        </Card>
+      </div>
+
+      <Card className="mb-5 overflow-hidden rounded-[1.5rem] border-slate-200 bg-white p-0 shadow-sm">
+        <div className="flex flex-col gap-2 border-b border-slate-100 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p className="text-xs font-black uppercase tracking-[0.18em] text-brand-blue">
+              Lançamentos de hoje
+            </p>
+            <p className="text-sm text-slate-500">Tudo que entra no saldo diário aparece aqui.</p>
+          </div>
+          <span className="rounded-full bg-blue-50 px-3 py-1 text-xs font-black text-brand-blue">
+            {todayEntries.length} lançamentos
+          </span>
+        </div>
+        <div className="max-h-64 overflow-y-auto p-3">
+          {todayEntriesError ? (
+            <div className="rounded-2xl border border-red-200 bg-red-50 p-4 text-sm font-bold text-red-700">
+              Não consegui carregar os lançamentos do caixa: {todayEntriesError.message}
+            </div>
+          ) : latestTodayEntries.length ? (
+            <div className="grid gap-2 md:grid-cols-2 xl:grid-cols-4">
+              {latestTodayEntries.map((entry) => (
+                <div
+                  key={entry.id}
+                  className="rounded-2xl border border-slate-200 bg-slate-50/70 p-3"
+                >
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-black">
+                        {entry.description || entry.category || "Lançamento"}
+                      </p>
+                      <p className="truncate text-xs text-slate-500">
+                        {entry.payment_method || "Sem forma"} ·{" "}
+                        {new Date(entry.created_at).toLocaleTimeString("pt-BR", {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
+                      </p>
+                    </div>
+                    <span
+                      className={`shrink-0 rounded-full px-2 py-1 text-[10px] font-black ${
+                        entry.type === "saida"
+                          ? "bg-red-100 text-red-700"
+                          : "bg-emerald-100 text-emerald-700"
+                      }`}
+                    >
+                      {entry.type === "saida" ? "Saída" : "Entrada"}
+                    </span>
+                  </div>
+                  <p
+                    className={`mt-2 text-xl font-black ${
+                      entry.type === "saida" ? "text-red-600" : "text-emerald-600"
+                    }`}
+                  >
+                    {entry.type === "saida" ? "-" : "+"}
+                    {brl(Number(entry.amount || 0))}
+                  </p>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="rounded-2xl border border-dashed border-slate-200 p-6 text-center text-sm text-slate-500">
+              Nenhum lançamento encontrado hoje. Finalize uma venda ou use “Lançar maquininha”.
+            </div>
+          )}
+        </div>
+      </Card>
+
+      <div className="grid min-w-0 gap-4 2xl:grid-cols-[minmax(0,1fr)_380px]">
+        <section className="min-w-0 space-y-4">
+          <div className="grid min-w-0 gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-[minmax(220px,1fr)_repeat(5,auto)]">
             <div className="relative">
               <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" />
               <Input
@@ -631,6 +809,36 @@ function PDVPage() {
               </a>
             </Button>
           </div>
+
+          {favoriteProducts.length > 0 && (
+            <div className="rounded-[1.5rem] border border-slate-200 bg-white p-3 shadow-sm">
+              <div className="mb-3 flex items-center justify-between gap-3">
+                <div>
+                  <p className="text-xs font-black uppercase tracking-[0.18em] text-brand-blue">
+                    Mais usados
+                  </p>
+                  <h3 className="font-black">Atalhos rápidos de venda</h3>
+                </div>
+                <span className="rounded-full bg-blue-50 px-3 py-1 text-xs font-black text-brand-blue">
+                  1 clique
+                </span>
+              </div>
+              <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
+                {favoriteProducts.map((product) => (
+                  <button
+                    key={product.id}
+                    type="button"
+                    onClick={() => addToCart(product)}
+                    className="rounded-2xl border border-slate-200 p-3 text-left transition hover:border-brand-blue hover:bg-blue-50"
+                  >
+                    <p className="line-clamp-1 text-sm font-black">{product.name}</p>
+                    <p className="mt-1 text-xs text-slate-500">{product.category}</p>
+                    <p className="mt-2 font-black text-brand-blue">{brl(product.price)}</p>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
 
           <div className="app-scrollbar flex gap-2 overflow-x-auto pb-1">
             {CATEGORIES.map((item) => (
@@ -686,7 +894,7 @@ function PDVPage() {
           </div>
         </section>
 
-        <aside className="rounded-[2rem] border border-slate-200 bg-white p-4 shadow-sm">
+        <aside className="min-w-0 rounded-[2rem] border border-slate-200 bg-white p-3 shadow-sm md:p-4">
           <div className="mb-4 flex items-center justify-between">
             <h2 className="text-xl font-black">Itens da venda</h2>
             <Button variant="ghost" size="sm" className="text-brand-blue" onClick={clearSale}>
@@ -699,7 +907,7 @@ function PDVPage() {
               cart.map((item) => (
                 <div
                   key={item.id}
-                  className="grid grid-cols-[96px_1fr_auto] items-center gap-3 rounded-2xl border border-slate-100 p-2"
+                  className="grid grid-cols-[80px_minmax(0,1fr)] items-center gap-2 rounded-2xl border border-slate-100 p-2 sm:grid-cols-[96px_minmax(0,1fr)_auto] sm:gap-3"
                 >
                   <div className="flex items-center justify-center gap-2">
                     <button
@@ -720,7 +928,7 @@ function PDVPage() {
                     <p className="truncate font-black">{item.name}</p>
                     <p className="truncate text-xs text-slate-500">{item.detail}</p>
                   </div>
-                  <div className="text-right">
+                  <div className="col-span-2 flex items-center justify-between border-t border-slate-100 pt-2 text-right sm:col-span-1 sm:block sm:border-0 sm:pt-0">
                     <p className="font-black">{brl(item.price * item.quantity)}</p>
                     <button
                       className="text-xs text-red-500"
@@ -772,7 +980,7 @@ function PDVPage() {
             </Button>
           </div>
 
-          <div className="mt-5 grid grid-cols-5 gap-2">
+          <div className="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-5">
             {PAYMENT_OPTIONS.map((option) => {
               const Icon = option.icon;
               return (
@@ -1024,7 +1232,7 @@ function PDVPage() {
                   </Button>
                 </div>
                 {payments.map((payment, index) => (
-                  <div key={index} className="grid grid-cols-[1fr_140px_auto] gap-2">
+                  <div key={index} className="grid gap-2 sm:grid-cols-[minmax(0,1fr)_140px_auto]">
                     <Select
                       value={payment.method}
                       onValueChange={(method) =>
@@ -1153,6 +1361,96 @@ function PDVPage() {
         </DialogContent>
       </Dialog>
 
+      <Dialog open={showMachineEntry} onOpenChange={setShowMachineEntry}>
+        <DialogContent className="max-w-lg rounded-3xl">
+          <DialogHeader>
+            <DialogTitle>Lançar vendas esquecidas da maquininha</DialogTitle>
+          </DialogHeader>
+          <p className="text-sm text-muted-foreground">
+            Use o total mostrado na maquininha para registrar débito, crédito ou PIX que não entrou
+            no PDV durante o dia.
+          </p>
+          <div className="space-y-3">
+            <div className="grid gap-3 sm:grid-cols-2">
+              <div>
+                <Label>Data da venda *</Label>
+                <Input
+                  type="date"
+                  max={today()}
+                  value={machineEntry.date}
+                  onChange={(event) =>
+                    setMachineEntry({ ...machineEntry, date: event.target.value })
+                  }
+                />
+              </div>
+              <div>
+                <Label>Forma de pagamento *</Label>
+                <Select
+                  value={machineEntry.method}
+                  onValueChange={(method) => setMachineEntry({ ...machineEntry, method })}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {MACHINE_PAYMENT_OPTIONS.map((method) => (
+                      <SelectItem key={method} value={method}>
+                        {method}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            <div>
+              <Label>Valor total *</Label>
+              <Input
+                autoFocus
+                type="number"
+                inputMode="decimal"
+                min="0"
+                step="0.01"
+                value={machineEntry.amount}
+                onChange={(event) =>
+                  setMachineEntry({ ...machineEntry, amount: event.target.value })
+                }
+                placeholder="0,00"
+              />
+            </div>
+            <div>
+              <Label>Descrição</Label>
+              <Input
+                value={machineEntry.description}
+                onChange={(event) =>
+                  setMachineEntry({ ...machineEntry, description: event.target.value })
+                }
+              />
+            </div>
+            <div>
+              <Label>Observações</Label>
+              <Textarea
+                value={machineEntry.notes}
+                onChange={(event) =>
+                  setMachineEntry({ ...machineEntry, notes: event.target.value })
+                }
+                placeholder="Ex: total conferido no relatório da máquina"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowMachineEntry(false)}>
+              Cancelar
+            </Button>
+            <Button
+              className="bg-brand-blue hover:bg-brand-blue-light"
+              onClick={registerMachineEntry}
+            >
+              Registrar no caixa
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       <Dialog open={showNewClient} onOpenChange={setShowNewClient}>
         <DialogContent className="rounded-3xl">
           <DialogHeader>
@@ -1222,31 +1520,55 @@ function PDVPage() {
       </Dialog>
 
       <Dialog open={showCloseCash} onOpenChange={setShowCloseCash}>
-        <DialogContent className="rounded-3xl">
+        <DialogContent className="max-w-lg rounded-3xl">
           <DialogHeader>
             <DialogTitle>Fechar caixa</DialogTitle>
           </DialogHeader>
           <div className="space-y-3">
-            <div className="rounded-2xl bg-slate-100 p-4 text-sm">
-              <div className="flex justify-between">
-                <span>Dinheiro esperado</span>
-                <strong>{brl(cashExpected)}</strong>
+            <div className="rounded-2xl bg-brand-blue p-4 text-white">
+              <p className="text-xs font-bold uppercase tracking-wider text-blue-200">
+                Saldo esperado do dia
+              </p>
+              <p className="mt-1 text-3xl font-black">{brl(dayBalance)}</p>
+              <p className="mt-1 text-xs text-blue-100">
+                {brl(totalToday)} em entradas e {brl(expenseTotal)} em saídas.
+              </p>
+            </div>
+            <div className="grid grid-cols-2 gap-2 text-sm">
+              <div className="rounded-xl bg-slate-100 p-3">
+                <span className="block text-xs text-slate-500">Dinheiro</span>
+                <strong>{brl(paymentTotals.cash)}</strong>
               </div>
-              <div className="flex justify-between">
-                <span>Total geral do dia</span>
-                <strong>{brl(totalToday)}</strong>
+              <div className="rounded-xl bg-slate-100 p-3">
+                <span className="block text-xs text-slate-500">PIX</span>
+                <strong>{brl(paymentTotals.pix)}</strong>
               </div>
+              <div className="rounded-xl bg-slate-100 p-3">
+                <span className="block text-xs text-slate-500">Débito</span>
+                <strong>{brl(paymentTotals.debit)}</strong>
+              </div>
+              <div className="rounded-xl bg-slate-100 p-3">
+                <span className="block text-xs text-slate-500">Crédito</span>
+                <strong>{brl(paymentTotals.credit)}</strong>
+              </div>
+              {paymentTotals.other > 0 && (
+                <div className="col-span-2 rounded-xl bg-slate-100 p-3">
+                  <span className="block text-xs text-slate-500">Outros ou mistos</span>
+                  <strong>{brl(paymentTotals.other)}</strong>
+                </div>
+              )}
             </div>
             <div>
-              <Label>Dinheiro informado</Label>
+              <Label>Saldo total conferido</Label>
               <Input
+                type="number"
                 inputMode="decimal"
                 value={sessionForm.informedCash}
                 onChange={(e) => setSessionForm({ ...sessionForm, informedCash: e.target.value })}
               />
             </div>
             <div className="rounded-2xl bg-blue-50 p-4 text-sm font-bold text-brand-blue">
-              Diferença: {brl(toNumber(sessionForm.informedCash) - cashExpected)}
+              Diferença: {brl(toNumber(sessionForm.informedCash) - dayBalance)}
             </div>
           </div>
           <DialogFooter>

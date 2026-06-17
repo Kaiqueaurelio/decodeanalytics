@@ -2,7 +2,7 @@ import { createContext, useContext, useEffect, useState, type ReactNode } from "
 import type { Session, User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 
-export type AppRole = "administrador" | "atendente" | "vendedor" | "producao" | "financeiro" | "consumidor";
+export type AppRole = "administrador" | "atendente" | "producao" | "financeiro" | "vendedor";
 
 interface AuthCtx {
   user: User | null;
@@ -92,8 +92,7 @@ export function useAuth() {
 export const ROLE_LABEL: Record<AppRole, string> = {
   administrador: "Administrador",
   atendente: "Atendente",
-  vendedor: "Vendedor",
   producao: "Produção",
   financeiro: "Financeiro",
-  consumidor: "Consumidor",
+  vendedor: "Vendedor",
 };

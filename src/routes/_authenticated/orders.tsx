@@ -10,7 +10,6 @@ import { Plus, Pencil, Trash2, Search, AlertTriangle } from "lucide-react";
 import { toast } from "sonner";
 import { brl, fmtDate, PRODUCTION_STATUS_LABEL, PAYMENT_STATUS_LABEL } from "@/lib/format";
 import { OrderEditor } from "@/components/OrderEditor";
-import { isMissingColumnError } from "@/lib/supabaseErrors";
 
 export const Route = createFileRoute("/_authenticated/orders")({ component: OrdersPage });
 
@@ -28,16 +27,7 @@ function OrdersPage() {
         .select("*, clients(name), assignee:profiles!orders_assigned_to_fkey(full_name,email)")
         .order("created_at", { ascending: false })
         .limit(200);
-      let { data, error } = await q;
-      if (error && isMissingColumnError(error, "assigned_to")) {
-        const fallback = await supabase
-          .from("orders")
-          .select("*, clients(name)")
-          .order("created_at", { ascending: false })
-          .limit(200);
-        data = fallback.data as any;
-        error = fallback.error;
-      }
+      const { data, error } = await q;
       if (error) throw error;
       const rows = (data ?? []) as any[];
       return search

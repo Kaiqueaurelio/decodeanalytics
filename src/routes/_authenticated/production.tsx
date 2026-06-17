@@ -32,7 +32,6 @@ import {
   UserRound,
 } from "lucide-react";
 import { toast } from "sonner";
-import { isMissingColumnError } from "@/lib/supabaseErrors";
 
 export const Route = createFileRoute("/_authenticated/production")({ component: ProductionBoard });
 
@@ -81,7 +80,7 @@ function ProductionBoard() {
   const { data } = useQuery({
     queryKey: ["production-board"],
     queryFn: async () => {
-      let [ordersResult, profilesResult]: [any, any] = await Promise.all([
+      const [ordersResult, profilesResult] = await Promise.all([
         supabase
           .from("orders")
           .select(
@@ -92,14 +91,6 @@ function ProductionBoard() {
           .order("deadline", { ascending: true }),
         supabase.from("profiles").select("id,full_name,email").order("full_name"),
       ]);
-      if (ordersResult.error && isMissingColumnError(ordersResult.error, "assigned_to")) {
-        ordersResult = await supabase
-          .from("orders")
-          .select("*, clients(name,whatsapp)")
-          .in("production_status", COLUMNS as readonly string[] as any)
-          .order("urgent", { ascending: false })
-          .order("deadline", { ascending: true });
-      }
       if (ordersResult.error) throw ordersResult.error;
       return { orders: (ordersResult.data ?? []) as any[], team: profilesResult.data ?? [] };
     },
@@ -179,7 +170,7 @@ function ProductionBoard() {
             <SelectContent>
               <SelectItem value="all">Todos os responsáveis</SelectItem>
               <SelectItem value="unassigned">Sem responsável</SelectItem>
-              {(data?.team ?? []).map((member: any) => (
+              {(data?.team ?? []).map((member) => (
                 <SelectItem key={member.id} value={member.id}>
                   {member.full_name || member.email}
                 </SelectItem>
