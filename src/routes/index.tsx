@@ -31,6 +31,7 @@ import {
 } from "@/components/storefront/ProductCard";
 import { STORE_CATEGORIES, STORE_CONTACT, brl, waLink } from "@/components/storefront/tokens";
 import { useStoreProducts } from "@/components/storefront/useStoreProducts";
+import { InfiniteProducts } from "@/components/storefront/InfiniteProducts";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -61,6 +62,7 @@ function HomePage() {
       </DarkBand>
       <StatsStrip />
       <CategoriesSection />
+      <InfiniteProducts />
       <TestimonialsSection />
       <HowItWorks />
       <ArtTipsSection />
