@@ -22,6 +22,7 @@ import { Route as AuthenticatedQuotesRouteImport } from './routes/_authenticated
 import { Route as AuthenticatedProductionRouteImport } from './routes/_authenticated/production'
 import { Route as AuthenticatedPdvRouteImport } from './routes/_authenticated/pdv'
 import { Route as AuthenticatedOrdersRouteImport } from './routes/_authenticated/orders'
+import { Route as AuthenticatedEllaRouteImport } from './routes/_authenticated/ella'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedClientsRouteImport } from './routes/_authenticated/clients'
 import { Route as AuthenticatedCashRouteImport } from './routes/_authenticated/cash'
@@ -92,6 +93,11 @@ const AuthenticatedOrdersRoute = AuthenticatedOrdersRouteImport.update({
   path: '/orders',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedEllaRoute = AuthenticatedEllaRouteImport.update({
+  id: '/ella',
+  path: '/ella',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -121,6 +127,7 @@ export interface FileRoutesByFullPath {
   '/cash': typeof AuthenticatedCashRoute
   '/clients': typeof AuthenticatedClientsRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/ella': typeof AuthenticatedEllaRoute
   '/orders': typeof AuthenticatedOrdersRoute
   '/pdv': typeof AuthenticatedPdvRoute
   '/production': typeof AuthenticatedProductionRoute
@@ -139,6 +146,7 @@ export interface FileRoutesByTo {
   '/cash': typeof AuthenticatedCashRoute
   '/clients': typeof AuthenticatedClientsRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/ella': typeof AuthenticatedEllaRoute
   '/orders': typeof AuthenticatedOrdersRoute
   '/pdv': typeof AuthenticatedPdvRoute
   '/production': typeof AuthenticatedProductionRoute
@@ -159,6 +167,7 @@ export interface FileRoutesById {
   '/_authenticated/cash': typeof AuthenticatedCashRoute
   '/_authenticated/clients': typeof AuthenticatedClientsRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/ella': typeof AuthenticatedEllaRoute
   '/_authenticated/orders': typeof AuthenticatedOrdersRoute
   '/_authenticated/pdv': typeof AuthenticatedPdvRoute
   '/_authenticated/production': typeof AuthenticatedProductionRoute
@@ -179,6 +188,7 @@ export interface FileRouteTypes {
     | '/cash'
     | '/clients'
     | '/dashboard'
+    | '/ella'
     | '/orders'
     | '/pdv'
     | '/production'
@@ -197,6 +207,7 @@ export interface FileRouteTypes {
     | '/cash'
     | '/clients'
     | '/dashboard'
+    | '/ella'
     | '/orders'
     | '/pdv'
     | '/production'
@@ -216,6 +227,7 @@ export interface FileRouteTypes {
     | '/_authenticated/cash'
     | '/_authenticated/clients'
     | '/_authenticated/dashboard'
+    | '/_authenticated/ella'
     | '/_authenticated/orders'
     | '/_authenticated/pdv'
     | '/_authenticated/production'
@@ -329,6 +341,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedOrdersRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/ella': {
+      id: '/_authenticated/ella'
+      path: '/ella'
+      fullPath: '/ella'
+      preLoaderRoute: typeof AuthenticatedEllaRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/dashboard': {
       id: '/_authenticated/dashboard'
       path: '/dashboard'
@@ -365,6 +384,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedCashRoute: typeof AuthenticatedCashRoute
   AuthenticatedClientsRoute: typeof AuthenticatedClientsRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedEllaRoute: typeof AuthenticatedEllaRoute
   AuthenticatedOrdersRoute: typeof AuthenticatedOrdersRoute
   AuthenticatedPdvRoute: typeof AuthenticatedPdvRoute
   AuthenticatedProductionRoute: typeof AuthenticatedProductionRoute
@@ -379,6 +399,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedCashRoute: AuthenticatedCashRoute,
   AuthenticatedClientsRoute: AuthenticatedClientsRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedEllaRoute: AuthenticatedEllaRoute,
   AuthenticatedOrdersRoute: AuthenticatedOrdersRoute,
   AuthenticatedPdvRoute: AuthenticatedPdvRoute,
   AuthenticatedProductionRoute: AuthenticatedProductionRoute,
