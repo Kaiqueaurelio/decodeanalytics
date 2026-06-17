@@ -365,8 +365,8 @@ export function AppShell({ children }: { children: ReactNode }) {
           <span className="font-semibold text-brand-yellow">Alcateia's Produções Gráficas</span>
         </div>
 
-        <header className="sticky top-0 z-20 border-b border-border/80 bg-white/92 px-3 backdrop-blur-xl md:px-4 lg:top-0">
-          <div className="flex h-[72px] items-center gap-3">
+        <header className="sticky top-0 z-20 border-b border-border/80 bg-white/92 px-2 backdrop-blur-xl md:px-4 lg:top-0">
+          <div className="flex h-16 md:h-[72px] items-center gap-2 md:gap-3">
             {isAdmin && (
               <Link
                 to="/ella"
@@ -378,7 +378,7 @@ export function AppShell({ children }: { children: ReactNode }) {
 
             <button
               type="button"
-              className="rounded-xl border border-border bg-white p-2.5 text-brand-blue shadow-sm md:hidden"
+              className="shrink-0 rounded-xl border border-border bg-white p-2 text-brand-blue shadow-sm md:hidden"
               onClick={() => setOpen(true)}
               aria-label="Abrir menu"
             >
@@ -389,7 +389,7 @@ export function AppShell({ children }: { children: ReactNode }) {
               <p className="hidden text-[10px] font-bold uppercase tracking-[0.18em] text-brand-orange sm:block">
                 Central de gestão
               </p>
-              <h1 className="truncate text-lg font-extrabold text-brand-blue sm:text-xl">
+              <h1 className="truncate text-base font-extrabold text-brand-blue sm:text-xl">
                 {title}
               </h1>
             </div>
@@ -451,7 +451,7 @@ export function AppShell({ children }: { children: ReactNode }) {
 
             <Link
               to="/orders"
-              className="inline-flex h-11 shrink-0 items-center justify-center gap-2 rounded-xl bg-brand-yellow px-3.5 text-sm font-extrabold text-brand-blue shadow-md transition-all hover:-translate-y-0.5 hover:brightness-105 hover:shadow-lg sm:px-5"
+              className="inline-flex h-10 md:h-11 shrink-0 items-center justify-center gap-2 rounded-xl bg-brand-yellow px-2.5 md:px-3.5 text-sm font-extrabold text-brand-blue shadow-md transition-all hover:-translate-y-0.5 hover:brightness-105 hover:shadow-lg sm:px-5"
             >
               <Plus className="h-4 w-4" />
               <span className="hidden sm:inline">Nova OS</span>

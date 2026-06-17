@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useRef, useState } from "react";
+import * as XLSX from "xlsx";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,7 +12,7 @@ import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { Plus, Pencil, Trash2 } from "lucide-react";
+import { Plus, Pencil, Trash2, FileSpreadsheet, Download } from "lucide-react";
 import { brl, SERVICE_CATEGORIES } from "@/lib/format";
 
 export const Route = createFileRoute("/_authenticated/services")({ component: ServicesPage });
@@ -22,6 +23,8 @@ function ServicesPage() {
   const qc = useQueryClient();
   const [open, setOpen] = useState(false);
   const [edit, setEdit] = useState<Partial<S> | null>(null);
+  const [importing, setImporting] = useState(false);
+  const fileRef = useRef<HTMLInputElement | null>(null);
 
   const { data } = useQuery({
     queryKey: ["services"],
@@ -54,9 +57,83 @@ function ServicesPage() {
     qc.invalidateQueries({ queryKey: ["services"] });
   }
 
+  function downloadTemplate() {
+    const ws = XLSX.utils.json_to_sheet([
+      { name: "Cartão de visita 4x4", category: "Cartões", description: "Couché 300g", base_price: 80, unit: "milheiro", default_deadline_days: 3, active: true },
+      { name: "Banner Lona 440g", category: "Banners", description: "Impressão digital", base_price: 60, unit: "m²", default_deadline_days: 2, active: true },
+    ]);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Produtos");
+    XLSX.writeFile(wb, "modelo-produtos-alcateia.xlsx");
+  }
+
+  async function handleImportFile(file: File) {
+    setImporting(true);
+    try {
+      const buf = await file.arrayBuffer();
+      const wb = XLSX.read(buf, { type: "array" });
+      const ws = wb.Sheets[wb.SheetNames[0]];
+      const rows = XLSX.utils.sheet_to_json<any>(ws, { defval: "" });
+      if (!rows.length) { toast.error("Planilha vazia"); return; }
+      const payload = rows
+        .map((r) => {
+          const get = (...keys: string[]) => {
+            for (const k of keys) {
+              const found = Object.keys(r).find((x) => x.toLowerCase().trim() === k.toLowerCase());
+              if (found && r[found] !== "" && r[found] != null) return r[found];
+            }
+            return undefined;
+          };
+          const name = String(get("name", "nome", "produto", "servico", "serviço") ?? "").trim();
+          if (!name) return null;
+          const category = String(get("category", "categoria") ?? "Outros").trim();
+          const rawPrice = String(get("base_price", "preço", "preco", "valor", "price") ?? "0")
+            .replace(/[^0-9,.-]/g, "")
+            .replace(/\./g, "")
+            .replace(",", ".");
+          return {
+            name,
+            category,
+            description: String(get("description", "descrição", "descricao") ?? "") || null,
+            base_price: Number(rawPrice) || 0,
+            unit: String(get("unit", "unidade") ?? "un") || "un",
+            default_deadline_days: Number(get("default_deadline_days", "prazo", "dias")) || 3,
+            active: String(get("active", "ativo") ?? "true").toLowerCase() !== "false",
+          };
+        })
+        .filter(Boolean) as any[];
+      if (!payload.length) { toast.error("Nenhuma linha válida (precisa coluna 'nome')."); return; }
+      const { error } = await supabase.from("services").insert(payload);
+      if (error) { toast.error(error.message); return; }
+      toast.success(`${payload.length} produto(s) importado(s)`);
+      qc.invalidateQueries({ queryKey: ["services"] });
+    } catch (err: any) {
+      toast.error("Erro ao ler planilha: " + err.message);
+    } finally {
+      setImporting(false);
+      if (fileRef.current) fileRef.current.value = "";
+    }
+  }
+
   return (
     <div className="space-y-4">
-      <div className="flex justify-end">
+      <div className="flex flex-wrap justify-end gap-2">
+        <input
+          ref={fileRef}
+          type="file"
+          accept=".xlsx,.xls,.csv"
+          className="hidden"
+          onChange={(e) => {
+            const f = e.target.files?.[0];
+            if (f) handleImportFile(f);
+          }}
+        />
+        <Button variant="outline" onClick={downloadTemplate}>
+          <Download className="w-4 h-4 mr-1" /> Modelo Excel
+        </Button>
+        <Button variant="outline" onClick={() => fileRef.current?.click()} disabled={importing}>
+          <FileSpreadsheet className="w-4 h-4 mr-1" /> {importing ? "Importando..." : "Importar Excel"}
+        </Button>
         <Dialog open={open} onOpenChange={(o) => { setOpen(o); if (!o) setEdit(null); }}>
           <DialogTrigger asChild><Button onClick={() => setEdit({ active: true })}><Plus className="w-4 h-4 mr-1" /> Novo serviço</Button></DialogTrigger>
           <DialogContent className="max-w-lg">
