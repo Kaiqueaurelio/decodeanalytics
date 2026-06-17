@@ -56,15 +56,15 @@ Quando precisar executar uma ação, inclua um JSON com a estrutura da ação no
         content: msg.content,
       }));
 
-      // Chamar a API do OpenAI (ou LLM configurado)
-      const response = await fetch("https://api.openai.com/v1/chat/completions", {
+      // Chamar a Lovable AI Gateway (sem necessidade de chave do usuário)
+      const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+          Authorization: `Bearer ${process.env.LOVABLE_API_KEY}`,
         },
         body: JSON.stringify({
-          model: "gpt-4o-mini",
+          model: "google/gemini-2.5-flash",
           messages: [
             {
               role: "system",
@@ -76,8 +76,6 @@ Quando precisar executar uma ação, inclua um JSON com a estrutura da ação no
               content: message,
             },
           ],
-          temperature: 0.7,
-          max_tokens: 1000,
         }),
       });
 
