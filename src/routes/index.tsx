@@ -17,18 +17,17 @@ import {
   AlertTriangle,
   CheckCircle2,
   Image as ImageIcon,
+  Plus,
+  Star,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { StoreShell } from "@/components/storefront/StoreShell";
 import { Hero } from "@/components/storefront/Hero";
 import {
-  ProductCard,
-  ProductCardSkeleton,
-  ProductGrid,
   SectionHeader,
   type StoreProduct,
 } from "@/components/storefront/ProductCard";
-import { STORE_CATEGORIES, STORE_CONTACT, waLink } from "@/components/storefront/tokens";
+import { STORE_CATEGORIES, STORE_CONTACT, brl, waLink } from "@/components/storefront/tokens";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -53,8 +52,10 @@ export const Route = createFileRoute("/")({
 function HomePage() {
   return (
     <StoreShell>
-      <Hero />
-      <FeaturedSection />
+      <DarkBand>
+        <Hero />
+        <FeaturedBento />
+      </DarkBand>
       <CategoriesSection />
       <HowItWorks />
       <ArtTipsSection />
@@ -79,33 +80,192 @@ function useStoreProducts() {
       if (error) throw error;
       return (data ?? []) as StoreProduct[];
     },
+    // Preços vêm da aba admin — refetch ao focar para refletir alterações
+    staleTime: 30_000,
+    refetchOnWindowFocus: true,
   });
 }
 
-function FeaturedSection() {
-  const { data, isLoading } = useStoreProducts();
-  const featured = (data ?? []).slice(0, 8);
+function DarkBand({ children }: { children: React.ReactNode }) {
   return (
-    <section className="mx-auto max-w-[1280px] px-4 py-12 sm:py-16">
-      <SectionHeader
-        kicker="Favoritos dos clientes"
-        title="Mais pedidos da gráfica"
-        description="Produtos com excelente avaliação e prazo de produção rápido."
-        action={
-          <Link
-            to="/produtos"
-            className="inline-flex items-center gap-1 text-sm font-bold text-[var(--store-primary)] hover:text-[var(--store-primary-light)]"
-          >
-            Ver tudo <ArrowRight className="h-4 w-4" />
-          </Link>
-        }
-      />
-      <ProductGrid>
+    <div
+      className="relative overflow-hidden bg-[var(--store-ink)] pb-12 pt-6 sm:pb-16 sm:pt-10"
+      style={{
+        backgroundImage:
+          "radial-gradient(circle at 90% -10%, rgba(255,215,0,0.10), transparent 40%), radial-gradient(circle at 0% 110%, rgba(255,215,0,0.06), transparent 50%)",
+      }}
+    >
+      {children}
+    </div>
+  );
+}
+
+function FeaturedBento() {
+  const { data, isLoading } = useStoreProducts();
+  const items = data ?? [];
+  const featured = items.slice(0, 6);
+
+  return (
+    <section className="mx-auto mt-3 w-full max-w-[1280px] px-4 sm:mt-4">
+      <header className="mb-5 flex flex-col items-start justify-between gap-2 sm:flex-row sm:items-end">
+        <div className="min-w-0">
+          <p className="text-[11px] font-extrabold uppercase tracking-[0.22em] text-[var(--store-gold)]">
+            Favoritos dos clientes
+          </p>
+          <h2 className="font-display mt-1 text-4xl leading-none text-white sm:text-5xl">
+            MAIS PEDIDOS DA GRÁFICA
+          </h2>
+          <p className="mt-2 max-w-2xl text-sm text-white/60">
+            Preços direto da nossa produção — atualizados em tempo real pelo painel.
+          </p>
+        </div>
+        <Link
+          to="/produtos"
+          className="inline-flex items-center gap-1 text-xs font-extrabold uppercase tracking-[0.18em] text-[var(--store-gold)] hover:text-white"
+        >
+          Ver tudo <ArrowRight className="h-4 w-4" />
+        </Link>
+      </header>
+
+      <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
         {isLoading
-          ? Array.from({ length: 8 }).map((_, i) => <ProductCardSkeleton key={i} />)
-          : featured.map((p) => <ProductCard key={p.id} product={p} />)}
-      </ProductGrid>
+          ? Array.from({ length: 6 }).map((_, i) => (
+              <div
+                key={i}
+                className="animate-pulse rounded-[var(--store-radius-lg)] bg-white/5 p-4"
+                style={{ minHeight: 260 }}
+              />
+            ))
+          : featured.slice(0, 2).map((p, idx) => (
+              <BentoProductCard
+                key={p.id}
+                product={p}
+                animationDelay={120 + idx * 80}
+              />
+            ))}
+
+        {/* Creative bento card — "Criamos sua arte" */}
+        <a
+          href={waLink("Olá! Quero contratar a criação de uma arte.")}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="store-bento-card group flex flex-col items-center justify-center bg-[var(--store-gold)] p-5 text-center text-[var(--store-ink)] animate-fade-in"
+          style={{ animationDelay: "280ms", animationFillMode: "both" }}
+        >
+          <Palette className="mb-2 h-7 w-7" />
+          <p className="font-display text-2xl leading-none sm:text-3xl">CRIAMOS SUA ARTE</p>
+          <p className="mt-2 text-xs font-medium">
+            Designers prontos para criar do zero.
+          </p>
+          <span className="mt-4 inline-flex items-center justify-center bg-[var(--store-ink)] px-4 py-2 text-[10px] font-extrabold uppercase tracking-[0.2em] text-white transition-transform group-hover:scale-105">
+            Saiba mais
+          </span>
+        </a>
+
+        {/* Card "mais produtos" */}
+        <Link
+          to="/produtos"
+          className="store-bento-card group flex flex-col items-center justify-center border border-[var(--store-ink-line)] bg-[var(--store-ink-soft)] p-5 text-center text-white animate-fade-in"
+          style={{ animationDelay: "360ms", animationFillMode: "both" }}
+        >
+          <div className="grid h-12 w-12 place-items-center rounded-full border-2 border-[var(--store-gold)] text-[var(--store-gold)] transition-transform group-hover:rotate-90">
+            <Plus className="h-5 w-5" />
+          </div>
+          <p className="font-display mt-3 text-2xl leading-none">MAIS PRODUTOS</p>
+          <p className="mt-1 text-xs text-white/60">Catálogo completo</p>
+        </Link>
+
+        {/* Mais 4 produtos */}
+        {!isLoading &&
+          featured.slice(2, 6).map((p, idx) => (
+            <BentoProductCard
+              key={p.id}
+              product={p}
+              animationDelay={440 + idx * 80}
+            />
+          ))}
+      </div>
     </section>
+  );
+}
+
+function BentoProductCard({
+  product,
+  animationDelay,
+}: {
+  product: StoreProduct;
+  animationDelay: number;
+}) {
+  const slug = product.slug ?? product.id;
+  const rating = product.rating ? Number(product.rating) : null;
+  const categoryShort = (product.category ?? "PRINT").slice(0, 9).toUpperCase();
+
+  return (
+    <Link
+      to="/produto/$slug"
+      params={{ slug }}
+      className="store-bento-card group flex flex-col overflow-hidden bg-white p-3 text-[var(--store-ink)] animate-fade-in"
+      style={{ animationDelay: `${animationDelay}ms`, animationFillMode: "both" }}
+    >
+      <div className="relative mb-3 flex aspect-square items-center justify-center overflow-hidden rounded-[var(--store-radius-md)] bg-slate-100">
+        <div
+          className="absolute inset-0 opacity-[0.06]"
+          style={{
+            backgroundImage: "radial-gradient(#000 1px, transparent 1px)",
+            backgroundSize: "10px 10px",
+          }}
+        />
+        {product.image_url ? (
+          <img
+            src={product.image_url}
+            alt={product.name}
+            loading="lazy"
+            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.06]"
+          />
+        ) : (
+          <span className="font-display text-3xl text-slate-300 sm:text-4xl">
+            {categoryShort}
+          </span>
+        )}
+        {product.badge && (
+          <span className="absolute left-2 top-2 rounded-sm bg-[var(--store-ink)] px-2 py-0.5 text-[9px] font-extrabold uppercase tracking-wider text-[var(--store-gold)]">
+            {product.badge}
+          </span>
+        )}
+      </div>
+
+      <p className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-[var(--store-text-muted)]">
+        {product.category ?? "Personalizado"}
+      </p>
+      <h4 className="mt-0.5 line-clamp-2 text-sm font-bold leading-snug sm:text-base">
+        {product.name}
+      </h4>
+
+      <div className="mt-auto flex items-end justify-between gap-2 pt-3">
+        <div className="min-w-0">
+          {rating != null && (
+            <div className="flex items-center gap-1 text-[var(--store-gold)]">
+              <Star className="h-3 w-3 fill-current" />
+              <span className="text-[11px] font-bold text-[var(--store-ink)]">
+                {rating.toFixed(1)}
+              </span>
+              <span className="text-[10px] text-slate-400">
+                ({product.reviews_count ?? 0})
+              </span>
+            </div>
+          )}
+          <p className="font-display text-2xl leading-none">{brl(product.base_price)}</p>
+          {product.min_quantity ? (
+            <p className="text-[10px] text-slate-500">
+              a partir de {product.min_quantity} {product.unit ?? "un"}
+            </p>
+          ) : null}
+        </div>
+        <span className="grid h-9 w-9 shrink-0 place-items-center rounded-[var(--store-radius-sm)] bg-[var(--store-ink)] text-white transition-colors group-hover:bg-[var(--store-gold)] group-hover:text-[var(--store-ink)]">
+          <Plus className="h-4 w-4" />
+        </span>
+      </div>
+    </Link>
   );
 }
 

@@ -1,92 +1,93 @@
 import { Link } from "@tanstack/react-router";
-import { ArrowRight, Upload, Sparkles, Truck, Award } from "lucide-react";
+import { ArrowRight, Upload, Calculator, Sparkles } from "lucide-react";
 import { waLink } from "./tokens";
 
 export function Hero() {
   return (
-    <section className="mx-auto max-w-[1280px] px-4 pt-6 sm:pt-10">
-      <div
-        className="relative overflow-hidden rounded-[var(--store-radius-xl)] px-6 py-10 text-white sm:px-12 sm:py-16"
-        style={{
-          backgroundImage:
-            "radial-gradient(circle at 90% 0%, rgba(250,204,21,0.18), transparent 40%), radial-gradient(circle at 10% 100%, rgba(249,115,22,0.22), transparent 45%), linear-gradient(135deg, #0f172a 0%, #172554 55%, #2563eb 100%)",
-        }}
-      >
-        <div className="absolute inset-0 opacity-[0.08]" aria-hidden="true">
+    <section className="mx-auto w-full max-w-[1280px] px-4 pt-4 sm:pt-6">
+      <div className="grid gap-3 sm:gap-4 md:grid-cols-12">
+        {/* HERO YELLOW BLOCK */}
+        <div
+          className="store-bento-card store-crop-marks group relative overflow-hidden bg-[var(--store-gold)] p-6 sm:p-10 md:col-span-8 md:p-12 animate-fade-in"
+          style={{ animationDelay: "60ms", animationFillMode: "both" }}
+        >
+          <span className="inline-flex items-center gap-2 rounded-full bg-[var(--store-ink)] px-3 py-1 text-[11px] font-extrabold uppercase tracking-[0.18em] text-[var(--store-gold)]">
+            <Sparkles className="h-3 w-3" /> Produção em até 48h
+          </span>
+          <h1
+            className="font-display mt-5 text-[44px] italic leading-[0.95] text-[var(--store-ink)] sm:text-6xl md:text-7xl lg:text-8xl"
+            style={{ letterSpacing: "-0.01em" }}
+          >
+            QUALIDADE
+            <br />
+            QUE VOCÊ <span className="text-[var(--store-ink-soft)]">TOCA.</span>
+          </h1>
+          <p className="mt-5 max-w-xl text-sm font-medium text-[var(--store-ink)]/80 sm:text-base">
+            Cartões, banners, adesivos, camisetas, canecas e brindes impressos com acabamento de
+            gráfica de verdade — sem cara de loja online genérica.
+          </p>
+
+          <div className="mt-7 flex flex-wrap gap-3">
+            <Link
+              to="/produtos"
+              className="inline-flex items-center justify-center gap-2 bg-[var(--store-ink)] px-6 py-3 text-xs font-extrabold uppercase tracking-[0.18em] text-white transition-transform hover:scale-[1.03] sm:px-8 sm:py-4 sm:text-sm"
+            >
+              Ver produtos <ArrowRight className="h-4 w-4" />
+            </Link>
+            <a
+              href={waLink("Olá! Quero enviar minha arte para um orçamento.")}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center gap-2 border-2 border-[var(--store-ink)] px-6 py-3 text-xs font-extrabold uppercase tracking-[0.18em] text-[var(--store-ink)] transition-colors hover:bg-[var(--store-ink)] hover:text-[var(--store-gold)] sm:px-8 sm:py-4 sm:text-sm"
+            >
+              <Upload className="h-4 w-4" /> Enviar minha arte
+            </a>
+          </div>
+
+          {/* Decorative giant number */}
           <div
-            className="h-full w-full"
-            style={{
-              backgroundImage:
-                "linear-gradient(rgba(255,255,255,0.4) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.4) 1px, transparent 1px)",
-              backgroundSize: "32px 32px",
-            }}
-          />
+            className="font-display pointer-events-none absolute -right-6 -bottom-10 select-none text-[180px] leading-none text-[var(--store-ink)]/10 transition-transform duration-700 group-hover:rotate-3 sm:text-[240px]"
+            aria-hidden="true"
+          >
+            48H
+          </div>
         </div>
 
-        <div className="relative grid gap-10 lg:grid-cols-[1.1fr_.9fr] lg:items-center">
-          <div>
-            <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs font-semibold backdrop-blur">
-              <Sparkles className="h-3.5 w-3.5 text-[var(--store-secondary)]" />
-              Produção em até 48h úteis
+        {/* SIDE BENTO COLUMN */}
+        <div className="grid gap-3 sm:gap-4 md:col-span-4 md:grid-rows-2">
+          <div
+            className="store-bento-card flex flex-col justify-between border border-[var(--store-ink-line)] bg-[var(--store-ink-soft)] p-6 text-white animate-fade-in"
+            style={{ animationDelay: "140ms", animationFillMode: "both" }}
+          >
+            <span className="w-fit rounded-full bg-[var(--store-gold)]/15 px-2 py-1 text-[10px] font-extrabold uppercase tracking-[0.18em] text-[var(--store-gold)]">
+              Acabamento
             </span>
-            <h1 className="mt-5 text-[34px] font-extrabold leading-[1.05] tracking-tight sm:text-5xl lg:text-[56px]">
-              Produtos personalizados para sua{" "}
-              <span className="text-[var(--store-secondary)]">marca aparecer mais</span>
-            </h1>
-            <p className="mt-4 max-w-xl text-base text-white/80 sm:text-lg">
-              Canecas, camisetas, adesivos, banners, brindes e muito mais com acabamento
-              profissional e atendimento humano.
+            <h3 className="font-display mt-4 text-3xl leading-none">
+              SOFT TOUCH,<br />
+              LAMINAÇÃO &amp; VERNIZ
+            </h3>
+            <p className="mt-2 text-xs text-white/60">
+              Sinta a diferença na primeira entrega.
             </p>
-            <div className="mt-7 flex flex-col gap-3 sm:flex-row">
-              <Link
-                to="/produtos"
-                className="inline-flex h-12 items-center justify-center gap-2 rounded-[var(--store-radius-md)] bg-[var(--store-secondary)] px-6 text-sm font-extrabold uppercase tracking-wide text-[var(--store-primary-dark)] shadow-[var(--store-shadow-md)] transition-transform hover:-translate-y-0.5 hover:bg-[var(--store-secondary-dark)]"
-              >
-                Ver produtos <ArrowRight className="h-4 w-4" />
-              </Link>
-              <a
-                href={waLink("Olá! Quero enviar minha arte para um orçamento.")}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex h-12 items-center justify-center gap-2 rounded-[var(--store-radius-md)] border border-white/30 bg-white/5 px-6 text-sm font-extrabold uppercase tracking-wide text-white transition-colors hover:bg-white/15"
-              >
-                <Upload className="h-4 w-4" /> Enviar minha arte
-              </a>
-            </div>
-            <div className="mt-8 grid max-w-xl grid-cols-3 gap-4 text-xs">
-              <Feature icon={Award} label="Qualidade profissional" />
-              <Feature icon={Truck} label="Entrega ou retirada" />
-              <Feature icon={Sparkles} label="Arte sob medida" />
-            </div>
           </div>
-
-          <div className="relative hidden lg:block">
-            <div className="absolute -left-10 top-10 h-44 w-44 rounded-[var(--store-radius-xl)] bg-[var(--store-secondary)]/30 blur-2xl" />
-            <div className="relative rounded-[var(--store-radius-xl)] border border-white/15 bg-white/5 p-4 shadow-2xl backdrop-blur">
-              <img
-                src="https://images.unsplash.com/photo-1599058917212-d750089bc07e?w=900&q=80"
-                alt="Mockup de produtos gráficos personalizados"
-                className="aspect-[4/3] w-full rounded-[var(--store-radius-lg)] object-cover"
-              />
-              <div className="mt-3 flex items-center justify-between text-xs">
-                <span className="rounded-full bg-[var(--store-secondary)] px-3 py-1 font-bold text-[var(--store-primary-dark)]">
-                  Mais vendido
+          <Link
+            to="/calculator"
+            className="store-bento-card group flex cursor-pointer flex-col justify-between border border-[var(--store-ink-line)] bg-[var(--store-ink-soft)] p-6 text-white transition-colors hover:border-[var(--store-gold)]/60 animate-fade-in"
+            style={{ animationDelay: "220ms", animationFillMode: "both" }}
+          >
+            <Calculator className="h-6 w-6 text-[var(--store-gold)]" />
+            <div>
+              <h3 className="font-display text-3xl leading-none">ORÇAMENTO RÁPIDO</h3>
+              <div className="mt-3 inline-flex items-center gap-2 text-[var(--store-gold)]">
+                <span className="text-xs font-extrabold uppercase tracking-[0.18em]">
+                  Calcular agora
                 </span>
-                <span className="font-semibold text-white/80">A partir de R$ 39,90</span>
+                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
               </div>
             </div>
-          </div>
+          </Link>
         </div>
       </div>
     </section>
-  );
-}
-
-function Feature({ icon: Icon, label }: { icon: any; label: string }) {
-  return (
-    <div className="flex items-center gap-2 text-white/85">
-      <Icon className="h-4 w-4 text-[var(--store-secondary)]" />
-      <span className="font-semibold">{label}</span>
-    </div>
   );
 }

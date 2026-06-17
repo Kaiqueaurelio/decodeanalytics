@@ -70,8 +70,11 @@ function StoreHeader() {
             className="h-12 w-auto md:h-14 object-contain"
           />
           <div className="hidden leading-tight sm:block">
-            <div className="text-base font-extrabold text-[var(--store-primary)]">
-              Alcateia's
+            <div
+              className="font-display text-2xl leading-none text-[var(--store-primary)]"
+              style={{ letterSpacing: "0.04em" }}
+            >
+              ALCATEIA&apos;S
             </div>
             <div className="text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--store-accent)]">
               Gráfica online
