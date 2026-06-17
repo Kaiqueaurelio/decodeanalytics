@@ -20,12 +20,12 @@ import { Route as AuthenticatedServicesRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedReceivablesRouteImport } from './routes/_authenticated/receivables'
 import { Route as AuthenticatedQuotesRouteImport } from './routes/_authenticated/quotes'
 import { Route as AuthenticatedProductionRouteImport } from './routes/_authenticated/production'
+import { Route as AuthenticatedPdvRouteImport } from './routes/_authenticated/pdv'
 import { Route as AuthenticatedOrdersRouteImport } from './routes/_authenticated/orders'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedClientsRouteImport } from './routes/_authenticated/clients'
 import { Route as AuthenticatedCashRouteImport } from './routes/_authenticated/cash'
 import { Route as AuthenticatedCalculatorRouteImport } from './routes/_authenticated/calculator'
-import { Route as AuthenticatedPdvRouteImport } from './routes/_authenticated/pdv'
 
 const ProdutosRoute = ProdutosRouteImport.update({
   id: '/produtos',
@@ -82,6 +82,11 @@ const AuthenticatedProductionRoute = AuthenticatedProductionRouteImport.update({
   path: '/production',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedPdvRoute = AuthenticatedPdvRouteImport.update({
+  id: '/pdv',
+  path: '/pdv',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedOrdersRoute = AuthenticatedOrdersRouteImport.update({
   id: '/orders',
   path: '/orders',
@@ -107,18 +112,13 @@ const AuthenticatedCalculatorRoute = AuthenticatedCalculatorRouteImport.update({
   path: '/calculator',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedPdvRoute = AuthenticatedPdvRouteImport.update({
-  id: '/pdv',
-  path: '/pdv',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/produtos': typeof ProdutosRoute
-  '/cash': typeof AuthenticatedCashRoute
   '/calculator': typeof AuthenticatedCalculatorRoute
+  '/cash': typeof AuthenticatedCashRoute
   '/clients': typeof AuthenticatedClientsRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/orders': typeof AuthenticatedOrdersRoute
@@ -135,8 +135,8 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/produtos': typeof ProdutosRoute
-  '/cash': typeof AuthenticatedCashRoute
   '/calculator': typeof AuthenticatedCalculatorRoute
+  '/cash': typeof AuthenticatedCashRoute
   '/clients': typeof AuthenticatedClientsRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/orders': typeof AuthenticatedOrdersRoute
@@ -155,8 +155,8 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/produtos': typeof ProdutosRoute
-  '/_authenticated/cash': typeof AuthenticatedCashRoute
   '/_authenticated/calculator': typeof AuthenticatedCalculatorRoute
+  '/_authenticated/cash': typeof AuthenticatedCashRoute
   '/_authenticated/clients': typeof AuthenticatedClientsRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/orders': typeof AuthenticatedOrdersRoute
@@ -175,8 +175,8 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/produtos'
-    | '/cash'
     | '/calculator'
+    | '/cash'
     | '/clients'
     | '/dashboard'
     | '/orders'
@@ -193,8 +193,8 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/produtos'
-    | '/cash'
     | '/calculator'
+    | '/cash'
     | '/clients'
     | '/dashboard'
     | '/orders'
@@ -212,8 +212,8 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/auth'
     | '/produtos'
-    | '/_authenticated/cash'
     | '/_authenticated/calculator'
+    | '/_authenticated/cash'
     | '/_authenticated/clients'
     | '/_authenticated/dashboard'
     | '/_authenticated/orders'
@@ -315,6 +315,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedProductionRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/pdv': {
+      id: '/_authenticated/pdv'
+      path: '/pdv'
+      fullPath: '/pdv'
+      preLoaderRoute: typeof AuthenticatedPdvRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/orders': {
       id: '/_authenticated/orders'
       path: '/orders'
@@ -350,19 +357,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedCalculatorRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/pdv': {
-      id: '/_authenticated/pdv'
-      path: '/pdv'
-      fullPath: '/pdv'
-      preLoaderRoute: typeof AuthenticatedPdvRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
   }
 }
 
 interface AuthenticatedRouteRouteChildren {
-  AuthenticatedCashRoute: typeof AuthenticatedCashRoute
   AuthenticatedCalculatorRoute: typeof AuthenticatedCalculatorRoute
+  AuthenticatedCashRoute: typeof AuthenticatedCashRoute
   AuthenticatedClientsRoute: typeof AuthenticatedClientsRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedOrdersRoute: typeof AuthenticatedOrdersRoute
@@ -375,8 +375,8 @@ interface AuthenticatedRouteRouteChildren {
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
-  AuthenticatedCashRoute: AuthenticatedCashRoute,
   AuthenticatedCalculatorRoute: AuthenticatedCalculatorRoute,
+  AuthenticatedCashRoute: AuthenticatedCashRoute,
   AuthenticatedClientsRoute: AuthenticatedClientsRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedOrdersRoute: AuthenticatedOrdersRoute,
