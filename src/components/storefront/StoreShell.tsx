@@ -44,7 +44,7 @@ export function StoreShell({ children }: { children: ReactNode }) {
 function TopPromoBar() {
   return (
     <div className="bg-[var(--store-secondary)] text-[var(--store-primary-dark)]">
-      <div className="mx-auto flex min-h-10 max-w-[1280px] items-center justify-center gap-2 px-4 py-2 text-center text-[13px] font-semibold sm:text-sm">
+      <div className="mx-auto flex min-h-9 max-w-[1280px] items-center justify-center gap-1 px-3 py-1.5 text-center text-[11px] font-semibold sm:min-h-10 sm:gap-2 sm:px-4 sm:py-2 sm:text-[13px] md:text-sm">
         <Tag className="h-4 w-4 shrink-0" aria-hidden="true" />
         <span>
           Ganhe <strong>10% OFF</strong> na sua primeira compra — cupom{" "}
@@ -62,21 +62,21 @@ function StoreHeader() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   return (
     <header className="sticky top-0 z-30 border-b border-[var(--store-border)] bg-[var(--store-surface)]/95 backdrop-blur">
-      <div className="mx-auto flex max-w-[1280px] items-center gap-3 px-4 py-3 md:gap-6 md:py-4">
-        <Link to="/" className="flex shrink-0 items-center gap-3">
+      <div className="mx-auto flex max-w-[1280px] items-center gap-2 px-3 py-2 sm:gap-3 sm:px-4 sm:py-3 md:gap-6 md:py-4">
+        <Link to="/" className="flex shrink-0 items-center gap-2 sm:gap-3">
           <img
             src="/brand/alcateia-symbol.png"
             alt="Alcateia's"
-            className="h-12 w-auto md:h-14 object-contain"
+            className="h-10 w-auto sm:h-12 md:h-14 object-contain"
           />
           <div className="hidden leading-tight sm:block">
             <div
-              className="font-display text-2xl leading-none text-[var(--store-primary)]"
+              className="font-display text-xl sm:text-2xl leading-none text-[var(--store-primary)]"
               style={{ letterSpacing: "0.04em" }}
             >
               ALCATEIA&apos;S
             </div>
-            <div className="text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--store-accent)]">
+            <div className="text-[9px] sm:text-[10px] font-bold uppercase tracking-[0.15em] sm:tracking-[0.2em] text-[var(--store-accent)]">
               Gráfica online
             </div>
           </div>
@@ -93,17 +93,17 @@ function StoreHeader() {
           <label htmlFor="store-search" className="sr-only">
             O que você está procurando?
           </label>
-          <Search className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-[var(--store-text-light)]" />
+          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--store-text-light)] sm:left-4 sm:h-5 sm:w-5" />
           <input
             id="store-search"
             value={q}
             onChange={(e) => setQ(e.target.value)}
             placeholder="O que você está procurando?"
-            className="h-11 w-full rounded-[var(--store-radius-lg)] border border-[var(--store-border)] bg-white pl-12 pr-28 text-sm outline-none transition-all placeholder:text-[var(--store-text-light)] focus:border-[var(--store-primary-light)] focus:ring-4 focus:ring-[var(--store-primary-light)]/15 md:h-12 md:text-[15px]"
+            className="h-10 w-full rounded-[var(--store-radius-lg)] border border-[var(--store-border)] bg-white pl-10 pr-24 text-xs sm:h-11 sm:pl-12 sm:pr-28 sm:text-sm md:h-12 md:text-[15px] outline-none transition-all placeholder:text-[var(--store-text-light)] focus:border-[var(--store-primary-light)] focus:ring-4 focus:ring-[var(--store-primary-light)]/15"
           />
           <button
             type="submit"
-            className="absolute right-1.5 top-1/2 -translate-y-1/2 rounded-[var(--store-radius-md)] bg-[var(--store-primary)] px-3 py-1.5 text-xs font-bold uppercase tracking-wide text-white transition-colors hover:bg-[var(--store-primary-light)] md:px-4 md:py-2 md:text-sm"
+            className="absolute right-1 top-1/2 -translate-y-1/2 rounded-[var(--store-radius-md)] bg-[var(--store-primary)] px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-white transition-colors hover:bg-[var(--store-primary-light)] sm:right-1.5 sm:px-3 sm:py-1.5 sm:text-xs md:px-4 md:py-2 md:text-sm"
           >
             Buscar
           </button>

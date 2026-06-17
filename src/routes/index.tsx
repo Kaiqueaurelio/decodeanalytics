@@ -262,7 +262,7 @@ function CategoriesSection() {
           title="Para todos os tipos de marca"
           description="Escolha uma categoria e personalize seu produto em poucos minutos."
         />
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+        <div className="grid grid-cols-2 gap-3 sm:gap-4 sm:grid-cols-3 lg:grid-cols-4">
           {STORE_CATEGORIES.slice(1).map((c) => (
             <Link
               key={c.slug}
@@ -478,17 +478,17 @@ function StatsStrip() {
   ];
   return (
     <section className="border-y border-[var(--store-border)] bg-white">
-      <div className="mx-auto grid max-w-[1280px] grid-cols-2 gap-4 px-4 py-8 sm:py-10 md:grid-cols-4">
+      <div className="mx-auto grid max-w-[1280px] grid-cols-2 gap-3 px-4 py-8 sm:gap-4 sm:py-10 md:grid-cols-4">
         {stats.map((s) => (
-          <div key={s.label} className="flex items-center gap-3 sm:gap-4">
-            <span className="grid h-12 w-12 shrink-0 place-items-center rounded-xl bg-[var(--store-ink)] text-[var(--store-gold)]">
-              <s.icon className="h-5 w-5" />
+          <div key={s.label} className="flex flex-col items-center gap-2 text-center sm:flex-row sm:gap-3 sm:text-left">
+            <span className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-[var(--store-ink)] text-[var(--store-gold)] sm:h-12 sm:w-12 sm:rounded-xl">
+              <s.icon className="h-4 w-4 sm:h-5 sm:w-5" />
             </span>
             <div className="min-w-0">
-              <p className="font-display text-3xl leading-none text-[var(--store-primary)] sm:text-4xl">
+              <p className="font-display text-2xl leading-none text-[var(--store-primary)] sm:text-3xl md:text-4xl">
                 {s.value}
               </p>
-              <p className="mt-1 text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--store-text-muted)]">
+              <p className="mt-0.5 text-[10px] font-bold uppercase tracking-[0.15em] text-[var(--store-text-muted)] sm:mt-1 sm:text-[11px]">
                 {s.label}
               </p>
             </div>
@@ -593,28 +593,28 @@ function _ContactSection() {
             <Send className="h-4 w-4" /> Falar no WhatsApp
           </a>
         </div>
-        <div className="grid gap-4 sm:grid-cols-2">
-          <div className="rounded-[var(--store-radius-lg)] bg-white/5 p-5">
-            <p className="text-xs font-bold uppercase tracking-wider text-[var(--store-secondary)]">
+        <div className="grid gap-3 sm:gap-4 sm:grid-cols-2">
+          <div className="rounded-[var(--store-radius-lg)] bg-white/5 p-4 sm:p-5">
+            <p className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-[var(--store-secondary)]">
               Telefone / WhatsApp
             </p>
-            <p className="mt-2 text-lg font-extrabold">{STORE_CONTACT.phone}</p>
+            <p className="mt-2 text-base sm:text-lg font-extrabold">{STORE_CONTACT.phone}</p>
           </div>
-          <div className="rounded-[var(--store-radius-lg)] bg-white/5 p-5">
-            <p className="text-xs font-bold uppercase tracking-wider text-[var(--store-secondary)]">
+          <div className="rounded-[var(--store-radius-lg)] bg-white/5 p-4 sm:p-5">
+            <p className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-[var(--store-secondary)]">
               E-mail
             </p>
-            <p className="mt-2 break-all text-base font-semibold">{STORE_CONTACT.email}</p>
+            <p className="mt-2 break-all text-sm sm:text-base font-semibold">{STORE_CONTACT.email}</p>
           </div>
-          <div className="rounded-[var(--store-radius-lg)] bg-white/5 p-5 sm:col-span-2">
-            <p className="text-xs font-bold uppercase tracking-wider text-[var(--store-secondary)]">
+          <div className="rounded-[var(--store-radius-lg)] bg-white/5 p-4 sm:p-5 sm:col-span-2">
+            <p className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-[var(--store-secondary)]">
               Endereço
             </p>
             <a
               href={STORE_CONTACT.mapsUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-2 block text-base font-semibold hover:text-[var(--store-secondary)]"
+              className="mt-2 block text-sm sm:text-base font-semibold hover:text-[var(--store-secondary)]"
             >
               {STORE_CONTACT.address}
               <br />
