@@ -68,14 +68,12 @@ export function Hero() {
           {/* Right column: product hero photo */}
           <div className="relative hidden md:block">
             <div className="absolute -right-8 -top-8 h-72 w-72 rounded-full bg-white/10 blur-2xl" />
-            <div className="relative aspect-square overflow-hidden rounded-[var(--store-radius-xl)] bg-gradient-to-br from-white/20 to-white/5 p-4 shadow-2xl rotate-[-2deg] transition-transform hover:rotate-0 border border-white/20">
-              <div className="h-full w-full rounded-[var(--store-radius-lg)] bg-gradient-to-br from-blue-100 to-blue-50 flex items-center justify-center">
-                <div className="text-center">
-                  <div className="text-6xl mb-2">📇</div>
-                  <p className="text-sm font-semibold text-blue-900">Cartões de Visita</p>
-                  <p className="text-xs text-blue-700">Premium</p>
-                </div>
-              </div>
+            <div className="relative aspect-square overflow-hidden rounded-[var(--store-radius-xl)] bg-white p-2 shadow-2xl rotate-[-2deg] transition-transform hover:rotate-0 border border-white/20">
+              <img
+                src={cartoesImg.url}
+                alt="Cartões de Visita Premium"
+                className="h-full w-full rounded-[var(--store-radius-lg)] object-cover"
+              />
               <span className="absolute -top-3 -left-3 inline-flex items-center gap-1 rounded-full bg-[var(--store-secondary)] px-3 py-1 text-xs font-extrabold uppercase text-[var(--store-primary-dark)] shadow-md">
                 <Sparkles className="h-3 w-3" /> Acabamento premium
               </span>
