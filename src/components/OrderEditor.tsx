@@ -23,6 +23,7 @@ import { Trash2, Plus, FileText } from "lucide-react";
 import { toast } from "sonner";
 import { brl, PAYMENT_METHODS, PRODUCTION_STATUS_LABEL } from "@/lib/format";
 import { generateOrderPDF } from "@/lib/pdf";
+import { isMissingColumnError, stripProductionTrackingFields } from "@/lib/supabaseErrors";
 
 export interface OrderEditorProps {
   open: boolean;
@@ -205,17 +206,48 @@ export function OrderEditor({
     if (id) {
       const { error } = await supabase.from("orders").update(payload).eq("id", id);
       if (error) {
-        setLoading(false);
-        return toast.error(error.message);
+        if (isMissingColumnError(error, "assigned_to")) {
+          const { error: fallbackError } = await supabase
+            .from("orders")
+            .update(stripProductionTrackingFields(payload))
+            .eq("id", id);
+          if (fallbackError) {
+            setLoading(false);
+            return toast.error(fallbackError.message);
+          }
+          toast.warning(
+            "OS salva. Campos de responsável/progresso serão ativados após aplicar a migration de produção.",
+          );
+        } else {
+          setLoading(false);
+          return toast.error(error.message);
+        }
       }
       await supabase.from("order_items").delete().eq("order_id", id);
     } else {
       const { data, error } = await supabase.from("orders").insert(payload).select("id").single();
       if (error || !data) {
-        setLoading(false);
-        return toast.error(error?.message || "Erro");
+        if (error && isMissingColumnError(error, "assigned_to")) {
+          const { data: fallbackData, error: fallbackError } = await supabase
+            .from("orders")
+            .insert(stripProductionTrackingFields(payload))
+            .select("id")
+            .single();
+          if (fallbackError || !fallbackData) {
+            setLoading(false);
+            return toast.error(fallbackError?.message || "Erro");
+          }
+          id = fallbackData.id;
+          toast.warning(
+            "OS criada. Campos de responsável/progresso serão ativados após aplicar a migration de produção.",
+          );
+        } else {
+          setLoading(false);
+          return toast.error(error?.message || "Erro");
+        }
+      } else {
+        id = data.id;
       }
-      id = data.id;
     }
     const { error: e2 } = await supabase.from("order_items").insert(
       items.map((i) => ({

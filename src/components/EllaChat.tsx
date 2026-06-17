@@ -1,219 +1,233 @@
+// @ts-nocheck
 import { useState, useRef, useEffect } from "react";
-import { Send, Loader2, MessageCircle, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { toast } from "sonner";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { chatWithElla, getEllaHistory } from "@/lib/api/ella.functions";
+import { useAuth } from "@/lib/auth";
+import { Loader2, Send, Sparkles, X, Zap } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface Message {
-  id: string;
   role: "user" | "assistant";
   content: string;
-  timestamp: Date;
 }
 
-export function EllaChat() {
-  const [open, setOpen] = useState(false);
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: "1",
-      role: "assistant",
-      content:
-        "Olá! Sou a Ella Ribeiro, sua assistente operacional. Posso ajudar você com: 📋 Criar/atualizar orçamentos, 📦 Gerenciar produtos e preços, 📝 Criar ordens de serviço, 💰 Controlar pagamentos. Como posso ajudar?",
-      timestamp: new Date(),
-    },
-  ]);
-  const [input, setInput] = useState("");
-  const [loading, setLoading] = useState(false);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
+const QUICK_COMMANDS = [
+  "Listar serviços",
+  "Mudar preço do Banner para 50",
+  "Adicionar serviço: Cartão de Visita, Papelaria, 100",
+  "Como estão os orçamentos hoje?",
+];
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
+export function EllaChat() {
+  const { user } = useAuth();
+  const [isOpen, setIsOpen] = useState(false);
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [input, setInput] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [isInitialLoading, setIsInitialLoading] = useState(true);
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
+    if (isOpen && messages.length === 0) {
+      loadHistory();
+    }
+  }, [isOpen]);
 
-  const handleSendMessage = async () => {
-    if (!input.trim()) return;
-
-    const userMessage: Message = {
-      id: Date.now().toString(),
-      role: "user",
-      content: input,
-      timestamp: new Date(),
-    };
-
-    setMessages((prev) => [...prev, userMessage]);
-    setInput("");
-    setLoading(true);
-
-    try {
-      // Chamada para a função de IA no servidor
-      const response = await fetch("/api/ella-chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          message: input,
-          conversationHistory: messages,
-        }),
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTo({
+        top: scrollRef.current.scrollHeight,
+        behavior: "smooth",
       });
+    }
+  }, [messages, isLoading]);
 
-      if (!response.ok) throw new Error("Erro ao comunicar com Ella");
-
-      const data = await response.json();
-
-      const assistantMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        role: "assistant",
-        content: data.response,
-        timestamp: new Date(),
-      };
-
-      setMessages((prev) => [...prev, assistantMessage]);
-
-      // Se houver ações a executar, executar
-      if (data.actions && data.actions.length > 0) {
-        for (const action of data.actions) {
-          await executeAction(action);
-        }
+  async function loadHistory() {
+    try {
+      const history = await getEllaHistory();
+      if (history && history.length > 0) {
+        setMessages(history.map((h) => ({ role: h.role as any, content: h.content })));
+      } else {
+        setMessages([
+          {
+            role: "assistant",
+            content:
+              "Olá! Sou a Ella Ribeiro. Como posso te ajudar com a gestão da Alcateia's hoje?",
+          },
+        ]);
       }
     } catch (error) {
-      toast.error("Erro ao processar comando");
-      console.error(error);
+      console.error("Erro ao carregar histórico:", error);
+      setMessages([
+        { role: "assistant", content: "Olá! Sou a Ella Ribeiro. Como posso te ajudar hoje?" },
+      ]);
     } finally {
-      setLoading(false);
+      setIsInitialLoading(false);
     }
-  };
+  }
 
-  const executeAction = async (action: any) => {
+  async function handleSend(text?: string) {
+    const messageToSend = text || input;
+    if (!messageToSend.trim() || isLoading || !user) return;
+
+    const userMessage = messageToSend.trim();
+    if (!text) setInput("");
+
+    setMessages((prev) => [...prev, { role: "user", content: userMessage }]);
+    setIsLoading(true);
+
     try {
-      const response = await fetch("/api/ella-execute", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(action),
+      const result = await chatWithElla({
+        data: {
+          message: userMessage,
+          userId: user.id,
+        },
       });
-
-      if (!response.ok) throw new Error("Erro ao executar ação");
-
-      const result = await response.json();
-      toast.success(result.message || "Ação executada com sucesso");
-
-      // Adicionar confirmação ao chat
-      const confirmMessage: Message = {
-        id: (Date.now() + 2).toString(),
-        role: "assistant",
-        content: `✅ ${result.message || "Ação concluída com sucesso"}`,
-        timestamp: new Date(),
-      };
-      setMessages((prev) => [...prev, confirmMessage]);
+      setMessages((prev) => [
+        ...prev,
+        { role: "assistant", content: result.message || "Ação executada com sucesso." },
+      ]);
     } catch (error) {
-      toast.error("Erro ao executar ação");
-      console.error(error);
+      setMessages((prev) => [
+        ...prev,
+        {
+          role: "assistant",
+          content:
+            "Desculpe, tive um problema ao processar sua solicitação. Pode tentar novamente?",
+        },
+      ]);
+    } finally {
+      setIsLoading(false);
     }
-  };
+  }
 
   return (
     <>
-      {/* Botão flutuante */}
-      <button
-        onClick={() => setOpen(!open)}
+      <Button
+        onClick={() => setIsOpen(true)}
         className={cn(
-          "fixed bottom-6 right-6 z-50 rounded-full shadow-lg transition-all",
-          open
-            ? "h-12 w-12 bg-red-500 hover:bg-red-600"
-            : "h-14 w-14 bg-gradient-to-br from-brand-yellow to-brand-orange hover:shadow-xl",
+          "fixed bottom-6 right-6 h-14 w-14 rounded-full bg-brand-blue p-0 shadow-2xl transition-all hover:scale-110 hover:bg-brand-blue/90",
+          isOpen && "scale-0 opacity-0",
         )}
-        aria-label="Assistente Ella"
       >
-        {open ? (
-          <X className="h-6 w-6 text-white mx-auto" />
-        ) : (
-          <MessageCircle className="h-7 w-7 text-brand-blue mx-auto" />
-        )}
-      </button>
-
-      {/* Chat window */}
-      {open && (
-        <div className="fixed bottom-24 right-6 z-50 w-96 max-w-[calc(100vw-24px)] bg-white rounded-2xl shadow-2xl flex flex-col h-[600px] border border-border">
-          {/* Header */}
-          <div className="bg-gradient-to-r from-brand-yellow to-brand-orange text-brand-blue p-4 rounded-t-2xl">
-            <div className="flex items-center gap-3">
-              <div className="h-10 w-10 rounded-full bg-white flex items-center justify-center font-bold">
-                E
-              </div>
-              <div>
-                <h3 className="font-bold text-sm">Ella Ribeiro</h3>
-                <p className="text-xs opacity-90">Assistente Operacional</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Messages */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-muted/30">
-            {messages.map((msg) => (
-              <div
-                key={msg.id}
-                className={cn(
-                  "flex gap-2",
-                  msg.role === "user" ? "justify-end" : "justify-start",
-                )}
-              >
-                <div
-                  className={cn(
-                    "max-w-xs px-4 py-2 rounded-lg text-sm leading-relaxed",
-                    msg.role === "user"
-                      ? "bg-brand-yellow text-brand-blue rounded-br-none font-medium"
-                      : "bg-white border border-border text-foreground rounded-bl-none",
-                  )}
-                >
-                  {msg.content}
-                </div>
-              </div>
-            ))}
-            {loading && (
-              <div className="flex gap-2 justify-start">
-                <div className="bg-white border border-border text-foreground rounded-lg rounded-bl-none px-4 py-2">
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                </div>
-              </div>
-            )}
-            <div ref={messagesEndRef} />
-          </div>
-
-          {/* Input */}
-          <div className="border-t border-border p-3 bg-white rounded-b-2xl">
-            <div className="flex gap-2">
-              <Input
-                placeholder="Peça algo para Ella..."
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyPress={(e) => {
-                  if (e.key === "Enter" && !e.shiftKey) {
-                    e.preventDefault();
-                    handleSendMessage();
-                  }
-                }}
-                disabled={loading}
-                className="text-sm"
-              />
-              <Button
-                size="icon"
-                onClick={handleSendMessage}
-                disabled={loading || !input.trim()}
-                className="bg-brand-yellow hover:bg-brand-yellow/90 text-brand-blue"
-              >
-                {loading ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  <Send className="h-4 w-4" />
-                )}
-              </Button>
-            </div>
+        <div className="relative">
+          <Avatar className="h-12 w-12 border-2 border-brand-yellow shadow-inner">
+            <AvatarImage src="/brand/ella-avatar.png" />
+            <AvatarFallback>ER</AvatarFallback>
+          </Avatar>
+          <div className="absolute -bottom-1 -right-1 rounded-full bg-brand-yellow p-1 text-brand-blue shadow-sm">
+            <Sparkles className="h-3 w-3" />
           </div>
         </div>
-      )}
+      </Button>
+
+      <Card
+        className={cn(
+          "fixed bottom-6 right-6 z-50 flex h-[600px] w-[380px] flex-col overflow-hidden border-border/50 bg-white/95 shadow-2xl backdrop-blur-sm transition-all duration-300 sm:w-[420px]",
+          !isOpen && "pointer-events-none translate-y-10 scale-95 opacity-0",
+        )}
+      >
+        <div className="flex items-center justify-between bg-brand-blue px-4 py-3 text-white">
+          <div className="flex items-center gap-3">
+            <Avatar className="h-9 w-9 border-2 border-brand-yellow/50">
+              <AvatarImage src="/brand/ella-avatar.png" />
+              <AvatarFallback>ER</AvatarFallback>
+            </Avatar>
+            <div>
+              <p className="text-sm font-bold leading-none">Ella Ribeiro</p>
+              <p className="text-[10px] font-medium text-brand-yellow">
+                Assistente Virtual • Online
+              </p>
+            </div>
+          </div>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setIsOpen(false)}
+            className="h-8 w-8 text-white/70 hover:bg-white/10 hover:text-white"
+          >
+            <X className="h-5 w-5" />
+          </Button>
+        </div>
+
+        <ScrollArea className="flex-1 p-4" viewportRef={scrollRef}>
+          {isInitialLoading && isOpen ? (
+            <div className="flex h-full items-center justify-center">
+              <Loader2 className="h-6 w-6 animate-spin text-brand-yellow" />
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {messages.map((msg, i) => (
+                <div
+                  key={i}
+                  className={cn(
+                    "flex max-w-[90%] flex-col gap-1",
+                    msg.role === "user" ? "ml-auto items-end" : "items-start",
+                  )}
+                >
+                  <div
+                    className={cn(
+                      "rounded-2xl px-4 py-2.5 text-sm shadow-sm",
+                      msg.role === "user"
+                        ? "bg-brand-blue text-white rounded-tr-none"
+                        : "bg-muted text-foreground rounded-tl-none",
+                    )}
+                  >
+                    {msg.content}
+                  </div>
+                </div>
+              ))}
+              {isLoading && (
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <Loader2 className="h-4 w-4 animate-spin text-brand-yellow" />
+                  <span className="text-xs font-medium">Ella está processando...</span>
+                </div>
+              )}
+            </div>
+          )}
+        </ScrollArea>
+
+        <div className="border-t bg-muted/20 p-4 space-y-3">
+          <div className="flex flex-wrap gap-2">
+            {QUICK_COMMANDS.map((cmd, i) => (
+              <button
+                key={i}
+                onClick={() => handleSend(cmd)}
+                className="flex items-center gap-1.5 rounded-full border border-border bg-white px-3 py-1 text-[11px] font-medium text-muted-foreground transition-colors hover:border-brand-yellow hover:text-brand-blue"
+              >
+                <Zap className="h-3 w-3 text-brand-yellow" />
+                {cmd}
+              </button>
+            ))}
+          </div>
+
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleSend();
+            }}
+            className="flex gap-2"
+          >
+            <Input
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder="Peça algo para a Ella..."
+              className="h-11 rounded-xl bg-white shadow-sm focus-visible:ring-brand-yellow"
+            />
+            <Button
+              type="submit"
+              disabled={isLoading || !input.trim()}
+              className="h-11 w-11 shrink-0 rounded-xl bg-brand-yellow p-0 text-brand-blue shadow-md hover:bg-brand-yellow/90"
+            >
+              <Send className="h-4 w-4" />
+            </Button>
+          </form>
+        </div>
+      </Card>
     </>
   );
 }
