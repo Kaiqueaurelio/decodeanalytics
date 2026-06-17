@@ -24,9 +24,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { StoreShell } from "@/components/storefront/StoreShell";
 import { Hero } from "@/components/storefront/Hero";
 import {
-  ProductCard,
-  ProductCardSkeleton,
-  ProductGrid,
   SectionHeader,
   type StoreProduct,
 } from "@/components/storefront/ProductCard";
