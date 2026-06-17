@@ -766,44 +766,44 @@ function PDVPage() {
 
       <div className="grid min-w-0 gap-4 2xl:grid-cols-[minmax(0,1fr)_380px]">
         <section className="min-w-0 space-y-4">
-          <div className="grid min-w-0 gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-[minmax(220px,1fr)_repeat(5,auto)]">
+          <div className="grid min-w-0 gap-2 grid-cols-2 sm:gap-3 lg:grid-cols-3 2xl:grid-cols-[minmax(220px,1fr)_repeat(5,auto)]">
             <div className="relative">
               <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" />
               <Input
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
-                className="h-14 rounded-2xl border-slate-200 bg-white pl-12 text-base shadow-sm"
+                className="h-12 sm:h-14 rounded-2xl border-slate-200 bg-white pl-12 text-base shadow-sm"
                 placeholder="Buscar produto, serviço ou código..."
               />
             </div>
             <Button
-              className="h-14 rounded-2xl bg-brand-blue px-6 text-base font-black hover:bg-brand-blue-light"
+              className="h-12 sm:h-14 rounded-2xl bg-brand-blue px-3 sm:px-6 text-sm sm:text-base font-black hover:bg-brand-blue-light"
               onClick={() => setShowFastSale(true)}
             >
               <Plus className="mr-2 h-5 w-5" /> Venda Rápida
             </Button>
             <Button
               variant="outline"
-              className="h-14 rounded-2xl border-blue-200 bg-blue-50 px-5 font-black text-brand-blue hover:bg-blue-100"
+              className="h-12 sm:h-14 rounded-2xl border-blue-200 bg-blue-50 px-3 sm:px-5 text-sm sm:text-base font-black text-brand-blue hover:bg-blue-100"
               onClick={() => setShowSquareMeter(true)}
             >
               <Calculator className="mr-2 h-5 w-5" /> Calcular m²
             </Button>
             <Button
               variant="outline"
-              className="h-14 rounded-2xl border-blue-200 bg-blue-50 px-5 font-black text-brand-blue hover:bg-blue-100"
+              className="h-12 sm:h-14 rounded-2xl border-blue-200 bg-blue-50 px-3 sm:px-5 text-sm sm:text-base font-black text-brand-blue hover:bg-blue-100"
               onClick={() => setShowOrderPicker(true)}
             >
               <ClipboardList className="mr-2 h-5 w-5" /> Cobrar OS
             </Button>
             <Button
               variant="outline"
-              className="h-14 rounded-2xl bg-white px-5 font-black"
+              className="h-12 sm:h-14 rounded-2xl bg-white px-3 sm:px-5 text-sm sm:text-base font-black"
               onClick={() => setShowNewClient(true)}
             >
               <UserPlus className="mr-2 h-5 w-5" /> Cliente
             </Button>
-            <Button asChild variant="outline" className="h-14 rounded-2xl bg-white px-5 font-black">
+            <Button asChild variant="outline" className="h-12 sm:h-14 rounded-2xl bg-white px-3 sm:px-5 text-sm sm:text-base font-black">
               <a href="/services">
                 <Settings2 className="mr-2 h-5 w-5" /> Produtos
               </a>
