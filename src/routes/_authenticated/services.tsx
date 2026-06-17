@@ -12,7 +12,7 @@ import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { Plus, Pencil, Trash2, FileSpreadsheet, Download } from "lucide-react";
+import { Plus, Pencil, Trash2, FileSpreadsheet, Download, Upload } from "lucide-react";
 import { brl, SERVICE_CATEGORIES } from "@/lib/format";
 
 export const Route = createFileRoute("/_authenticated/services")({ component: ServicesPage });
@@ -65,6 +65,25 @@ function ServicesPage() {
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Produtos");
     XLSX.writeFile(wb, "modelo-produtos-alcateia.xlsx");
+  }
+
+  function exportCurrent() {
+    const rows = (data ?? []).map((s) => ({
+      name: s.name,
+      category: s.category,
+      description: s.description ?? "",
+      base_price: Number(s.base_price) || 0,
+      unit: s.unit ?? "un",
+      default_deadline_days: s.default_deadline_days ?? 3,
+      active: s.active,
+    }));
+    if (!rows.length) return toast.error("Nenhum produto para exportar");
+    const ws = XLSX.utils.json_to_sheet(rows);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Produtos");
+    const stamp = new Date().toISOString().slice(0, 10);
+    XLSX.writeFile(wb, `produtos-alcateia-${stamp}.xlsx`);
+    toast.success(`${rows.length} produto(s) exportado(s)`);
   }
 
   async function handleImportFile(file: File) {
@@ -130,6 +149,9 @@ function ServicesPage() {
         />
         <Button variant="outline" onClick={downloadTemplate}>
           <Download className="w-4 h-4 mr-1" /> Modelo Excel
+        </Button>
+        <Button variant="outline" onClick={exportCurrent}>
+          <Upload className="w-4 h-4 mr-1" /> Exportar Excel
         </Button>
         <Button variant="outline" onClick={() => fileRef.current?.click()} disabled={importing}>
           <FileSpreadsheet className="w-4 h-4 mr-1" /> {importing ? "Importando..." : "Importar Excel"}
