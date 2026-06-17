@@ -93,19 +93,19 @@ function FeaturedBento() {
     <section className="mx-auto mt-3 w-full max-w-[1280px] px-4 sm:mt-4">
       <header className="mb-5 flex flex-col items-start justify-between gap-2 sm:flex-row sm:items-end">
         <div className="min-w-0">
-          <p className="text-[11px] font-extrabold uppercase tracking-[0.22em] text-[var(--store-gold)]">
-            Favoritos dos clientes
+          <p className="text-[11px] font-extrabold uppercase tracking-[0.22em] text-[#1366ff]">
+            Os favoritos dos IMbatíveis
           </p>
-          <h2 className="font-display mt-1 text-4xl leading-none text-white sm:text-5xl">
+          <h2 className="font-display mt-1 text-4xl leading-none text-[var(--store-primary-dark)] sm:text-5xl">
             MAIS PEDIDOS DA GRÁFICA
           </h2>
-          <p className="mt-2 max-w-2xl text-sm text-white/60">
+          <p className="mt-2 max-w-2xl text-sm text-[var(--store-text-muted)]">
             Preços direto da nossa produção — atualizados em tempo real pelo painel.
           </p>
         </div>
         <Link
           to="/produtos"
-          className="inline-flex items-center gap-1 text-xs font-extrabold uppercase tracking-[0.18em] text-[var(--store-gold)] hover:text-white"
+          className="inline-flex items-center gap-1 text-xs font-extrabold uppercase tracking-[0.18em] text-[#1366ff] hover:text-[var(--store-primary-dark)]"
         >
           Ver tudo <ArrowRight className="h-4 w-4" />
         </Link>
@@ -149,14 +149,14 @@ function FeaturedBento() {
         {/* Card "mais produtos" */}
         <Link
           to="/produtos"
-          className="store-bento-card group flex flex-col items-center justify-center border border-[var(--store-ink-line)] bg-[var(--store-ink-soft)] p-5 text-center text-white animate-fade-in"
+          className="store-bento-card group flex flex-col items-center justify-center bg-[#1366ff] p-5 text-center text-white animate-fade-in"
           style={{ animationDelay: "360ms", animationFillMode: "both" }}
         >
-          <div className="grid h-12 w-12 place-items-center rounded-full border-2 border-[var(--store-gold)] text-[var(--store-gold)] transition-transform group-hover:rotate-90">
+          <div className="grid h-12 w-12 place-items-center rounded-full border-2 border-white text-white transition-transform group-hover:rotate-90">
             <Plus className="h-5 w-5" />
           </div>
           <p className="font-display mt-3 text-2xl leading-none">MAIS PRODUTOS</p>
-          <p className="mt-1 text-xs text-white/60">Catálogo completo</p>
+          <p className="mt-1 text-xs text-white/80">Catálogo completo</p>
         </Link>
 
         {/* Mais 4 produtos */}
