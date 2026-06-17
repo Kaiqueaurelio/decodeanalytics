@@ -32,6 +32,7 @@ import {
 import { STORE_CATEGORIES, STORE_CONTACT, brl, waLink } from "@/components/storefront/tokens";
 import { useStoreProducts } from "@/components/storefront/useStoreProducts";
 import { InfiniteProducts } from "@/components/storefront/InfiniteProducts";
+import { CategoryCircles } from "@/components/storefront/CategoryCircles";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -56,10 +57,11 @@ export const Route = createFileRoute("/")({
 function HomePage() {
   return (
     <StoreShell>
-      <DarkBand>
-        <Hero />
+      <Hero />
+      <CategoryCircles />
+      <LightBand>
         <FeaturedBento />
-      </DarkBand>
+      </LightBand>
       <StatsStrip />
       <CategoriesSection />
       <InfiniteProducts />
@@ -72,14 +74,10 @@ function HomePage() {
   );
 }
 
-function DarkBand({ children }: { children: React.ReactNode }) {
+function LightBand({ children }: { children: React.ReactNode }) {
   return (
     <div
-      className="relative overflow-hidden bg-[var(--store-ink)] pb-12 pt-6 sm:pb-16 sm:pt-10"
-      style={{
-        backgroundImage:
-          "radial-gradient(circle at 90% -10%, rgba(255,215,0,0.10), transparent 40%), radial-gradient(circle at 0% 110%, rgba(255,215,0,0.06), transparent 50%)",
-      }}
+      className="relative overflow-hidden bg-[var(--store-bg)] pb-12 pt-2 sm:pb-16 sm:pt-4"
     >
       {children}
     </div>
