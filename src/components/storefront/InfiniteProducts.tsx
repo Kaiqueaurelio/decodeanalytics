@@ -2,8 +2,9 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { Loader2, Plus, Star } from "lucide-react";
 import { useStoreProducts } from "./useStoreProducts";
-import { brl, getProductImage } from "./tokens";
+import { brl } from "./tokens";
 import type { StoreProduct } from "./ProductCard";
+import { SmartImage } from "./SmartImage";
 
 const PAGE = 8;
 
@@ -122,11 +123,11 @@ function FeedCard({ product, index }: { product: StoreProduct; index: number }) 
       style={{ animationDelay: `${(index % PAGE) * 50}ms`, animationFillMode: "both" }}
     >
       <div className="relative mb-3 aspect-square overflow-hidden rounded-[var(--store-radius-md)] bg-slate-100">
-        <img
-          src={getProductImage(product.image_url, product.category)}
+        <SmartImage 
+          src={product.image_url} 
           alt={product.name}
-          loading="lazy"
-          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.06]"
+          fallbackEmoji="📦"
+          className="transition-transform duration-500 group-hover:scale-[1.06]"
         />
         {product.badge && (
           <span className="absolute left-2 top-2 rounded-sm bg-[var(--store-ink)] px-2 py-0.5 text-[9px] font-extrabold uppercase tracking-wider text-[var(--store-gold)]">

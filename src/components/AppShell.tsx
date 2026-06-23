@@ -94,6 +94,14 @@ const NAV: NavItem[] = [
     roles: ["administrador", "financeiro", "atendente"],
   },
   {
+    to: "/closures",
+    label: "Fechamentos de Caixa",
+    description: "Histórico de fechamentos",
+    icon: Receipt,
+    section: "Financeiro",
+    roles: ["administrador", "financeiro"],
+  },
+  {
     to: "/services",
     label: "Serviços",
     description: "Catálogo e preços",

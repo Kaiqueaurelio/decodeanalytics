@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
-import { Star, ShoppingBag } from "lucide-react";
-import { brl, getProductImage } from "./tokens";
+import { Star } from "lucide-react";
+import { brl } from "./tokens";
+import { SmartImage } from "./SmartImage";
 
 export type StoreProduct = {
   id: string;
@@ -9,7 +10,7 @@ export type StoreProduct = {
   category: string | null;
   short_description: string | null;
   base_price: number | string;
-  image_url: string | null;
+  image_url: string | null | undefined;
   rating: number | string | null;
   reviews_count: number | null;
   min_quantity: number | null;
@@ -38,11 +39,10 @@ export function ProductCard({ product }: { product: StoreProduct }) {
         params={{ slug }}
         className="relative block aspect-[4/3] overflow-hidden bg-[var(--store-surface-soft)]"
       >
-        <img
-          src={getProductImage(product.image_url, product.category)}
+        <SmartImage 
+          src={product.image_url} 
           alt={product.name}
-          loading="lazy"
-          className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+          fallbackEmoji="🛍️"
         />
         {product.badge && tone && (
           <span

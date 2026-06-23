@@ -40,21 +40,3 @@ export function brl(value: number | string | null | undefined) {
   const n = typeof value === "number" ? value : Number(value ?? 0);
   return n.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 }
-
-export function getProductImage(url: string | null | undefined, category: string | null | undefined) {
-  if (url && !url.startsWith("/__l5e")) return url;
-  
-  const categoryMap: Record<string, string> = {
-    "Cartões": "/products/cartoes.jpg",
-    "Panfletos": "/products/panfletos.jpg",
-    "Adesivos": "/products/adesivos.jpg",
-    "Canecas": "/products/canecas.jpg",
-    "Camisetas": "/products/camisetas.jpg",
-    "Brindes": "/products/brindes.jpg",
-    "Banners": "/products/banners.jpg",
-    "Embalagens": "/products/embalagens.jpg",
-    "Plotagem": "/products/plotagem.jpg",
-  };
-
-  return categoryMap[category ?? ""] || "/products/cartoes.jpg";
-}

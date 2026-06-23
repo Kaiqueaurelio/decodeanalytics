@@ -25,7 +25,7 @@ export function CategoryCircles() {
               className="group flex w-20 shrink-0 flex-col items-center gap-2 sm:w-28 animate-fade-in"
               style={{ animationDelay: `${60 + i * 40}ms`, animationFillMode: "both" }}
             >
-              <div className="relative grid h-20 w-20 place-items-center overflow-hidden rounded-full bg-gradient-to-br from-[#1366ff]/10 to-[#1366ff]/5 ring-2 ring-transparent transition-all group-hover:ring-[#1366ff] group-hover:shadow-lg sm:h-24 sm:w-24">
+              <div className="relative grid h-20 w-20 place-items-center overflow-hidden rounded-full bg-gradient-to-br from-[#172554]/10 to-[#172554]/5 ring-2 ring-transparent transition-all group-hover:ring-[#172554] group-hover:shadow-lg sm:h-24 sm:w-24">
                 <span className="text-3xl sm:text-4xl transition-transform duration-300 group-hover:scale-110">
                   {c.emoji}
                 </span>
