@@ -1,7 +1,8 @@
 import { Link } from "@tanstack/react-router";
 import { ArrowRight, Upload, Calculator, Sparkles, Tag } from "lucide-react";
 import { waLink } from "./tokens";
-import cartoesImg from "@/assets/products/cartoes.jpg.asset.json";
+// Imagem importada localmente da pasta public
+const cartoesImgUrl = "/products/cartoes.jpg";
 
 export function Hero() {
   return (
@@ -70,7 +71,7 @@ export function Hero() {
             <div className="absolute -right-8 -top-8 h-72 w-72 rounded-full bg-white/10 blur-2xl" />
             <div className="relative aspect-square overflow-hidden rounded-[var(--store-radius-xl)] bg-white p-2 shadow-2xl rotate-[-2deg] transition-transform hover:rotate-0 border border-white/20">
               <img
-                src={cartoesImg.url}
+                src={cartoesImgUrl}
                 alt="Cartões de Visita Premium"
                 className="h-full w-full rounded-[var(--store-radius-lg)] object-cover"
               />

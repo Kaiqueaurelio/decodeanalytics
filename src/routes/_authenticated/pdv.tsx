@@ -498,10 +498,15 @@ function PDVPage() {
 
   async function finalizeSale() {
     if (!cart.length) return toast.error("Adicione pelo menos um item.");
-    if (total <= 0) return toast.error("O total da venda deve ser maior que zero.");
+    // Permitir venda com valor 0 se for brinde ou amostra, mas geralmente total > 0
+    if (total < 0) return toast.error("O total da venda não pode ser negativo.");
     if (!saleDate) return toast.error("Informe a data da venda.");
-    if (!payments.length || paidTotal < total)
-      return toast.error("Pagamento insuficiente para finalizar.");
+    
+    // Validação de pagamento
+    const currentPaidTotal = payments.reduce((acc, p) => acc + (Number(p.amount) || 0), 0);
+    if (!payments.length || currentPaidTotal < total) {
+      return toast.error(`Pagamento insuficiente. Total: ${brl(total)}, Recebido: ${brl(currentPaidTotal)}`);
+    }
 
     const saleDescription = `PDV - ${cart.map((item) => `${item.quantity}x ${item.name}`).join(", ")}`;
     const mainMethod =
@@ -969,10 +974,11 @@ function PDVPage() {
               <strong className="text-3xl font-black text-brand-blue">{brl(total)}</strong>
             </div>
             <Button
-              disabled={!cart.length}
-              className="h-14 w-full rounded-2xl bg-brand-blue text-base font-black hover:bg-brand-blue-light"
+              disabled={cart.length === 0}
+              className="h-14 w-full rounded-2xl bg-brand-blue text-base font-black hover:bg-brand-blue-light disabled:opacity-50 disabled:cursor-not-allowed"
               onClick={() => {
-                setPayments([{ method: "PIX QR Code", amount: String(total.toFixed(2)) }]);
+                // Ao abrir o checkout, sugerimos o pagamento total no método PIX por padrão
+                setPayments([{ method: "PIX QR Code", amount: total.toFixed(2).replace('.', '.') }]);
                 setShowCheckout(true);
               }}
             >

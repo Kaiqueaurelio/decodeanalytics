@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { Star, ShoppingBag } from "lucide-react";
-import { brl } from "./tokens";
+import { brl, getProductImage } from "./tokens";
 
 export type StoreProduct = {
   id: string;
@@ -38,18 +38,12 @@ export function ProductCard({ product }: { product: StoreProduct }) {
         params={{ slug }}
         className="relative block aspect-[4/3] overflow-hidden bg-[var(--store-surface-soft)]"
       >
-        {product.image_url ? (
-          <img
-            src={product.image_url}
-            alt={product.name}
-            loading="lazy"
-            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-          />
-        ) : (
-          <div className="grid h-full w-full place-items-center text-[var(--store-text-light)]">
-            <ShoppingBag className="h-12 w-12" />
-          </div>
-        )}
+        <img
+          src={getProductImage(product.image_url, product.category)}
+          alt={product.name}
+          loading="lazy"
+          className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+        />
         {product.badge && tone && (
           <span
             className={`absolute left-3 top-3 rounded-full px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-wide ${tone}`}

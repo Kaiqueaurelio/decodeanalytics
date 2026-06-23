@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { Loader2, Plus, Star } from "lucide-react";
 import { useStoreProducts } from "./useStoreProducts";
-import { brl } from "./tokens";
+import { brl, getProductImage } from "./tokens";
 import type { StoreProduct } from "./ProductCard";
 
 const PAGE = 8;
@@ -122,18 +122,12 @@ function FeedCard({ product, index }: { product: StoreProduct; index: number }) 
       style={{ animationDelay: `${(index % PAGE) * 50}ms`, animationFillMode: "both" }}
     >
       <div className="relative mb-3 aspect-square overflow-hidden rounded-[var(--store-radius-md)] bg-slate-100">
-        {product.image_url ? (
-          <img
-            src={product.image_url}
-            alt={product.name}
-            loading="lazy"
-            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.06]"
-          />
-        ) : (
-          <div className="grid h-full w-full place-items-center font-display text-3xl text-slate-300">
-            {(product.category ?? "PRINT").slice(0, 8).toUpperCase()}
-          </div>
-        )}
+        <img
+          src={getProductImage(product.image_url, product.category)}
+          alt={product.name}
+          loading="lazy"
+          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.06]"
+        />
         {product.badge && (
           <span className="absolute left-2 top-2 rounded-sm bg-[var(--store-ink)] px-2 py-0.5 text-[9px] font-extrabold uppercase tracking-wider text-[var(--store-gold)]">
             {product.badge}
