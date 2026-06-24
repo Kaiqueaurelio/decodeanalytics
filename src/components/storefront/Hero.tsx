@@ -23,18 +23,18 @@ export function Hero() {
         <div className="relative grid items-center gap-6 sm:gap-8 md:grid-cols-2">
           <div>
             <span className="inline-flex items-center gap-2 rounded-full bg-white/15 px-3 py-1 text-[11px] font-extrabold uppercase tracking-[0.18em] text-white backdrop-blur">
-              <Sparkles className="h-3 w-3" /> Alcateia's · gráfica em Goiânia · produção em 48h
+              <Sparkles className="h-3 w-3" /> Alcateia · gráfica da matilha · produção 48h
             </span>
             <h1 className="font-display mt-5 text-4xl leading-[0.95] sm:text-5xl md:text-6xl lg:text-7xl">
-              SUA MARCA
+              IMPRESSÃO
               <br />
               <span className="rounded-md bg-[var(--store-secondary)] px-3 py-1 text-[var(--store-primary-dark)]">
-                IMPRESSA HOJE
+                DA MATILHA
               </span>
             </h1>
             <p className="mt-5 max-w-md text-sm sm:text-base font-medium text-white/85">
-              Cartões, banners, camisetas, canecas, adesivos e brindes com
-              acabamento profissional e atendimento direto com quem produz.
+              Cartões, banners, camisetas, canecas, adesivos e brindes feitos com
+              acabamento profissional pela Alcateia — gráfica que uiva por qualidade.
             </p>
 
             <div className="mt-6 inline-flex items-center gap-2 rounded-lg bg-white/10 px-4 py-2 text-sm font-bold backdrop-blur">

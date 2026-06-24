@@ -6,6 +6,10 @@ import {
   Upload,
   Send,
   PackageCheck,
+  ShieldCheck,
+  Lock,
+  Server,
+  Cloud,
   FileText,
   Palette,
   Bot,
@@ -14,6 +18,10 @@ import {
   Image as ImageIcon,
   Plus,
   Star,
+  Quote,
+  Zap,
+  Users,
+  Award,
 } from "lucide-react";
 import { StoreShell } from "@/components/storefront/StoreShell";
 import { Hero } from "@/components/storefront/Hero";
@@ -55,10 +63,13 @@ function HomePage() {
       <LightBand>
         <FeaturedBento />
       </LightBand>
+      <StatsStrip />
       <CategoriesSection />
       <InfiniteProducts />
+      <TestimonialsSection />
       <HowItWorks />
       <ArtTipsSection />
+      <TechSecuritySection />
       <ContactSection />
     </StoreShell>
   );
@@ -84,13 +95,13 @@ function FeaturedBento() {
       <header className="mb-5 flex flex-col items-start justify-between gap-2 sm:flex-row sm:items-end">
         <div className="min-w-0">
           <p className="text-[11px] font-extrabold uppercase tracking-[0.22em] text-[#172554]">
-            Mais pedidos
+            Os favoritos dos IMbatíveis
           </p>
           <h2 className="font-display mt-1 text-4xl leading-none text-[var(--store-primary-dark)] sm:text-5xl">
-            O QUE MAIS SAI DA GRÁFICA
+            MAIS PEDIDOS DA GRÁFICA
           </h2>
           <p className="mt-2 max-w-2xl text-sm text-[var(--store-text-muted)]">
-            Preços direto da produção, atualizados pela equipe.
+            Preços direto da nossa produção — atualizados em tempo real pelo painel.
           </p>
         </div>
         <Link
@@ -382,8 +393,171 @@ function ArtTipsSection() {
   );
 }
 
+function TechSecuritySection() {
+  const items = [
+    {
+      icon: Lock,
+      title: "Login criptografado",
+      desc: "Autenticação protegida e senhas com hash seguro. Seu acesso é só seu.",
+    },
+    {
+      icon: ShieldCheck,
+      title: "Arquivos privados",
+      desc: "Cada pedido tem link único. Suas artes ficam isoladas e só sua equipe enxerga.",
+    },
+    {
+      icon: Server,
+      title: "Banco com RLS",
+      desc: "Banco de dados com regras linha-a-linha (Row Level Security) — ninguém vê dados de outro cliente.",
+    },
+    {
+      icon: Cloud,
+      title: "Infra global",
+      desc: "Hospedagem em nuvem com HTTPS, backups e disponibilidade alta. App rápido em qualquer dispositivo.",
+    },
+  ];
+  return (
+    <section className="mx-auto max-w-[1280px] px-4 py-12 sm:py-16">
+      <SectionHeader
+        kicker="Tecnologia e segurança"
+        title="Um app moderno, rápido e protegido"
+        description="Construído com React, TanStack Start e backend gerenciado com criptografia, RLS e HTTPS de ponta a ponta."
+      />
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {items.map((it) => (
+          <div
+            key={it.title}
+            className="rounded-[var(--store-radius-lg)] border border-[var(--store-border)] bg-white p-5 shadow-[var(--store-shadow-sm)]"
+          >
+            <span className="grid h-10 w-10 place-items-center rounded-xl bg-[var(--store-success)]/10 text-[var(--store-success)]">
+              <it.icon className="h-5 w-5" />
+            </span>
+            <p className="mt-4 text-base font-extrabold text-[var(--store-text)]">{it.title}</p>
+            <p className="mt-1 text-sm text-[var(--store-text-muted)]">{it.desc}</p>
+          </div>
+        ))}
+      </div>
+      <div className="mt-6 flex flex-wrap items-center justify-center gap-2 text-xs font-semibold text-[var(--store-text-muted)]">
+        {["React 19", "TanStack Start", "TypeScript", "Tailwind CSS", "Supabase", "HTTPS", "PWA"].map(
+          (t) => (
+            <span
+              key={t}
+              className="rounded-full border border-[var(--store-border)] bg-white px-3 py-1"
+            >
+              {t}
+            </span>
+          ),
+        )}
+      </div>
+    </section>
+  );
+}
 
 function ContactSection() {
+  return _ContactSection();
+}
+
+function StatsStrip() {
+  const stats = [
+    { icon: Users, value: "+12.000", label: "Clientes atendidos" },
+    { icon: Zap, value: "48h", label: "Produção média" },
+    { icon: Award, value: "4.9★", label: "Avaliação dos clientes" },
+    { icon: PackageCheck, value: "+200k", label: "Pedidos entregues" },
+  ];
+  return (
+    <section className="border-y border-[var(--store-border)] bg-white">
+      <div className="mx-auto grid max-w-[1280px] grid-cols-2 gap-3 px-4 py-8 sm:gap-4 sm:py-10 md:grid-cols-4">
+        {stats.map((s) => (
+          <div key={s.label} className="flex flex-col items-center gap-2 text-center sm:flex-row sm:gap-3 sm:text-left">
+            <span className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-[var(--store-ink)] text-[var(--store-gold)] sm:h-12 sm:w-12 sm:rounded-xl">
+              <s.icon className="h-4 w-4 sm:h-5 sm:w-5" />
+            </span>
+            <div className="min-w-0">
+              <p className="font-display text-2xl leading-none text-[var(--store-primary)] sm:text-3xl md:text-4xl">
+                {s.value}
+              </p>
+              <p className="mt-0.5 text-[10px] font-bold uppercase tracking-[0.15em] text-[var(--store-text-muted)] sm:mt-1 sm:text-[11px]">
+                {s.label}
+              </p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function TestimonialsSection() {
+  const items = [
+    {
+      name: "Mariana S.",
+      role: "Salão Bella Hair",
+      text: "Pedi 2 milheiros de cartão laminado fosco e chegou perfeito em 3 dias. Cores fiéis e papel pesado, recomendo demais!",
+      rating: 5,
+    },
+    {
+      name: "Rafael P.",
+      role: "Hamburgueria Bun's",
+      text: "Faço caixas de delivery aqui há meses. Preço justo, prazo cumprido e impressão sem falhas. Virei cliente fiel.",
+      rating: 5,
+    },
+    {
+      name: "Camila R.",
+      role: "Coach financeiro",
+      text: "Camisetas DTF e canecas pro meu evento. Material premium e ainda me ajudaram com a arte. Show!",
+      rating: 5,
+    },
+  ];
+  return (
+    <section className="bg-[var(--store-ink)] py-12 sm:py-16">
+      <div className="mx-auto max-w-[1280px] px-4">
+        <div className="mb-8 flex flex-col items-start gap-2 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <p className="text-[11px] font-extrabold uppercase tracking-[0.22em] text-[var(--store-gold)]">
+              Quem já imprimiu com a gente
+            </p>
+            <h2 className="font-display mt-1 text-4xl leading-none text-white sm:text-5xl">
+              MARCAS QUE CONFIAM NA ALCATEIA'S
+            </h2>
+          </div>
+          <div className="flex items-center gap-1 text-[var(--store-gold)]">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <Star key={i} className="h-5 w-5 fill-current" />
+            ))}
+            <span className="ml-2 text-sm font-bold text-white">4.9 / 5 · 1.247 avaliações</span>
+          </div>
+        </div>
+        <div className="grid gap-4 md:grid-cols-3">
+          {items.map((t, idx) => (
+            <article
+              key={t.name}
+              className="store-bento-card relative flex flex-col bg-white p-6 text-[var(--store-ink)] animate-fade-in"
+              style={{ animationDelay: `${120 + idx * 100}ms`, animationFillMode: "both" }}
+            >
+              <Quote className="h-7 w-7 text-[var(--store-gold)]" />
+              <p className="mt-3 flex-1 text-sm leading-relaxed text-[var(--store-ink)]/85">
+                "{t.text}"
+              </p>
+              <div className="mt-5 flex items-center justify-between border-t border-[var(--store-ink-line)]/15 pt-4">
+                <div>
+                  <p className="text-sm font-extrabold">{t.name}</p>
+                  <p className="text-xs text-[var(--store-text-muted)]">{t.role}</p>
+                </div>
+                <div className="flex text-[var(--store-gold)]">
+                  {Array.from({ length: t.rating }).map((_, i) => (
+                    <Star key={i} className="h-3.5 w-3.5 fill-current" />
+                  ))}
+                </div>
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function _ContactSection() {
   return (
     <section className="bg-[var(--store-primary-dark)] py-12 text-white sm:py-16">
       <div className="mx-auto grid max-w-[1280px] gap-8 px-4 lg:grid-cols-2 lg:items-center">
