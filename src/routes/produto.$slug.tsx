@@ -20,6 +20,8 @@ import {
   SectionHeader,
   type StoreProduct,
 } from "@/components/storefront/ProductCard";
+import { SmartImage } from "@/components/storefront/SmartImage";
+import { resolveProductImage } from "@/components/storefront/productImages";
 
 export const Route = createFileRoute("/produto/$slug")({
   head: ({ params }) => ({
@@ -48,7 +50,9 @@ function ProductPage() {
         .eq("active", true)
         .maybeSingle();
       if (byCol.error) throw byCol.error;
-      return byCol.data as StoreProduct | null;
+      const p = byCol.data as StoreProduct | null;
+      if (!p) return null;
+      return { ...p, image_url: resolveProductImage(p.image_url, p.category) } as StoreProduct;
     },
   });
 
@@ -66,7 +70,10 @@ function ProductPage() {
         .neq("id", product!.id)
         .limit(4);
       if (error) throw error;
-      return (data ?? []) as StoreProduct[];
+      return (data ?? []).map((p) => ({
+        ...p,
+        image_url: resolveProductImage(p.image_url, p.category),
+      })) as StoreProduct[];
     },
   });
 
@@ -183,17 +190,11 @@ function ProductPage() {
   );
 }
 
-function Gallery({ image, alt }: { image: string | null; alt: string }) {
+function Gallery({ image, alt }: { image: string | null | undefined; alt: string }) {
   return (
     <div className="space-y-3">
       <div className="aspect-square overflow-hidden rounded-[var(--store-radius-xl)] border border-[var(--store-border)] bg-[var(--store-surface-soft)]">
-        {image ? (
-          <img src={image} alt={alt} className="h-full w-full object-cover" />
-        ) : (
-          <div className="grid h-full w-full place-items-center text-[var(--store-text-light)]">
-            Sem imagem
-          </div>
-        )}
+        <SmartImage src={image} alt={alt} fallbackEmoji="🖼️" />
       </div>
     </div>
   );

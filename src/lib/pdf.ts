@@ -150,3 +150,89 @@ export function generateQuotePDF(opts: {
   footer(doc);
   doc.save(`Orcamento-${opts.quote.number}.pdf`);
 }
+
+export function generateCashClosingPDF(opts: {
+  company?: Partial<Company> | null;
+  closing: {
+    date: string;
+    operator?: string | null;
+    expected: number;
+    counted: number;
+    difference: number;
+    entriesIn: number;
+    entriesOut: number;
+    notes?: string | null;
+  };
+  items: Array<{
+    description: string;
+    category?: string | null;
+    payment_method?: string | null;
+    amount: number;
+    type: "entrada" | "saida";
+    created_at?: string | null;
+  }>;
+}) {
+  const company = {
+    name: "Alcateia's Producoes Graficas",
+    address: "",
+    whatsapp: "",
+    instagram: "",
+    ...opts.company,
+  };
+  const doc = new jsPDF();
+  header(doc, company, `Fechamento de Caixa - ${fmtDate(opts.closing.date)}`);
+
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.setTextColor(50);
+  doc.text(`Operador: ${opts.closing.operator || "Operador"}`, 14, 50);
+  doc.text(`Data: ${fmtDate(opts.closing.date)}`, 120, 50);
+
+  autoTable(doc, {
+    startY: 58,
+    head: [["Resumo", "Valor"]],
+    body: [
+      ["Entradas do dia", brl(opts.closing.entriesIn)],
+      ["Saidas do dia", brl(opts.closing.entriesOut)],
+      ["Saldo esperado", brl(opts.closing.expected)],
+      ["Valor contado", brl(opts.closing.counted)],
+      ["Diferenca", brl(opts.closing.difference)],
+    ],
+    headStyles: { fillColor: [34, 38, 70], textColor: 255 },
+    styles: { fontSize: 10 },
+    columnStyles: { 1: { halign: "right", fontStyle: "bold" } },
+  });
+
+  const listStart = ((doc as any).lastAutoTable?.finalY ?? 90) + 10;
+  autoTable(doc, {
+    startY: listStart,
+    head: [["Hora", "Item / OS", "Forma", "Tipo", "Valor"]],
+    body: opts.items.map((item) => [
+      item.created_at
+        ? new Date(item.created_at).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })
+        : "-",
+      item.description || item.category || "Lancamento",
+      item.payment_method || "-",
+      item.type === "entrada" ? "Entrada" : "Saida",
+      `${item.type === "entrada" ? "+" : "-"} ${brl(item.amount)}`,
+    ]),
+    headStyles: { fillColor: [34, 38, 70], textColor: 255 },
+    styles: { fontSize: 8, cellPadding: 2 },
+    columnStyles: { 4: { halign: "right", fontStyle: "bold" } },
+  });
+
+  const y = ((doc as any).lastAutoTable?.finalY ?? 230) + 10;
+  if (opts.closing.notes && y < 250) {
+    doc.setFont("helvetica", "bold");
+    doc.text("Observacoes", 14, y);
+    doc.setFont("helvetica", "normal");
+    doc.text(doc.splitTextToSize(opts.closing.notes, 180), 14, y + 6);
+  }
+
+  doc.line(14, 265, 95, 265);
+  doc.text("Responsavel pelo caixa", 14, 271);
+  doc.line(115, 265, 196, 265);
+  doc.text("Conferencia", 115, 271);
+  footer(doc);
+  doc.save(`Fechamento-Caixa-${opts.closing.date}.pdf`);
+}

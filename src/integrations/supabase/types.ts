@@ -14,6 +14,66 @@ export type Database = {
   }
   public: {
     Tables: {
+      cash_closures: {
+        Row: {
+          by_method: Json
+          closed_at: string
+          closure_date: string
+          counted_cash: number
+          created_at: string
+          created_by: string | null
+          difference: number
+          entries_count: number
+          expected_cash: number
+          id: string
+          initial_amount: number
+          notes: string | null
+          opened_at: string | null
+          operator: string | null
+          total_in: number
+          total_out: number
+          updated_at: string
+        }
+        Insert: {
+          by_method?: Json
+          closed_at?: string
+          closure_date?: string
+          counted_cash?: number
+          created_at?: string
+          created_by?: string | null
+          difference?: number
+          entries_count?: number
+          expected_cash?: number
+          id?: string
+          initial_amount?: number
+          notes?: string | null
+          opened_at?: string | null
+          operator?: string | null
+          total_in?: number
+          total_out?: number
+          updated_at?: string
+        }
+        Update: {
+          by_method?: Json
+          closed_at?: string
+          closure_date?: string
+          counted_cash?: number
+          created_at?: string
+          created_by?: string | null
+          difference?: number
+          entries_count?: number
+          expected_cash?: number
+          id?: string
+          initial_amount?: number
+          notes?: string | null
+          opened_at?: string | null
+          operator?: string | null
+          total_in?: number
+          total_out?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       cash_entries: {
         Row: {
           amount: number

@@ -12,6 +12,7 @@ import {
   type StoreProduct,
 } from "@/components/storefront/ProductCard";
 import { STORE_CATEGORIES } from "@/components/storefront/tokens";
+import { resolveProductImage } from "@/components/storefront/productImages";
 
 type Search = { cat?: string; q?: string };
 
@@ -50,7 +51,10 @@ function ProdutosPage() {
         .eq("active", true)
         .order("reviews_count", { ascending: false });
       if (error) throw error;
-      return (data ?? []) as StoreProduct[];
+      return (data ?? []).map((p) => ({
+        ...p,
+        image_url: resolveProductImage(p.image_url, p.category),
+      })) as StoreProduct[];
     },
   });
 
