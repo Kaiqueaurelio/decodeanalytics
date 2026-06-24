@@ -94,12 +94,14 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         name: "twitter:description",
         content: "Sistema de gestão para a Alcateia's Produções Gráficas",
       },
-      { property: "og:image", content: "/brand/alcateia-logo.png" },
-      { name: "twitter:image", content: "/brand/alcateia-logo.png" },
+      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/d4c276a4-775a-4dfe-9844-7a91bcaf3f42" },
+      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/d4c276a4-775a-4dfe-9844-7a91bcaf3f42" },
       { name: "theme-color", content: "#172554" },
       { name: "apple-mobile-web-app-capable", content: "yes" },
       { name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
       { name: "apple-mobile-web-app-title", content: "Alcateia's" },
+      { property: "og:description", content: "Sistema de gestão para a Alcateia's Produções Gráficas" },
+      { name: "twitter:description", content: "Sistema de gestão para a Alcateia's Produções Gráficas" },
     ],
     links: [
       {
