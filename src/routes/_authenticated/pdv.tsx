@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { Link, createFileRoute } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import {
@@ -45,8 +45,97 @@ import {
 } from "@/components/ui/select";
 import { brl } from "@/lib/format";
 import { cn } from "@/lib/utils";
+import { PdvCalculator } from "@/components/pdv/PdvCalculator";
 
 export const Route = createFileRoute("/_authenticated/pdv")({ component: PDVPage });
+
+function buildClosureReceiptHtml(c: any, items: any[]) {
+  const m = c.by_method || {};
+  const ok = Math.abs(Number(c.difference || 0)) < 0.01;
+  const fmtBrl = (v: number) =>
+    new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(Number(v || 0));
+  const date = new Date(c.closure_date + "T12:00:00").toLocaleDateString("pt-BR");
+  const closedAt = c.closed_at
+    ? new Date(c.closed_at).toLocaleString("pt-BR")
+    : new Date().toLocaleString("pt-BR");
+
+  const rows = (items || [])
+    .map((it) => {
+      const time = new Date(it.created_at).toLocaleTimeString("pt-BR", {
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+      const sign = it.type === "saida" ? "-" : "+";
+      const cls = it.type === "saida" ? "out" : "in";
+      const desc = String(it.description || it.category || "Lançamento").replace(/</g, "&lt;");
+      const pm = String(it.payment_method || "").replace(/</g, "&lt;");
+      return `<tr><td>${time}</td><td>${desc}<div class="muted">${pm}</div></td><td class="right ${cls}">${sign}${fmtBrl(it.amount)}</td></tr>`;
+    })
+    .join("");
+
+  return `<!doctype html><html><head><meta charset="utf-8"><title>Fechamento ${date}</title>
+<style>
+body{font-family:system-ui,-apple-system,Arial;padding:20px;max-width:520px;margin:0 auto;color:#0f172a}
+h1{font-size:18px;margin:0 0 2px}h2{font-size:12px;margin:14px 0 6px;text-transform:uppercase;letter-spacing:.08em;color:#475569}
+table{width:100%;border-collapse:collapse;font-size:12px}
+td{padding:5px 0;border-bottom:1px dashed #cbd5e1;vertical-align:top}
+.right{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.in{color:#059669;font-weight:700}.out{color:#dc2626;font-weight:700}
+.total{font-weight:800;border-top:2px solid #0f172a;padding-top:6px}
+.diff-ok{color:#059669;font-weight:800}.diff-bad{color:#b45309;font-weight:800}
+.muted{color:#64748b;font-size:10px}
+.brand{display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid #0f172a;padding-bottom:6px;margin-bottom:6px}
+.brand strong{font-size:14px}.tag{font-size:10px;color:#64748b}
+.badge{display:inline-block;padding:2px 8px;border-radius:999px;font-size:10px;font-weight:800}
+.ok{background:#d1fae5;color:#065f46}.bad{background:#fef3c7;color:#92400e}
+@media print{button{display:none}}
+</style></head><body>
+<div class="brand"><strong>Alcateia's Produções Gráficas</strong><span class="tag">Fechamento de caixa</span></div>
+<h1>Recibo de Fechamento</h1>
+<p class="muted">${date} · Fechado em ${closedAt} · Operador: ${c.operator || "—"} · <span class="badge ${ok ? "ok" : "bad"}">${ok ? "Caixa bate" : "Com diferença"}</span></p>
+
+<h2>Resumo</h2>
+<table>
+  <tr><td>Troco inicial</td><td class="right">${fmtBrl(c.initial_amount)}</td></tr>
+  <tr><td>Entradas</td><td class="right in">${fmtBrl(c.total_in)}</td></tr>
+  <tr><td>Saídas</td><td class="right out">${fmtBrl(c.total_out)}</td></tr>
+  <tr class="total"><td>Saldo do dia</td><td class="right">${fmtBrl(Number(c.total_in) - Number(c.total_out))}</td></tr>
+  <tr><td>Lançamentos</td><td class="right">${c.entries_count}</td></tr>
+</table>
+
+<h2>Por forma de pagamento</h2>
+<table>
+  <tr><td>Dinheiro</td><td class="right">${fmtBrl(m.cash || 0)}</td></tr>
+  <tr><td>PIX</td><td class="right">${fmtBrl(m.pix || 0)}</td></tr>
+  <tr><td>Débito</td><td class="right">${fmtBrl(m.debit || 0)}</td></tr>
+  <tr><td>Crédito</td><td class="right">${fmtBrl(m.credit || 0)}</td></tr>
+  ${m.other ? `<tr><td>Outros</td><td class="right">${fmtBrl(m.other)}</td></tr>` : ""}
+</table>
+
+<h2>Conferência do dinheiro</h2>
+<table>
+  <tr><td>Esperado em dinheiro</td><td class="right">${fmtBrl(c.expected_cash)}</td></tr>
+  <tr><td>Contado na gaveta</td><td class="right">${fmtBrl(c.counted_cash)}</td></tr>
+  <tr class="total"><td>Diferença</td><td class="right ${ok ? "diff-ok" : "diff-bad"}">${fmtBrl(c.difference)}</td></tr>
+</table>
+
+${items?.length ? `<h2>Vendas e lançamentos do dia (${items.length})</h2>
+<table>${rows}</table>` : ""}
+
+${c.notes ? `<h2>Observações</h2><p style="font-size:12px">${String(c.notes).replace(/</g, "&lt;")}</p>` : ""}
+
+<p style="margin-top:24px;text-align:center"><button onclick="window.print()" style="padding:8px 18px;border-radius:8px;border:1px solid #0f172a;background:#0f172a;color:#fff;font-weight:700;cursor:pointer">Imprimir / Salvar PDF</button></p>
+<script>setTimeout(()=>window.print(),350)</script>
+</body></html>`;
+}
+
+function openClosureReceipt(c: any, items: any[]) {
+  const html = buildClosureReceiptHtml(c, items);
+  const w = window.open("", "_blank", "width=560,height=760");
+  if (!w) return;
+  w.document.write(html);
+  w.document.close();
+}
 
 const QUICK_PRODUCTS = [
   {
@@ -173,8 +262,8 @@ function PDVPage() {
   const [showCheckout, setShowCheckout] = useState(false);
   const [showFastSale, setShowFastSale] = useState(false);
   const [showSquareMeter, setShowSquareMeter] = useState(false);
+  const [showCalculator, setShowCalculator] = useState(false);
   const [showMachineEntry, setShowMachineEntry] = useState(false);
-  const [editingEntry, setEditingEntry] = useState<any | null>(null);
   const [showOpenCash, setShowOpenCash] = useState(false);
   const [showCloseCash, setShowCloseCash] = useState(false);
   const [fastSale, setFastSale] = useState({ description: "", value: "" });
@@ -266,6 +355,37 @@ function PDVPage() {
     },
   });
 
+  async function deleteEntry(entry: any) {
+    if (!entry?.id) return;
+    const label = entry.description || entry.category || "lançamento";
+    if (!confirm(`Excluir "${label}" de ${brl(Number(entry.amount || 0))}? Esta ação não pode ser desfeita.`)) return;
+    const { error } = await supabase.from("cash_entries").delete().eq("id", entry.id);
+    if (error) return toast.error(error.message);
+    toast.success("Lançamento excluído");
+    qc.invalidateQueries({ queryKey: ["pdv_cash_entries_today"] });
+    qc.invalidateQueries({ queryKey: ["cash_entries"] });
+  }
+
+  async function editEntry(entry: any) {
+    if (!entry?.id) return;
+    const rawAmount = prompt(
+      `Novo valor para "${entry.description || entry.category || "lançamento"}" (use ponto para decimais):`,
+      String(entry.amount ?? ""),
+    );
+    if (rawAmount === null) return;
+    const amount = Number(String(rawAmount).replace(",", "."));
+    if (!Number.isFinite(amount) || amount < 0) return toast.error("Valor inválido");
+    const description = prompt("Descrição:", entry.description || "") ?? entry.description;
+    const { error } = await supabase
+      .from("cash_entries")
+      .update({ amount, description })
+      .eq("id", entry.id);
+    if (error) return toast.error(error.message);
+    toast.success("Lançamento atualizado");
+    qc.invalidateQueries({ queryKey: ["pdv_cash_entries_today"] });
+    qc.invalidateQueries({ queryKey: ["cash_entries"] });
+  }
+
   const products = useMemo(() => {
     const serviceProducts = services.map((service) => ({
       id: service.id,
@@ -337,22 +457,7 @@ function PDVPage() {
     },
     { cash: 0, pix: 0, debit: 0, credit: 0, other: 0 },
   );
-  const latestTodayEntries = todayEntries.slice(0, 40);
-
-  function openEntryEditor(entry: any) {
-    setEditingEntry({
-      ...entry,
-      amount: String(Number(entry.amount || 0).toFixed(2)),
-      entry_date: entry.entry_date || today(),
-      payment_method: entry.payment_method || "",
-      notes: entry.notes || "",
-      description: entry.description || "",
-      originalAmount: Number(entry.amount || 0),
-      originalType: entry.type,
-      originalOrderId: entry.order_id,
-      originalReceivableId: entry.receivable_id,
-    });
-  }
+  const latestTodayEntries = todayEntries.slice(0, 8);
   function addToCart(product: any) {
     if (selectedOrderId) {
       toast.error("Conclua ou limpe a cobrança da OS antes de adicionar outros itens.");
@@ -477,32 +582,42 @@ function PDVPage() {
     toast.success("Caixa aberto.");
   }
 
-  async function closeCash() {
-    const informed = toNumber(sessionForm.informedCash);
-    const diff = informed - dayBalance;
-    const { error } = await supabase.from("cash_entries").insert({
-      type: diff < 0 ? "saida" : "entrada",
-      description: `Fechamento de caixa - ${today()}`,
-      amount: Math.abs(diff),
-      entry_date: today(),
-      payment_method: "Conferencia",
-      category: "Fechamento de caixa",
-      notes: [
-        `Operador: ${sessionForm.operator || cashSession?.operator || "Operador"}`,
-        `Esperado: ${brl(dayBalance)}`,
-        `Contado: ${brl(informed)}`,
-        `Diferenca: ${brl(diff)}`,
-        sessionForm.notes,
-      ].filter(Boolean).join(" | "),
-    });
+  async function closeCashAndSave() {
+    const counted = toNumber(sessionForm.informedCash);
+    const expectedCash = paymentTotals.cash + Number(cashSession?.initialAmount || 0);
+    const diff = counted - expectedCash;
+    const payload = {
+      closure_date: today(),
+      opened_at: cashSession?.openedAt || null,
+      operator: cashSession?.operator || sessionForm.operator || "Operador",
+      initial_amount: Number(cashSession?.initialAmount || 0),
+      expected_cash: expectedCash,
+      counted_cash: counted,
+      difference: diff,
+      total_in: totalToday,
+      total_out: expenseTotal,
+      by_method: {
+        cash: paymentTotals.cash,
+        pix: paymentTotals.pix,
+        debit: paymentTotals.debit,
+        credit: paymentTotals.credit,
+        other: paymentTotals.other,
+      },
+      entries_count: todayEntries.length,
+      notes: sessionForm.notes || null,
+    };
+    const { error } = await supabase.from("cash_closures" as any).insert(payload);
     if (error) return toast.error(error.message);
     localStorage.removeItem(SESSION_KEY);
     setCashSession(null);
     setShowCloseCash(false);
-    qc.invalidateQueries({ queryKey: ["pdv_cash_entries_today"] });
-    qc.invalidateQueries({ queryKey: ["cash"] });
-    qc.invalidateQueries({ queryKey: ["cash_entries"] });
-    toast.success(`Caixa do dia fechado. Diferença: ${brl(diff)}.`);
+    qc.invalidateQueries({ queryKey: ["cash_closures"] });
+    openClosureReceipt({ ...payload, closed_at: new Date().toISOString() }, todayEntries);
+    toast.success(
+      Math.abs(diff) < 0.01
+        ? "Caixa fechado certinho!"
+        : `Caixa fechado. Diferença: ${brl(diff)}.`,
+    );
   }
 
   async function registerMachineEntry() {
@@ -619,109 +734,6 @@ function PDVPage() {
     toast.success("Venda finalizada e registrada no caixa.");
   }
 
-  async function syncOrderAfterCashEntryChange(entry: any, amountDelta: number, nextMethod?: string) {
-    if (!entry?.originalOrderId || entry.originalType !== "entrada" || amountDelta === 0) return;
-
-    const { data: order, error: orderReadError } = await supabase
-      .from("orders")
-      .select("id, total, paid")
-      .eq("id", entry.originalOrderId)
-      .single();
-    if (orderReadError) throw orderReadError;
-
-    const nextPaid = Math.max(0, Math.min(Number(order.total || 0), Number(order.paid || 0) + amountDelta));
-    const fullyPaid = nextPaid >= Number(order.total || 0);
-    const paymentStatus = nextPaid <= 0 ? "pendente" : fullyPaid ? "pago_completo" : "pago_parcial";
-    const { error: orderUpdateError } = await supabase
-      .from("orders")
-      .update({
-        paid: nextPaid,
-        payment_method: nextMethod || entry.payment_method || null,
-        payment_status: paymentStatus,
-      })
-      .eq("id", entry.originalOrderId);
-    if (orderUpdateError) throw orderUpdateError;
-
-    if (entry.originalReceivableId) {
-      const { error: receivableError } = await supabase
-        .from("receivables")
-        .update({
-          status: fullyPaid ? "pago" : "pendente",
-          paid_at: fullyPaid ? new Date(`${entry.entry_date || today()}T12:00:00`).toISOString() : null,
-          payment_method: fullyPaid ? nextMethod || entry.payment_method || null : null,
-        })
-        .eq("id", entry.originalReceivableId);
-      if (receivableError) throw receivableError;
-    }
-  }
-
-  async function saveEditedEntry() {
-    if (!editingEntry) return;
-    const amount = toNumber(editingEntry.amount);
-    if (!editingEntry.description?.trim()) return toast.error("Informe a descrição do lançamento.");
-    if (!editingEntry.entry_date) return toast.error("Informe a data do lançamento.");
-    if (amount <= 0) return toast.error("Informe um valor maior que zero.");
-
-    const { error } = await supabase
-      .from("cash_entries")
-      .update({
-        type: editingEntry.type,
-        description: editingEntry.description.trim(),
-        amount,
-        entry_date: editingEntry.entry_date,
-        payment_method: editingEntry.payment_method || null,
-        category: editingEntry.category || null,
-        notes: editingEntry.notes?.trim() || null,
-      })
-      .eq("id", editingEntry.id);
-
-    if (error) return toast.error(error.message);
-
-    try {
-      await syncOrderAfterCashEntryChange(
-        editingEntry,
-        editingEntry.type === "entrada" ? amount - Number(editingEntry.originalAmount || 0) : 0,
-        editingEntry.payment_method,
-      );
-    } catch (syncError: any) {
-      return toast.error(`Venda corrigida, mas a OS precisa de revisão manual: ${syncError.message}`);
-    }
-
-    setEditingEntry(null);
-    qc.invalidateQueries({ queryKey: ["pdv_cash_entries_today"] });
-    qc.invalidateQueries({ queryKey: ["cash_entries"] });
-    qc.invalidateQueries({ queryKey: ["pdv_open_orders"] });
-    qc.invalidateQueries({ queryKey: ["orders"] });
-    qc.invalidateQueries({ queryKey: ["receivables"] });
-    toast.success("Lançamento corrigido.");
-  }
-
-  async function deleteEntry(entry: any) {
-    if (!window.confirm("Excluir este lançamento do caixa?")) return;
-    const editableEntry = {
-      ...entry,
-      originalAmount: Number(entry.amount || 0),
-      originalType: entry.type,
-      originalOrderId: entry.order_id,
-      originalReceivableId: entry.receivable_id,
-    };
-    const { error } = await supabase.from("cash_entries").delete().eq("id", entry.id);
-    if (error) return toast.error(error.message);
-
-    try {
-      await syncOrderAfterCashEntryChange(editableEntry, entry.type === "entrada" ? -Number(entry.amount || 0) : 0);
-    } catch (syncError: any) {
-      return toast.error(`Lançamento excluído, mas a OS precisa de revisão manual: ${syncError.message}`);
-    }
-
-    qc.invalidateQueries({ queryKey: ["pdv_cash_entries_today"] });
-    qc.invalidateQueries({ queryKey: ["cash_entries"] });
-    qc.invalidateQueries({ queryKey: ["pdv_open_orders"] });
-    qc.invalidateQueries({ queryKey: ["orders"] });
-    qc.invalidateQueries({ queryKey: ["receivables"] });
-    toast.success("Lançamento excluído do caixa.");
-  }
-
   async function createClient() {
     if (!newClient.name.trim()) return toast.error("Informe o nome do cliente.");
     const { data, error } = await supabase
@@ -758,13 +770,13 @@ function PDVPage() {
   }
 
   return (
-    <div className="min-h-[calc(100vh-9rem)] max-w-full overflow-x-hidden rounded-xl bg-[#f8fafc] p-2 text-slate-950 sm:p-3 xl:rounded-[2rem]">
-      <div className="mb-3 flex flex-col gap-3 rounded-2xl border border-slate-200 bg-white p-3 shadow-sm lg:flex-row lg:items-center lg:justify-between">
+    <div className="min-h-[calc(100vh-9rem)] max-w-full overflow-x-hidden rounded-[2rem] bg-[#f8fafc] p-2 text-slate-950 sm:p-3 md:p-4">
+      <div className="mb-5 flex flex-col gap-3 rounded-[1.5rem] border border-slate-200 bg-white p-4 shadow-sm lg:flex-row lg:items-center lg:justify-between">
         <div>
           <p className="text-xs font-black uppercase tracking-[0.22em] text-brand-blue">
             PDV Mercado Alcateia
           </p>
-          <h2 className="text-xl font-black tracking-tight sm:text-2xl">Frente de Caixa</h2>
+          <h2 className="text-2xl font-black tracking-tight">Frente de Caixa</h2>
         </div>
         <div className="flex flex-wrap items-center gap-2 text-sm">
           <span className="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-2 font-bold text-emerald-700">
@@ -772,6 +784,17 @@ function PDVPage() {
           </span>
           <span className="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-2 font-bold">
             <CalendarDays className="h-4 w-4" /> {new Date().toLocaleDateString("pt-BR")}
+          </span>
+          <span
+            className={cn(
+              "inline-flex items-center gap-2 rounded-full px-3 py-2 font-bold",
+              cashSession
+                ? "bg-emerald-50 text-emerald-700"
+                : "bg-amber-50 text-amber-700",
+            )}
+          >
+            <Banknote className="h-4 w-4" />
+            {cashSession ? "Caixa aberto" : "Caixa fechado"}
           </span>
           {!cashSession && (
             <Button
@@ -782,28 +805,21 @@ function PDVPage() {
             </Button>
           )}
           <Button
-            variant="outline"
-            className="rounded-xl"
+            className="rounded-xl bg-red-600 px-4 font-black text-white hover:bg-red-700"
             onClick={() => {
               setSessionForm((current) => ({
                 ...current,
-                informedCash: dayBalance.toFixed(2),
+                informedCash: (paymentTotals.cash + Number(cashSession?.initialAmount || 0)).toFixed(2),
               }));
               setShowCloseCash(true);
             }}
           >
             Fechar caixa
           </Button>
-          <Button asChild variant="outline" className="rounded-xl">
-            <Link to="/cash">
-              <ReceiptText className="mr-2 h-4 w-4" />
-              Caixa/Recibos
-            </Link>
-          </Button>
         </div>
       </div>
 
-      <div className="mb-3 flex flex-col gap-3 rounded-2xl bg-brand-blue p-4 text-white shadow-lg shadow-blue-200 sm:flex-row sm:items-center sm:justify-between">
+      <div className="mb-5 flex flex-col gap-4 rounded-[1.5rem] bg-brand-blue p-5 text-white shadow-lg shadow-blue-200 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <p className="text-xs font-black uppercase tracking-[0.2em] text-blue-200">
             Saldo somente de hoje
@@ -821,7 +837,7 @@ function PDVPage() {
         </Button>
       </div>
 
-      <div className="mb-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+      <div className="mb-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         <Card className="rounded-2xl border-slate-200 p-4">
           <p className="text-xs font-black uppercase tracking-wide text-slate-500">Entradas</p>
           <p className="mt-1 text-2xl font-black text-emerald-600">{brl(totalToday)}</p>
@@ -848,19 +864,19 @@ function PDVPage() {
             <p className="text-xs font-black uppercase tracking-[0.18em] text-brand-blue">
               Lançamentos de hoje
             </p>
-            <p className="text-sm text-slate-500">Edite ou exclua aqui quando uma venda sair duplicada.</p>
+            <p className="text-sm text-slate-500">Tudo que entra no saldo diário aparece aqui.</p>
           </div>
           <span className="rounded-full bg-blue-50 px-3 py-1 text-xs font-black text-brand-blue">
             {todayEntries.length} lançamentos
           </span>
         </div>
-        <div className="max-h-[30rem] overflow-y-auto p-3">
+        <div className="max-h-64 overflow-y-auto p-3">
           {todayEntriesError ? (
             <div className="rounded-2xl border border-red-200 bg-red-50 p-4 text-sm font-bold text-red-700">
               Não consegui carregar os lançamentos do caixa: {todayEntriesError.message}
             </div>
           ) : latestTodayEntries.length ? (
-            <div className="grid gap-2 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+            <div className="grid gap-2 md:grid-cols-2 xl:grid-cols-4">
               {latestTodayEntries.map((entry) => (
                 <div
                   key={entry.id}
@@ -889,9 +905,6 @@ function PDVPage() {
                       {entry.type === "saida" ? "Saída" : "Entrada"}
                     </span>
                   </div>
-                  {entry.notes ? (
-                    <p className="mt-2 line-clamp-2 text-xs text-slate-500">{entry.notes}</p>
-                  ) : null}
                   <p
                     className={`mt-2 text-xl font-black ${
                       entry.type === "saida" ? "text-red-600" : "text-emerald-600"
@@ -900,26 +913,21 @@ function PDVPage() {
                     {entry.type === "saida" ? "-" : "+"}
                     {brl(Number(entry.amount || 0))}
                   </p>
-                  <div className="mt-3 flex gap-2">
-                    <Button
+                  <div className="mt-2 flex items-center justify-end gap-1 border-t border-slate-200 pt-2">
+                    <button
                       type="button"
-                      variant="outline"
-                      size="sm"
-                      className="h-8 flex-1 rounded-xl text-xs font-bold"
-                      onClick={() => openEntryEditor(entry)}
+                      onClick={() => editEntry(entry)}
+                      className="inline-flex items-center gap-1 rounded-lg px-2 py-1 text-[11px] font-bold text-slate-600 hover:bg-slate-200"
                     >
-                      <Pencil className="mr-1.5 h-3.5 w-3.5" /> Editar
-                    </Button>
-                    <Button
+                      <Pencil className="h-3 w-3" /> editar
+                    </button>
+                    <button
                       type="button"
-                      variant="outline"
-                      size="sm"
-                      className="h-8 rounded-xl border-red-200 px-2 text-red-600 hover:bg-red-50 hover:text-red-700"
                       onClick={() => deleteEntry(entry)}
-                      aria-label="Excluir lançamento"
+                      className="inline-flex items-center gap-1 rounded-lg px-2 py-1 text-[11px] font-bold text-red-600 hover:bg-red-50"
                     >
-                      <Trash2 className="h-3.5 w-3.5" />
-                    </Button>
+                      <Trash2 className="h-3 w-3" /> excluir
+                    </button>
                   </div>
                 </div>
               ))}
@@ -932,10 +940,10 @@ function PDVPage() {
         </div>
       </Card>
 
-      <div className="grid min-w-0 gap-4 2xl:grid-cols-[minmax(0,1fr)_360px]">
+      <div className="grid min-w-0 gap-4 2xl:grid-cols-[minmax(0,1fr)_380px]">
         <section className="min-w-0 space-y-4">
-          <div className="grid min-w-0 grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-3 lg:grid-cols-3 2xl:grid-cols-6">
-            <div className="relative sm:col-span-2 lg:col-span-3 2xl:col-span-1">
+          <div className="grid min-w-0 gap-2 grid-cols-2 sm:gap-3 lg:grid-cols-3 2xl:grid-cols-[minmax(220px,1fr)_repeat(5,auto)]">
+            <div className="relative">
               <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" />
               <Input
                 value={query}
@@ -945,33 +953,40 @@ function PDVPage() {
               />
             </div>
             <Button
-              className="h-12 rounded-2xl bg-brand-blue px-3 text-sm font-black hover:bg-brand-blue-light sm:h-14"
+              className="h-12 sm:h-14 rounded-2xl bg-brand-blue px-3 sm:px-6 text-sm sm:text-base font-black hover:bg-brand-blue-light"
               onClick={() => setShowFastSale(true)}
             >
               <Plus className="mr-2 h-5 w-5" /> Venda Rápida
             </Button>
             <Button
               variant="outline"
-              className="h-12 rounded-2xl border-blue-200 bg-blue-50 px-3 text-sm font-black text-brand-blue hover:bg-blue-100 sm:h-14"
+              className="h-12 sm:h-14 rounded-2xl border-blue-200 bg-blue-50 px-3 sm:px-5 text-sm sm:text-base font-black text-brand-blue hover:bg-blue-100"
               onClick={() => setShowSquareMeter(true)}
             >
               <Calculator className="mr-2 h-5 w-5" /> Calcular m²
             </Button>
             <Button
               variant="outline"
-              className="h-12 rounded-2xl border-blue-200 bg-blue-50 px-3 text-sm font-black text-brand-blue hover:bg-blue-100 sm:h-14"
+              className="h-12 sm:h-14 rounded-2xl border-emerald-200 bg-emerald-50 px-3 sm:px-5 text-sm sm:text-base font-black text-emerald-700 hover:bg-emerald-100"
+              onClick={() => setShowCalculator(true)}
+            >
+              <Calculator className="mr-2 h-5 w-5" /> Calculadora
+            </Button>
+            <Button
+              variant="outline"
+              className="h-12 sm:h-14 rounded-2xl border-blue-200 bg-blue-50 px-3 sm:px-5 text-sm sm:text-base font-black text-brand-blue hover:bg-blue-100"
               onClick={() => setShowOrderPicker(true)}
             >
               <ClipboardList className="mr-2 h-5 w-5" /> Cobrar OS
             </Button>
             <Button
               variant="outline"
-              className="h-12 rounded-2xl bg-white px-3 text-sm font-black sm:h-14"
+              className="h-12 sm:h-14 rounded-2xl bg-white px-3 sm:px-5 text-sm sm:text-base font-black"
               onClick={() => setShowNewClient(true)}
             >
               <UserPlus className="mr-2 h-5 w-5" /> Cliente
             </Button>
-            <Button asChild variant="outline" className="h-12 rounded-2xl bg-white px-3 text-sm font-black sm:h-14">
+            <Button asChild variant="outline" className="h-12 sm:h-14 rounded-2xl bg-white px-3 sm:px-5 text-sm sm:text-base font-black">
               <a href="/services">
                 <Settings2 className="mr-2 h-5 w-5" /> Produtos
               </a>
@@ -1026,7 +1041,7 @@ function PDVPage() {
             ))}
           </div>
 
-          <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
             {filteredProducts.map((product) => (
               <Card
                 key={product.id}
@@ -1062,7 +1077,7 @@ function PDVPage() {
           </div>
         </section>
 
-        <aside className="min-w-0 rounded-2xl border border-slate-200 bg-white p-3 shadow-sm xl:rounded-[2rem]">
+        <aside className="min-w-0 rounded-[2rem] border border-slate-200 bg-white p-3 shadow-sm md:p-4">
           <div className="mb-4 flex items-center justify-between">
             <h2 className="text-xl font-black">Itens da venda</h2>
             <Button variant="ghost" size="sm" className="text-brand-blue" onClick={clearSale}>
@@ -1166,6 +1181,21 @@ function PDVPage() {
           </div>
         </aside>
       </div>
+
+      <PdvCalculator
+        open={showCalculator}
+        onOpenChange={setShowCalculator}
+        onSendToCart={(total, desc) => {
+          addToCart({
+            id: `calc-${Date.now()}`,
+            name: desc,
+            category: "Outros",
+            price: total,
+            detail: "Calculadora",
+          });
+          toast.success("Valor enviado ao carrinho.");
+        }}
+      />
 
       <Dialog open={showFastSale} onOpenChange={setShowFastSale}>
         <DialogContent className="rounded-3xl">
@@ -1477,111 +1507,6 @@ function PDVPage() {
         </DialogContent>
       </Dialog>
 
-      <Dialog open={!!editingEntry} onOpenChange={(open) => !open && setEditingEntry(null)}>
-        <DialogContent className="max-w-xl rounded-[1.5rem]">
-          <DialogHeader>
-            <DialogTitle>Editar lançamento do caixa</DialogTitle>
-          </DialogHeader>
-          {editingEntry ? (
-            <div className="grid gap-4">
-              {editingEntry.originalOrderId ? (
-                <div className="rounded-2xl border border-amber-200 bg-amber-50 p-3 text-sm font-semibold text-amber-800">
-                  Este lançamento está ligado a uma OS. Ao mudar o valor, o pago da OS também será ajustado.
-                </div>
-              ) : null}
-              <div className="grid gap-3 sm:grid-cols-2">
-                <div>
-                  <Label>Tipo</Label>
-                  <Select
-                    value={editingEntry.type}
-                    onValueChange={(value) => setEditingEntry({ ...editingEntry, type: value })}
-                  >
-                    <SelectTrigger className="mt-1 rounded-xl">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="entrada">Entrada</SelectItem>
-                      <SelectItem value="saida">Saída</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div>
-                  <Label>Data</Label>
-                  <Input
-                    type="date"
-                    className="mt-1 rounded-xl"
-                    value={editingEntry.entry_date}
-                    onChange={(e) => setEditingEntry({ ...editingEntry, entry_date: e.target.value })}
-                  />
-                </div>
-              </div>
-              <div>
-                <Label>Descrição *</Label>
-                <Input
-                  className="mt-1 rounded-xl"
-                  value={editingEntry.description}
-                  onChange={(e) => setEditingEntry({ ...editingEntry, description: e.target.value })}
-                />
-              </div>
-              <div className="grid gap-3 sm:grid-cols-2">
-                <div>
-                  <Label>Valor *</Label>
-                  <Input
-                    type="number"
-                    step="0.01"
-                    min="0"
-                    className="mt-1 rounded-xl"
-                    value={editingEntry.amount}
-                    onChange={(e) => setEditingEntry({ ...editingEntry, amount: e.target.value })}
-                  />
-                </div>
-                <div>
-                  <Label>Forma de pagamento</Label>
-                  <Select
-                    value={editingEntry.payment_method || "Sem forma"}
-                    onValueChange={(value) =>
-                      setEditingEntry({
-                        ...editingEntry,
-                        payment_method: value === "Sem forma" ? "" : value,
-                      })
-                    }
-                  >
-                    <SelectTrigger className="mt-1 rounded-xl">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="Sem forma">Sem forma</SelectItem>
-                      {PAYMENT_OPTIONS.map((option) => (
-                        <SelectItem key={option.id} value={option.id}>
-                          {option.label}
-                        </SelectItem>
-                      ))}
-                      <SelectItem value="Ajuste manual">Ajuste manual</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-              <div>
-                <Label>Observações</Label>
-                <Textarea
-                  className="mt-1 rounded-xl"
-                  value={editingEntry.notes}
-                  onChange={(e) => setEditingEntry({ ...editingEntry, notes: e.target.value })}
-                />
-              </div>
-            </div>
-          ) : null}
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setEditingEntry(null)}>
-              Cancelar
-            </Button>
-            <Button className="bg-brand-blue hover:bg-brand-blue-light" onClick={saveEditedEntry}>
-              Salvar correção
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
       <Dialog open={showOrderPicker} onOpenChange={setShowOrderPicker}>
         <DialogContent className="max-w-2xl rounded-3xl">
           <DialogHeader>
@@ -1635,7 +1560,7 @@ function PDVPage() {
       </Dialog>
 
       <Dialog open={showMachineEntry} onOpenChange={setShowMachineEntry}>
-        <DialogContent className="max-h-[92vh] max-w-3xl overflow-y-auto rounded-3xl">
+        <DialogContent className="max-w-lg rounded-3xl">
           <DialogHeader>
             <DialogTitle>Lançar vendas esquecidas da maquininha</DialogTitle>
           </DialogHeader>
@@ -1793,14 +1718,14 @@ function PDVPage() {
       </Dialog>
 
       <Dialog open={showCloseCash} onOpenChange={setShowCloseCash}>
-        <DialogContent className="max-h-[92vh] max-w-3xl overflow-y-auto rounded-3xl">
+        <DialogContent className="max-w-2xl rounded-3xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Fechar caixa</DialogTitle>
+            <DialogTitle>Fechar caixa — confira antes de salvar</DialogTitle>
           </DialogHeader>
           <div className="space-y-3">
             <div className="rounded-2xl bg-brand-blue p-4 text-white">
               <p className="text-xs font-bold uppercase tracking-wider text-blue-200">
-                Saldo esperado do dia
+                Resultado do dia
               </p>
               <p className="mt-1 text-3xl font-black">{brl(dayBalance)}</p>
               <p className="mt-1 text-xs text-blue-100">
@@ -1831,22 +1756,113 @@ function PDVPage() {
                 </div>
               )}
             </div>
+            <div className="rounded-2xl border border-dashed border-slate-200 p-3 text-xs text-slate-600">
+              <p className="font-bold text-slate-700 mb-1">Conferência do dinheiro físico</p>
+              <p>
+                Esperado em dinheiro:{" "}
+                <strong>{brl(paymentTotals.cash + Number(cashSession?.initialAmount || 0))}</strong>
+                {cashSession?.initialAmount ? (
+                  <span className="block text-[11px] text-slate-500">
+                    (inclui troco inicial de {brl(Number(cashSession.initialAmount))})
+                  </span>
+                ) : null}
+              </p>
+            </div>
             <div>
-              <Label>Saldo total conferido</Label>
+              <Label>Valor contado na gaveta</Label>
               <Input
                 type="number"
                 inputMode="decimal"
+                placeholder="0,00"
                 value={sessionForm.informedCash}
                 onChange={(e) => setSessionForm({ ...sessionForm, informedCash: e.target.value })}
               />
             </div>
-            <div className="rounded-2xl bg-blue-50 p-4 text-sm font-bold text-brand-blue">
-              Diferença: {brl(toNumber(sessionForm.informedCash) - dayBalance)}
+            <div
+              className={`rounded-2xl p-4 text-sm font-bold ${
+                Math.abs(
+                  toNumber(sessionForm.informedCash) -
+                    (paymentTotals.cash + Number(cashSession?.initialAmount || 0)),
+                ) < 0.01
+                  ? "bg-emerald-50 text-emerald-700"
+                  : "bg-amber-50 text-amber-800"
+              }`}
+            >
+              Diferença:{" "}
+              {brl(
+                toNumber(sessionForm.informedCash) -
+                  (paymentTotals.cash + Number(cashSession?.initialAmount || 0)),
+              )}
+            </div>
+            <div className="rounded-2xl border border-slate-200 bg-white">
+              <div className="flex items-center justify-between border-b border-slate-100 px-3 py-2">
+                <p className="text-xs font-black uppercase tracking-wider text-brand-blue">
+                  Vendas e lançamentos do dia ({todayEntries.length})
+                </p>
+                <span className="text-xs text-slate-500">{brl(totalToday)} entrada · {brl(expenseTotal)} saída</span>
+              </div>
+              <div className="max-h-56 overflow-y-auto divide-y divide-slate-100">
+                {todayEntries.length ? (
+                  todayEntries.map((entry) => (
+                    <div key={entry.id} className="flex items-start justify-between gap-3 px-3 py-2 text-sm">
+                      <div className="min-w-0">
+                        <p className="truncate font-bold">{entry.description || entry.category || "Lançamento"}</p>
+                        <p className="truncate text-[11px] text-slate-500">
+                          {new Date(entry.created_at).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}
+                          {entry.payment_method ? ` · ${entry.payment_method}` : ""}
+                        </p>
+                      </div>
+                      <span className={`shrink-0 font-black ${entry.type === "saida" ? "text-red-600" : "text-emerald-600"}`}>
+                        {entry.type === "saida" ? "-" : "+"}{brl(Number(entry.amount || 0))}
+                      </span>
+                    </div>
+                  ))
+                ) : (
+                  <p className="px-3 py-6 text-center text-sm text-slate-500">Nenhum lançamento hoje.</p>
+                )}
+              </div>
+            </div>
+            <div>
+              <Label>Observações</Label>
+              <Textarea
+                placeholder="Ex: faltou troco, sangria não registrada..."
+                value={sessionForm.notes}
+                onChange={(e) => setSessionForm({ ...sessionForm, notes: e.target.value })}
+              />
             </div>
           </div>
-          <DialogFooter>
-            <Button className="bg-brand-blue hover:bg-brand-blue-light" onClick={closeCash}>
-              Fechar caixa
+          <DialogFooter className="flex-col-reverse gap-2 sm:flex-row">
+            <Button variant="outline" onClick={() => setShowCloseCash(false)}>
+              Cancelar
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => {
+                const counted = toNumber(sessionForm.informedCash);
+                const expectedCash = paymentTotals.cash + Number(cashSession?.initialAmount || 0);
+                openClosureReceipt(
+                  {
+                    closure_date: today(),
+                    closed_at: new Date().toISOString(),
+                    operator: cashSession?.operator || sessionForm.operator || "Operador",
+                    initial_amount: Number(cashSession?.initialAmount || 0),
+                    expected_cash: expectedCash,
+                    counted_cash: counted,
+                    difference: counted - expectedCash,
+                    total_in: totalToday,
+                    total_out: expenseTotal,
+                    by_method: { cash: paymentTotals.cash, pix: paymentTotals.pix, debit: paymentTotals.debit, credit: paymentTotals.credit, other: paymentTotals.other },
+                    entries_count: todayEntries.length,
+                    notes: sessionForm.notes || null,
+                  },
+                  todayEntries,
+                );
+              }}
+            >
+              Imprimir prévia
+            </Button>
+            <Button className="bg-brand-blue hover:bg-brand-blue-light" onClick={closeCashAndSave}>
+              Fechar e salvar
             </Button>
           </DialogFooter>
         </DialogContent>

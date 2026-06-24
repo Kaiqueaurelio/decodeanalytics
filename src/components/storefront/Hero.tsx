@@ -6,53 +6,51 @@ import { CATEGORY_IMAGES } from "./productImages";
 export function Hero() {
   return (
     <section className="mx-auto w-full max-w-[1280px] px-3 pt-3 sm:px-4 sm:pt-4 md:pt-6">
+      {/* Big bright blue hero banner — Futuraim-style */}
       <div
-        className="store-crop-marks relative overflow-hidden rounded-[var(--store-radius-xl)] bg-[var(--store-primary)] p-4 text-white shadow-[var(--store-shadow-lg)] sm:p-6 md:p-10 lg:p-12 animate-fade-in"
+        className="relative overflow-hidden rounded-[var(--store-radius-xl)] bg-gradient-to-br from-[#1e3a8a] via-[#172554] to-[#0b1a3f] p-4 text-white shadow-[var(--store-shadow-lg)] sm:p-6 md:p-10 lg:p-12 animate-fade-in"
         style={{ animationDelay: "60ms", animationFillMode: "both" }}
       >
+        {/* Decorative percent marks */}
         <div
           aria-hidden="true"
-          className="store-halftone pointer-events-none absolute inset-0 opacity-60"
-        />
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-x-0 top-0 h-1.5 bg-[linear-gradient(90deg,#00a3ff_0_25%,#ff3b30_25%_50%,#f5c542_50%_75%,#171717_75%_100%)]"
-        />
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute -right-10 bottom-8 h-44 w-44 rounded-full border border-[var(--store-secondary)]/25"
+          className="pointer-events-none absolute inset-0 opacity-10"
           style={{
-            boxShadow: "0 0 0 28px rgba(245, 197, 66, 0.05)",
+            backgroundImage:
+              "radial-gradient(circle at 20% 20%, rgba(255,255,255,0.5) 0, transparent 35%), radial-gradient(circle at 80% 80%, rgba(255,255,255,0.4) 0, transparent 40%)",
           }}
         />
         <div className="relative grid items-center gap-6 sm:gap-8 md:grid-cols-2">
           <div>
-            <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-[11px] font-extrabold uppercase tracking-[0.18em] text-white backdrop-blur">
-              <Sparkles className="h-3 w-3 text-[var(--store-secondary)]" /> Alcateia's · gráfica de produção
+            <span className="inline-flex items-center gap-2 rounded-full bg-white/15 px-3 py-1 text-[11px] font-extrabold uppercase tracking-[0.18em] text-white backdrop-blur">
+              <Sparkles className="h-3 w-3" /> Alcateia's · gráfica em Goiânia · produção em 48h
             </span>
-            <h1 className="font-display mt-5 text-4xl leading-[0.95] text-white sm:text-5xl md:text-6xl lg:text-7xl">
+            <h1 className="font-display mt-5 text-4xl leading-[0.95] sm:text-5xl md:text-6xl lg:text-7xl">
               SUA MARCA
               <br />
-              <span className="inline-block rotate-[-1deg] rounded-md bg-[var(--store-secondary)] px-3 py-1 text-[var(--store-primary-dark)]">
-                NO CAPRICHO
+              <span className="rounded-md bg-[var(--store-secondary)] px-3 py-1 text-[var(--store-primary-dark)]">
+                IMPRESSA HOJE
               </span>
             </h1>
             <p className="mt-5 max-w-md text-sm sm:text-base font-medium text-white/85">
-              Cartões, panfletos, banners, adesivos, camisetas, canecas e brindes feitos com
-              atendimento próximo, arte bem cuidada e acabamento de gráfica de bairro que joga junto.
+              Cartões, banners, camisetas, canecas, adesivos e brindes com
+              acabamento profissional e atendimento direto com quem produz.
             </p>
 
-            <div className="mt-6 inline-flex items-center gap-2 rounded-lg border border-white/15 bg-white/10 px-4 py-2 text-sm font-bold backdrop-blur">
+            <div className="mt-6 inline-flex items-center gap-2 rounded-lg bg-white/10 px-4 py-2 text-sm font-bold backdrop-blur">
               <Tag className="h-4 w-4 text-[var(--store-secondary)]" />
               <span>
-                Retirada em Carapicuíba · suporte pelo WhatsApp
+                10% OFF na 1ª compra ·{" "}
+                <span className="rounded bg-[var(--store-secondary)] px-1.5 py-0.5 text-[12px] text-[var(--store-primary-dark)]">
+                  BEMVINDO10
+                </span>
               </span>
             </div>
 
             <div className="mt-7 flex flex-wrap gap-3">
               <Link
                 to="/produtos"
-                className="inline-flex items-center justify-center gap-2 rounded-[var(--store-radius-md)] bg-[var(--store-secondary)] px-6 py-3 text-sm font-extrabold uppercase tracking-wide text-[var(--store-primary-dark)] shadow-md transition-transform hover:scale-[1.03] sm:px-8"
+                className="inline-flex items-center justify-center gap-2 rounded-[var(--store-radius-md)] bg-white px-6 py-3 text-sm font-extrabold uppercase tracking-wide text-[#172554] shadow-md transition-transform hover:scale-[1.03] sm:px-8"
               >
                 Ver produtos <ArrowRight className="h-4 w-4" />
               </Link>
@@ -60,7 +58,7 @@ export function Hero() {
                 href={waLink("Olá! Quero enviar minha arte para um orçamento.")}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-2 rounded-[var(--store-radius-md)] border-2 border-white/70 bg-transparent px-6 py-3 text-sm font-extrabold uppercase tracking-wide text-white transition-colors hover:bg-white hover:text-[var(--store-primary)] sm:px-8"
+                className="inline-flex items-center justify-center gap-2 rounded-[var(--store-radius-md)] border-2 border-white/70 bg-transparent px-6 py-3 text-sm font-extrabold uppercase tracking-wide text-white transition-colors hover:bg-white hover:text-[#172554] sm:px-8"
               >
                 <Upload className="h-4 w-4" /> Enviar minha arte
               </a>
@@ -69,15 +67,15 @@ export function Hero() {
 
           {/* Right column: product hero photo */}
           <div className="relative hidden md:block">
-            <div className="absolute -right-8 -top-8 h-72 w-72 rounded-full bg-[var(--store-secondary)]/10 blur-2xl" />
+            <div className="absolute -right-8 -top-8 h-72 w-72 rounded-full bg-white/10 blur-2xl" />
             <div className="relative aspect-square overflow-hidden rounded-[var(--store-radius-xl)] bg-white p-2 shadow-2xl rotate-[-2deg] transition-transform hover:rotate-0 border border-white/20">
               <img
                 src={CATEGORY_IMAGES["Cartões"]}
                 alt="Cartões de Visita Premium"
                 className="h-full w-full rounded-[var(--store-radius-lg)] object-cover"
               />
-              <span className="absolute left-3 top-3 inline-flex items-center gap-1 rounded-full bg-[var(--store-primary)] px-3 py-1 text-xs font-extrabold uppercase text-[var(--store-secondary)] shadow-md">
-                <Sparkles className="h-3 w-3" /> Feito pela Alcateia
+              <span className="absolute -top-3 -left-3 inline-flex items-center gap-1 rounded-full bg-[var(--store-secondary)] px-3 py-1 text-xs font-extrabold uppercase text-[var(--store-primary-dark)] shadow-md">
+                <Sparkles className="h-3 w-3" /> Acabamento premium
               </span>
             </div>
           </div>
@@ -91,7 +89,7 @@ export function Hero() {
           className="group flex items-center gap-2 rounded-[var(--store-radius-lg)] border border-[var(--store-border)] bg-white p-3 sm:gap-3 sm:p-4 shadow-[var(--store-shadow-sm)] transition-all hover:-translate-y-1 hover:shadow-[var(--store-shadow-md)] animate-fade-in"
           style={{ animationDelay: "120ms", animationFillMode: "both" }}
         >
-          <span className="grid h-10 w-10 shrink-0 place-items-center rounded-lg sm:h-11 sm:w-11 sm:rounded-xl bg-[var(--store-primary)] text-[var(--store-secondary)]">
+          <span className="grid h-10 w-10 shrink-0 place-items-center rounded-lg sm:h-11 sm:w-11 sm:rounded-xl bg-[#172554]/10 text-[#172554]">
             <Calculator className="h-4 w-4 sm:h-5 sm:w-5" />
           </span>
           <div>

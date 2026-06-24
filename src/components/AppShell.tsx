@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import {
   Bell,
@@ -12,7 +12,6 @@ import {
   LayoutDashboard,
   LogOut,
   Menu,
-  Moon,
   Package,
   PanelLeftClose,
   PanelLeftOpen,
@@ -22,7 +21,6 @@ import {
   Settings,
   ShoppingCart,
   Sparkles,
-  Sun,
   Users,
   X,
 } from "lucide-react";
@@ -88,14 +86,6 @@ const NAV: NavItem[] = [
     roles: ["administrador", "financeiro", "vendedor"],
   },
   {
-    to: "/cash",
-    label: "Caixa financeiro",
-    description: "Lancamentos e fechamento",
-    icon: Receipt,
-    section: "Financeiro",
-    roles: ["administrador", "financeiro"],
-  },
-  {
     to: "/receivables",
     label: "Contas a Receber",
     description: "Cobranças e vencimentos",
@@ -136,13 +126,6 @@ const NAV: NavItem[] = [
     roles: ["administrador"],
   },
   {
-    to: "/profile",
-    label: "Meu perfil",
-    description: "Dados da conta",
-    icon: Users,
-    section: "AdministraÃ§Ã£o",
-  },
-  {
     to: "/ella",
     label: "Ella Ribeiro",
     description: "Assistente de IA para gestão",
@@ -166,15 +149,6 @@ export function AppShell({ children }: { children: ReactNode }) {
   });
   const [search, setSearch] = useState("");
   const [searchFocused, setSearchFocused] = useState(false);
-  const [darkMode, setDarkMode] = useState(() => {
-    if (typeof window === "undefined") return false;
-    return localStorage.getItem("alcateia_theme") === "dark";
-  });
-
-  useEffect(() => {
-    document.documentElement.classList.toggle("dark", darkMode);
-    localStorage.setItem("alcateia_theme", darkMode ? "dark" : "light");
-  }, [darkMode]);
 
   const items = useMemo(
     () =>
@@ -194,7 +168,7 @@ export function AppShell({ children }: { children: ReactNode }) {
   const userInitial = user?.email?.charAt(0).toUpperCase() ?? "A";
 
   return (
-    <div className="app-shell min-h-screen overflow-x-hidden bg-background">
+    <div className="min-h-screen overflow-x-hidden bg-background">
       <aside
         className={cn(
           "fixed inset-y-0 left-0 z-40 flex flex-col overflow-hidden bg-sidebar text-sidebar-foreground shadow-2xl transition-[width,transform] duration-300 md:translate-x-0",
@@ -242,14 +216,14 @@ export function AppShell({ children }: { children: ReactNode }) {
             </div>
             <div
               className={cn(
-                "hidden h-14 w-14 shrink-0 place-items-center overflow-hidden rounded-full bg-brand-yellow p-1.5 shadow-lg ring-2 ring-white/80",
+                "hidden h-12 w-12 shrink-0 place-items-center rounded-2xl bg-white p-1 shadow-lg ring-2 ring-brand-yellow/70",
                 collapsed && "md:grid",
               )}
             >
               <img
                 src="/brand/alcateia-symbol.png"
                 alt="Símbolo da Alcateia's"
-                className="h-full w-full rounded-full bg-white object-contain p-0.5"
+                className="h-full w-full object-contain"
               />
             </div>
             <button
@@ -354,10 +328,7 @@ export function AppShell({ children }: { children: ReactNode }) {
               </>
             )}
           </button>
-          <Link
-            to="/profile"
-            className="mb-2 flex items-center gap-3 rounded-xl px-2 py-2 transition-colors hover:bg-white/8"
-          >
+          <div className="mb-2 flex items-center gap-3 rounded-xl px-2 py-2">
             <div className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-brand-yellow text-sm font-extrabold text-brand-blue">
               {userInitial}
             </div>
@@ -367,7 +338,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                 {roles.map((role) => ROLE_LABEL[role]).join(", ") || "Sem papel"}
               </div>
             </div>
-          </Link>
+          </div>
           <button
             type="button"
             onClick={async () => {
@@ -402,8 +373,8 @@ export function AppShell({ children }: { children: ReactNode }) {
           <span className="font-semibold text-brand-yellow">Alcateia's Produções Gráficas</span>
         </div>
 
-        <header className="sticky top-0 z-20 border-b border-border/80 bg-white/92 px-2 py-2 backdrop-blur-xl md:px-4 lg:top-0">
-          <div className="flex min-h-14 flex-wrap items-center gap-2 md:min-h-16 md:gap-3">
+        <header className="sticky top-0 z-20 border-b border-border/80 bg-white/92 px-2 backdrop-blur-xl md:px-4 lg:top-0">
+          <div className="flex h-16 md:h-[72px] items-center gap-2 md:gap-3">
             {isAdmin && (
               <Link
                 to="/ella"
@@ -422,7 +393,7 @@ export function AppShell({ children }: { children: ReactNode }) {
               <Menu className="h-5 w-5" />
             </button>
 
-            <div className="min-w-0 flex-1 xl:flex-none xl:min-w-40">
+            <div className="min-w-0 flex-1 lg:flex-none lg:min-w-44">
               <p className="hidden text-[10px] font-bold uppercase tracking-[0.18em] text-brand-orange sm:block">
                 Central de gestão
               </p>
@@ -431,7 +402,7 @@ export function AppShell({ children }: { children: ReactNode }) {
               </h1>
             </div>
 
-            <div className="relative ml-auto hidden w-full max-w-md xl:block 2xl:max-w-xl">
+            <div className="relative ml-auto hidden w-full max-w-xl lg:block">
               <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <input
                 value={search}
@@ -484,16 +455,6 @@ export function AppShell({ children }: { children: ReactNode }) {
             >
               <Bell className="h-5 w-5" />
               <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-brand-orange ring-2 ring-white" />
-            </button>
-
-            <button
-              type="button"
-              className="rounded-xl border border-border bg-card p-2.5 text-foreground shadow-sm transition-colors hover:bg-muted"
-              onClick={() => setDarkMode((value) => !value)}
-              aria-label={darkMode ? "Ativar modo claro" : "Ativar modo noturno"}
-              title={darkMode ? "Modo claro" : "Modo noturno"}
-            >
-              {darkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
             </button>
 
             <Link

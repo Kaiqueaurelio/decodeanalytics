@@ -135,37 +135,37 @@
   --sidebar-ring: oklch(0.78 0.13 80);
 
   /* Storefront design system tokens */
-  --store-primary: #171717;
-  --store-primary-light: #3f3f46;
-  --store-primary-dark: #050505;
-  --store-secondary: #f5c542;
-  --store-secondary-dark: #d79a16;
-  --store-accent: #ff6b2c;
-  --store-accent-dark: #d9480f;
+  --store-primary: #172554;
+  --store-primary-light: #2563eb;
+  --store-primary-dark: #0f172a;
+  --store-secondary: #facc15;
+  --store-secondary-dark: #eab308;
+  --store-accent: #f97316;
+  --store-accent-dark: #ea580c;
   --store-success: #16a34a;
   --store-danger: #dc2626;
   --store-warning: #f59e0b;
-  --store-bg: #fbfaf6;
+  --store-bg: #f8fafc;
   --store-surface: #ffffff;
-  --store-surface-soft: #f5f1e8;
-  --store-text: #171717;
-  --store-text-muted: #68625a;
-  --store-text-light: #9b9287;
-  --store-border: #e7dece;
-  --store-border-strong: #d5c6ad;
-  --store-shadow-sm: 0 2px 8px rgba(23, 23, 23, 0.06);
-  --store-shadow-md: 0 8px 24px rgba(23, 23, 23, 0.1);
-  --store-shadow-lg: 0 18px 44px rgba(23, 23, 23, 0.16);
+  --store-surface-soft: #f1f5f9;
+  --store-text: #0f172a;
+  --store-text-muted: #64748b;
+  --store-text-light: #94a3b8;
+  --store-border: #e2e8f0;
+  --store-border-strong: #cbd5e1;
+  --store-shadow-sm: 0 2px 8px rgba(15, 23, 42, 0.06);
+  --store-shadow-md: 0 8px 24px rgba(15, 23, 42, 0.1);
+  --store-shadow-lg: 0 16px 40px rgba(15, 23, 42, 0.14);
   --store-radius-sm: 6px;
   --store-radius-md: 10px;
   --store-radius-lg: 16px;
   --store-radius-xl: 24px;
   --store-font: "Barlow", "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
   --store-display-font: "Bebas Neue", "Barlow", "Inter", sans-serif;
-  --store-ink: #171717;
-  --store-ink-soft: #2d2925;
+  --store-ink: #001b3d;
+  --store-ink-soft: #002855;
   --store-ink-line: rgba(255, 255, 255, 0.1);
-  --store-gold: #f5c542;
+  --store-gold: #ffd700;
 }
 
 .dark {
@@ -269,62 +269,8 @@
 
   @media (min-width: 768px) {
     .app-page {
-      padding: 0.875rem;
+      padding: 1.25rem;
     }
-  }
-
-  @media (min-width: 1280px) {
-    .app-page {
-      padding: 1rem;
-    }
-  }
-
-  .dark .app-shell {
-    color-scheme: dark;
-  }
-
-  .dark .app-shell header,
-  .dark .app-shell .bg-white,
-  .dark .app-shell .bg-\[\#f8fafc\] {
-    background-color: color-mix(in oklab, var(--card) 94%, black) !important;
-    color: var(--foreground);
-  }
-
-  .dark .app-shell .bg-slate-50,
-  .dark .app-shell .bg-slate-50\/70,
-  .dark .app-shell .bg-slate-100,
-  .dark .app-shell .bg-blue-50,
-  .dark .app-shell .bg-emerald-50,
-  .dark .app-shell .bg-red-50 {
-    background-color: color-mix(in oklab, var(--muted) 86%, black) !important;
-  }
-
-  .dark .app-shell .text-slate-950,
-  .dark .app-shell .text-slate-900,
-  .dark .app-shell .text-slate-800,
-  .dark .app-shell .text-slate-700,
-  .dark .app-shell .text-brand-blue {
-    color: var(--foreground) !important;
-  }
-
-  .dark .app-shell .text-slate-500,
-  .dark .app-shell .text-slate-400,
-  .dark .app-shell .text-muted-foreground {
-    color: var(--muted-foreground) !important;
-  }
-
-  .dark .app-shell input,
-  .dark .app-shell textarea,
-  .dark .app-shell select {
-    background-color: color-mix(in oklab, var(--card) 88%, black);
-    color: var(--foreground);
-  }
-
-  .dark .app-shell button.bg-white,
-  .dark .app-shell a.bg-white {
-    border-color: var(--border);
-    background-color: var(--secondary) !important;
-    color: var(--secondary-foreground) !important;
   }
 
   .font-display {
