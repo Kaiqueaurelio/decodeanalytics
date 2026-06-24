@@ -208,11 +208,6 @@
     border-color: var(--color-border);
   }
 
-  html {
-    overflow-x: hidden;
-    max-width: 100vw;
-  }
-
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
@@ -234,7 +229,6 @@
       linear-gradient(180deg, color-mix(in oklab, var(--background) 96%, white), var(--background));
     background-attachment: fixed;
     overflow-x: hidden;
-    max-width: 100vw;
   }
 
   h1,

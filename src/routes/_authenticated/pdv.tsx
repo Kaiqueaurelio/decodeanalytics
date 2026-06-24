@@ -11,7 +11,6 @@ import {
   CreditCard,
   ReceiptText,
   Minus,
-  Pencil,
   Plus,
   QrCode,
   Search,
@@ -45,97 +44,8 @@ import {
 } from "@/components/ui/select";
 import { brl } from "@/lib/format";
 import { cn } from "@/lib/utils";
-import { PdvCalculator } from "@/components/pdv/PdvCalculator";
 
 export const Route = createFileRoute("/_authenticated/pdv")({ component: PDVPage });
-
-function buildClosureReceiptHtml(c: any, items: any[]) {
-  const m = c.by_method || {};
-  const ok = Math.abs(Number(c.difference || 0)) < 0.01;
-  const fmtBrl = (v: number) =>
-    new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(Number(v || 0));
-  const date = new Date(c.closure_date + "T12:00:00").toLocaleDateString("pt-BR");
-  const closedAt = c.closed_at
-    ? new Date(c.closed_at).toLocaleString("pt-BR")
-    : new Date().toLocaleString("pt-BR");
-
-  const rows = (items || [])
-    .map((it) => {
-      const time = new Date(it.created_at).toLocaleTimeString("pt-BR", {
-        hour: "2-digit",
-        minute: "2-digit",
-      });
-      const sign = it.type === "saida" ? "-" : "+";
-      const cls = it.type === "saida" ? "out" : "in";
-      const desc = String(it.description || it.category || "Lançamento").replace(/</g, "&lt;");
-      const pm = String(it.payment_method || "").replace(/</g, "&lt;");
-      return `<tr><td>${time}</td><td>${desc}<div class="muted">${pm}</div></td><td class="right ${cls}">${sign}${fmtBrl(it.amount)}</td></tr>`;
-    })
-    .join("");
-
-  return `<!doctype html><html><head><meta charset="utf-8"><title>Fechamento ${date}</title>
-<style>
-body{font-family:system-ui,-apple-system,Arial;padding:20px;max-width:520px;margin:0 auto;color:#0f172a}
-h1{font-size:18px;margin:0 0 2px}h2{font-size:12px;margin:14px 0 6px;text-transform:uppercase;letter-spacing:.08em;color:#475569}
-table{width:100%;border-collapse:collapse;font-size:12px}
-td{padding:5px 0;border-bottom:1px dashed #cbd5e1;vertical-align:top}
-.right{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
-.in{color:#059669;font-weight:700}.out{color:#dc2626;font-weight:700}
-.total{font-weight:800;border-top:2px solid #0f172a;padding-top:6px}
-.diff-ok{color:#059669;font-weight:800}.diff-bad{color:#b45309;font-weight:800}
-.muted{color:#64748b;font-size:10px}
-.brand{display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid #0f172a;padding-bottom:6px;margin-bottom:6px}
-.brand strong{font-size:14px}.tag{font-size:10px;color:#64748b}
-.badge{display:inline-block;padding:2px 8px;border-radius:999px;font-size:10px;font-weight:800}
-.ok{background:#d1fae5;color:#065f46}.bad{background:#fef3c7;color:#92400e}
-@media print{button{display:none}}
-</style></head><body>
-<div class="brand"><strong>Alcateia's Produções Gráficas</strong><span class="tag">Fechamento de caixa</span></div>
-<h1>Recibo de Fechamento</h1>
-<p class="muted">${date} · Fechado em ${closedAt} · Operador: ${c.operator || "—"} · <span class="badge ${ok ? "ok" : "bad"}">${ok ? "Caixa bate" : "Com diferença"}</span></p>
-
-<h2>Resumo</h2>
-<table>
-  <tr><td>Troco inicial</td><td class="right">${fmtBrl(c.initial_amount)}</td></tr>
-  <tr><td>Entradas</td><td class="right in">${fmtBrl(c.total_in)}</td></tr>
-  <tr><td>Saídas</td><td class="right out">${fmtBrl(c.total_out)}</td></tr>
-  <tr class="total"><td>Saldo do dia</td><td class="right">${fmtBrl(Number(c.total_in) - Number(c.total_out))}</td></tr>
-  <tr><td>Lançamentos</td><td class="right">${c.entries_count}</td></tr>
-</table>
-
-<h2>Por forma de pagamento</h2>
-<table>
-  <tr><td>Dinheiro</td><td class="right">${fmtBrl(m.cash || 0)}</td></tr>
-  <tr><td>PIX</td><td class="right">${fmtBrl(m.pix || 0)}</td></tr>
-  <tr><td>Débito</td><td class="right">${fmtBrl(m.debit || 0)}</td></tr>
-  <tr><td>Crédito</td><td class="right">${fmtBrl(m.credit || 0)}</td></tr>
-  ${m.other ? `<tr><td>Outros</td><td class="right">${fmtBrl(m.other)}</td></tr>` : ""}
-</table>
-
-<h2>Conferência do dinheiro</h2>
-<table>
-  <tr><td>Esperado em dinheiro</td><td class="right">${fmtBrl(c.expected_cash)}</td></tr>
-  <tr><td>Contado na gaveta</td><td class="right">${fmtBrl(c.counted_cash)}</td></tr>
-  <tr class="total"><td>Diferença</td><td class="right ${ok ? "diff-ok" : "diff-bad"}">${fmtBrl(c.difference)}</td></tr>
-</table>
-
-${items?.length ? `<h2>Vendas e lançamentos do dia (${items.length})</h2>
-<table>${rows}</table>` : ""}
-
-${c.notes ? `<h2>Observações</h2><p style="font-size:12px">${String(c.notes).replace(/</g, "&lt;")}</p>` : ""}
-
-<p style="margin-top:24px;text-align:center"><button onclick="window.print()" style="padding:8px 18px;border-radius:8px;border:1px solid #0f172a;background:#0f172a;color:#fff;font-weight:700;cursor:pointer">Imprimir / Salvar PDF</button></p>
-<script>setTimeout(()=>window.print(),350)</script>
-</body></html>`;
-}
-
-function openClosureReceipt(c: any, items: any[]) {
-  const html = buildClosureReceiptHtml(c, items);
-  const w = window.open("", "_blank", "width=560,height=760");
-  if (!w) return;
-  w.document.write(html);
-  w.document.close();
-}
 
 const QUICK_PRODUCTS = [
   {
@@ -262,7 +172,6 @@ function PDVPage() {
   const [showCheckout, setShowCheckout] = useState(false);
   const [showFastSale, setShowFastSale] = useState(false);
   const [showSquareMeter, setShowSquareMeter] = useState(false);
-  const [showCalculator, setShowCalculator] = useState(false);
   const [showMachineEntry, setShowMachineEntry] = useState(false);
   const [showOpenCash, setShowOpenCash] = useState(false);
   const [showCloseCash, setShowCloseCash] = useState(false);
@@ -355,37 +264,6 @@ function PDVPage() {
     },
   });
 
-  async function deleteEntry(entry: any) {
-    if (!entry?.id) return;
-    const label = entry.description || entry.category || "lançamento";
-    if (!confirm(`Excluir "${label}" de ${brl(Number(entry.amount || 0))}? Esta ação não pode ser desfeita.`)) return;
-    const { error } = await supabase.from("cash_entries").delete().eq("id", entry.id);
-    if (error) return toast.error(error.message);
-    toast.success("Lançamento excluído");
-    qc.invalidateQueries({ queryKey: ["pdv_cash_entries_today"] });
-    qc.invalidateQueries({ queryKey: ["cash_entries"] });
-  }
-
-  async function editEntry(entry: any) {
-    if (!entry?.id) return;
-    const rawAmount = prompt(
-      `Novo valor para "${entry.description || entry.category || "lançamento"}" (use ponto para decimais):`,
-      String(entry.amount ?? ""),
-    );
-    if (rawAmount === null) return;
-    const amount = Number(String(rawAmount).replace(",", "."));
-    if (!Number.isFinite(amount) || amount < 0) return toast.error("Valor inválido");
-    const description = prompt("Descrição:", entry.description || "") ?? entry.description;
-    const { error } = await supabase
-      .from("cash_entries")
-      .update({ amount, description })
-      .eq("id", entry.id);
-    if (error) return toast.error(error.message);
-    toast.success("Lançamento atualizado");
-    qc.invalidateQueries({ queryKey: ["pdv_cash_entries_today"] });
-    qc.invalidateQueries({ queryKey: ["cash_entries"] });
-  }
-
   const products = useMemo(() => {
     const serviceProducts = services.map((service) => ({
       id: service.id,
@@ -393,7 +271,7 @@ function PDVPage() {
       category: service.category || "Outros",
       price: Number(service.base_price || 0),
       detail: service.description || service.category || "Serviço gráfico",
-      imageUrl: service.image_url && !service.image_url.includes('__l5e') ? service.image_url : undefined,
+      imageUrl: service.image_url,
     }));
     return serviceProducts.length ? serviceProducts : QUICK_PRODUCTS;
   }, [services]);
@@ -582,42 +460,13 @@ function PDVPage() {
     toast.success("Caixa aberto.");
   }
 
-  async function closeCashAndSave() {
-    const counted = toNumber(sessionForm.informedCash);
-    const expectedCash = paymentTotals.cash + Number(cashSession?.initialAmount || 0);
-    const diff = counted - expectedCash;
-    const payload = {
-      closure_date: today(),
-      opened_at: cashSession?.openedAt || null,
-      operator: cashSession?.operator || sessionForm.operator || "Operador",
-      initial_amount: Number(cashSession?.initialAmount || 0),
-      expected_cash: expectedCash,
-      counted_cash: counted,
-      difference: diff,
-      total_in: totalToday,
-      total_out: expenseTotal,
-      by_method: {
-        cash: paymentTotals.cash,
-        pix: paymentTotals.pix,
-        debit: paymentTotals.debit,
-        credit: paymentTotals.credit,
-        other: paymentTotals.other,
-      },
-      entries_count: todayEntries.length,
-      notes: sessionForm.notes || null,
-    };
-    const { error } = await supabase.from("cash_closures" as any).insert(payload);
-    if (error) return toast.error(error.message);
+  function closeCash() {
+    const informed = toNumber(sessionForm.informedCash);
+    const diff = informed - dayBalance;
     localStorage.removeItem(SESSION_KEY);
     setCashSession(null);
     setShowCloseCash(false);
-    qc.invalidateQueries({ queryKey: ["cash_closures"] });
-    openClosureReceipt({ ...payload, closed_at: new Date().toISOString() }, todayEntries);
-    toast.success(
-      Math.abs(diff) < 0.01
-        ? "Caixa fechado certinho!"
-        : `Caixa fechado. Diferença: ${brl(diff)}.`,
-    );
+    toast.success(`Caixa do dia fechado. Diferença: ${brl(diff)}.`);
   }
 
   async function registerMachineEntry() {
@@ -649,10 +498,15 @@ function PDVPage() {
 
   async function finalizeSale() {
     if (!cart.length) return toast.error("Adicione pelo menos um item.");
-    if (total <= 0) return toast.error("O total da venda deve ser maior que zero.");
+    // Permitir venda com valor 0 se for brinde ou amostra, mas geralmente total > 0
+    if (total < 0) return toast.error("O total da venda não pode ser negativo.");
     if (!saleDate) return toast.error("Informe a data da venda.");
-    if (!payments.length || paidTotal < total)
-      return toast.error("Pagamento insuficiente para finalizar.");
+    
+    // Validação de pagamento
+    const currentPaidTotal = payments.reduce((acc, p) => acc + (Number(p.amount) || 0), 0);
+    if (!payments.length || currentPaidTotal < total) {
+      return toast.error(`Pagamento insuficiente. Total: ${brl(total)}, Recebido: ${brl(currentPaidTotal)}`);
+    }
 
     const saleDescription = `PDV - ${cart.map((item) => `${item.quantity}x ${item.name}`).join(", ")}`;
     const mainMethod =
@@ -785,18 +639,21 @@ function PDVPage() {
           <span className="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-2 font-bold">
             <CalendarDays className="h-4 w-4" /> {new Date().toLocaleDateString("pt-BR")}
           </span>
-          <span
-            className={cn(
-              "inline-flex items-center gap-2 rounded-full px-3 py-2 font-bold",
-              cashSession
-                ? "bg-emerald-50 text-emerald-700"
-                : "bg-amber-50 text-amber-700",
-            )}
-          >
-            <Banknote className="h-4 w-4" />
-            {cashSession ? "Caixa aberto" : "Caixa fechado"}
-          </span>
-          {!cashSession && (
+          {cashSession ? (
+            <Button
+              variant="outline"
+              className="rounded-xl"
+              onClick={() => {
+                setSessionForm((current) => ({
+                  ...current,
+                  informedCash: dayBalance.toFixed(2),
+                }));
+                setShowCloseCash(true);
+              }}
+            >
+              Fechar caixa
+            </Button>
+          ) : (
             <Button
               className="rounded-xl bg-brand-blue hover:bg-brand-blue-light"
               onClick={() => setShowOpenCash(true)}
@@ -804,18 +661,6 @@ function PDVPage() {
               Abrir caixa
             </Button>
           )}
-          <Button
-            className="rounded-xl bg-red-600 px-4 font-black text-white hover:bg-red-700"
-            onClick={() => {
-              setSessionForm((current) => ({
-                ...current,
-                informedCash: (paymentTotals.cash + Number(cashSession?.initialAmount || 0)).toFixed(2),
-              }));
-              setShowCloseCash(true);
-            }}
-          >
-            Fechar caixa
-          </Button>
         </div>
       </div>
 
@@ -913,22 +758,6 @@ function PDVPage() {
                     {entry.type === "saida" ? "-" : "+"}
                     {brl(Number(entry.amount || 0))}
                   </p>
-                  <div className="mt-2 flex items-center justify-end gap-1 border-t border-slate-200 pt-2">
-                    <button
-                      type="button"
-                      onClick={() => editEntry(entry)}
-                      className="inline-flex items-center gap-1 rounded-lg px-2 py-1 text-[11px] font-bold text-slate-600 hover:bg-slate-200"
-                    >
-                      <Pencil className="h-3 w-3" /> editar
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => deleteEntry(entry)}
-                      className="inline-flex items-center gap-1 rounded-lg px-2 py-1 text-[11px] font-bold text-red-600 hover:bg-red-50"
-                    >
-                      <Trash2 className="h-3 w-3" /> excluir
-                    </button>
-                  </div>
                 </div>
               ))}
             </div>
@@ -964,13 +793,6 @@ function PDVPage() {
               onClick={() => setShowSquareMeter(true)}
             >
               <Calculator className="mr-2 h-5 w-5" /> Calcular m²
-            </Button>
-            <Button
-              variant="outline"
-              className="h-12 sm:h-14 rounded-2xl border-emerald-200 bg-emerald-50 px-3 sm:px-5 text-sm sm:text-base font-black text-emerald-700 hover:bg-emerald-100"
-              onClick={() => setShowCalculator(true)}
-            >
-              <Calculator className="mr-2 h-5 w-5" /> Calculadora
             </Button>
             <Button
               variant="outline"
@@ -1152,10 +974,11 @@ function PDVPage() {
               <strong className="text-3xl font-black text-brand-blue">{brl(total)}</strong>
             </div>
             <Button
-              disabled={!cart.length}
-              className="h-14 w-full rounded-2xl bg-brand-blue text-base font-black hover:bg-brand-blue-light"
+              disabled={cart.length === 0}
+              className="h-14 w-full rounded-2xl bg-brand-blue text-base font-black hover:bg-brand-blue-light disabled:opacity-50 disabled:cursor-not-allowed"
               onClick={() => {
-                setPayments([{ method: "PIX QR Code", amount: String(total.toFixed(2)) }]);
+                // Ao abrir o checkout, sugerimos o pagamento total no método PIX por padrão
+                setPayments([{ method: "PIX QR Code", amount: total.toFixed(2).replace('.', '.') }]);
                 setShowCheckout(true);
               }}
             >
@@ -1181,21 +1004,6 @@ function PDVPage() {
           </div>
         </aside>
       </div>
-
-      <PdvCalculator
-        open={showCalculator}
-        onOpenChange={setShowCalculator}
-        onSendToCart={(total, desc) => {
-          addToCart({
-            id: `calc-${Date.now()}`,
-            name: desc,
-            category: "Outros",
-            price: total,
-            detail: "Calculadora",
-          });
-          toast.success("Valor enviado ao carrinho.");
-        }}
-      />
 
       <Dialog open={showFastSale} onOpenChange={setShowFastSale}>
         <DialogContent className="rounded-3xl">
@@ -1718,14 +1526,14 @@ function PDVPage() {
       </Dialog>
 
       <Dialog open={showCloseCash} onOpenChange={setShowCloseCash}>
-        <DialogContent className="max-w-2xl rounded-3xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-lg rounded-3xl">
           <DialogHeader>
-            <DialogTitle>Fechar caixa — confira antes de salvar</DialogTitle>
+            <DialogTitle>Fechar caixa</DialogTitle>
           </DialogHeader>
           <div className="space-y-3">
             <div className="rounded-2xl bg-brand-blue p-4 text-white">
               <p className="text-xs font-bold uppercase tracking-wider text-blue-200">
-                Resultado do dia
+                Saldo esperado do dia
               </p>
               <p className="mt-1 text-3xl font-black">{brl(dayBalance)}</p>
               <p className="mt-1 text-xs text-blue-100">
@@ -1756,113 +1564,22 @@ function PDVPage() {
                 </div>
               )}
             </div>
-            <div className="rounded-2xl border border-dashed border-slate-200 p-3 text-xs text-slate-600">
-              <p className="font-bold text-slate-700 mb-1">Conferência do dinheiro físico</p>
-              <p>
-                Esperado em dinheiro:{" "}
-                <strong>{brl(paymentTotals.cash + Number(cashSession?.initialAmount || 0))}</strong>
-                {cashSession?.initialAmount ? (
-                  <span className="block text-[11px] text-slate-500">
-                    (inclui troco inicial de {brl(Number(cashSession.initialAmount))})
-                  </span>
-                ) : null}
-              </p>
-            </div>
             <div>
-              <Label>Valor contado na gaveta</Label>
+              <Label>Saldo total conferido</Label>
               <Input
                 type="number"
                 inputMode="decimal"
-                placeholder="0,00"
                 value={sessionForm.informedCash}
                 onChange={(e) => setSessionForm({ ...sessionForm, informedCash: e.target.value })}
               />
             </div>
-            <div
-              className={`rounded-2xl p-4 text-sm font-bold ${
-                Math.abs(
-                  toNumber(sessionForm.informedCash) -
-                    (paymentTotals.cash + Number(cashSession?.initialAmount || 0)),
-                ) < 0.01
-                  ? "bg-emerald-50 text-emerald-700"
-                  : "bg-amber-50 text-amber-800"
-              }`}
-            >
-              Diferença:{" "}
-              {brl(
-                toNumber(sessionForm.informedCash) -
-                  (paymentTotals.cash + Number(cashSession?.initialAmount || 0)),
-              )}
-            </div>
-            <div className="rounded-2xl border border-slate-200 bg-white">
-              <div className="flex items-center justify-between border-b border-slate-100 px-3 py-2">
-                <p className="text-xs font-black uppercase tracking-wider text-brand-blue">
-                  Vendas e lançamentos do dia ({todayEntries.length})
-                </p>
-                <span className="text-xs text-slate-500">{brl(totalToday)} entrada · {brl(expenseTotal)} saída</span>
-              </div>
-              <div className="max-h-56 overflow-y-auto divide-y divide-slate-100">
-                {todayEntries.length ? (
-                  todayEntries.map((entry) => (
-                    <div key={entry.id} className="flex items-start justify-between gap-3 px-3 py-2 text-sm">
-                      <div className="min-w-0">
-                        <p className="truncate font-bold">{entry.description || entry.category || "Lançamento"}</p>
-                        <p className="truncate text-[11px] text-slate-500">
-                          {new Date(entry.created_at).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}
-                          {entry.payment_method ? ` · ${entry.payment_method}` : ""}
-                        </p>
-                      </div>
-                      <span className={`shrink-0 font-black ${entry.type === "saida" ? "text-red-600" : "text-emerald-600"}`}>
-                        {entry.type === "saida" ? "-" : "+"}{brl(Number(entry.amount || 0))}
-                      </span>
-                    </div>
-                  ))
-                ) : (
-                  <p className="px-3 py-6 text-center text-sm text-slate-500">Nenhum lançamento hoje.</p>
-                )}
-              </div>
-            </div>
-            <div>
-              <Label>Observações</Label>
-              <Textarea
-                placeholder="Ex: faltou troco, sangria não registrada..."
-                value={sessionForm.notes}
-                onChange={(e) => setSessionForm({ ...sessionForm, notes: e.target.value })}
-              />
+            <div className="rounded-2xl bg-blue-50 p-4 text-sm font-bold text-brand-blue">
+              Diferença: {brl(toNumber(sessionForm.informedCash) - dayBalance)}
             </div>
           </div>
-          <DialogFooter className="flex-col-reverse gap-2 sm:flex-row">
-            <Button variant="outline" onClick={() => setShowCloseCash(false)}>
-              Cancelar
-            </Button>
-            <Button
-              variant="outline"
-              onClick={() => {
-                const counted = toNumber(sessionForm.informedCash);
-                const expectedCash = paymentTotals.cash + Number(cashSession?.initialAmount || 0);
-                openClosureReceipt(
-                  {
-                    closure_date: today(),
-                    closed_at: new Date().toISOString(),
-                    operator: cashSession?.operator || sessionForm.operator || "Operador",
-                    initial_amount: Number(cashSession?.initialAmount || 0),
-                    expected_cash: expectedCash,
-                    counted_cash: counted,
-                    difference: counted - expectedCash,
-                    total_in: totalToday,
-                    total_out: expenseTotal,
-                    by_method: { cash: paymentTotals.cash, pix: paymentTotals.pix, debit: paymentTotals.debit, credit: paymentTotals.credit, other: paymentTotals.other },
-                    entries_count: todayEntries.length,
-                    notes: sessionForm.notes || null,
-                  },
-                  todayEntries,
-                );
-              }}
-            >
-              Imprimir prévia
-            </Button>
-            <Button className="bg-brand-blue hover:bg-brand-blue-light" onClick={closeCashAndSave}>
-              Fechar e salvar
+          <DialogFooter>
+            <Button className="bg-brand-blue hover:bg-brand-blue-light" onClick={closeCash}>
+              Fechar caixa
             </Button>
           </DialogFooter>
         </DialogContent>

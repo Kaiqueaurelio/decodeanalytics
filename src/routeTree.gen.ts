@@ -24,7 +24,6 @@ import { Route as AuthenticatedPdvRouteImport } from './routes/_authenticated/pd
 import { Route as AuthenticatedOrdersRouteImport } from './routes/_authenticated/orders'
 import { Route as AuthenticatedEllaRouteImport } from './routes/_authenticated/ella'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
-import { Route as AuthenticatedClosuresRouteImport } from './routes/_authenticated/closures'
 import { Route as AuthenticatedClientsRouteImport } from './routes/_authenticated/clients'
 import { Route as AuthenticatedCashRouteImport } from './routes/_authenticated/cash'
 import { Route as AuthenticatedCalculatorRouteImport } from './routes/_authenticated/calculator'
@@ -104,11 +103,6 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedClosuresRoute = AuthenticatedClosuresRouteImport.update({
-  id: '/closures',
-  path: '/closures',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
 const AuthenticatedClientsRoute = AuthenticatedClientsRouteImport.update({
   id: '/clients',
   path: '/clients',
@@ -132,7 +126,6 @@ export interface FileRoutesByFullPath {
   '/calculator': typeof AuthenticatedCalculatorRoute
   '/cash': typeof AuthenticatedCashRoute
   '/clients': typeof AuthenticatedClientsRoute
-  '/closures': typeof AuthenticatedClosuresRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/ella': typeof AuthenticatedEllaRoute
   '/orders': typeof AuthenticatedOrdersRoute
@@ -152,7 +145,6 @@ export interface FileRoutesByTo {
   '/calculator': typeof AuthenticatedCalculatorRoute
   '/cash': typeof AuthenticatedCashRoute
   '/clients': typeof AuthenticatedClientsRoute
-  '/closures': typeof AuthenticatedClosuresRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/ella': typeof AuthenticatedEllaRoute
   '/orders': typeof AuthenticatedOrdersRoute
@@ -174,7 +166,6 @@ export interface FileRoutesById {
   '/_authenticated/calculator': typeof AuthenticatedCalculatorRoute
   '/_authenticated/cash': typeof AuthenticatedCashRoute
   '/_authenticated/clients': typeof AuthenticatedClientsRoute
-  '/_authenticated/closures': typeof AuthenticatedClosuresRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/ella': typeof AuthenticatedEllaRoute
   '/_authenticated/orders': typeof AuthenticatedOrdersRoute
@@ -196,7 +187,6 @@ export interface FileRouteTypes {
     | '/calculator'
     | '/cash'
     | '/clients'
-    | '/closures'
     | '/dashboard'
     | '/ella'
     | '/orders'
@@ -216,7 +206,6 @@ export interface FileRouteTypes {
     | '/calculator'
     | '/cash'
     | '/clients'
-    | '/closures'
     | '/dashboard'
     | '/ella'
     | '/orders'
@@ -237,7 +226,6 @@ export interface FileRouteTypes {
     | '/_authenticated/calculator'
     | '/_authenticated/cash'
     | '/_authenticated/clients'
-    | '/_authenticated/closures'
     | '/_authenticated/dashboard'
     | '/_authenticated/ella'
     | '/_authenticated/orders'
@@ -367,13 +355,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/closures': {
-      id: '/_authenticated/closures'
-      path: '/closures'
-      fullPath: '/closures'
-      preLoaderRoute: typeof AuthenticatedClosuresRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
     '/_authenticated/clients': {
       id: '/_authenticated/clients'
       path: '/clients'
@@ -402,7 +383,6 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedCalculatorRoute: typeof AuthenticatedCalculatorRoute
   AuthenticatedCashRoute: typeof AuthenticatedCashRoute
   AuthenticatedClientsRoute: typeof AuthenticatedClientsRoute
-  AuthenticatedClosuresRoute: typeof AuthenticatedClosuresRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedEllaRoute: typeof AuthenticatedEllaRoute
   AuthenticatedOrdersRoute: typeof AuthenticatedOrdersRoute
@@ -418,7 +398,6 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedCalculatorRoute: AuthenticatedCalculatorRoute,
   AuthenticatedCashRoute: AuthenticatedCashRoute,
   AuthenticatedClientsRoute: AuthenticatedClientsRoute,
-  AuthenticatedClosuresRoute: AuthenticatedClosuresRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedEllaRoute: AuthenticatedEllaRoute,
   AuthenticatedOrdersRoute: AuthenticatedOrdersRoute,

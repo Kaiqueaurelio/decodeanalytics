@@ -29,7 +29,6 @@ import {
   SectionHeader,
   type StoreProduct,
 } from "@/components/storefront/ProductCard";
-import { SmartImage } from "@/components/storefront/SmartImage";
 import { STORE_CATEGORIES, STORE_CONTACT, brl, waLink } from "@/components/storefront/tokens";
 import { useStoreProducts } from "@/components/storefront/useStoreProducts";
 import { InfiniteProducts } from "@/components/storefront/InfiniteProducts";
@@ -94,7 +93,7 @@ function FeaturedBento() {
     <section className="mx-auto mt-3 w-full max-w-[1280px] px-4 sm:mt-4">
       <header className="mb-5 flex flex-col items-start justify-between gap-2 sm:flex-row sm:items-end">
         <div className="min-w-0">
-          <p className="text-[11px] font-extrabold uppercase tracking-[0.22em] text-[#172554]">
+          <p className="text-[11px] font-extrabold uppercase tracking-[0.22em] text-[#1366ff]">
             Os favoritos dos IMbatíveis
           </p>
           <h2 className="font-display mt-1 text-4xl leading-none text-[var(--store-primary-dark)] sm:text-5xl">
@@ -106,7 +105,7 @@ function FeaturedBento() {
         </div>
         <Link
           to="/produtos"
-          className="inline-flex items-center gap-1 text-xs font-extrabold uppercase tracking-[0.18em] text-[#172554] hover:text-[var(--store-primary-dark)]"
+          className="inline-flex items-center gap-1 text-xs font-extrabold uppercase tracking-[0.18em] text-[#1366ff] hover:text-[var(--store-primary-dark)]"
         >
           Ver tudo <ArrowRight className="h-4 w-4" />
         </Link>
@@ -150,7 +149,7 @@ function FeaturedBento() {
         {/* Card "mais produtos" */}
         <Link
           to="/produtos"
-          className="store-bento-card group flex flex-col items-center justify-center bg-[#172554] p-5 text-center text-white animate-fade-in"
+          className="store-bento-card group flex flex-col items-center justify-center bg-[#1366ff] p-5 text-center text-white animate-fade-in"
           style={{ animationDelay: "360ms", animationFillMode: "both" }}
         >
           <div className="grid h-12 w-12 place-items-center rounded-full border-2 border-white text-white transition-transform group-hover:rotate-90">
@@ -193,12 +192,25 @@ function BentoProductCard({
       style={{ animationDelay: `${animationDelay}ms`, animationFillMode: "both" }}
     >
       <div className="relative mb-3 flex aspect-square items-center justify-center overflow-hidden rounded-[var(--store-radius-md)] bg-slate-100">
-        <SmartImage 
-          src={product.image_url} 
-          alt={product.name}
-          fallbackEmoji="✨"
-          className="transition-transform duration-500 group-hover:scale-[1.06]"
+        <div
+          className="absolute inset-0 opacity-[0.06]"
+          style={{
+            backgroundImage: "radial-gradient(#000 1px, transparent 1px)",
+            backgroundSize: "10px 10px",
+          }}
         />
+        {product.image_url ? (
+          <img
+            src={product.image_url}
+            alt={product.name}
+            loading="lazy"
+            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.06]"
+          />
+        ) : (
+          <span className="font-display text-3xl text-slate-300 sm:text-4xl">
+            {categoryShort}
+          </span>
+        )}
         {product.badge && (
           <span className="absolute left-2 top-2 rounded-sm bg-[var(--store-ink)] px-2 py-0.5 text-[9px] font-extrabold uppercase tracking-wider text-[var(--store-gold)]">
             {product.badge}

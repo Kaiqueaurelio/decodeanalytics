@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Pencil, Trash2, Search, AlertTriangle, Eye, EyeOff } from "lucide-react";
+import { Plus, Pencil, Trash2, Search, AlertTriangle } from "lucide-react";
 import { toast } from "sonner";
 import { brl, fmtDate, PRODUCTION_STATUS_LABEL, PAYMENT_STATUS_LABEL } from "@/lib/format";
 import { OrderEditor } from "@/components/OrderEditor";
@@ -18,19 +18,15 @@ function OrdersPage() {
   const [search, setSearch] = useState("");
   const [open, setOpen] = useState(false);
   const [editId, setEditId] = useState<string | null>(null);
-  const [showCompleted, setShowCompleted] = useState(false);
 
   const { data } = useQuery({
-    queryKey: ["orders", search, showCompleted],
+    queryKey: ["orders", search],
     queryFn: async () => {
       let q = supabase
         .from("orders")
         .select("*, clients(name), assignee:profiles!orders_assigned_to_fkey(full_name,email)")
         .order("created_at", { ascending: false })
         .limit(200);
-      if (!showCompleted) {
-        q = q.not("production_status", "in", "(entregue,cancelado)");
-      }
       const { data, error } = await q;
       if (error) throw error;
       const rows = (data ?? []) as any[];
@@ -73,25 +69,15 @@ function OrdersPage() {
             className="pl-9"
           />
         </div>
-        <div className="flex gap-2">
-          <Button
-            variant="outline"
-            onClick={() => setShowCompleted((v) => !v)}
-            title={showCompleted ? "Ocultar entregues/cancelados" : "Mostrar entregues/cancelados"}
-          >
-            {showCompleted ? <EyeOff className="w-4 h-4 mr-1" /> : <Eye className="w-4 h-4 mr-1" />}
-            {showCompleted ? "Ocultar concluídas" : "Mostrar concluídas"}
-          </Button>
-          <Button
-            onClick={() => {
-              setEditId(null);
-              setOpen(true);
-            }}
-          >
-            <Plus className="w-4 h-4 mr-1" />
-            Nova OS
-          </Button>
-        </div>
+        <Button
+          onClick={() => {
+            setEditId(null);
+            setOpen(true);
+          }}
+        >
+          <Plus className="w-4 h-4 mr-1" />
+          Nova OS
+        </Button>
       </div>
       <Card>
         <div className="overflow-x-auto">
