@@ -560,7 +560,7 @@ function TestimonialsSection() {
 function _ContactSection() {
   return (
     <section className="bg-[var(--store-primary-dark)] py-12 text-white sm:py-16">
-      <div className="mx-auto grid max-w-[1280px] gap-8 px-4 lg:grid-cols-2 lg:items-center">
+      <div className="mx-auto grid max-w-[1280px] gap-8 px-4 lg:grid-cols-2 lg:items-start">
         <div>
           <p className="text-xs font-bold uppercase tracking-[0.2em] text-[var(--store-secondary)]">
             Atendimento
@@ -621,6 +621,33 @@ function _ContactSection() {
                 </li>
               ))}
             </ul>
+          </div>
+        </div>
+      </div>
+
+      {/* Mapa */}
+      <div className="mx-auto mt-10 max-w-[1280px] px-4">
+        <div className="overflow-hidden rounded-[var(--store-radius-lg)] border border-white/10 bg-white/5">
+          <iframe
+            title="Localização Alcateia's"
+            src="https://maps.google.com/maps?q=Estrada+do+Cabreúva,703,Vila+Santa+Lúcia,Carapicuíba,SP&t=&z=15&ie=UTF8&iwloc=&output=embed"
+            className="h-72 w-full border-0 sm:h-96"
+            allowFullScreen
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
+          />
+          <div className="flex items-center justify-between border-t border-white/10 px-4 py-3 sm:px-5">
+            <p className="text-xs font-semibold text-white/80">
+              {STORE_CONTACT.address}, {STORE_CONTACT.city}
+            </p>
+            <a
+              href={STORE_CONTACT.mapsUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-xs font-bold text-[var(--store-secondary)] hover:underline"
+            >
+              Abrir no Google Maps
+            </a>
           </div>
         </div>
       </div>
