@@ -21,6 +21,7 @@ import { Route as AuthenticatedReceivablesRouteImport } from './routes/_authenti
 import { Route as AuthenticatedQuotesRouteImport } from './routes/_authenticated/quotes'
 import { Route as AuthenticatedProductionRouteImport } from './routes/_authenticated/production'
 import { Route as AuthenticatedPdvRouteImport } from './routes/_authenticated/pdv'
+import { Route as AuthenticatedInventoryRouteImport } from './routes/_authenticated/inventory'
 import { Route as AuthenticatedOrdersRouteImport } from './routes/_authenticated/orders'
 import { Route as AuthenticatedEllaRouteImport } from './routes/_authenticated/ella'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
@@ -84,6 +85,11 @@ const AuthenticatedProductionRoute = AuthenticatedProductionRouteImport.update({
   path: '/production',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedInventoryRoute = AuthenticatedInventoryRouteImport.update({
+  id: '/inventory',
+  path: '/inventory',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedPdvRoute = AuthenticatedPdvRouteImport.update({
   id: '/pdv',
   path: '/pdv',
@@ -137,6 +143,7 @@ export interface FileRoutesByFullPath {
   '/ella': typeof AuthenticatedEllaRoute
   '/orders': typeof AuthenticatedOrdersRoute
   '/pdv': typeof AuthenticatedPdvRoute
+  '/inventory': typeof AuthenticatedInventoryRoute
   '/production': typeof AuthenticatedProductionRoute
   '/quotes': typeof AuthenticatedQuotesRoute
   '/receivables': typeof AuthenticatedReceivablesRoute
@@ -157,6 +164,7 @@ export interface FileRoutesByTo {
   '/ella': typeof AuthenticatedEllaRoute
   '/orders': typeof AuthenticatedOrdersRoute
   '/pdv': typeof AuthenticatedPdvRoute
+  '/inventory': typeof AuthenticatedInventoryRoute
   '/production': typeof AuthenticatedProductionRoute
   '/quotes': typeof AuthenticatedQuotesRoute
   '/receivables': typeof AuthenticatedReceivablesRoute
@@ -179,6 +187,7 @@ export interface FileRoutesById {
   '/_authenticated/ella': typeof AuthenticatedEllaRoute
   '/_authenticated/orders': typeof AuthenticatedOrdersRoute
   '/_authenticated/pdv': typeof AuthenticatedPdvRoute
+  '/_authenticated/inventory': typeof AuthenticatedInventoryRoute
   '/_authenticated/production': typeof AuthenticatedProductionRoute
   '/_authenticated/quotes': typeof AuthenticatedQuotesRoute
   '/_authenticated/receivables': typeof AuthenticatedReceivablesRoute
@@ -201,6 +210,7 @@ export interface FileRouteTypes {
     | '/ella'
     | '/orders'
     | '/pdv'
+    | '/inventory'
     | '/production'
     | '/quotes'
     | '/receivables'
@@ -221,6 +231,7 @@ export interface FileRouteTypes {
     | '/ella'
     | '/orders'
     | '/pdv'
+    | '/inventory'
     | '/production'
     | '/quotes'
     | '/receivables'
@@ -242,6 +253,7 @@ export interface FileRouteTypes {
     | '/_authenticated/ella'
     | '/_authenticated/orders'
     | '/_authenticated/pdv'
+    | '/_authenticated/inventory'
     | '/_authenticated/production'
     | '/_authenticated/quotes'
     | '/_authenticated/receivables'
@@ -339,6 +351,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedProductionRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/inventory': {
+      id: '/_authenticated/inventory'
+      path: '/inventory'
+      fullPath: '/inventory'
+      preLoaderRoute: typeof AuthenticatedInventoryRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/pdv': {
       id: '/_authenticated/pdv'
       path: '/pdv'
@@ -407,6 +426,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedEllaRoute: typeof AuthenticatedEllaRoute
   AuthenticatedOrdersRoute: typeof AuthenticatedOrdersRoute
   AuthenticatedPdvRoute: typeof AuthenticatedPdvRoute
+  AuthenticatedInventoryRoute: typeof AuthenticatedInventoryRoute
   AuthenticatedProductionRoute: typeof AuthenticatedProductionRoute
   AuthenticatedQuotesRoute: typeof AuthenticatedQuotesRoute
   AuthenticatedReceivablesRoute: typeof AuthenticatedReceivablesRoute
@@ -423,6 +443,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedEllaRoute: AuthenticatedEllaRoute,
   AuthenticatedOrdersRoute: AuthenticatedOrdersRoute,
   AuthenticatedPdvRoute: AuthenticatedPdvRoute,
+  AuthenticatedInventoryRoute: AuthenticatedInventoryRoute,
   AuthenticatedProductionRoute: AuthenticatedProductionRoute,
   AuthenticatedQuotesRoute: AuthenticatedQuotesRoute,
   AuthenticatedReceivablesRoute: AuthenticatedReceivablesRoute,

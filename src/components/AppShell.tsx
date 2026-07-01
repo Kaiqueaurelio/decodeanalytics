@@ -4,6 +4,7 @@ import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import {
   Bell,
   BarChart3,
+  Boxes,
   ChevronRight,
   ClipboardList,
   Cog,
@@ -76,6 +77,14 @@ const NAV: NavItem[] = [
     icon: Kanban,
     section: "Operação",
     roles: ["administrador", "atendente", "producao"],
+  },
+  {
+    to: "/inventory",
+    label: "Estoque",
+    description: "Entradas, saidas e minimo",
+    icon: Boxes,
+    section: "Operação",
+    roles: ["administrador", "atendente", "producao", "financeiro"],
   },
   {
     to: "/pdv",
@@ -172,11 +181,11 @@ export function AppShell({ children }: { children: ReactNode }) {
       <aside
         className={cn(
           "fixed inset-y-0 left-0 z-40 flex flex-col overflow-hidden bg-sidebar text-sidebar-foreground shadow-2xl transition-[width,transform] duration-300 md:translate-x-0",
-          collapsed ? "w-72 md:w-20" : "w-72",
+          collapsed ? "w-72 md:w-16" : "w-72 md:w-64",
           open ? "translate-x-0" : "-translate-x-full",
         )}
       >
-        <div className="app-grid-pattern border-b border-white/10 px-4 py-4">
+        <div className="app-grid-pattern border-b border-white/10 px-3 py-3">
           <button
             type="button"
             onClick={() =>
@@ -186,17 +195,17 @@ export function AppShell({ children }: { children: ReactNode }) {
                 return next;
               })
             }
-            className="mb-3 hidden w-full items-center justify-center gap-2 rounded-xl bg-white/10 px-3 py-2 text-xs font-bold text-white/80 hover:bg-white/15 hover:text-white md:flex"
+            className="mb-2 hidden w-full items-center justify-center gap-2 rounded-lg bg-white/10 px-2 py-1.5 text-xs font-bold text-white/80 hover:bg-white/15 hover:text-white md:flex"
             aria-label={collapsed ? "Expandir menu" : "Recolher menu"}
           >
             {collapsed ? (
               <>
-                <PanelLeftOpen className="h-4 w-4" />
+                <PanelLeftOpen className="h-3.5 w-3.5" />
                 <span className="sr-only">Expandir menu</span>
               </>
             ) : (
               <>
-                <PanelLeftClose className="h-4 w-4" />
+                <PanelLeftClose className="h-3.5 w-3.5" />
                 Recolher menu
               </>
             )}
@@ -204,19 +213,19 @@ export function AppShell({ children }: { children: ReactNode }) {
           <div className="flex items-center justify-between gap-3">
             <div
               className={cn(
-                "flex min-w-0 flex-1 items-center justify-center rounded-2xl bg-white p-2 shadow-lg ring-2 ring-brand-yellow/70",
-                collapsed ? "h-28 md:hidden" : "h-28",
+                "flex min-w-0 flex-1 items-center justify-center rounded-xl bg-white p-2 shadow-lg ring-2 ring-brand-yellow/70",
+                collapsed ? "h-24 md:hidden" : "h-24",
               )}
             >
               <img
                 src="/brand/alcateia-logo.png"
                 alt="Logo da Alcateia's Produções Gráficas"
-                className="h-full max-h-24 w-full object-contain"
+                className="h-full max-h-20 w-full object-contain"
               />
             </div>
             <div
               className={cn(
-                "hidden h-12 w-12 shrink-0 place-items-center rounded-2xl bg-white p-1 shadow-lg ring-2 ring-brand-yellow/70",
+                "hidden h-10 w-10 shrink-0 place-items-center rounded-xl bg-white p-1 shadow-lg ring-2 ring-brand-yellow/70",
                 collapsed && "md:grid",
               )}
             >
@@ -232,12 +241,12 @@ export function AppShell({ children }: { children: ReactNode }) {
               className="rounded-lg p-2 text-white/70 hover:bg-white/10 hover:text-white md:hidden"
               aria-label="Fechar menu"
             >
-              <X className="h-5 w-5" />
+              <X className="h-4 w-4" />
             </button>
           </div>
           <div
             className={cn(
-              "mt-4 rounded-xl border border-white/10 bg-white/5 px-3 py-2.5",
+              "mt-3 rounded-xl border border-white/10 bg-white/5 px-3 py-2",
               collapsed && "md:hidden",
             )}
           >
@@ -250,12 +259,12 @@ export function AppShell({ children }: { children: ReactNode }) {
           </div>
         </div>
 
-        <nav className="app-scrollbar flex-1 overflow-y-auto px-3 py-4">
+        <nav className="app-scrollbar flex-1 overflow-y-auto px-2.5 py-3">
           {SECTIONS.map((section) => {
             const sectionItems = items.filter((item) => item.section === section);
             if (!sectionItems.length) return null;
             return (
-              <div key={section} className="mb-5">
+              <div key={section} className="mb-4">
                 <p
                   className={cn(
                     "mb-2 px-3 text-[10px] font-bold uppercase tracking-[0.18em] text-white/35",
@@ -275,7 +284,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                         to={item.to}
                         onClick={() => setOpen(false)}
                         className={cn(
-                          "group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-all",
+                          "group flex min-w-0 items-center gap-2.5 rounded-xl px-2.5 py-2 text-sm transition-all",
                           active
                             ? "bg-brand-yellow font-bold text-brand-blue shadow-lg shadow-black/10"
                             : "text-white/72 hover:bg-white/8 hover:text-white",
@@ -283,18 +292,18 @@ export function AppShell({ children }: { children: ReactNode }) {
                       >
                         <span
                           className={cn(
-                            "grid h-8 w-8 shrink-0 place-items-center rounded-lg transition-colors",
+                            "grid h-7 w-7 shrink-0 place-items-center rounded-lg transition-colors",
                             active ? "bg-brand-blue/10" : "bg-white/7 group-hover:bg-white/12",
                           )}
                         >
-                          <Icon className="h-4 w-4" />
+                          <Icon className="h-3.5 w-3.5" />
                         </span>
                         <span className={cn("min-w-0 flex-1 truncate", collapsed && "md:hidden")}>
                           {item.label}
                         </span>
                         {active && (
                           <ChevronRight
-                            className={cn("h-4 w-4 shrink-0", collapsed && "md:hidden")}
+                            className={cn("h-3.5 w-3.5 shrink-0", collapsed && "md:hidden")}
                           />
                         )}
                       </Link>
@@ -306,7 +315,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           })}
         </nav>
 
-        <div className="border-t border-white/10 bg-black/10 p-3">
+        <div className="border-t border-white/10 bg-black/10 p-2.5">
           <button
             type="button"
             onClick={() =>
@@ -316,20 +325,20 @@ export function AppShell({ children }: { children: ReactNode }) {
                 return next;
               })
             }
-            className="mb-2 hidden w-full items-center justify-center gap-2 rounded-xl bg-white/8 px-3 py-2 text-sm font-bold text-white/75 hover:bg-white/12 hover:text-white md:flex"
+            className="mb-2 hidden w-full items-center justify-center gap-2 rounded-lg bg-white/8 px-2 py-1.5 text-xs font-bold text-white/75 hover:bg-white/12 hover:text-white md:flex"
             aria-label={collapsed ? "Expandir menu" : "Recolher menu"}
           >
             {collapsed ? (
-              <PanelLeftOpen className="h-5 w-5" />
+              <PanelLeftOpen className="h-4 w-4" />
             ) : (
               <>
-                <PanelLeftClose className="h-5 w-5" />
+                <PanelLeftClose className="h-4 w-4" />
                 <span>Recolher menu</span>
               </>
             )}
           </button>
-          <div className="mb-2 flex items-center gap-3 rounded-xl px-2 py-2">
-            <div className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-brand-yellow text-sm font-extrabold text-brand-blue">
+          <div className="mb-2 flex items-center gap-2 rounded-xl px-2 py-1.5">
+            <div className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-brand-yellow text-xs font-extrabold text-brand-blue">
               {userInitial}
             </div>
             <div className={cn("min-w-0 flex-1", collapsed && "md:hidden")}>
@@ -345,9 +354,9 @@ export function AppShell({ children }: { children: ReactNode }) {
               await signOut();
               navigate({ to: "/auth" });
             }}
-            className="flex w-full items-center gap-2 rounded-xl px-3 py-2.5 text-sm font-medium text-white/65 transition-colors hover:bg-white/8 hover:text-white"
+            className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 text-sm font-medium text-white/65 transition-colors hover:bg-white/8 hover:text-white"
           >
-            <LogOut className="h-4 w-4" />{" "}
+            <LogOut className="h-3.5 w-3.5" />{" "}
             <span className={cn(collapsed && "md:hidden")}>Sair da conta</span>
           </button>
         </div>
@@ -365,7 +374,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       <div
         className={cn(
           "flex min-h-screen min-w-0 max-w-full flex-col overflow-x-hidden transition-[margin] duration-300",
-          collapsed ? "md:ml-20" : "md:ml-72",
+          collapsed ? "md:ml-16" : "md:ml-64",
         )}
       >
         <div className="hidden h-8 items-center justify-between bg-brand-blue px-6 text-[11px] font-medium text-white/70 lg:flex">
