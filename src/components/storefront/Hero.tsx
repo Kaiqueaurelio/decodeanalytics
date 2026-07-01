@@ -29,7 +29,7 @@ export function Hero() {
               IMPRESSÃO
               <br />
               <span className="rounded-md bg-[var(--store-secondary)] px-3 py-1 text-[var(--store-primary-dark)]">
-                DA MATILHA
+                PRODUÇÕES GRÁFICAS
               </span>
             </h1>
             <p className="mt-5 max-w-md text-sm sm:text-base font-medium text-white/85">
