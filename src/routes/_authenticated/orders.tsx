@@ -208,7 +208,7 @@ function OrdersPage() {
                   </td>
                 </tr>
               ))}
-              {!data?.length && (
+              {!filtered?.length && (
                 <tr>
                   <td colSpan={8} className="p-8 text-center text-muted-foreground">
                     Nenhuma OS cadastrada
