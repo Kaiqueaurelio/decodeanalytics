@@ -16,6 +16,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import { STORE_CATEGORIES, STORE_CONTACT, waLink } from "./tokens";
+import { useCart } from "@/lib/cart-context";
 import { useState } from "react";
 import {
   Sheet,
