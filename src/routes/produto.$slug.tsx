@@ -11,9 +11,11 @@ import {
   ShieldCheck,
   CheckCircle2,
 } from "lucide-react";
+import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { StoreShell } from "@/components/storefront/StoreShell";
 import { brl, waLink } from "@/components/storefront/tokens";
+import { useCart } from "@/lib/cart-context";
 import {
   ProductCard,
   ProductGrid,
