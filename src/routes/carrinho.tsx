@@ -1,8 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useCart, brl } from "@/components/storefront/tokens";
+import { useCart } from "@/lib/cart-context";
+import { brl, waLink } from "@/components/storefront/tokens";
 import { StoreShell } from "@/components/storefront/StoreShell";
 import { ShoppingCart, Trash2, Minus, Plus, ArrowRight, MessageCircle } from "lucide-react";
-import { waLink } from "@/components/storefront/tokens";
 import { useMemo } from "react";
 
 export const Route = createFileRoute("/carrinho")({
@@ -23,7 +23,7 @@ function CartPage() {
 
   const message = useMemo(() => {
     const lines = items.map(
-      (item) =>
+      (item: { name: string; quantity: number; price: number }) =>
         `• ${item.name} — ${item.quantity}x ${brl(item.price)} = ${brl(item.price * item.quantity)}`,
     );
     return `Olá! Estou finalizando um pedido no site:\n\n${lines.join("\n")}\n\n*Total: ${brl(total)}*\n\nPodemos prosseguir?`;
@@ -63,7 +63,7 @@ function CartPage() {
 
         <div className="mt-6 grid gap-8 lg:grid-cols-[1fr_380px]">
           <div className="space-y-3">
-            {items.map((item) => (
+            {items.map((item: { id: string; name: string; category: string | null; price: number; quantity: number; image_url?: string | null }) => (
               <div
                 key={item.id}
                 className="flex items-center gap-4 rounded-[var(--store-radius-lg)] border border-[var(--store-border)] bg-white p-4 shadow-[var(--store-shadow-sm)]"
