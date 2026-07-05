@@ -1,65 +1,94 @@
-## Resumo
+# Plano de Melhorias — Alcateia's
 
-Construir um storefront público de gráfica online ao lado do painel administrativo atual (sem quebrar nada). O catálogo lê da tabela `services` que já existe. O painel `_authenticated/*` continua intacto. Entrego em 3 fases, com aprovação entre cada uma.
+## Diagnóstico resumido
 
-## O que será preservado
+**Loja pública**: O catálogo está bonito e funcional, mas o cliente não consegue comprar sozinho. Os botões "Adicionar ao carrinho", "Comprar agora" e "Enviar arte" estão todos desabilitados com a legenda "(em breve)". O único canal de conversão é o botão do WhatsApp. Isso significa que todo tráfego que chega ao site precisa de atendimento humano para fechar.
 
-- Todas as rotas atuais sob `/_authenticated/*` (Dashboard, Clientes, Orçamentos, OS, Produção, Caixa, Contas a Receber, Serviços, Configurações).
-- Autenticação, RLS, tabelas, edge functions e configurações de e-mail.
-- O `AppShell` administrativo só aparece dentro de `/_authenticated/*`; o storefront usa seu próprio layout.
+**Painel administrativo**: O PDV acumula 1.872 linhas e mistura venda rápida, cobrança de OS, fechamento de caixa, lançamentos de maquininha e cálculo por m² num único arquivo. A calculadora de serviços gráficos já existe como página separada (`/calculator`), mas não está acessível de dentro do PDV — exatamente o ponto onde o vendedor precisa dela. A tabela de OS não tem filtros por status ou data, e a produção não tem visual Kanban.
 
-## Fase 1 — Fundação visual + Home + Catálogo (esta entrega)
+**SEO/Técnico**: Não existe `robots.txt` nem `sitemap.xml`. O manifest PWA está configurado, mas não há service worker ativo.
 
-**Design system (tokens em `src/styles.css`)**
-- Paleta: `--primary #172554`, `--primary-light #2563eb`, `--secondary #facc15`, `--accent #f97316`, success/danger/warning, surfaces e borders.
-- Tipografia: Inter (via `<link>` no `__root.tsx`), escala h1/h2/h3/p/small/price.
-- Radius (`sm 6 / md 10 / lg 16 / xl 24`) e sombras `sm/md/lg`.
-- Tokens mapeados em `@theme inline` (compatíveis com shadcn já existente).
+---
 
-**Componentes novos em `src/components/storefront/`**
-- `StorefrontLayout` (header + footer + outlet)
-- `TopPromoBar` ("Ganhe 10% OFF — cupom BEMVINDO10")
-- `Header` (logo, busca grande, ações: Entrar, WhatsApp, Carrinho, Minha conta)
-- `CategoryNav` (chips horizontais com scroll mobile)
-- `HeroBanner` (degradê azul-marinho, CTA "Ver produtos" / "Enviar minha arte")
-- `SectionTitle`, `ProductCard`, `ProductGrid`, `Badge`, `Rating`, `Price`, `ServiceCard`, `Footer`
-- Microinterações: hover scale leve, sombra md, transição 200ms; skeleton no grid.
+## Fase 1 — Quick Wins (entrega rápida, alto impacto)
 
-**Rotas públicas**
-- `src/routes/index.tsx` → substitui o placeholder por Home: TopPromo + Header + Hero + "Favoritos dos clientes" + "Acabou de chegar" + "Serviços gráficos" + "Como funciona" + Footer.
-- `src/routes/produtos.tsx` → catálogo completo com filtro por categoria e busca, lendo `services`.
-- `src/routes/produto.$slug.tsx` → página de produto (galeria, infos, seletores básicos, observações, botões "Adicionar ao carrinho", "Comprar agora", "WhatsApp"). Sem checkout ainda.
-- Cada rota com `head()` próprio (title, description, OG).
+### 1.1 Carrinho funcional na loja
+- Criar `CartContext` com persistência em `localStorage`.
+- Habilitar o botão "Adicionar ao carrinho" na página de produto.
+- Adicionar ícone de carrinho no `StoreShell` com contador de itens.
+- Página `/carrinho`: listar itens, alterar quantidade, remover, mostrar total.
+- **Por que**: desbloqueia a primeira etapa de compra sem depender de WhatsApp.
 
-**Dados**
-- Catálogo lê `public.services` (já existe) via server fn pública (`supabaseAdmin` dentro do handler) para funcionar em SSR sem login.
-- Pequena migração: adiciona em `services` os campos opcionais `slug`, `category`, `image_url`, `short_description`, `rating`, `reviews_count`, `min_quantity`, `badge` (todos nullable, sem quebrar admin). O CRUD de Serviços continua funcionando — campos extras ficam vazios até o admin preencher.
+### 1.2 Calculadora no PDV
+- Integrar a `GraphicServiceCalculator` como um modal/drawer dentro da tela do PDV.
+- Permitir que o vendedor, ao calcular um valor, clique em "Adicionar ao carrinho do PDV" e o item entre no carrinho com a descrição e valor calculados.
+- **Por que**: resolve a dor imediata de vender serviços não cadastrados (que você mesmo pediu).
 
-**SEO/A11y**
-- Single `<main>`, headings em ordem, labels nos inputs, alt em imagens, foco visível, contraste AA, tap targets ≥44px.
+### 1.3 robots.txt + sitemap.xml
+- Criar `public/robots.txt` permitindo tudo.
+- Criar `public/sitemap.xml` com as rotas públicas (`/`, `/produtos`, `/produto/*`).
+- **Por que**: Google não indexa direito sem esses arquivos.
 
-## Fase 2 — Carrinho, upload de arte e checkout via pedido
+### 1.4 Filtros na tabela de OS
+- Adicionar filtros por status de produção, status de pagamento, prazo (hoje, atrasado, próximos 7 dias) e responsável.
+- **Por que**: reduz o tempo de busca manual em listas longas.
 
-- `CartContext` (localStorage), página `/carrinho`, drawer no header.
-- Página `/checkout`: dados do cliente, upload da arte (Supabase Storage bucket `arquivos`), forma de pagamento, observações.
-- Ao finalizar: cria `client` (se novo), `order` + `order_items`, vincula arquivo em `order_files`. Dispara WhatsApp opcional.
-- Página `/meus-pedidos` para o cliente acompanhar (usando login Supabase já existente).
+---
 
-## Fase 3 — Conteúdo e conversão
+## Fase 2 — Fechamento do ciclo de venda + operação
 
-- Depoimentos (CMS simples no admin), FAQ accordion, "Como funciona" expandido, página `/sobre`, `/contato`.
-- WhatsApp flutuante.
-- Banner de cupom integrado ao checkout.
-- Sitemap.xml + robots.txt.
+### 2.1 Checkout online (cliente finaliza sozinho)
+- Página `/checkout`: dados do cliente, resumo do carrinho, escolha de retirada/entrega, observações.
+- Ao finalizar: criar `client` (se novo), criar `order` + `order_items` no banco.
+- Página `/pedido/:id` com resumo e status para o cliente acompanhar.
+- Integrar upload de arte no checkout (usar bucket `arquivos` já existente).
+- **Por que**: transforma o site em canal de venda real, não só vitrine.
 
-## Detalhes técnicos (Fase 1)
+### 2.2 WhatsApp com resumo automático
+- No checkout, gerar link do WhatsApp com resumo do pedido já preenchido.
+- Botão "Prefiro falar no WhatsApp" mantido como alternativa.
+- **Por que**: quem quer atendimento humano continua tendo; quem quer autonomia, tem.
 
-- Stack: TanStack Start + React 19, Tailwind v4 com `@theme inline`, shadcn já presente.
-- Fonte via `links` no `head()` do `__root.tsx` (preconnect + Inter).
-- Server fn pública `listServices` em `src/lib/catalog.functions.ts` chamando `supabaseAdmin` dentro do handler (loader-safe em SSR).
-- `useSuspenseQuery` no componente para hidratar.
-- Sem `<a href>` para rotas tipadas — usar `<Link to params>`.
-- `errorComponent` e `notFoundComponent` em cada rota com loader.
-- Não toco em `src/integrations/supabase/*` autogerados.
+### 2.3 Kanban de produção
+- Trocar a lista linear de `/production` por um board estilo Kanban com colunas por status (arte, impressão, acabamento, pronto, entregue).
+- Drag-and-drop para mover cards entre colunas e atualizar o status da OS.
+- **Por que**: visão imediata do gargalo da produção.
 
-Aprovo esta Fase 1 para começar?
+### 2.4 Relatórios de caixa e vendas
+- No PDV (ou em nova rota `/reports`): exportar fechamento de caixa em PDF e vendas do dia/período.
+- Gráfico simples de vendas por forma de pagamento.
+- **Por que**: o fechamento já gera HTML para impressão, mas não há histórico consultável.
+
+---
+
+## Fase 3 — Automação e escala
+
+### 3.1 Notificações inteligentes
+- Alertas no dashboard para: OS atrasada, OS sem responsável há +24h, estoque baixo.
+- Badge de notificação no header administrativo.
+- **Por que**: evita que problemas só sejam descobertos na reunião de segunda.
+
+### 3.2 Integração loja ↔ produção
+- Pedidos feitos pelo site aparecem automaticamente como novas OS no painel.
+- Status da OS reflete no acompanhamento do cliente (`/pedido/:id`).
+- **Por que**: elimina digitação dupla e reduz erro humano.
+
+### 3.3 Controle de estoque integrado
+- Vincular `order_items` a itens de estoque.
+- Baixa automática ao marcar OS como "pronto" ou "entregue".
+- Alerta quando material está abaixo do mínimo.
+- **Por que**: evita prometer prazo sem ter material.
+
+---
+
+## O que NÃO muda
+
+- Todas as rotas `/_authenticated/*` permanecem intactas.
+- Autenticação, RLS, tabelas e edge functions existentes não são alteradas.
+- O `AppShell` administrativo continua igual.
+
+---
+
+## Sugestão de sequência
+
+Se você quiser começar agora, recomendo a **Fase 1** inteira: são melhorias menores que já desbloqueiam valor imediato (carrinho, calculadora no PDV, filtros de OS, SEO básico). Aprovamos a Fase 1 para eu começar a implementar?
