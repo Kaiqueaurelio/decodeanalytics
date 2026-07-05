@@ -31,8 +31,8 @@ function OrdersPage() {
   const [deadlineFilter, setDeadlineFilter] = useState("all");
   const [responsibleFilter, setResponsibleFilter] = useState("all");
 
-  const { data } = useQuery({
-    queryKey: ["orders", search, showCompleted],
+  const { data: rawOrders } = useQuery({
+    queryKey: ["orders", showCompleted],
     queryFn: async () => {
       let q = supabase
         .from("orders")
@@ -44,16 +44,51 @@ function OrdersPage() {
       }
       const { data, error } = await q;
       if (error) throw error;
-      const rows = (data ?? []) as any[];
-      return search
-        ? rows.filter(
-            (r) =>
-              (r.clients?.name ?? "").toLowerCase().includes(search.toLowerCase()) ||
-              String(r.number).includes(search),
-          )
-        : rows;
+      return (data ?? []) as any[];
     },
   });
+
+  const { data: team } = useQuery({
+    queryKey: ["profiles-team"],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("profiles").select("id,full_name,email").order("full_name");
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
+
+  const filtered = useMemo(() => {
+    const rows = rawOrders ?? [];
+    const term = search.trim().toLowerCase();
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const nextWeek = new Date(today);
+    nextWeek.setDate(nextWeek.getDate() + 7);
+
+    return rows.filter((r: any) => {
+      const matchesSearch =
+        !term ||
+        (r.clients?.name ?? "").toLowerCase().includes(term) ||
+        String(r.number).includes(term);
+      const matchesProd = productionStatus === "all" || r.production_status === productionStatus;
+      const matchesPay = paymentStatus === "all" || r.payment_status === paymentStatus;
+      const matchesResp =
+        responsibleFilter === "all" ||
+        (responsibleFilter === "unassigned" ? !r.assigned_to : r.assigned_to === responsibleFilter);
+
+      let matchesDeadline = true;
+      if (deadlineFilter === "hoje") {
+        matchesDeadline = r.deadline === today.toISOString().slice(0, 10);
+      } else if (deadlineFilter === "atrasado") {
+        matchesDeadline = isOverdue(r);
+      } else if (deadlineFilter === "proximos7") {
+        const d = r.deadline ? new Date(r.deadline) : null;
+        matchesDeadline = !!d && d >= today && d <= nextWeek;
+      }
+
+      return matchesSearch && matchesProd && matchesPay && matchesResp && matchesDeadline;
+    });
+  }, [rawOrders, search, productionStatus, paymentStatus, deadlineFilter, responsibleFilter]);
 
   async function remove(id: string, number: number) {
     if (!confirm(`Excluir OS #${number}? Esta ação não pode ser desfeita.`)) return;
