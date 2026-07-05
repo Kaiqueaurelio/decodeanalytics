@@ -10,7 +10,7 @@ const SELECT =
 function normalizeProducts(rows: StoreProduct[]): StoreProduct[] {
   return rows.map((p) => ({
     ...p,
-    image_url: resolveProductImage(p.image_url, p.category),
+    image_url: resolveProductImage(p.image_url, p.category, p.slug),
   }));
 }
 
