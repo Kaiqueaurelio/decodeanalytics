@@ -303,11 +303,10 @@ function BuyBox({ product }: { product: StoreProduct }) {
         </a>
         <button
           type="button"
-          disabled
-          className="inline-flex h-11 cursor-not-allowed items-center justify-center gap-2 rounded-[var(--store-radius-md)] border border-[var(--store-border)] bg-white text-sm font-bold text-[var(--store-text-muted)]"
-          title="Disponível em breve"
+          onClick={handleAddToCart}
+          className="inline-flex h-11 items-center justify-center gap-2 rounded-[var(--store-radius-md)] border border-[var(--store-border)] bg-white text-sm font-bold text-[var(--store-primary)] hover:bg-[var(--store-surface-soft)] transition-colors"
         >
-          <ShoppingCart className="h-4 w-4" /> Adicionar ao carrinho (em breve)
+          <ShoppingCart className="h-4 w-4" /> Adicionar ao carrinho
         </button>
         <button
           type="button"
