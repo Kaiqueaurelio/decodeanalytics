@@ -140,6 +140,54 @@ function OrdersPage() {
           </Button>
         </div>
       </div>
+      <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
+        <Select value={productionStatus} onValueChange={setProductionStatus}>
+          <SelectTrigger className="h-9 text-xs">
+            <SelectValue placeholder="Status produção" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Todos os status</SelectItem>
+            {Object.entries(PRODUCTION_STATUS_LABEL).map(([key, label]) => (
+              <SelectItem key={key} value={key}>{label}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <Select value={paymentStatus} onValueChange={setPaymentStatus}>
+          <SelectTrigger className="h-9 text-xs">
+            <SelectValue placeholder="Status pagamento" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Todos os pagamentos</SelectItem>
+            {Object.entries(PAYMENT_STATUS_LABEL).map(([key, label]) => (
+              <SelectItem key={key} value={key}>{label}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <Select value={deadlineFilter} onValueChange={setDeadlineFilter}>
+          <SelectTrigger className="h-9 text-xs">
+            <SelectValue placeholder="Prazo" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Qualquer prazo</SelectItem>
+            <SelectItem value="hoje">Para hoje</SelectItem>
+            <SelectItem value="proximos7">Próximos 7 dias</SelectItem>
+            <SelectItem value="atrasado">Atrasado</SelectItem>
+          </SelectContent>
+        </Select>
+        <Select value={responsibleFilter} onValueChange={setResponsibleFilter}>
+          <SelectTrigger className="h-9 text-xs">
+            <SelectValue placeholder="Responsável" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Todos os responsáveis</SelectItem>
+            <SelectItem value="unassigned">Sem responsável</SelectItem>
+            {(team ?? []).map((m: any) => (
+              <SelectItem key={m.id} value={m.id}>{m.full_name || m.email}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+      </div>
       <Card>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
