@@ -21,8 +21,8 @@ import { Route as AuthenticatedReceivablesRouteImport } from './routes/_authenti
 import { Route as AuthenticatedQuotesRouteImport } from './routes/_authenticated/quotes'
 import { Route as AuthenticatedProductionRouteImport } from './routes/_authenticated/production'
 import { Route as AuthenticatedPdvRouteImport } from './routes/_authenticated/pdv'
-import { Route as AuthenticatedInventoryRouteImport } from './routes/_authenticated/inventory'
 import { Route as AuthenticatedOrdersRouteImport } from './routes/_authenticated/orders'
+import { Route as AuthenticatedInventoryRouteImport } from './routes/_authenticated/inventory'
 import { Route as AuthenticatedEllaRouteImport } from './routes/_authenticated/ella'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedClosuresRouteImport } from './routes/_authenticated/closures'
@@ -85,11 +85,6 @@ const AuthenticatedProductionRoute = AuthenticatedProductionRouteImport.update({
   path: '/production',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedInventoryRoute = AuthenticatedInventoryRouteImport.update({
-  id: '/inventory',
-  path: '/inventory',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
 const AuthenticatedPdvRoute = AuthenticatedPdvRouteImport.update({
   id: '/pdv',
   path: '/pdv',
@@ -98,6 +93,11 @@ const AuthenticatedPdvRoute = AuthenticatedPdvRouteImport.update({
 const AuthenticatedOrdersRoute = AuthenticatedOrdersRouteImport.update({
   id: '/orders',
   path: '/orders',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedInventoryRoute = AuthenticatedInventoryRouteImport.update({
+  id: '/inventory',
+  path: '/inventory',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedEllaRoute = AuthenticatedEllaRouteImport.update({
@@ -141,9 +141,9 @@ export interface FileRoutesByFullPath {
   '/closures': typeof AuthenticatedClosuresRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/ella': typeof AuthenticatedEllaRoute
+  '/inventory': typeof AuthenticatedInventoryRoute
   '/orders': typeof AuthenticatedOrdersRoute
   '/pdv': typeof AuthenticatedPdvRoute
-  '/inventory': typeof AuthenticatedInventoryRoute
   '/production': typeof AuthenticatedProductionRoute
   '/quotes': typeof AuthenticatedQuotesRoute
   '/receivables': typeof AuthenticatedReceivablesRoute
@@ -162,9 +162,9 @@ export interface FileRoutesByTo {
   '/closures': typeof AuthenticatedClosuresRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/ella': typeof AuthenticatedEllaRoute
+  '/inventory': typeof AuthenticatedInventoryRoute
   '/orders': typeof AuthenticatedOrdersRoute
   '/pdv': typeof AuthenticatedPdvRoute
-  '/inventory': typeof AuthenticatedInventoryRoute
   '/production': typeof AuthenticatedProductionRoute
   '/quotes': typeof AuthenticatedQuotesRoute
   '/receivables': typeof AuthenticatedReceivablesRoute
@@ -185,9 +185,9 @@ export interface FileRoutesById {
   '/_authenticated/closures': typeof AuthenticatedClosuresRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/ella': typeof AuthenticatedEllaRoute
+  '/_authenticated/inventory': typeof AuthenticatedInventoryRoute
   '/_authenticated/orders': typeof AuthenticatedOrdersRoute
   '/_authenticated/pdv': typeof AuthenticatedPdvRoute
-  '/_authenticated/inventory': typeof AuthenticatedInventoryRoute
   '/_authenticated/production': typeof AuthenticatedProductionRoute
   '/_authenticated/quotes': typeof AuthenticatedQuotesRoute
   '/_authenticated/receivables': typeof AuthenticatedReceivablesRoute
@@ -208,9 +208,9 @@ export interface FileRouteTypes {
     | '/closures'
     | '/dashboard'
     | '/ella'
+    | '/inventory'
     | '/orders'
     | '/pdv'
-    | '/inventory'
     | '/production'
     | '/quotes'
     | '/receivables'
@@ -229,9 +229,9 @@ export interface FileRouteTypes {
     | '/closures'
     | '/dashboard'
     | '/ella'
+    | '/inventory'
     | '/orders'
     | '/pdv'
-    | '/inventory'
     | '/production'
     | '/quotes'
     | '/receivables'
@@ -251,9 +251,9 @@ export interface FileRouteTypes {
     | '/_authenticated/closures'
     | '/_authenticated/dashboard'
     | '/_authenticated/ella'
+    | '/_authenticated/inventory'
     | '/_authenticated/orders'
     | '/_authenticated/pdv'
-    | '/_authenticated/inventory'
     | '/_authenticated/production'
     | '/_authenticated/quotes'
     | '/_authenticated/receivables'
@@ -351,13 +351,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedProductionRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/inventory': {
-      id: '/_authenticated/inventory'
-      path: '/inventory'
-      fullPath: '/inventory'
-      preLoaderRoute: typeof AuthenticatedInventoryRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
     '/_authenticated/pdv': {
       id: '/_authenticated/pdv'
       path: '/pdv'
@@ -370,6 +363,13 @@ declare module '@tanstack/react-router' {
       path: '/orders'
       fullPath: '/orders'
       preLoaderRoute: typeof AuthenticatedOrdersRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/inventory': {
+      id: '/_authenticated/inventory'
+      path: '/inventory'
+      fullPath: '/inventory'
+      preLoaderRoute: typeof AuthenticatedInventoryRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/ella': {
@@ -424,9 +424,9 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedClosuresRoute: typeof AuthenticatedClosuresRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedEllaRoute: typeof AuthenticatedEllaRoute
+  AuthenticatedInventoryRoute: typeof AuthenticatedInventoryRoute
   AuthenticatedOrdersRoute: typeof AuthenticatedOrdersRoute
   AuthenticatedPdvRoute: typeof AuthenticatedPdvRoute
-  AuthenticatedInventoryRoute: typeof AuthenticatedInventoryRoute
   AuthenticatedProductionRoute: typeof AuthenticatedProductionRoute
   AuthenticatedQuotesRoute: typeof AuthenticatedQuotesRoute
   AuthenticatedReceivablesRoute: typeof AuthenticatedReceivablesRoute
@@ -441,9 +441,9 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedClosuresRoute: AuthenticatedClosuresRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedEllaRoute: AuthenticatedEllaRoute,
+  AuthenticatedInventoryRoute: AuthenticatedInventoryRoute,
   AuthenticatedOrdersRoute: AuthenticatedOrdersRoute,
   AuthenticatedPdvRoute: AuthenticatedPdvRoute,
-  AuthenticatedInventoryRoute: AuthenticatedInventoryRoute,
   AuthenticatedProductionRoute: AuthenticatedProductionRoute,
   AuthenticatedQuotesRoute: AuthenticatedQuotesRoute,
   AuthenticatedReceivablesRoute: AuthenticatedReceivablesRoute,
@@ -465,13 +465,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
