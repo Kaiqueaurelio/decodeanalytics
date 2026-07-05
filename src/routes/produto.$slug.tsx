@@ -203,6 +203,7 @@ function Gallery({ image, alt }: { image: string | null | undefined; alt: string
 }
 
 function BuyBox({ product }: { product: StoreProduct }) {
+  const { addItem } = useCart();
   const min = product.min_quantity ?? 1;
   const [qty, setQty] = useState(min);
   const [obs, setObs] = useState("");
@@ -210,6 +211,19 @@ function BuyBox({ product }: { product: StoreProduct }) {
   const rating = product.rating ? Number(product.rating) : null;
 
   const message = `Olá! Tenho interesse no produto *${product.name}*. Quantidade: ${qty}${obs ? `. Observações: ${obs}` : ""}.`;
+
+  function handleAddToCart() {
+    addItem({
+      id: product.id,
+      name: product.name,
+      category: product.category,
+      price: Number(product.base_price) || 0,
+      quantity: qty,
+      image_url: product.image_url,
+      observation: obs || undefined,
+    });
+    toast.success(`${product.name} adicionado ao carrinho`);
+  }
 
   return (
     <section className="space-y-5 rounded-[var(--store-radius-xl)] border border-[var(--store-border)] bg-white p-6 shadow-[var(--store-shadow-sm)]">
