@@ -109,26 +109,27 @@ function OrdersPage() {
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-col sm:flex-row gap-2 justify-between">
-        <div className="relative flex-1 max-w-sm">
-          <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            placeholder="Buscar por cliente ou nº"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="pl-9"
-          />
-        </div>
-        <div className="flex gap-2">
-          <Button
-            variant="outline"
-            onClick={() => setShowCompleted((v) => !v)}
-            title={showCompleted ? "Ocultar entregues/cancelados" : "Mostrar entregues/cancelados"}
-          >
-            {showCompleted ? <EyeOff className="w-4 h-4 mr-1" /> : <Eye className="w-4 h-4 mr-1" />}
-            {showCompleted ? "Ocultar concluídas" : "Mostrar concluídas"}
-          </Button>
-          <Button
+      <div className="flex flex-col gap-2">
+        <div className="flex flex-col sm:flex-row gap-2 justify-between">
+          <div className="relative flex-1 max-w-sm">
+            <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              placeholder="Buscar por cliente ou nº"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="pl-9"
+            />
+          </div>
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              onClick={() => setShowCompleted((v) => !v)}
+              title={showCompleted ? "Ocultar entregues/cancelados" : "Mostrar entregues/cancelados"}
+            >
+              {showCompleted ? <EyeOff className="w-4 h-4 mr-1" /> : <Eye className="w-4 h-4 mr-1" />}
+              {showCompleted ? "Ocultar concluídas" : "Mostrar concluídas"}
+            </Button>
+            <Button
             onClick={() => {
               setEditId(null);
               setOpen(true);
