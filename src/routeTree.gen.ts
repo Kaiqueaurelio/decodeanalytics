@@ -10,9 +10,11 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as ProdutosRouteImport } from './routes/produtos'
+import { Route as CarrinhoRouteImport } from './routes/carrinho'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as SitemapXmlRouteImport } from './routes/sitemap.xml'
 import { Route as ProdutoSlugRouteImport } from './routes/produto.$slug'
 import { Route as BriefingTokenRouteImport } from './routes/briefing.$token'
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
@@ -35,6 +37,11 @@ const ProdutosRoute = ProdutosRouteImport.update({
   path: '/produtos',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CarrinhoRoute = CarrinhoRouteImport.update({
+  id: '/carrinho',
+  path: '/carrinho',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
@@ -47,6 +54,11 @@ const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapXmlRoute = SitemapXmlRouteImport.update({
+  id: '/sitemap/xml',
+  path: '/sitemap/xml',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ProdutoSlugRoute = ProdutoSlugRouteImport.update({
@@ -134,6 +146,7 @@ const AuthenticatedCalculatorRoute = AuthenticatedCalculatorRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/carrinho': typeof CarrinhoRoute
   '/produtos': typeof ProdutosRoute
   '/calculator': typeof AuthenticatedCalculatorRoute
   '/cash': typeof AuthenticatedCashRoute
@@ -151,10 +164,12 @@ export interface FileRoutesByFullPath {
   '/settings': typeof AuthenticatedSettingsRoute
   '/briefing/$token': typeof BriefingTokenRoute
   '/produto/$slug': typeof ProdutoSlugRoute
+  '/sitemap/xml': typeof SitemapXmlRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/carrinho': typeof CarrinhoRoute
   '/produtos': typeof ProdutosRoute
   '/calculator': typeof AuthenticatedCalculatorRoute
   '/cash': typeof AuthenticatedCashRoute
@@ -172,12 +187,14 @@ export interface FileRoutesByTo {
   '/settings': typeof AuthenticatedSettingsRoute
   '/briefing/$token': typeof BriefingTokenRoute
   '/produto/$slug': typeof ProdutoSlugRoute
+  '/sitemap/xml': typeof SitemapXmlRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/carrinho': typeof CarrinhoRoute
   '/produtos': typeof ProdutosRoute
   '/_authenticated/calculator': typeof AuthenticatedCalculatorRoute
   '/_authenticated/cash': typeof AuthenticatedCashRoute
@@ -195,12 +212,14 @@ export interface FileRoutesById {
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
   '/briefing/$token': typeof BriefingTokenRoute
   '/produto/$slug': typeof ProdutoSlugRoute
+  '/sitemap/xml': typeof SitemapXmlRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/auth'
+    | '/carrinho'
     | '/produtos'
     | '/calculator'
     | '/cash'
@@ -218,10 +237,12 @@ export interface FileRouteTypes {
     | '/settings'
     | '/briefing/$token'
     | '/produto/$slug'
+    | '/sitemap/xml'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/auth'
+    | '/carrinho'
     | '/produtos'
     | '/calculator'
     | '/cash'
@@ -239,11 +260,13 @@ export interface FileRouteTypes {
     | '/settings'
     | '/briefing/$token'
     | '/produto/$slug'
+    | '/sitemap/xml'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/auth'
+    | '/carrinho'
     | '/produtos'
     | '/_authenticated/calculator'
     | '/_authenticated/cash'
@@ -261,15 +284,18 @@ export interface FileRouteTypes {
     | '/_authenticated/settings'
     | '/briefing/$token'
     | '/produto/$slug'
+    | '/sitemap/xml'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
+  CarrinhoRoute: typeof CarrinhoRoute
   ProdutosRoute: typeof ProdutosRoute
   BriefingTokenRoute: typeof BriefingTokenRoute
   ProdutoSlugRoute: typeof ProdutoSlugRoute
+  SitemapXmlRoute: typeof SitemapXmlRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -279,6 +305,13 @@ declare module '@tanstack/react-router' {
       path: '/produtos'
       fullPath: '/produtos'
       preLoaderRoute: typeof ProdutosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/carrinho': {
+      id: '/carrinho'
+      path: '/carrinho'
+      fullPath: '/carrinho'
+      preLoaderRoute: typeof CarrinhoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth': {
@@ -300,6 +333,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap/xml': {
+      id: '/sitemap/xml'
+      path: '/sitemap/xml'
+      fullPath: '/sitemap/xml'
+      preLoaderRoute: typeof SitemapXmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/produto/$slug': {
@@ -458,9 +498,11 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
+  CarrinhoRoute: CarrinhoRoute,
   ProdutosRoute: ProdutosRoute,
   BriefingTokenRoute: BriefingTokenRoute,
   ProdutoSlugRoute: ProdutoSlugRoute,
+  SitemapXmlRoute: SitemapXmlRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
