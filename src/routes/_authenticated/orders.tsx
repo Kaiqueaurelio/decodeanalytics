@@ -26,6 +26,10 @@ function OrdersPage() {
   const [open, setOpen] = useState(false);
   const [editId, setEditId] = useState<string | null>(null);
   const [showCompleted, setShowCompleted] = useState(false);
+  const [productionStatus, setProductionStatus] = useState("all");
+  const [paymentStatus, setPaymentStatus] = useState("all");
+  const [deadlineFilter, setDeadlineFilter] = useState("all");
+  const [responsibleFilter, setResponsibleFilter] = useState("all");
 
   const { data } = useQuery({
     queryKey: ["orders", search, showCompleted],
