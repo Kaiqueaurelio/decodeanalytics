@@ -53,7 +53,7 @@ function ProdutosPage() {
       if (error) throw error;
       return (data ?? []).map((p) => ({
         ...p,
-        image_url: resolveProductImage(p.image_url, p.category),
+        image_url: resolveProductImage(p.image_url, p.category, p.slug),
       })) as StoreProduct[];
     },
   });

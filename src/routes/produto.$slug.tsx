@@ -54,7 +54,7 @@ function ProductPage() {
       if (byCol.error) throw byCol.error;
       const p = byCol.data as StoreProduct | null;
       if (!p) return null;
-      return { ...p, image_url: resolveProductImage(p.image_url, p.category) } as StoreProduct;
+      return { ...p, image_url: resolveProductImage(p.image_url, p.category, p.slug) } as StoreProduct;
     },
   });
 
@@ -74,7 +74,7 @@ function ProductPage() {
       if (error) throw error;
       return (data ?? []).map((p) => ({
         ...p,
-        image_url: resolveProductImage(p.image_url, p.category),
+        image_url: resolveProductImage(p.image_url, p.category, p.slug),
       })) as StoreProduct[];
     },
   });
