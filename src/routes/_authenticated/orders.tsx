@@ -155,7 +155,7 @@ function OrdersPage() {
               </tr>
             </thead>
             <tbody>
-              {(data ?? []).map((o: any) => (
+              {(filtered ?? []).map((o: any) => (
                 <tr key={o.id} className="border-t hover:bg-muted/30">
                   <td className="p-3 font-mono">#{o.number}</td>
                   <td className="p-3 font-medium">
