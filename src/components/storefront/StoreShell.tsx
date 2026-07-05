@@ -59,6 +59,15 @@ function CartButton() {
   );
 }
 
+function CartCountBadge() {
+  const { count } = useCart();
+  return (
+    <span className="ml-auto rounded-full bg-[var(--store-primary)] px-2 py-0.5 text-[10px] font-extrabold text-white">
+      {count}
+    </span>
+  );
+}
+
 function TopPromoBar() {
   return (
     <div className="bg-[var(--store-secondary)] text-[var(--store-primary-dark)]">
