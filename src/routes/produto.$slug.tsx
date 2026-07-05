@@ -11,9 +11,11 @@ import {
   ShieldCheck,
   CheckCircle2,
 } from "lucide-react";
+import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { StoreShell } from "@/components/storefront/StoreShell";
 import { brl, waLink } from "@/components/storefront/tokens";
+import { useCart } from "@/lib/cart-context";
 import {
   ProductCard,
   ProductGrid,
@@ -201,6 +203,7 @@ function Gallery({ image, alt }: { image: string | null | undefined; alt: string
 }
 
 function BuyBox({ product }: { product: StoreProduct }) {
+  const { addItem } = useCart();
   const min = product.min_quantity ?? 1;
   const [qty, setQty] = useState(min);
   const [obs, setObs] = useState("");
@@ -208,6 +211,19 @@ function BuyBox({ product }: { product: StoreProduct }) {
   const rating = product.rating ? Number(product.rating) : null;
 
   const message = `Olá! Tenho interesse no produto *${product.name}*. Quantidade: ${qty}${obs ? `. Observações: ${obs}` : ""}.`;
+
+  function handleAddToCart() {
+    addItem({
+      id: product.id,
+      name: product.name,
+      category: product.category,
+      price: Number(product.base_price) || 0,
+      quantity: qty,
+      image_url: product.image_url,
+      observation: obs || undefined,
+    });
+    toast.success(`${product.name} adicionado ao carrinho`);
+  }
 
   return (
     <section className="space-y-5 rounded-[var(--store-radius-xl)] border border-[var(--store-border)] bg-white p-6 shadow-[var(--store-shadow-sm)]">
@@ -287,11 +303,10 @@ function BuyBox({ product }: { product: StoreProduct }) {
         </a>
         <button
           type="button"
-          disabled
-          className="inline-flex h-11 cursor-not-allowed items-center justify-center gap-2 rounded-[var(--store-radius-md)] border border-[var(--store-border)] bg-white text-sm font-bold text-[var(--store-text-muted)]"
-          title="Disponível em breve"
+          onClick={handleAddToCart}
+          className="inline-flex h-11 items-center justify-center gap-2 rounded-[var(--store-radius-md)] border border-[var(--store-border)] bg-white text-sm font-bold text-[var(--store-primary)] hover:bg-[var(--store-surface-soft)] transition-colors"
         >
-          <ShoppingCart className="h-4 w-4" /> Adicionar ao carrinho (em breve)
+          <ShoppingCart className="h-4 w-4" /> Adicionar ao carrinho
         </button>
         <button
           type="button"

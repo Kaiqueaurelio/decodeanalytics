@@ -1,11 +1,18 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Plus, Pencil, Trash2, Search, AlertTriangle, Eye, EyeOff } from "lucide-react";
 import { toast } from "sonner";
 import { brl, fmtDate, PRODUCTION_STATUS_LABEL, PAYMENT_STATUS_LABEL } from "@/lib/format";
@@ -19,9 +26,13 @@ function OrdersPage() {
   const [open, setOpen] = useState(false);
   const [editId, setEditId] = useState<string | null>(null);
   const [showCompleted, setShowCompleted] = useState(false);
+  const [productionStatus, setProductionStatus] = useState("all");
+  const [paymentStatus, setPaymentStatus] = useState("all");
+  const [deadlineFilter, setDeadlineFilter] = useState("all");
+  const [responsibleFilter, setResponsibleFilter] = useState("all");
 
-  const { data } = useQuery({
-    queryKey: ["orders", search, showCompleted],
+  const { data: rawOrders } = useQuery({
+    queryKey: ["orders", showCompleted],
     queryFn: async () => {
       let q = supabase
         .from("orders")
@@ -33,16 +44,51 @@ function OrdersPage() {
       }
       const { data, error } = await q;
       if (error) throw error;
-      const rows = (data ?? []) as any[];
-      return search
-        ? rows.filter(
-            (r) =>
-              (r.clients?.name ?? "").toLowerCase().includes(search.toLowerCase()) ||
-              String(r.number).includes(search),
-          )
-        : rows;
+      return (data ?? []) as any[];
     },
   });
+
+  const { data: team } = useQuery({
+    queryKey: ["profiles-team"],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("profiles").select("id,full_name,email").order("full_name");
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
+
+  const filtered = useMemo(() => {
+    const rows = rawOrders ?? [];
+    const term = search.trim().toLowerCase();
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const nextWeek = new Date(today);
+    nextWeek.setDate(nextWeek.getDate() + 7);
+
+    return rows.filter((r: any) => {
+      const matchesSearch =
+        !term ||
+        (r.clients?.name ?? "").toLowerCase().includes(term) ||
+        String(r.number).includes(term);
+      const matchesProd = productionStatus === "all" || r.production_status === productionStatus;
+      const matchesPay = paymentStatus === "all" || r.payment_status === paymentStatus;
+      const matchesResp =
+        responsibleFilter === "all" ||
+        (responsibleFilter === "unassigned" ? !r.assigned_to : r.assigned_to === responsibleFilter);
+
+      let matchesDeadline = true;
+      if (deadlineFilter === "hoje") {
+        matchesDeadline = r.deadline === today.toISOString().slice(0, 10);
+      } else if (deadlineFilter === "atrasado") {
+        matchesDeadline = isOverdue(r);
+      } else if (deadlineFilter === "proximos7") {
+        const d = r.deadline ? new Date(r.deadline) : null;
+        matchesDeadline = !!d && d >= today && d <= nextWeek;
+      }
+
+      return matchesSearch && matchesProd && matchesPay && matchesResp && matchesDeadline;
+    });
+  }, [rawOrders, search, productionStatus, paymentStatus, deadlineFilter, responsibleFilter]);
 
   async function remove(id: string, number: number) {
     if (!confirm(`Excluir OS #${number}? Esta ação não pode ser desfeita.`)) return;
@@ -63,26 +109,27 @@ function OrdersPage() {
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-col sm:flex-row gap-2 justify-between">
-        <div className="relative flex-1 max-w-sm">
-          <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            placeholder="Buscar por cliente ou nº"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="pl-9"
-          />
-        </div>
-        <div className="flex gap-2">
-          <Button
-            variant="outline"
-            onClick={() => setShowCompleted((v) => !v)}
-            title={showCompleted ? "Ocultar entregues/cancelados" : "Mostrar entregues/cancelados"}
-          >
-            {showCompleted ? <EyeOff className="w-4 h-4 mr-1" /> : <Eye className="w-4 h-4 mr-1" />}
-            {showCompleted ? "Ocultar concluídas" : "Mostrar concluídas"}
-          </Button>
-          <Button
+      <div className="flex flex-col gap-2">
+        <div className="flex flex-col sm:flex-row gap-2 justify-between">
+          <div className="relative flex-1 max-w-sm">
+            <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              placeholder="Buscar por cliente ou nº"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="pl-9"
+            />
+          </div>
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              onClick={() => setShowCompleted((v) => !v)}
+              title={showCompleted ? "Ocultar entregues/cancelados" : "Mostrar entregues/cancelados"}
+            >
+              {showCompleted ? <EyeOff className="w-4 h-4 mr-1" /> : <Eye className="w-4 h-4 mr-1" />}
+              {showCompleted ? "Ocultar concluídas" : "Mostrar concluídas"}
+            </Button>
+            <Button
             onClick={() => {
               setEditId(null);
               setOpen(true);
@@ -92,6 +139,54 @@ function OrdersPage() {
             Nova OS
           </Button>
         </div>
+      </div>
+      <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
+        <Select value={productionStatus} onValueChange={setProductionStatus}>
+          <SelectTrigger className="h-9 text-xs">
+            <SelectValue placeholder="Status produção" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Todos os status</SelectItem>
+            {Object.entries(PRODUCTION_STATUS_LABEL).map(([key, label]) => (
+              <SelectItem key={key} value={key}>{label}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <Select value={paymentStatus} onValueChange={setPaymentStatus}>
+          <SelectTrigger className="h-9 text-xs">
+            <SelectValue placeholder="Status pagamento" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Todos os pagamentos</SelectItem>
+            {Object.entries(PAYMENT_STATUS_LABEL).map(([key, label]) => (
+              <SelectItem key={key} value={key}>{label}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <Select value={deadlineFilter} onValueChange={setDeadlineFilter}>
+          <SelectTrigger className="h-9 text-xs">
+            <SelectValue placeholder="Prazo" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Qualquer prazo</SelectItem>
+            <SelectItem value="hoje">Para hoje</SelectItem>
+            <SelectItem value="proximos7">Próximos 7 dias</SelectItem>
+            <SelectItem value="atrasado">Atrasado</SelectItem>
+          </SelectContent>
+        </Select>
+        <Select value={responsibleFilter} onValueChange={setResponsibleFilter}>
+          <SelectTrigger className="h-9 text-xs">
+            <SelectValue placeholder="Responsável" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Todos os responsáveis</SelectItem>
+            <SelectItem value="unassigned">Sem responsável</SelectItem>
+            {(team ?? []).map((m: any) => (
+              <SelectItem key={m.id} value={m.id}>{m.full_name || m.email}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
       </div>
       <Card>
         <div className="overflow-x-auto">
@@ -109,7 +204,7 @@ function OrdersPage() {
               </tr>
             </thead>
             <tbody>
-              {(data ?? []).map((o: any) => (
+              {(filtered ?? []).map((o: any) => (
                 <tr key={o.id} className="border-t hover:bg-muted/30">
                   <td className="p-3 font-mono">#{o.number}</td>
                   <td className="p-3 font-medium">
@@ -162,7 +257,7 @@ function OrdersPage() {
                   </td>
                 </tr>
               ))}
-              {!data?.length && (
+              {!filtered?.length && (
                 <tr>
                   <td colSpan={8} className="p-8 text-center text-muted-foreground">
                     Nenhuma OS cadastrada

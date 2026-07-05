@@ -16,6 +16,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import { STORE_CATEGORIES, STORE_CONTACT, waLink } from "./tokens";
+import { useCart } from "@/lib/cart-context";
 import { useState } from "react";
 import {
   Sheet,
@@ -39,6 +40,31 @@ export function StoreShell({ children }: { children: ReactNode }) {
       <StoreFooter />
       <FloatingWhatsApp />
     </div>
+  );
+}
+
+function CartButton() {
+  const { count } = useCart();
+  return (
+    <Link
+      to="/carrinho"
+      className="relative flex items-center gap-1.5 rounded-lg bg-[var(--store-primary)] px-3 py-2 text-sm font-bold text-white hover:bg-[var(--store-primary-light)]"
+    >
+      <ShoppingCart className="h-4 w-4" />
+      Carrinho
+      <span className="ml-1 rounded-full bg-[var(--store-secondary)] px-1.5 text-[10px] font-extrabold text-[var(--store-primary-dark)]">
+        {count}
+      </span>
+    </Link>
+  );
+}
+
+function CartCountBadge() {
+  const { count } = useCart();
+  return (
+    <span className="ml-auto rounded-full bg-[var(--store-primary)] px-2 py-0.5 text-[10px] font-extrabold text-white">
+      {count}
+    </span>
   );
 }
 
@@ -134,17 +160,7 @@ function StoreHeader() {
             <User className="h-4 w-4" />
             Entrar
           </Link>
-          <button
-            type="button"
-            aria-label="Carrinho"
-            className="relative flex items-center gap-1.5 rounded-lg bg-[var(--store-primary)] px-3 py-2 text-sm font-bold text-white hover:bg-[var(--store-primary-light)]"
-          >
-            <ShoppingCart className="h-4 w-4" />
-            Carrinho
-            <span className="ml-1 rounded-full bg-[var(--store-secondary)] px-1.5 text-[10px] font-extrabold text-[var(--store-primary-dark)]">
-              0
-            </span>
-          </button>
+          <CartButton />
         </nav>
 
         <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
@@ -222,13 +238,15 @@ function StoreHeader() {
                     <User className="h-4 w-4 text-[var(--store-primary)]" />
                     Entrar na conta
                   </Link>
-                  <button
-                    type="button"
-                    className="w-full flex items-center gap-3 px-3 py-3 rounded-lg text-sm font-medium text-[var(--store-text)] hover:bg-[var(--store-surface-soft)] transition-colors text-left"
+                  <Link
+                    to="/carrinho"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center gap-3 px-3 py-3 rounded-lg text-sm font-medium text-[var(--store-text)] hover:bg-[var(--store-surface-soft)] transition-colors"
                   >
                     <ShoppingCart className="h-4 w-4 text-[var(--store-primary)]" />
-                    Carrinho (0)
-                  </button>
+                    Carrinho
+                    <CartCountBadge />
+                  </Link>
                 </div>
               </div>
 
