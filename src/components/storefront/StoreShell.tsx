@@ -43,6 +43,22 @@ export function StoreShell({ children }: { children: ReactNode }) {
   );
 }
 
+function CartButton() {
+  const { count } = useCart();
+  return (
+    <Link
+      to="/carrinho"
+      className="relative flex items-center gap-1.5 rounded-lg bg-[var(--store-primary)] px-3 py-2 text-sm font-bold text-white hover:bg-[var(--store-primary-light)]"
+    >
+      <ShoppingCart className="h-4 w-4" />
+      Carrinho
+      <span className="ml-1 rounded-full bg-[var(--store-secondary)] px-1.5 text-[10px] font-extrabold text-[var(--store-primary-dark)]">
+        {count}
+      </span>
+    </Link>
+  );
+}
+
 function TopPromoBar() {
   return (
     <div className="bg-[var(--store-secondary)] text-[var(--store-primary-dark)]">
