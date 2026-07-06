@@ -369,9 +369,10 @@ function ArtTipsSection() {
         />
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {tips.map((t) => (
-            <div
+            <Reveal
               key={t.title}
-              className="rounded-[var(--store-radius-lg)] border border-[var(--store-border)] bg-white p-5 shadow-[var(--store-shadow-sm)]"
+              variant="up"
+              className="lift-on-hover rounded-[var(--store-radius-lg)] border border-[var(--store-border)] bg-white p-5 shadow-[var(--store-shadow-sm)]"
             >
               <div className="flex items-center gap-3">
                 <span className="grid h-10 w-10 place-items-center rounded-xl bg-[var(--store-primary)] text-white">
@@ -380,7 +381,7 @@ function ArtTipsSection() {
                 <p className="text-base font-extrabold text-[var(--store-text)]">{t.title}</p>
               </div>
               <p className="mt-3 text-sm text-[var(--store-text-muted)]">{t.desc}</p>
-            </div>
+            </Reveal>
           ))}
         </div>
         <div className="mt-8 rounded-[var(--store-radius-lg)] border border-[var(--store-primary)]/15 bg-[var(--store-primary)]/5 p-5 text-sm text-[var(--store-text)]">
@@ -429,16 +430,17 @@ function TechSecuritySection() {
       />
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {items.map((it) => (
-          <div
+          <Reveal
             key={it.title}
-            className="rounded-[var(--store-radius-lg)] border border-[var(--store-border)] bg-white p-5 shadow-[var(--store-shadow-sm)]"
+            variant="up"
+            className="lift-on-hover rounded-[var(--store-radius-lg)] border border-[var(--store-border)] bg-white p-5 shadow-[var(--store-shadow-sm)]"
           >
             <span className="grid h-10 w-10 place-items-center rounded-xl bg-[var(--store-success)]/10 text-[var(--store-success)]">
               <it.icon className="h-5 w-5" />
             </span>
             <p className="mt-4 text-base font-extrabold text-[var(--store-text)]">{it.title}</p>
             <p className="mt-1 text-sm text-[var(--store-text-muted)]">{it.desc}</p>
-          </div>
+          </Reveal>
         ))}
       </div>
       <div className="mt-6 flex flex-wrap items-center justify-center gap-2 text-xs font-semibold text-[var(--store-text-muted)]">
