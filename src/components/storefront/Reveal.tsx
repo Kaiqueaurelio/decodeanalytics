@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
+import { useEffect, useRef, useState, createElement, type CSSProperties, type ElementType, type ReactNode } from "react";
 
 type Variant = "up" | "fade" | "left" | "right" | "zoom";
 
@@ -21,7 +21,7 @@ export function Reveal({
   once = true,
 }: {
   children: ReactNode;
-  as?: keyof JSX.IntrinsicElements;
+  as?: ElementType;
   variant?: Variant;
   delay?: number;
   duration?: number;
@@ -65,6 +65,5 @@ export function Reveal({
     ...style,
   };
 
-  // @ts-expect-error dynamic tag
-  return <Tag ref={ref} className={className} style={composed}>{children}</Tag>;
+  return createElement(Tag, { ref, className, style: composed }, children);
 }
