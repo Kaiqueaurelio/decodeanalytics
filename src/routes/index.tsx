@@ -34,6 +34,7 @@ import { STORE_CATEGORIES, STORE_CONTACT, brl, waLink } from "@/components/store
 import { useStoreProducts } from "@/components/storefront/useStoreProducts";
 import { InfiniteProducts } from "@/components/storefront/InfiniteProducts";
 import { CategoryCircles } from "@/components/storefront/CategoryCircles";
+import { Reveal } from "@/components/storefront/Reveal";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -61,16 +62,16 @@ function HomePage() {
       <Hero />
       <CategoryCircles />
       <LightBand>
-        <FeaturedBento />
+        <Reveal variant="up"><FeaturedBento /></Reveal>
       </LightBand>
-      <StatsStrip />
-      <CategoriesSection />
-      <InfiniteProducts />
-      <TestimonialsSection />
-      <HowItWorks />
-      <ArtTipsSection />
-      <TechSecuritySection />
-      <ContactSection />
+      <Reveal variant="up"><StatsStrip /></Reveal>
+      <Reveal variant="up"><CategoriesSection /></Reveal>
+      <Reveal variant="up"><InfiniteProducts /></Reveal>
+      <Reveal variant="up"><TestimonialsSection /></Reveal>
+      <Reveal variant="up"><HowItWorks /></Reveal>
+      <Reveal variant="up"><ArtTipsSection /></Reveal>
+      <Reveal variant="up"><TechSecuritySection /></Reveal>
+      <Reveal variant="up"><ContactSection /></Reveal>
     </StoreShell>
   );
 }
@@ -290,9 +291,12 @@ function HowItWorks() {
       />
       <ol className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {steps.map((s, idx) => (
-          <li
+          <Reveal
+            as="li"
             key={s.title}
-            className="rounded-[var(--store-radius-lg)] border border-[var(--store-border)] bg-white p-5 shadow-[var(--store-shadow-sm)]"
+            variant="up"
+            delay={idx * 90}
+            className="lift-on-hover rounded-[var(--store-radius-lg)] border border-[var(--store-border)] bg-white p-5 shadow-[var(--store-shadow-sm)]"
           >
             <div className="flex items-center gap-3">
               <span className="grid h-10 w-10 place-items-center rounded-full bg-[var(--store-primary)] text-sm font-extrabold text-white">
@@ -302,7 +306,7 @@ function HowItWorks() {
             </div>
             <p className="mt-4 text-base font-extrabold text-[var(--store-text)]">{s.title}</p>
             <p className="mt-1 text-sm text-[var(--store-text-muted)]">{s.desc}</p>
-          </li>
+          </Reveal>
         ))}
       </ol>
       <div className="mt-8 flex flex-col items-center gap-3 text-center">
