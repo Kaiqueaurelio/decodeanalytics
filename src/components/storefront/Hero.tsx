@@ -68,7 +68,7 @@ export function Hero() {
           {/* Right column: product hero photo */}
           <div className="relative hidden md:block">
             <div className="absolute -right-8 -top-8 h-72 w-72 rounded-full bg-white/10 blur-2xl" />
-            <div className="relative aspect-square overflow-hidden rounded-[var(--store-radius-xl)] bg-white p-2 shadow-2xl rotate-[-2deg] transition-transform hover:rotate-0 border border-white/20">
+            <div className="relative aspect-square overflow-hidden rounded-[var(--store-radius-xl)] bg-white p-2 shadow-2xl rotate-[-2deg] transition-transform hover:rotate-0 border border-white/20 animate-float">
               <img
                 src={CATEGORY_IMAGES["Cartões"]}
                 alt="Cartões de Visita Premium"
