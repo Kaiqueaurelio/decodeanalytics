@@ -940,10 +940,10 @@ function PDVPage() {
         </div>
       </Card>
 
-      <div className="grid min-w-0 gap-4 2xl:grid-cols-[minmax(0,1fr)_380px]">
+      <div className="grid min-w-0 gap-4 xl:grid-cols-[minmax(0,1fr)_340px] 2xl:grid-cols-[minmax(0,1fr)_380px]">
         <section className="min-w-0 space-y-4">
-          <div className="grid min-w-0 gap-2 grid-cols-2 sm:gap-3 lg:grid-cols-3 2xl:grid-cols-[minmax(220px,1fr)_repeat(5,auto)]">
-            <div className="relative">
+          <div className="flex min-w-0 flex-wrap gap-2 sm:gap-3">
+            <div className="relative min-w-0 flex-1 basis-full sm:basis-[220px]">
               <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" />
               <Input
                 value={query}
@@ -953,40 +953,40 @@ function PDVPage() {
               />
             </div>
             <Button
-              className="h-12 sm:h-14 rounded-2xl bg-brand-blue px-3 sm:px-6 text-sm sm:text-base font-black hover:bg-brand-blue-light"
+              className="h-12 flex-1 min-w-[130px] sm:h-14 rounded-2xl bg-brand-blue px-3 sm:px-5 text-sm sm:text-base font-black hover:bg-brand-blue-light"
               onClick={() => setShowFastSale(true)}
             >
               <Plus className="mr-2 h-5 w-5" /> Venda Rápida
             </Button>
             <Button
               variant="outline"
-              className="h-12 sm:h-14 rounded-2xl border-blue-200 bg-blue-50 px-3 sm:px-5 text-sm sm:text-base font-black text-brand-blue hover:bg-blue-100"
+              className="h-12 flex-1 min-w-[120px] sm:h-14 rounded-2xl border-blue-200 bg-blue-50 px-3 sm:px-4 text-sm sm:text-base font-black text-brand-blue hover:bg-blue-100"
               onClick={() => setShowSquareMeter(true)}
             >
               <Calculator className="mr-2 h-5 w-5" /> Calcular m²
             </Button>
             <Button
               variant="outline"
-              className="h-12 sm:h-14 rounded-2xl border-emerald-200 bg-emerald-50 px-3 sm:px-5 text-sm sm:text-base font-black text-emerald-700 hover:bg-emerald-100"
+              className="h-12 flex-1 min-w-[120px] sm:h-14 rounded-2xl border-emerald-200 bg-emerald-50 px-3 sm:px-4 text-sm sm:text-base font-black text-emerald-700 hover:bg-emerald-100"
               onClick={() => setShowCalculator(true)}
             >
               <Calculator className="mr-2 h-5 w-5" /> Calculadora
             </Button>
             <Button
               variant="outline"
-              className="h-12 sm:h-14 rounded-2xl border-blue-200 bg-blue-50 px-3 sm:px-5 text-sm sm:text-base font-black text-brand-blue hover:bg-blue-100"
+              className="h-12 flex-1 min-w-[120px] sm:h-14 rounded-2xl border-blue-200 bg-blue-50 px-3 sm:px-4 text-sm sm:text-base font-black text-brand-blue hover:bg-blue-100"
               onClick={() => setShowOrderPicker(true)}
             >
               <ClipboardList className="mr-2 h-5 w-5" /> Cobrar OS
             </Button>
             <Button
               variant="outline"
-              className="h-12 sm:h-14 rounded-2xl bg-white px-3 sm:px-5 text-sm sm:text-base font-black"
+              className="h-12 flex-1 min-w-[110px] sm:h-14 rounded-2xl bg-white px-3 sm:px-4 text-sm sm:text-base font-black"
               onClick={() => setShowNewClient(true)}
             >
               <UserPlus className="mr-2 h-5 w-5" /> Cliente
             </Button>
-            <Button asChild variant="outline" className="h-12 sm:h-14 rounded-2xl bg-white px-3 sm:px-5 text-sm sm:text-base font-black">
+            <Button asChild variant="outline" className="h-12 flex-1 min-w-[110px] sm:h-14 rounded-2xl bg-white px-3 sm:px-4 text-sm sm:text-base font-black">
               <a href="/services">
                 <Settings2 className="mr-2 h-5 w-5" /> Produtos
               </a>
@@ -1041,7 +1041,7 @@ function PDVPage() {
             ))}
           </div>
 
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-4">
             {filteredProducts.map((product) => (
               <Card
                 key={product.id}
