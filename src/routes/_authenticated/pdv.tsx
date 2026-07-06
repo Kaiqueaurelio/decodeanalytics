@@ -1163,7 +1163,7 @@ function PDVPage() {
             </Button>
           </div>
 
-          <div className="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-5">
+          <div className="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-3 2xl:grid-cols-5">
             {PAYMENT_OPTIONS.map((option) => {
               const Icon = option.icon;
               return (
