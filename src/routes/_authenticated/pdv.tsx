@@ -944,52 +944,63 @@ function PDVPage() {
         <section className="min-w-0 space-y-4">
           <div className="space-y-3">
             <div className="relative">
-              <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" />
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400 sm:left-4 sm:h-5 sm:w-5" />
               <Input
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
-                className="h-12 sm:h-14 rounded-2xl border-slate-200 bg-white pl-12 text-base shadow-sm"
+                className="h-11 sm:h-14 rounded-2xl border-slate-200 bg-white pl-10 sm:pl-12 text-sm sm:text-base shadow-sm"
                 placeholder="Buscar produto, serviço ou código..."
               />
             </div>
-            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-7">
+            <div className="grid grid-cols-3 gap-1.5 sm:grid-cols-4 sm:gap-2 md:grid-cols-4 xl:grid-cols-7">
               <Button
-                className="h-11 w-full rounded-2xl bg-brand-blue px-2 text-xs font-black hover:bg-brand-blue-light sm:h-14 sm:text-sm"
+                className="h-10 w-full flex-col rounded-xl bg-brand-blue px-1 text-[10px] font-black leading-tight hover:bg-brand-blue-light sm:h-14 sm:flex-row sm:rounded-2xl sm:px-2 sm:text-sm"
                 onClick={() => setShowFastSale(true)}
               >
-                <Plus className="mr-1 h-4 w-4 sm:mr-2 sm:h-5 sm:w-5" /> Venda Rápida
+                <Plus className="h-3.5 w-3.5 sm:mr-2 sm:h-5 sm:w-5" />
+                <span className="sm:hidden">Venda</span>
+                <span className="hidden sm:inline">Venda Rápida</span>
               </Button>
               <Button
                 variant="outline"
-                className="h-11 w-full rounded-2xl border-blue-200 bg-blue-50 px-2 text-xs font-black text-brand-blue hover:bg-blue-100 sm:h-14 sm:text-sm"
+                className="h-10 w-full flex-col rounded-xl border-blue-200 bg-blue-50 px-1 text-[10px] font-black leading-tight text-brand-blue hover:bg-blue-100 sm:h-14 sm:flex-row sm:rounded-2xl sm:px-2 sm:text-sm"
                 onClick={() => setShowSquareMeter(true)}
               >
-                <Calculator className="mr-1 h-4 w-4 sm:mr-2 sm:h-5 sm:w-5" /> Calcular m²
+                <Calculator className="h-3.5 w-3.5 sm:mr-2 sm:h-5 sm:w-5" />
+                <span className="sm:hidden">m²</span>
+                <span className="hidden sm:inline">Calcular m²</span>
               </Button>
               <Button
                 variant="outline"
-                className="h-11 w-full rounded-2xl border-emerald-200 bg-emerald-50 px-2 text-xs font-black text-emerald-700 hover:bg-emerald-100 sm:h-14 sm:text-sm"
+                className="h-10 w-full flex-col rounded-xl border-emerald-200 bg-emerald-50 px-1 text-[10px] font-black leading-tight text-emerald-700 hover:bg-emerald-100 sm:h-14 sm:flex-row sm:rounded-2xl sm:px-2 sm:text-sm"
                 onClick={() => setShowCalculator(true)}
               >
-                <Calculator className="mr-1 h-4 w-4 sm:mr-2 sm:h-5 sm:w-5" /> Calculadora
+                <Calculator className="h-3.5 w-3.5 sm:mr-2 sm:h-5 sm:w-5" />
+                <span className="sm:hidden">Calc</span>
+                <span className="hidden sm:inline">Calculadora</span>
               </Button>
               <Button
                 variant="outline"
-                className="h-11 w-full rounded-2xl border-blue-200 bg-blue-50 px-2 text-xs font-black text-brand-blue hover:bg-blue-100 sm:h-14 sm:text-sm"
+                className="h-10 w-full flex-col rounded-xl border-blue-200 bg-blue-50 px-1 text-[10px] font-black leading-tight text-brand-blue hover:bg-blue-100 sm:h-14 sm:flex-row sm:rounded-2xl sm:px-2 sm:text-sm"
                 onClick={() => setShowOrderPicker(true)}
               >
-                <ClipboardList className="mr-1 h-4 w-4 sm:mr-2 sm:h-5 sm:w-5" /> Cobrar OS
+                <ClipboardList className="h-3.5 w-3.5 sm:mr-2 sm:h-5 sm:w-5" />
+                <span className="sm:hidden">OS</span>
+                <span className="hidden sm:inline">Cobrar OS</span>
               </Button>
               <Button
                 variant="outline"
-                className="h-11 w-full rounded-2xl bg-white px-2 text-xs font-black sm:h-14 sm:text-sm"
+                className="h-10 w-full flex-col rounded-xl bg-white px-1 text-[10px] font-black leading-tight sm:h-14 sm:flex-row sm:rounded-2xl sm:px-2 sm:text-sm"
                 onClick={() => setShowNewClient(true)}
               >
-                <UserPlus className="mr-1 h-4 w-4 sm:mr-2 sm:h-5 sm:w-5" /> Cliente
+                <UserPlus className="h-3.5 w-3.5 sm:mr-2 sm:h-5 sm:w-5" />
+                <span>Cliente</span>
               </Button>
-              <Button asChild variant="outline" className="h-11 w-full rounded-2xl bg-white px-2 text-xs font-black sm:h-14 sm:text-sm">
+              <Button asChild variant="outline" className="h-10 w-full flex-col rounded-xl bg-white px-1 text-[10px] font-black leading-tight sm:h-14 sm:flex-row sm:rounded-2xl sm:px-2 sm:text-sm">
                 <a href="/services">
-                  <Settings2 className="mr-1 h-4 w-4 sm:mr-2 sm:h-5 sm:w-5" /> Produtos
+                  <Settings2 className="h-3.5 w-3.5 sm:mr-2 sm:h-5 sm:w-5" />
+                  <span className="sm:hidden">Prod.</span>
+                  <span className="hidden sm:inline">Produtos</span>
                 </a>
               </Button>
             </div>
@@ -1025,14 +1036,14 @@ function PDVPage() {
             </div>
           )}
 
-          <div className="app-scrollbar flex gap-2 overflow-x-auto pb-1">
+          <div className="app-scrollbar flex gap-1.5 overflow-x-auto pb-1 sm:gap-2">
             {CATEGORIES.map((item) => (
               <button
                 key={item}
                 type="button"
                 onClick={() => setCategory(item)}
                 className={cn(
-                  "whitespace-nowrap rounded-2xl border px-4 py-3 text-sm font-black shadow-sm transition",
+                  "whitespace-nowrap rounded-xl border px-3 py-2 text-xs font-black shadow-sm transition sm:rounded-2xl sm:px-4 sm:py-3 sm:text-sm",
                   category === item
                     ? "border-brand-blue bg-brand-blue text-white"
                     : "border-slate-200 bg-white text-slate-700 hover:border-brand-blue/40",
