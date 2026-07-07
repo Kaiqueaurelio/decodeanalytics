@@ -942,8 +942,8 @@ function PDVPage() {
 
       <div className="grid min-w-0 gap-4 lg:grid-cols-[minmax(0,1fr)_300px] xl:grid-cols-[minmax(0,1fr)_340px] 2xl:grid-cols-[minmax(0,1fr)_380px]">
         <section className="min-w-0 space-y-4">
-          <div className="flex min-w-0 flex-wrap gap-2 sm:gap-3">
-            <div className="relative min-w-0 flex-1 basis-full sm:basis-[220px]">
+          <div className="space-y-3">
+            <div className="relative">
               <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" />
               <Input
                 value={query}
@@ -952,45 +952,47 @@ function PDVPage() {
                 placeholder="Buscar produto, serviço ou código..."
               />
             </div>
-            <Button
-              className="h-11 flex-1 min-w-[96px] sm:h-14 rounded-2xl bg-brand-blue px-2 sm:px-5 text-xs sm:text-base font-black hover:bg-brand-blue-light"
-              onClick={() => setShowFastSale(true)}
-            >
-              <Plus className="mr-1 h-4 w-4 sm:mr-2 sm:h-5 sm:w-5" /> Venda Rápida
-            </Button>
-            <Button
-              variant="outline"
-              className="h-11 flex-1 min-w-[92px] sm:h-14 rounded-2xl border-blue-200 bg-blue-50 px-2 sm:px-4 text-xs sm:text-base font-black text-brand-blue hover:bg-blue-100"
-              onClick={() => setShowSquareMeter(true)}
-            >
-              <Calculator className="mr-1 h-4 w-4 sm:mr-2 sm:h-5 sm:w-5" /> Calcular m²
-            </Button>
-            <Button
-              variant="outline"
-              className="h-11 flex-1 min-w-[92px] sm:h-14 rounded-2xl border-emerald-200 bg-emerald-50 px-2 sm:px-4 text-xs sm:text-base font-black text-emerald-700 hover:bg-emerald-100"
-              onClick={() => setShowCalculator(true)}
-            >
-              <Calculator className="mr-1 h-4 w-4 sm:mr-2 sm:h-5 sm:w-5" /> Calculadora
-            </Button>
-            <Button
-              variant="outline"
-              className="h-11 flex-1 min-w-[92px] sm:h-14 rounded-2xl border-blue-200 bg-blue-50 px-2 sm:px-4 text-xs sm:text-base font-black text-brand-blue hover:bg-blue-100"
-              onClick={() => setShowOrderPicker(true)}
-            >
-              <ClipboardList className="mr-1 h-4 w-4 sm:mr-2 sm:h-5 sm:w-5" /> Cobrar OS
-            </Button>
-            <Button
-              variant="outline"
-              className="h-11 flex-1 min-w-[88px] sm:h-14 rounded-2xl bg-white px-2 sm:px-4 text-xs sm:text-base font-black"
-              onClick={() => setShowNewClient(true)}
-            >
-              <UserPlus className="mr-1 h-4 w-4 sm:mr-2 sm:h-5 sm:w-5" /> Cliente
-            </Button>
-            <Button asChild variant="outline" className="h-11 flex-1 min-w-[88px] sm:h-14 rounded-2xl bg-white px-2 sm:px-4 text-xs sm:text-base font-black">
-              <a href="/services">
-                <Settings2 className="mr-1 h-4 w-4 sm:mr-2 sm:h-5 sm:w-5" /> Produtos
-              </a>
-            </Button>
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-7">
+              <Button
+                className="h-11 w-full rounded-2xl bg-brand-blue px-2 text-xs font-black hover:bg-brand-blue-light sm:h-14 sm:text-sm"
+                onClick={() => setShowFastSale(true)}
+              >
+                <Plus className="mr-1 h-4 w-4 sm:mr-2 sm:h-5 sm:w-5" /> Venda Rápida
+              </Button>
+              <Button
+                variant="outline"
+                className="h-11 w-full rounded-2xl border-blue-200 bg-blue-50 px-2 text-xs font-black text-brand-blue hover:bg-blue-100 sm:h-14 sm:text-sm"
+                onClick={() => setShowSquareMeter(true)}
+              >
+                <Calculator className="mr-1 h-4 w-4 sm:mr-2 sm:h-5 sm:w-5" /> Calcular m²
+              </Button>
+              <Button
+                variant="outline"
+                className="h-11 w-full rounded-2xl border-emerald-200 bg-emerald-50 px-2 text-xs font-black text-emerald-700 hover:bg-emerald-100 sm:h-14 sm:text-sm"
+                onClick={() => setShowCalculator(true)}
+              >
+                <Calculator className="mr-1 h-4 w-4 sm:mr-2 sm:h-5 sm:w-5" /> Calculadora
+              </Button>
+              <Button
+                variant="outline"
+                className="h-11 w-full rounded-2xl border-blue-200 bg-blue-50 px-2 text-xs font-black text-brand-blue hover:bg-blue-100 sm:h-14 sm:text-sm"
+                onClick={() => setShowOrderPicker(true)}
+              >
+                <ClipboardList className="mr-1 h-4 w-4 sm:mr-2 sm:h-5 sm:w-5" /> Cobrar OS
+              </Button>
+              <Button
+                variant="outline"
+                className="h-11 w-full rounded-2xl bg-white px-2 text-xs font-black sm:h-14 sm:text-sm"
+                onClick={() => setShowNewClient(true)}
+              >
+                <UserPlus className="mr-1 h-4 w-4 sm:mr-2 sm:h-5 sm:w-5" /> Cliente
+              </Button>
+              <Button asChild variant="outline" className="h-11 w-full rounded-2xl bg-white px-2 text-xs font-black sm:h-14 sm:text-sm">
+                <a href="/services">
+                  <Settings2 className="mr-1 h-4 w-4 sm:mr-2 sm:h-5 sm:w-5" /> Produtos
+                </a>
+              </Button>
+            </div>
           </div>
 
           {favoriteProducts.length > 0 && (
