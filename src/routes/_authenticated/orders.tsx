@@ -265,6 +265,53 @@ function OrdersPage() {
         </Select>
       </div>
       </div>
+      <Tabs value={lifecycleTab} onValueChange={(v) => setLifecycleTab(v as any)}>
+        <TabsList className="w-full sm:w-auto flex flex-wrap gap-1">
+          <TabsTrigger value="todas" className="text-xs">
+            Todas <span className="ml-1 text-muted-foreground">({counts.todas})</span>
+          </TabsTrigger>
+          <TabsTrigger value="producao" className="text-xs">
+            Em produção <span className="ml-1 text-muted-foreground">({counts.producao})</span>
+          </TabsTrigger>
+          <TabsTrigger value="concluidas" className="text-xs">
+            Concluídas <span className="ml-1 text-muted-foreground">({counts.concluidas})</span>
+          </TabsTrigger>
+          <TabsTrigger value="arquivadas" className="text-xs">
+            Arquivadas <span className="ml-1 text-muted-foreground">({counts.arquivadas})</span>
+          </TabsTrigger>
+        </TabsList>
+      </Tabs>
+      {activeChips.length > 0 && (
+        <div className="flex flex-wrap items-center gap-1.5">
+          <span className="text-xs text-muted-foreground mr-1">Filtros ativos:</span>
+          {activeChips.map((chip) => (
+            <button
+              key={chip.key}
+              type="button"
+              onClick={chip.onClear}
+              className="inline-flex items-center gap-1 rounded-full border bg-muted/50 hover:bg-muted px-2.5 py-1 text-xs transition-colors"
+              aria-label={`Remover filtro ${chip.label}`}
+            >
+              <span>{chip.label}</span>
+              <X className="w-3 h-3 opacity-70" />
+            </button>
+          ))}
+          <button
+            type="button"
+            onClick={() => {
+              setLifecycleTab("todas");
+              setProductionStatus("all");
+              setPaymentStatus("all");
+              setDeadlineFilter("all");
+              setResponsibleFilter("all");
+              setSearch("");
+            }}
+            className="text-xs text-muted-foreground hover:text-foreground underline ml-1"
+          >
+            Limpar todos
+          </button>
+        </div>
+      )}
       <Card>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
