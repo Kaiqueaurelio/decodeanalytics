@@ -147,7 +147,7 @@ function EllaPage() {
           width={44}
           height={44}
           loading="lazy"
-          className="h-11 w-11 shrink-0 rounded-full object-cover ring-2 ring-brand-yellow"
+          className="h-11 w-11 shrink-0 rounded-full object-cover object-top ring-2 ring-brand-yellow"
         />
         <div className="min-w-0">
           <h1 className="truncate text-lg sm:text-xl font-black tracking-tight">Ella Ribeiro</h1>
