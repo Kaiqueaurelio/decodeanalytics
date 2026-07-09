@@ -840,12 +840,24 @@ function PDVPage() {
             Entradas menos saídas de {new Date().toLocaleDateString("pt-BR")}.
           </p>
         </div>
-        <Button
-          className="h-10 w-full rounded-xl bg-white text-sm font-black text-brand-blue hover:bg-blue-50 sm:w-auto"
-          onClick={() => setShowMachineEntry(true)}
-        >
-          <ReceiptText className="mr-2 h-4 w-4" /> Lançar maquininha
-        </Button>
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+          <Button
+            className="h-10 w-full rounded-xl bg-white text-sm font-black text-brand-blue hover:bg-blue-50 sm:w-auto"
+            onClick={() => setShowMachineEntry(true)}
+          >
+            <ReceiptText className="mr-2 h-4 w-4" /> Lançar maquininha
+          </Button>
+          <Button
+            variant="secondary"
+            className="h-10 w-full rounded-xl bg-brand-blue/20 text-sm font-black text-white hover:bg-brand-blue/30 sm:w-auto lg:hidden"
+            onClick={() => {
+              document.getElementById("pdv-cart")?.scrollIntoView({ behavior: "smooth", block: "start" });
+            }}
+          >
+            <ShoppingCart className="mr-2 h-4 w-4" />
+            Itens ({cart.length}) · {brl(total)}
+          </Button>
+        </div>
       </div>
 
       <div className="mb-3 grid gap-2 sm:grid-cols-2 xl:grid-cols-4">
