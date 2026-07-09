@@ -37,6 +37,7 @@ import { InfiniteProducts } from "@/components/storefront/InfiniteProducts";
 import { CategoryCircles } from "@/components/storefront/CategoryCircles";
 import { Reveal } from "@/components/storefront/Reveal";
 import { CursorFollower } from "@/components/storefront/CursorFollower";
+import { AnalyticsDebugPanel } from "@/components/storefront/AnalyticsDebugPanel";
 import { trackCardClick, trackCta } from "@/lib/analytics";
 
 export const Route = createFileRoute("/")({
@@ -63,6 +64,7 @@ function HomePage() {
   return (
     <StoreShell>
       <CursorFollower />
+      <AnalyticsDebugPanel />
       <Hero />
       <CategoryCircles />
       <LightBand>
