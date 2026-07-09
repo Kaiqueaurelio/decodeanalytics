@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useId, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { toast } from "sonner";
+import { emitAuthTelemetry, trackInputFocus } from "@/lib/auth-telemetry";
 
 export const Route = createFileRoute("/auth")({
   head: () => ({ meta: [{ title: "Entrar | Alcateia's Gestão" }] }),
@@ -29,18 +30,33 @@ function AuthPage() {
   const signupEmailId = useId();
   const signupPwdId = useId();
 
+  useEffect(() => {
+    emitAuthTelemetry("auth_page_view");
+  }, []);
+
+  const loginEmailTrack = trackInputFocus("login-email");
+  const loginPwdTrack = trackInputFocus("login-password");
+  const signupNameTrack = trackInputFocus("signup-name");
+  const signupEmailTrack = trackInputFocus("signup-email");
+  const signupPwdTrack = trackInputFocus("signup-password");
+
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault();
+    emitAuthTelemetry("auth_submit_attempt", { form: "login" });
     setLoading(true);
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     setLoading(false);
-    if (error) return toast.error(error.message);
+    if (error) {
+      emitAuthTelemetry("auth_submit_error", { form: "login", errorMessage: error.message });
+      return toast.error(error.message);
+    }
     toast.success("Bem-vindo!");
     nav({ to: "/dashboard" });
   }
 
   async function handleSignup(e: React.FormEvent) {
     e.preventDefault();
+    emitAuthTelemetry("auth_submit_attempt", { form: "signup" });
     setLoading(true);
     const { error } = await supabase.auth.signUp({
       email,
@@ -48,7 +64,10 @@ function AuthPage() {
       options: { data: { full_name: fullName }, emailRedirectTo: window.location.origin },
     });
     setLoading(false);
-    if (error) return toast.error(error.message);
+    if (error) {
+      emitAuthTelemetry("auth_submit_error", { form: "signup", errorMessage: error.message });
+      return toast.error(error.message);
+    }
     toast.success("Conta criada! Faça login.");
   }
 
@@ -97,6 +116,8 @@ function AuthPage() {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                  onPointerDown={loginEmailTrack.onPointerDown}
+                  onFocus={loginEmailTrack.onFocus}
                   onKeyDown={(e) => {
                     if (e.key === "Enter") loginPasswordRef.current?.focus();
                   }}
@@ -118,6 +139,8 @@ function AuthPage() {
                     type={showPwd ? "text" : "password"}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
+                    onPointerDown={loginPwdTrack.onPointerDown}
+                    onFocus={loginPwdTrack.onFocus}
                     required
                     className="pr-11"
                   />
@@ -157,6 +180,8 @@ function AuthPage() {
                   type="text"
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
+                  onPointerDown={signupNameTrack.onPointerDown}
+                  onFocus={signupNameTrack.onFocus}
                   onKeyDown={(e) => {
                     if (e.key === "Enter") signupEmailRef.current?.focus();
                   }}
@@ -178,6 +203,8 @@ function AuthPage() {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                  onPointerDown={signupEmailTrack.onPointerDown}
+                  onFocus={signupEmailTrack.onFocus}
                   onKeyDown={(e) => {
                     if (e.key === "Enter") signupPasswordRef.current?.focus();
                   }}
@@ -199,6 +226,8 @@ function AuthPage() {
                     type={showPwd ? "text" : "password"}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
+                    onPointerDown={signupPwdTrack.onPointerDown}
+                    onFocus={signupPwdTrack.onFocus}
                     required
                     minLength={6}
                     className="pr-11"
