@@ -15,6 +15,7 @@ import { AuthProvider } from "@/lib/auth";
 import { CartProvider } from "@/lib/cart-context";
 import { ThemeProvider, themeInitScript } from "@/lib/theme";
 import { Toaster } from "@/components/ui/sonner";
+import { installAnalytics } from "@/lib/analytics";
 
 function NotFoundComponent() {
   return (
@@ -147,6 +148,10 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+
+  useEffect(() => {
+    installAnalytics();
+  }, []);
 
   return (
     <QueryClientProvider client={queryClient}>

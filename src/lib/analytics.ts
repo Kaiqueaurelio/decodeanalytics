@@ -15,6 +15,73 @@ export type AnalyticsProps = Record<string, Primitive>;
 
 const SESSION_KEY = "lp_session_v1";
 
+/**
+ * IDs de tracking configurados via variáveis públicas (ok em build client):
+ *   VITE_GTM_CONTAINER_ID  →  GTM-XXXXXXX   (preferido; carrega GA4 via tag)
+ *   VITE_GA4_MEASUREMENT_ID → G-XXXXXXXXXX  (gtag direto, sem GTM)
+ *
+ * Definidos ambos, GTM tem prioridade e o GA4 é configurado por dentro do container.
+ */
+export const GTM_ID = (import.meta.env.VITE_GTM_CONTAINER_ID ?? "") as string;
+export const GA4_ID = (import.meta.env.VITE_GA4_MEASUREMENT_ID ?? "") as string;
+
+let installed = false;
+
+/**
+ * Injeta o snippet oficial do GTM (ou do gtag GA4, se só o GA4 estiver
+ * configurado) uma única vez. Deve ser chamada no cliente após a
+ * montagem — respeitando `prefers-reduced-motion`? Não: analytics não é
+ * animação. Só evita rodar em SSR.
+ */
+export function installAnalytics() {
+  if (installed || typeof window === "undefined") return;
+  installed = true;
+
+  // dataLayer precisa existir antes do snippet do GTM/gtag.
+  const w = window as unknown as { dataLayer?: unknown[]; gtag?: (...a: unknown[]) => void };
+  w.dataLayer = w.dataLayer ?? [];
+
+  if (GTM_ID) {
+    // Snippet oficial do GTM.
+    w.dataLayer.push({ "gtm.start": Date.now(), event: "gtm.js" });
+    const s = document.createElement("script");
+    s.async = true;
+    s.src = `https://www.googletagmanager.com/gtm.js?id=${encodeURIComponent(GTM_ID)}`;
+    document.head.appendChild(s);
+
+    // Fallback <noscript> iframe para navegadores sem JS.
+    const noscript = document.createElement("noscript");
+    const iframe = document.createElement("iframe");
+    iframe.src = `https://www.googletagmanager.com/ns.html?id=${encodeURIComponent(GTM_ID)}`;
+    iframe.height = "0";
+    iframe.width = "0";
+    iframe.style.display = "none";
+    iframe.style.visibility = "hidden";
+    noscript.appendChild(iframe);
+    document.body.prepend(noscript);
+    return;
+  }
+
+  if (GA4_ID) {
+    // Snippet oficial do gtag GA4 (sem GTM).
+    const s = document.createElement("script");
+    s.async = true;
+    s.src = `https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(GA4_ID)}`;
+    document.head.appendChild(s);
+
+    function gtag(...args: unknown[]) {
+      (w.dataLayer as unknown[]).push(args);
+    }
+    w.gtag = gtag as (...a: unknown[]) => void;
+    gtag("js", new Date());
+    gtag("config", GA4_ID, { send_page_view: true });
+  }
+}
+
+export function isAnalyticsConfigured() {
+  return Boolean(GTM_ID || GA4_ID);
+}
+
 type SessionState = {
   session_id: string;
   started_at: number;
@@ -84,9 +151,20 @@ export function track(event: string, props: AnalyticsProps = {}) {
   };
 
   // GA4 / GTM compatible sink
-  const w = window as unknown as { dataLayer?: unknown[] };
+  const w = window as unknown as {
+    dataLayer?: unknown[];
+    gtag?: (...a: unknown[]) => void;
+  };
   w.dataLayer = w.dataLayer ?? [];
   w.dataLayer.push(payload);
+
+  // Se estamos usando gtag direto (GA4 sem GTM), envia como evento
+  // customizado. Com GTM, deixa a tag do container disparar o evento
+  // — o push acima já basta.
+  if (!GTM_ID && GA4_ID && typeof w.gtag === "function") {
+    const { event: _ev, ...rest } = payload;
+    w.gtag("event", event, rest);
+  }
 
   if (import.meta.env.DEV) {
     // eslint-disable-next-line no-console
