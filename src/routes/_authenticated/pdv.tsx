@@ -1101,7 +1101,10 @@ function PDVPage() {
           </div>
         </section>
 
-        <aside className="min-w-0 rounded-2xl border border-slate-200 bg-white p-3 shadow-sm">
+        <aside
+          id="pdv-cart"
+          className="order-first min-w-0 rounded-2xl border-2 border-brand-blue/30 bg-white p-3 shadow-lg lg:order-none lg:border lg:border-slate-200 lg:shadow-sm"
+        >
           <div className="mb-3 flex items-center justify-between">
             <h2 className="text-base font-black">Itens da venda</h2>
             <Button variant="ghost" size="sm" className="text-brand-blue" onClick={clearSale}>
@@ -1187,15 +1190,26 @@ function PDVPage() {
             </Button>
           </div>
 
-          <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-3 2xl:grid-cols-5">
+          <p className="mt-4 text-[10px] font-black uppercase tracking-wider text-slate-500">
+            Finalizar rápido com o método:
+          </p>
+          <div className="mt-1 grid grid-cols-2 gap-2 sm:grid-cols-3 2xl:grid-cols-5">
             {PAYMENT_OPTIONS.map((option) => {
               const Icon = option.icon;
               return (
                 <button
                   key={option.id}
                   type="button"
-                  onClick={() => setExactPayment(option.id)}
-                  className="rounded-xl border border-slate-200 bg-white p-2 text-center text-[11px] font-black text-slate-700 transition hover:border-brand-blue hover:text-brand-blue"
+                  disabled={!cart.length}
+                  onClick={() => {
+                    if (!cart.length) {
+                      toast.error("Adicione um produto ao carrinho primeiro.");
+                      return;
+                    }
+                    setExactPayment(option.id);
+                    setShowCheckout(true);
+                  }}
+                  className="rounded-xl border border-slate-200 bg-white p-2 text-center text-[11px] font-black text-slate-700 transition hover:border-brand-blue hover:text-brand-blue disabled:cursor-not-allowed disabled:opacity-40"
                 >
                   <Icon className="mx-auto mb-1 h-4 w-4" />
                   {option.label}
