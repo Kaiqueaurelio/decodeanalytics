@@ -118,16 +118,12 @@ const CATEGORY_IMAGES_BY_KEY: Record<string, string> = {
 const PRODUCT_IMAGES_BY_FILE: Record<string, string> = {
   "adesivos.jpg": imgAdesivos,
   "banners.jpg": imgBanners,
-  "banners.jpg": imgBanners,
-  "brindes.jpg": imgBrindes,
   "brindes.jpg": imgBrindes,
   "camisetas.jpg": imgCamisetas,
   "canecas.jpg": imgCanecas,
   "cartoes.jpg": imgCartoes,
   "embalagens.jpg": imgEmbalagens,
-  "embalagens.jpg": imgEmbalagens,
   "panfletos.jpg": imgPanfletos,
-  "plotagem.jpg": imgPlotagem,
   "plotagem.jpg": imgPlotagem,
 };
 
