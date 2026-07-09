@@ -1,10 +1,8 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { Sparkles } from "lucide-react";
 import { useAuth } from "@/lib/auth";
-import ellaAsset from "@/assets/ella-avatar.png.asset.json";
+import ellaAvatar from "@/assets/ella-avatar.jpg";
 import { cn } from "@/lib/utils";
-
-const ellaAvatar = ellaAsset.url;
 
 /**
  * Botão flutuante (FAB) que leva administradores direto para a Ella.
