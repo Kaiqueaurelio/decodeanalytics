@@ -158,7 +158,7 @@ function FeedCard({
           section: "infinite_products",
           position: index + 1,
           infinite_page_at_click: page,
-          price: product.base_price ?? null,
+          price: product.base_price != null ? Number(product.base_price) : null,
           category: product.category ?? null,
         })
       }
