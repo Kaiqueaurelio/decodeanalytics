@@ -430,6 +430,69 @@
   .animate-shimmer-bg { animation: none !important; }
 }
 
+/* ============ Cursor follower (desktop only) ============ */
+@media (pointer: fine) {
+  .cursor-follower-dot,
+  .cursor-follower-ring {
+    position: fixed;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    z-index: 9999;
+    will-change: transform;
+    mix-blend-mode: difference;
+  }
+  .cursor-follower-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 9999px;
+    background: #ffffff;
+  }
+  .cursor-follower-ring {
+    width: 34px;
+    height: 34px;
+    border-radius: 9999px;
+    border: 1.5px solid rgba(255, 255, 255, 0.85);
+    transition: width 220ms cubic-bezier(0.22, 1, 0.36, 1),
+      height 220ms cubic-bezier(0.22, 1, 0.36, 1),
+      background-color 220ms ease,
+      border-color 220ms ease,
+      opacity 220ms ease;
+  }
+  .cursor-follower-ring[data-hover="1"] {
+    width: 58px;
+    height: 58px;
+    background: rgba(250, 204, 21, 0.18);
+    border-color: rgba(250, 204, 21, 0.95);
+    box-shadow: 0 0 24px rgba(250, 204, 21, 0.35);
+  }
+  .cursor-follower-ripple {
+    position: fixed;
+    pointer-events: none;
+    width: 10px;
+    height: 10px;
+    margin: -5px 0 0 -5px;
+    border-radius: 9999px;
+    border: 2px solid rgba(19, 102, 255, 0.6);
+    z-index: 9998;
+    animation: cursor-ripple 600ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+  @keyframes cursor-ripple {
+    to {
+      width: 90px;
+      height: 90px;
+      margin: -45px 0 0 -45px;
+      opacity: 0;
+      border-color: rgba(250, 204, 21, 0.1);
+    }
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cursor-follower-dot,
+  .cursor-follower-ring,
+  .cursor-follower-ripple { display: none !important; }
+}
+
 /* Hide Lovable badge */
 #lovable-badge,
 #lovable-badge-v2,
