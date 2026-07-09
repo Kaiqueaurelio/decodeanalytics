@@ -15,7 +15,8 @@ import {
   X,
   Sparkles,
 } from "lucide-react";
-import { STORE_CATEGORIES, STORE_CONTACT, waLink } from "./tokens";
+import { STORE_CATEGORIES } from "./tokens";
+import { useCompanyInfo, useWaLink } from "@/hooks/useCompanyInfo";
 import { useCart } from "@/lib/cart-context";
 import { useState } from "react";
 import {
@@ -87,6 +88,8 @@ function TopPromoBar() {
 function StoreHeader() {
   const [q, setQ] = useState("");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const info = useCompanyInfo();
+  const waLink = useWaLink();
   return (
     <header className="sticky top-0 z-30 border-b border-[var(--store-border)] bg-[var(--store-surface)]/95 backdrop-blur">
       <div className="mx-auto flex max-w-[1280px] items-center gap-2 px-3 py-2 sm:gap-3 sm:px-4 sm:py-3 md:gap-6 md:py-4">
@@ -265,7 +268,7 @@ function StoreHeader() {
                   <MessageCircle className="h-4 w-4 text-[var(--store-success)]" />
                   <div>
                     <div className="font-semibold text-[var(--store-success)]">WhatsApp</div>
-                    <div className="text-xs text-[var(--store-text-muted)]">{STORE_CONTACT.phone}</div>
+                    <div className="text-xs text-[var(--store-text-muted)]">{info.whatsappDisplay}</div>
                   </div>
                 </a>
               </div>
@@ -278,7 +281,9 @@ function StoreHeader() {
               </p>
               <div className="flex gap-2">
                 <a
-                  href="#"
+                  href={info.instagramUrl ?? "#"}
+                  target={info.instagramUrl ? "_blank" : undefined}
+                  rel={info.instagramUrl ? "noopener noreferrer" : undefined}
                   aria-label="Instagram"
                   className="grid h-9 w-9 place-items-center rounded-lg bg-white hover:bg-[var(--store-primary)] hover:text-white transition-colors"
                 >
