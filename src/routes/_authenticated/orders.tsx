@@ -13,7 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Plus, Pencil, Trash2, Search, AlertTriangle, Eye, EyeOff, X, Clock, CalendarClock, CalendarX } from "lucide-react";
+import { Plus, Pencil, Trash2, Search, AlertTriangle, Eye, EyeOff, X, Clock, CalendarClock, CalendarX, Play, CheckCircle2 } from "lucide-react";
 import { toast } from "sonner";
 import { brl, fmtDate, PRODUCTION_STATUS_LABEL, PAYMENT_STATUS_LABEL } from "@/lib/format";
 import { OrderEditor } from "@/components/OrderEditor";
@@ -196,6 +196,16 @@ function OrdersPage() {
     const { error } = await supabase.from("orders").delete().eq("id", id);
     if (error) return toast.error(error.message);
     toast.success("Excluída");
+    qc.invalidateQueries({ queryKey: ["orders"] });
+  }
+
+  async function quickStatus(id: string, number: number, status: string, label: string) {
+    const { error } = await supabase
+      .from("orders")
+      .update({ production_status: status as any })
+      .eq("id", id);
+    if (error) return toast.error(error.message);
+    toast.success(`OS #${number} ${label}`);
     qc.invalidateQueries({ queryKey: ["orders"] });
   }
 
