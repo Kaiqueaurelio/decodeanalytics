@@ -37,6 +37,7 @@ import { InfiniteProducts } from "@/components/storefront/InfiniteProducts";
 import { CategoryCircles } from "@/components/storefront/CategoryCircles";
 import { Reveal } from "@/components/storefront/Reveal";
 import { CursorFollower } from "@/components/storefront/CursorFollower";
+import { trackCardClick, trackCta } from "@/lib/analytics";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -112,6 +113,15 @@ function FeaturedBento() {
         <Link
           to="/produtos"
           className="inline-flex items-center gap-1 text-xs font-extrabold uppercase tracking-[0.18em] text-[#172554] hover:text-[var(--store-primary-dark)]"
+          onClick={() =>
+            trackCta({
+              cta_id: "bento_view_all",
+              cta_label: "Ver tudo",
+              section: "featured_bento",
+              destination: "/produtos",
+              channel: "internal",
+            })
+          }
         >
           Ver tudo <ArrowRight className="h-4 w-4" />
         </Link>
@@ -131,6 +141,7 @@ function FeaturedBento() {
                 key={p.id}
                 product={p}
                 animationDelay={120 + idx * 80}
+                position={idx + 1}
               />
             ))}
 
@@ -141,6 +152,14 @@ function FeaturedBento() {
           rel="noopener noreferrer"
           className="store-bento-card group flex flex-col items-center justify-center bg-[var(--store-gold)] p-5 text-center text-[var(--store-ink)] animate-fade-in"
           style={{ animationDelay: "280ms", animationFillMode: "both" }}
+          onClick={() =>
+            trackCta({
+              cta_id: "bento_criar_arte",
+              cta_label: "Criamos sua arte",
+              section: "featured_bento",
+              channel: "whatsapp",
+            })
+          }
         >
           <Palette className="mb-2 h-7 w-7" />
           <p className="font-display text-2xl leading-none sm:text-3xl">CRIAMOS SUA ARTE</p>
@@ -157,6 +176,15 @@ function FeaturedBento() {
           to="/produtos"
           className="store-bento-card group flex flex-col items-center justify-center bg-[#172554] p-5 text-center text-white animate-fade-in"
           style={{ animationDelay: "360ms", animationFillMode: "both" }}
+          onClick={() =>
+            trackCta({
+              cta_id: "bento_mais_produtos",
+              cta_label: "Mais produtos",
+              section: "featured_bento",
+              destination: "/produtos",
+              channel: "internal",
+            })
+          }
         >
           <div className="grid h-12 w-12 place-items-center rounded-full border-2 border-white text-white transition-transform group-hover:rotate-90">
             <Plus className="h-5 w-5" />
@@ -172,6 +200,7 @@ function FeaturedBento() {
               key={p.id}
               product={p}
               animationDelay={440 + idx * 80}
+              position={idx + 3}
             />
           ))}
       </div>
@@ -182,9 +211,11 @@ function FeaturedBento() {
 function BentoProductCard({
   product,
   animationDelay,
+  position,
 }: {
   product: StoreProduct;
   animationDelay: number;
+  position?: number;
 }) {
   const slug = product.slug ?? product.id;
   const rating = product.rating ? Number(product.rating) : null;
@@ -196,6 +227,17 @@ function BentoProductCard({
       params={{ slug }}
       className="store-bento-card group flex flex-col overflow-hidden bg-white p-3 text-[var(--store-ink)] animate-fade-in"
       style={{ animationDelay: `${animationDelay}ms`, animationFillMode: "both" }}
+      onClick={() =>
+        trackCardClick({
+          card_id: product.id,
+          card_title: product.name,
+          card_type: "product",
+          section: "featured_bento",
+          position,
+          price: product.base_price != null ? Number(product.base_price) : null,
+          category: product.category ?? null,
+        })
+      }
     >
       <div className="relative mb-3 flex aspect-square items-center justify-center overflow-hidden rounded-[var(--store-radius-md)] bg-slate-100">
         <SmartImage 
@@ -323,6 +365,14 @@ function HowItWorks() {
           target="_blank"
           rel="noopener noreferrer"
           className="inline-flex h-11 items-center justify-center gap-2 rounded-[var(--store-radius-md)] bg-[var(--store-success)] px-5 text-sm font-bold text-white shadow-[var(--store-shadow-md)] hover:brightness-110"
+          onClick={() =>
+            trackCta({
+              cta_id: "how_it_works_whatsapp",
+              cta_label: "Falar com a equipe no WhatsApp",
+              section: "how_it_works",
+              channel: "whatsapp",
+            })
+          }
         >
           Falar com a equipe no WhatsApp
         </a>
@@ -590,6 +640,14 @@ function _ContactSection() {
             target="_blank"
             rel="noopener noreferrer"
             className="mt-6 inline-flex h-12 items-center justify-center gap-2 rounded-[var(--store-radius-md)] bg-[var(--store-success)] px-6 text-sm font-extrabold uppercase tracking-wide text-white shadow-[var(--store-shadow-md)] hover:brightness-110"
+            onClick={() =>
+              trackCta({
+                cta_id: "contact_whatsapp",
+                cta_label: "Falar no WhatsApp",
+                section: "contact",
+                channel: "whatsapp",
+              })
+            }
           >
             <Send className="h-4 w-4" /> Falar no WhatsApp
           </a>
