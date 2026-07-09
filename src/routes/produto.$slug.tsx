@@ -204,6 +204,7 @@ function Gallery({ image, alt }: { image: string | null | undefined; alt: string
 }
 
 function BuyBox({ product }: { product: StoreProduct }) {
+  const waLink = useWaLink();
   const { addItem } = useCart();
   const min = product.min_quantity ?? 1;
   const [qty, setQty] = useState(min);

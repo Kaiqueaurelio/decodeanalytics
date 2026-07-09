@@ -20,6 +20,7 @@ export const Route = createFileRoute("/carrinho")({
 });
 
 function CartPage() {
+  const waLink = useWaLink();
   const { items, count, total, updateQuantity, removeItem, clear } = useCart();
 
   const message = useMemo(() => {
