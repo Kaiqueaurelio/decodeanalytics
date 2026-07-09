@@ -520,6 +520,119 @@ export const ellaChat = createServerFn({ method: "POST" })
           return { success: true };
         },
       }),
+      update_client: tool({
+        description: "Atualiza dados de um cliente pelo id.",
+        inputSchema: z.object({
+          id: z.string().uuid(),
+          name: z.string().optional(),
+          whatsapp: z.string().optional(),
+          email: z.string().optional(),
+          address: z.string().optional(),
+          city: z.string().optional(),
+          notes: z.string().optional(),
+        }),
+        execute: async ({ id, ...rest }) => {
+          const patch: any = {};
+          for (const [k, v] of Object.entries(rest)) if (v !== undefined) patch[k] = v;
+          const { error } = await supabase.from("clients").update(patch).eq("id", id);
+          if (error) return { error: error.message };
+          return { success: true };
+        },
+      }),
+      delete_client: tool({
+        description: "Exclui um cliente pelo id. Ação destrutiva — só use após confirmação.",
+        inputSchema: z.object({ id: z.string().uuid() }),
+        execute: async ({ id }) => {
+          const { error } = await supabase.from("clients").delete().eq("id", id);
+          if (error) return { error: error.message };
+          return { success: true };
+        },
+      }),
+      cancel_order: tool({
+        description: "Cancela uma OS pelo número (marca como 'cancelado').",
+        inputSchema: z.object({ number: z.number(), reason: z.string().optional() }),
+        execute: async ({ number, reason }) => {
+          const { data, error } = await supabase
+            .from("orders")
+            .update({
+              production_status: "cancelado",
+              current_activity: reason ? `Cancelado: ${reason}` : "Cancelado",
+            })
+            .eq("number", number)
+            .select("number")
+            .maybeSingle();
+          if (error) return { error: error.message };
+          if (!data) return { error: `OS #${number} não encontrada` };
+          return { success: true };
+        },
+      }),
+      delete_receivable: tool({
+        description: "Exclui uma cobrança pelo id. Ação destrutiva.",
+        inputSchema: z.object({ id: z.string().uuid() }),
+        execute: async ({ id }) => {
+          const { error } = await supabase.from("receivables").delete().eq("id", id);
+          if (error) return { error: error.message };
+          return { success: true };
+        },
+      }),
+      update_receivable: tool({
+        description: "Atualiza valor, vencimento ou status de uma cobrança.",
+        inputSchema: z.object({
+          id: z.string().uuid(),
+          amount: z.number().optional(),
+          dueDate: z.string().optional().describe("YYYY-MM-DD"),
+          status: z.enum(["pendente", "pago", "vencido", "cancelado"]).optional(),
+          notes: z.string().optional(),
+        }),
+        execute: async ({ id, dueDate, ...rest }) => {
+          const patch: any = {};
+          for (const [k, v] of Object.entries(rest)) if (v !== undefined) patch[k] = v;
+          if (dueDate) patch.due_date = dueDate;
+          const { error } = await supabase.from("receivables").update(patch).eq("id", id);
+          if (error) return { error: error.message };
+          return { success: true };
+        },
+      }),
+      list_users: tool({
+        description: "Lista usuários do sistema com seus papéis.",
+        inputSchema: z.object({}),
+        execute: async () => {
+          const { data: profiles, error } = await supabase
+            .from("profiles")
+            .select("id,full_name,email")
+            .order("full_name");
+          if (error) return { error: error.message };
+          const { data: roles } = await supabase.from("user_roles").select("user_id,role");
+          const byUser: Record<string, string[]> = {};
+          for (const r of roles ?? []) {
+            (byUser[r.user_id] ??= []).push(r.role);
+          }
+          return {
+            users: (profiles ?? []).map((p: any) => ({ ...p, roles: byUser[p.id] ?? [] })),
+          };
+        },
+      }),
+      set_user_role: tool({
+        description:
+          "Define o papel de um usuário. role em: administrador, atendente, producao, financeiro, vendedor.",
+        inputSchema: z.object({
+          userId: z.string().uuid(),
+          role: z.enum(["administrador", "atendente", "producao", "financeiro", "vendedor"]),
+          replaceExisting: z.boolean().optional(),
+        }),
+        execute: async ({ userId: uid, role, replaceExisting }) => {
+          if (replaceExisting) {
+            await supabase.from("user_roles").delete().eq("user_id", uid);
+          }
+          const { error } = await supabase
+            .from("user_roles")
+            .insert({ user_id: uid, role })
+            .select("id")
+            .maybeSingle();
+          if (error) return { error: error.message };
+          return { success: true };
+        },
+      }),
     };
 
     const history = (data.conversationHistory ?? []).map((m) => ({
@@ -543,11 +656,41 @@ export const ellaChat = createServerFn({ method: "POST" })
             .join("\n")}`
         : "";
 
+    // Processa anexos: áudio vira transcrição; imagem/PDF/vídeo viram partes multimodais.
+    const attachments = data.attachments ?? [];
+    let userText = data.message;
+    const mediaParts: any[] = [];
+    for (const att of attachments) {
+      const mt = att.mimeType.toLowerCase();
+      if (mt.startsWith("audio/")) {
+        const transcript = await transcribeAttachment(key, att);
+        userText += transcript
+          ? `\n\n[Áudio "${att.name}" — transcrição]: ${transcript}`
+          : `\n\n[Áudio "${att.name}" enviado mas não foi possível transcrever.]`;
+      } else if (mt.startsWith("image/")) {
+        mediaParts.push({
+          type: "image" as const,
+          image: `data:${att.mimeType};base64,${att.dataBase64}`,
+        });
+      } else {
+        mediaParts.push({
+          type: "file" as const,
+          data: `data:${att.mimeType};base64,${att.dataBase64}`,
+          mediaType: att.mimeType,
+          filename: att.name,
+        });
+      }
+    }
+
+    const userMessage: any = mediaParts.length
+      ? { role: "user", content: [{ type: "text", text: userText }, ...mediaParts] }
+      : { role: "user", content: userText };
+
     try {
       const result = await generateText({
         model,
         system: `${SYSTEM_PROMPT}\n\nData/hora atual (America/Sao_Paulo): ${today}${kbBlock}`,
-        messages: [...history, { role: "user", content: data.message }],
+        messages: [...history, userMessage],
         tools,
         stopWhen: stepCountIs(50),
       });
