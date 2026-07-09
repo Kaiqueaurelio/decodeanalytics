@@ -10,7 +10,7 @@ import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { ellaPublicChat } from "@/lib/api/ella-public.functions";
 import { StoreShell } from "@/components/storefront/StoreShell";
-import ellaAvatar from "@/assets/ella-avatar.png.asset.json";
+import ellaAvatar from "@/assets/ella-avatar.jpg";
 
 export const Route = createFileRoute("/assistente")({
   component: AssistantePage,
