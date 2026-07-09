@@ -414,7 +414,7 @@ export const ellaChat = createServerFn({ method: "POST" })
         stopWhen: stepCountIs(50),
       });
 
-      const toolActivity: Array<{ name: string; input: unknown; output: unknown }> = [];
+      const toolActivity: Array<{ name: string; input: any; output: any }> = [];
       for (const step of result.steps ?? []) {
         for (const tc of step.toolCalls ?? []) {
           const tr = step.toolResults?.find((r: any) => r.toolCallId === tc.toolCallId);

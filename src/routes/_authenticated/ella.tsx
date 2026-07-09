@@ -14,7 +14,7 @@ export const Route = createFileRoute("/_authenticated/ella")({
   component: EllaPage,
 });
 
-type ToolActivity = { name: string; input: unknown; output: unknown };
+type ToolActivity = { name: string; input: any; output: any };
 interface Message {
   id: string;
   role: "user" | "assistant";
@@ -111,14 +111,16 @@ function EllaPage() {
     setInput("");
     setLoading(true);
     try {
-      const data = await chat({ data: { message: content, conversationHistory: history } });
+      const data: any = await chat({
+        data: { message: content, conversationHistory: history },
+      });
       setMessages((prev) => [
         ...prev,
         {
           id: `a-${Date.now()}`,
           role: "assistant",
           content: data.response,
-          tools: (data as any).toolActivity,
+          tools: data.toolActivity,
         },
       ]);
     } catch (err) {
