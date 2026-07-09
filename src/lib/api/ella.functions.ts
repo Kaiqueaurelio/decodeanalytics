@@ -17,6 +17,8 @@ const InputSchema = z.object({
 const SYSTEM_PROMPT = `Você é Ella Ribeiro, assistente operacional da Alcateia's Produções Gráficas.
 
 Personalidade: profissional, calorosa, direta, com bom humor sutil. Fala em português do Brasil.
+Você é especialista no universo gráfico (impressão offset e digital, papéis, gramaturas, acabamentos, prazos, cores CMYK/Pantone, arquivos abertos vs fechados, sangria/margem de segurança, formatos, orçamentação).
+Você também é uma boa conversadora: se perguntarem "o que você sabe fazer?", "como está seu dia?", "me explica X", responda com naturalidade — sem tools, só um papo objetivo e útil, sempre puxando para o contexto de gráfica quando fizer sentido.
 
 Você tem AÇÕES REAIS no sistema (tools). Use-as sempre que o usuário pedir para criar, buscar, listar, atualizar ou remover algo. Não invente dados: chame a tool correspondente e use o resultado.
 
@@ -26,6 +28,8 @@ Fluxos comuns:
 - Andamento: update_order_status muda a etapa da produção.
 - Lembretes: se tiver título e horário claros, execute create_reminder direto e confirme no final. Só pergunte se o horário estiver ambíguo.
 - Panorama: use dashboard_summary para números gerais.
+- Treinamento/aprendizado: quando o usuário disser "aprenda que...", "lembre que...", "guarda esse conhecimento...", "treinamento:", "isso aqui você usa no atendimento ao cliente", etc, chame add_knowledge com título curto, o conteúdo completo, e o escopo correto (admin/public/both). Se o admin pedir "isso vale para os clientes também" use scope='both' ou 'public'. Se disser "isso é só interno" use 'admin'.
+- Consultar aprendizados: use list_knowledge para procurar antes de responder algo específico da empresa (preços, políticas, produtos, prazos, formas de pagamento). Se houver conhecimento salvo relevante, priorize-o sobre suposições.
 
 Regras:
 - Execute direto criações e atualizações comuns (OS, cobrança, lembrete, cliente, status). Só peça confirmação para cancelar/excluir.
@@ -397,6 +401,76 @@ export const ellaChat = createServerFn({ method: "POST" })
           return { activeOrders: active, pendingReceivables: pending, monthRevenue: revenue };
         },
       }),
+      add_knowledge: tool({
+        description:
+          "Salva um aprendizado/treinamento da Ella (informações sobre a gráfica, produtos, políticas, respostas prontas). scope: 'admin' (só interno), 'public' (só clientes), 'both' (ambos).",
+        inputSchema: z.object({
+          title: z.string(),
+          content: z.string(),
+          scope: z.enum(["admin", "public", "both"]).default("both"),
+          tags: z.array(z.string()).optional(),
+        }),
+        execute: async ({ title, content, scope, tags }) => {
+          const { data, error } = await supabase
+            .from("ella_knowledge" as any)
+            .insert({ title, content, scope, tags: tags ?? [], created_by: userId } as any)
+            .select("id,title,scope")
+            .single();
+          if (error) return { error: error.message };
+          return { success: true, knowledge: data };
+        },
+      }),
+      list_knowledge: tool({
+        description:
+          "Lista aprendizados salvos. Filtra por scope e/ou busca textual em título/conteúdo.",
+        inputSchema: z.object({
+          scope: z.enum(["admin", "public", "both"]).optional(),
+          search: z.string().optional(),
+        }),
+        execute: async ({ scope, search }) => {
+          let q = supabase
+            .from("ella_knowledge" as any)
+            .select("id,title,content,scope,tags,updated_at")
+            .order("updated_at", { ascending: false });
+          if (scope) q = q.eq("scope", scope);
+          if (search) q = q.or(`title.ilike.%${search}%,content.ilike.%${search}%`);
+          const { data, error } = await q.limit(30);
+          if (error) return { error: error.message };
+          return { knowledge: data ?? [] };
+        },
+      }),
+      update_knowledge: tool({
+        description: "Atualiza um aprendizado pelo id.",
+        inputSchema: z.object({
+          id: z.string().uuid(),
+          title: z.string().optional(),
+          content: z.string().optional(),
+          scope: z.enum(["admin", "public", "both"]).optional(),
+          tags: z.array(z.string()).optional(),
+        }),
+        execute: async ({ id, ...rest }) => {
+          const patch: any = {};
+          for (const [k, v] of Object.entries(rest)) if (v !== undefined) patch[k] = v;
+          const { error } = await supabase
+            .from("ella_knowledge" as any)
+            .update(patch)
+            .eq("id", id);
+          if (error) return { error: error.message };
+          return { success: true };
+        },
+      }),
+      delete_knowledge: tool({
+        description: "Remove um aprendizado pelo id.",
+        inputSchema: z.object({ id: z.string().uuid() }),
+        execute: async ({ id }) => {
+          const { error } = await supabase
+            .from("ella_knowledge" as any)
+            .delete()
+            .eq("id", id);
+          if (error) return { error: error.message };
+          return { success: true };
+        },
+      }),
     };
 
     const history = (data.conversationHistory ?? []).map((m) => ({
@@ -406,10 +480,24 @@ export const ellaChat = createServerFn({ method: "POST" })
 
     const today = new Date().toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo" });
 
+    // Injeta conhecimento salvo (admin+both) no contexto para tornar Ella "mais inteligente".
+    const { data: kb } = await supabase
+      .from("ella_knowledge" as any)
+      .select("title,content,scope")
+      .in("scope", ["admin", "both"])
+      .order("updated_at", { ascending: false })
+      .limit(40);
+    const kbBlock =
+      kb && kb.length
+        ? `\n\nBase de conhecimento (aprendizados salvos — priorize sobre suposições):\n${(kb as any[])
+            .map((k) => `• [${k.scope}] ${k.title}: ${k.content}`)
+            .join("\n")}`
+        : "";
+
     try {
       const result = await generateText({
         model,
-        system: `${SYSTEM_PROMPT}\n\nData/hora atual (America/Sao_Paulo): ${today}`,
+        system: `${SYSTEM_PROMPT}\n\nData/hora atual (America/Sao_Paulo): ${today}${kbBlock}`,
         messages: [...history, { role: "user", content: data.message }],
         tools,
         stopWhen: stepCountIs(50),
