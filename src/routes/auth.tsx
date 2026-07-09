@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useId, useState } from "react";
+import { useEffect, useId, useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -25,6 +25,55 @@ function AuthPage() {
   const signupNameId = useId();
   const signupEmailId = useId();
   const signupPwdId = useId();
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const syncAuthViewport = () => {
+      const viewportHeight = window.visualViewport?.height ?? window.innerHeight;
+      const keyboardIsOpen =
+        !!window.visualViewport && viewportHeight < window.innerHeight - 120;
+
+      document.documentElement.style.setProperty("--auth-viewport-height", `${viewportHeight}px`);
+      document.documentElement.classList.toggle("auth-keyboard-open", keyboardIsOpen);
+    };
+
+    syncAuthViewport();
+    window.visualViewport?.addEventListener("resize", syncAuthViewport);
+    window.visualViewport?.addEventListener("scroll", syncAuthViewport);
+    window.addEventListener("resize", syncAuthViewport);
+
+    return () => {
+      window.visualViewport?.removeEventListener("resize", syncAuthViewport);
+      window.visualViewport?.removeEventListener("scroll", syncAuthViewport);
+      window.removeEventListener("resize", syncAuthViewport);
+      document.documentElement.style.removeProperty("--auth-viewport-height");
+      document.documentElement.classList.remove("auth-keyboard-open");
+    };
+  }, []);
+
+  function focusNativeKeyboard(input: HTMLInputElement) {
+    input.focus({ preventScroll: true });
+    window.setTimeout(() => {
+      input.scrollIntoView({ block: "center", inline: "nearest", behavior: "smooth" });
+    }, 80);
+  }
+
+  const mobileFocusHandlers = {
+    onPointerUp: (event: React.PointerEvent<HTMLInputElement>) => {
+      if (event.pointerType === "touch" || event.pointerType === "pen") {
+        focusNativeKeyboard(event.currentTarget);
+      }
+    },
+    onClick: (event: React.MouseEvent<HTMLInputElement>) => {
+      focusNativeKeyboard(event.currentTarget);
+    },
+    onFocus: (event: React.FocusEvent<HTMLInputElement>) => {
+      window.setTimeout(() => {
+        event.currentTarget.scrollIntoView({ block: "center", inline: "nearest", behavior: "smooth" });
+      }, 120);
+    },
+  };
 
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault();
@@ -60,15 +109,15 @@ function AuthPage() {
 
   return (
     <div
-      className="min-h-screen-dvh flex items-center justify-center p-3 sm:p-4 overflow-y-auto safe-pt safe-pb"
+      className="auth-screen min-h-screen-dvh flex items-center justify-center overflow-x-hidden overflow-y-auto p-3 safe-pt safe-pb sm:p-4"
       style={{ background: "linear-gradient(135deg, #031c18, #074531 58%, #d9a83f)" }}
     >
-      <div className="w-full max-w-md bg-card rounded-2xl shadow-2xl p-5 sm:p-8 border border-border">
+      <div className="auth-card w-full max-w-md rounded-2xl border border-border bg-card p-5 shadow-2xl sm:p-8">
         <div className="text-center mb-4 sm:mb-6">
           <img
             src="/brand/alcateia-logo.png"
             alt="Alcateia's Produções Gráficas - Criando impacto a cada imagem"
-            className="mx-auto mb-3 sm:mb-4 h-24 sm:h-36 md:h-44 w-auto max-w-full object-contain"
+            className="auth-logo mx-auto mb-3 h-24 w-auto max-w-full object-contain sm:mb-4 sm:h-36 md:h-44"
           />
           <h1 className="text-xl sm:text-2xl font-bold text-primary">Alcateia's Gestão</h1>
           <p className="text-sm text-muted-foreground">Sistema de gestão da produção gráfica</p>
@@ -94,6 +143,7 @@ function AuthPage() {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                  {...mobileFocusHandlers}
                   required
                 />
               </div>
@@ -112,6 +162,7 @@ function AuthPage() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
+                    {...mobileFocusHandlers}
                     className="pr-11"
                   />
                   <button
@@ -145,9 +196,12 @@ function AuthPage() {
                   name="name"
                   autoComplete="name"
                   autoCapitalize="words"
+                  inputMode="text"
                   enterKeyHint="next"
+                  type="text"
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
+                  {...mobileFocusHandlers}
                   required
                 />
               </div>
@@ -165,6 +219,7 @@ function AuthPage() {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                  {...mobileFocusHandlers}
                   required
                 />
               </div>
@@ -184,6 +239,7 @@ function AuthPage() {
                     onChange={(e) => setPassword(e.target.value)}
                     required
                     minLength={6}
+                    {...mobileFocusHandlers}
                     className="pr-11"
                   />
                   <button
