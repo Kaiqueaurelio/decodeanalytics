@@ -13,7 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Plus, Pencil, Trash2, Search, AlertTriangle, Eye, EyeOff, X, Clock, CalendarClock, CalendarX } from "lucide-react";
+import { Plus, Pencil, Trash2, Search, AlertTriangle, Eye, EyeOff, X, Clock, CalendarClock, CalendarX, Play, CheckCircle2 } from "lucide-react";
 import { toast } from "sonner";
 import { brl, fmtDate, PRODUCTION_STATUS_LABEL, PAYMENT_STATUS_LABEL } from "@/lib/format";
 import { OrderEditor } from "@/components/OrderEditor";
@@ -196,6 +196,16 @@ function OrdersPage() {
     const { error } = await supabase.from("orders").delete().eq("id", id);
     if (error) return toast.error(error.message);
     toast.success("Excluída");
+    qc.invalidateQueries({ queryKey: ["orders"] });
+  }
+
+  async function quickStatus(id: string, number: number, status: string, label: string) {
+    const { error } = await supabase
+      .from("orders")
+      .update({ production_status: status as any })
+      .eq("id", id);
+    if (error) return toast.error(error.message);
+    toast.success(`OS #${number} ${label}`);
     qc.invalidateQueries({ queryKey: ["orders"] });
   }
 
@@ -419,9 +429,38 @@ function OrdersPage() {
                   </td>
                   <td className="p-3 text-right font-mono">{brl(o.total)}</td>
                   <td className="p-3 text-right">
+                    {o.production_status !== "em_producao" &&
+                      o.production_status !== "entregue" &&
+                      o.production_status !== "cancelado" && (
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          title="Avançar para Em produção"
+                          onClick={() =>
+                            quickStatus(o.id, o.number, "em_producao", "movida para produção")
+                          }
+                        >
+                          <Play className="w-4 h-4 text-blue-600" />
+                        </Button>
+                      )}
+                    {o.production_status !== "entregue" &&
+                      o.production_status !== "cancelado" && (
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          title="Marcar como concluída"
+                          onClick={() => {
+                            if (!confirm(`Concluir OS #${o.number}?`)) return;
+                            quickStatus(o.id, o.number, "entregue", "marcada como concluída");
+                          }}
+                        >
+                          <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                        </Button>
+                      )}
                     <Button
                       size="icon"
                       variant="ghost"
+                      title="Editar"
                       onClick={() => {
                         setEditId(o.id);
                         setOpen(true);
@@ -429,7 +468,12 @@ function OrdersPage() {
                     >
                       <Pencil className="w-4 h-4" />
                     </Button>
-                    <Button size="icon" variant="ghost" onClick={() => remove(o.id, o.number)}>
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      title="Excluir"
+                      onClick={() => remove(o.id, o.number)}
+                    >
                       <Trash2 className="w-4 h-4 text-destructive" />
                     </Button>
                   </td>
