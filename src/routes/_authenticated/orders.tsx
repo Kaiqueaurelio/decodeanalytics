@@ -429,9 +429,38 @@ function OrdersPage() {
                   </td>
                   <td className="p-3 text-right font-mono">{brl(o.total)}</td>
                   <td className="p-3 text-right">
+                    {o.production_status !== "em_producao" &&
+                      o.production_status !== "entregue" &&
+                      o.production_status !== "cancelado" && (
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          title="Avançar para Em produção"
+                          onClick={() =>
+                            quickStatus(o.id, o.number, "em_producao", "movida para produção")
+                          }
+                        >
+                          <Play className="w-4 h-4 text-blue-600" />
+                        </Button>
+                      )}
+                    {o.production_status !== "entregue" &&
+                      o.production_status !== "cancelado" && (
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          title="Marcar como concluída"
+                          onClick={() => {
+                            if (!confirm(`Concluir OS #${o.number}?`)) return;
+                            quickStatus(o.id, o.number, "entregue", "marcada como concluída");
+                          }}
+                        >
+                          <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                        </Button>
+                      )}
                     <Button
                       size="icon"
                       variant="ghost"
+                      title="Editar"
                       onClick={() => {
                         setEditId(o.id);
                         setOpen(true);
@@ -439,7 +468,12 @@ function OrdersPage() {
                     >
                       <Pencil className="w-4 h-4" />
                     </Button>
-                    <Button size="icon" variant="ghost" onClick={() => remove(o.id, o.number)}>
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      title="Excluir"
+                      onClick={() => remove(o.id, o.number)}
+                    >
                       <Trash2 className="w-4 h-4 text-destructive" />
                     </Button>
                   </td>
