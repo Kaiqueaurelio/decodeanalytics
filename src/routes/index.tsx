@@ -597,27 +597,31 @@ function _ContactSection() {
             <p className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-[var(--store-secondary)]">
               Telefone / WhatsApp
             </p>
-            <p className="mt-2 text-base sm:text-lg font-extrabold">{STORE_CONTACT.phone}</p>
+            <p className="mt-2 text-base sm:text-lg font-extrabold">{info.whatsappDisplay}</p>
           </div>
           <div className="rounded-[var(--store-radius-lg)] bg-white/5 p-4 sm:p-5">
             <p className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-[var(--store-secondary)]">
               E-mail
             </p>
-            <p className="mt-2 break-all text-sm sm:text-base font-semibold">{STORE_CONTACT.email}</p>
+            <p className="mt-2 break-all text-sm sm:text-base font-semibold">{info.email}</p>
           </div>
           <div className="rounded-[var(--store-radius-lg)] bg-white/5 p-4 sm:p-5 sm:col-span-2">
             <p className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-[var(--store-secondary)]">
               Endereço
             </p>
             <a
-              href={STORE_CONTACT.mapsUrl}
+              href={info.mapsUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="mt-2 block text-sm sm:text-base font-semibold hover:text-[var(--store-secondary)]"
             >
-              {STORE_CONTACT.address}
-              <br />
-              {STORE_CONTACT.city}
+              {info.address}
+              {info.instagram && (
+                <>
+                  <br />
+                  <span className="text-[var(--store-secondary)]">{info.instagram}</span>
+                </>
+              )}
             </a>
           </div>
           <div className="rounded-[var(--store-radius-lg)] bg-white/5 p-5 sm:col-span-2">
@@ -625,7 +629,7 @@ function _ContactSection() {
               Horário de atendimento
             </p>
             <ul className="mt-2 space-y-1 text-sm">
-              {STORE_CONTACT.hours.map((h) => (
+              {info.hours.map((h) => (
                 <li key={h.day} className="flex justify-between gap-3">
                   <span className="text-white/80">{h.day}</span>
                   <span className="font-semibold">{h.time}</span>
@@ -649,10 +653,10 @@ function _ContactSection() {
           />
           <div className="flex items-center justify-between border-t border-white/10 px-4 py-3 sm:px-5">
             <p className="text-xs font-semibold text-white/80">
-              {STORE_CONTACT.address}, {STORE_CONTACT.city}
+              {info.address}
             </p>
             <a
-              href={STORE_CONTACT.mapsUrl}
+              href={info.mapsUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="text-xs font-bold text-[var(--store-secondary)] hover:underline"
