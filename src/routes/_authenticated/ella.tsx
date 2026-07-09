@@ -1,7 +1,21 @@
 import { useState, useRef, useEffect } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { Send, Loader2, Sparkles, Wrench, ChevronDown } from "lucide-react";
+import {
+  Send,
+  Loader2,
+  Sparkles,
+  Wrench,
+  ChevronDown,
+  Paperclip,
+  Mic,
+  Square,
+  X,
+  FileText,
+  FileAudio,
+  FileVideo,
+  Image as ImageIcon,
+} from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { Button } from "@/components/ui/button";
@@ -16,11 +30,19 @@ export const Route = createFileRoute("/_authenticated/ella")({
 });
 
 type ToolActivity = { name: string; input: any; output: any };
+type Attachment = {
+  name: string;
+  mimeType: string;
+  dataBase64: string;
+  size: number;
+  previewUrl?: string;
+};
 interface Message {
   id: string;
   role: "user" | "assistant";
   content: string;
   tools?: ToolActivity[];
+  attachments?: { name: string; mimeType: string; previewUrl?: string }[];
 }
 
 const SUGGESTIONS = [
