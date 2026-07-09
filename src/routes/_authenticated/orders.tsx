@@ -13,11 +13,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Plus, Pencil, Trash2, Search, AlertTriangle, Eye, EyeOff } from "lucide-react";
+import { Plus, Pencil, Trash2, Search, AlertTriangle, Eye, EyeOff, X } from "lucide-react";
 import { toast } from "sonner";
 import { brl, fmtDate, PRODUCTION_STATUS_LABEL, PAYMENT_STATUS_LABEL } from "@/lib/format";
 import { OrderEditor } from "@/components/OrderEditor";
 import { OSStatusBadge } from "@/components/OSStatusBadge";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export const Route = createFileRoute("/_authenticated/orders")({ component: OrdersPage });
 
@@ -31,16 +32,19 @@ function OrdersPage() {
   const [paymentStatus, setPaymentStatus] = useState("all");
   const [deadlineFilter, setDeadlineFilter] = useState("all");
   const [responsibleFilter, setResponsibleFilter] = useState("all");
+  const [lifecycleTab, setLifecycleTab] = useState<"todas" | "producao" | "concluidas" | "arquivadas">("todas");
 
   const { data: rawOrders } = useQuery({
-    queryKey: ["orders", showCompleted],
+    queryKey: ["orders", showCompleted, lifecycleTab],
     queryFn: async () => {
       let q = supabase
         .from("orders")
         .select("*, clients(name), assignee:profiles!orders_assigned_to_fkey(full_name,email)")
         .order("created_at", { ascending: false })
         .limit(200);
-      if (!showCompleted) {
+      // If a lifecycle tab targets concluídas/arquivadas we must include them
+      const forceAll = lifecycleTab !== "todas" && lifecycleTab !== "producao";
+      if (!showCompleted && !forceAll) {
         q = q.not("production_status", "in", "(entregue,cancelado)");
       }
       const { data, error } = await q;
@@ -87,9 +91,81 @@ function OrdersPage() {
         matchesDeadline = !!d && d >= today && d <= nextWeek;
       }
 
-      return matchesSearch && matchesProd && matchesPay && matchesResp && matchesDeadline;
+      let matchesLifecycle = true;
+      if (lifecycleTab === "producao") {
+        matchesLifecycle =
+          r.production_status !== "entregue" &&
+          r.production_status !== "cancelado" &&
+          r.production_status !== "pausado";
+      } else if (lifecycleTab === "concluidas") {
+        matchesLifecycle = r.production_status === "entregue";
+      } else if (lifecycleTab === "arquivadas") {
+        matchesLifecycle =
+          r.production_status === "cancelado" || r.production_status === "pausado";
+      }
+
+      return (
+        matchesSearch && matchesProd && matchesPay && matchesResp && matchesDeadline && matchesLifecycle
+      );
     });
-  }, [rawOrders, search, productionStatus, paymentStatus, deadlineFilter, responsibleFilter]);
+  }, [rawOrders, search, productionStatus, paymentStatus, deadlineFilter, responsibleFilter, lifecycleTab]);
+
+  const counts = useMemo(() => {
+    const rows = rawOrders ?? [];
+    return {
+      todas: rows.length,
+      producao: rows.filter(
+        (r: any) =>
+          r.production_status !== "entregue" &&
+          r.production_status !== "cancelado" &&
+          r.production_status !== "pausado",
+      ).length,
+      concluidas: rows.filter((r: any) => r.production_status === "entregue").length,
+      arquivadas: rows.filter(
+        (r: any) => r.production_status === "cancelado" || r.production_status === "pausado",
+      ).length,
+    };
+  }, [rawOrders]);
+
+  const activeChips: { key: string; label: string; onClear: () => void }[] = [];
+  if (lifecycleTab !== "todas") {
+    const map = { producao: "Em produção", concluidas: "Concluídas", arquivadas: "Arquivadas" } as const;
+    activeChips.push({ key: "lifecycle", label: map[lifecycleTab], onClear: () => setLifecycleTab("todas") });
+  }
+  if (productionStatus !== "all") {
+    activeChips.push({
+      key: "prod",
+      label: `Status: ${PRODUCTION_STATUS_LABEL[productionStatus] ?? productionStatus}`,
+      onClear: () => setProductionStatus("all"),
+    });
+  }
+  if (paymentStatus !== "all") {
+    activeChips.push({
+      key: "pay",
+      label: `Pagamento: ${PAYMENT_STATUS_LABEL[paymentStatus] ?? paymentStatus}`,
+      onClear: () => setPaymentStatus("all"),
+    });
+  }
+  if (deadlineFilter !== "all") {
+    const map: Record<string, string> = {
+      hoje: "Prazo: hoje",
+      proximos7: "Prazo: próximos 7 dias",
+      atrasado: "Prazo: atrasado",
+    };
+    activeChips.push({ key: "deadline", label: map[deadlineFilter] ?? deadlineFilter, onClear: () => setDeadlineFilter("all") });
+  }
+  if (responsibleFilter !== "all") {
+    const name =
+      responsibleFilter === "unassigned"
+        ? "Sem responsável"
+        : (team ?? []).find((m: any) => m.id === responsibleFilter)?.full_name ||
+          (team ?? []).find((m: any) => m.id === responsibleFilter)?.email ||
+          "Responsável";
+    activeChips.push({ key: "resp", label: `Resp.: ${name}`, onClear: () => setResponsibleFilter("all") });
+  }
+  if (search.trim()) {
+    activeChips.push({ key: "search", label: `Busca: "${search.trim()}"`, onClear: () => setSearch("") });
+  }
 
   async function remove(id: string, number: number) {
     if (!confirm(`Excluir OS #${number}? Esta ação não pode ser desfeita.`)) return;
