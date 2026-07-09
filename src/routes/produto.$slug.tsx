@@ -14,7 +14,8 @@ import {
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { StoreShell } from "@/components/storefront/StoreShell";
-import { brl, waLink } from "@/components/storefront/tokens";
+import { brl } from "@/components/storefront/tokens";
+import { useWaLink } from "@/hooks/useCompanyInfo";
 import { useCart } from "@/lib/cart-context";
 import {
   ProductCard,
@@ -203,6 +204,7 @@ function Gallery({ image, alt }: { image: string | null | undefined; alt: string
 }
 
 function BuyBox({ product }: { product: StoreProduct }) {
+  const waLink = useWaLink();
   const { addItem } = useCart();
   const min = product.min_quantity ?? 1;
   const [qty, setQty] = useState(min);
