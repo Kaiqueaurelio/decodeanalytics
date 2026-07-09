@@ -24,7 +24,8 @@ function CashPage() {
   const { data } = useQuery({
     queryKey: ["cash"],
     queryFn: async () => {
-      const { data } = await supabase.from("cash_entries").select("*, clients(name)").order("entry_date", { ascending: false }).order("created_at", { ascending: false }).limit(300);
+      const { data, error } = await supabase.from("cash_entries").select("*, clients(name)").order("entry_date", { ascending: false }).order("created_at", { ascending: false }).limit(300);
+      if (error) throw error;
       return (data ?? []) as any[];
     },
   });
