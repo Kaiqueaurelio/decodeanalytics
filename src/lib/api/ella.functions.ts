@@ -9,9 +9,16 @@ const MessageSchema = z.object({
   content: z.string(),
 });
 
+const AttachmentSchema = z.object({
+  name: z.string(),
+  mimeType: z.string(),
+  dataBase64: z.string(),
+});
+
 const InputSchema = z.object({
   message: z.string().min(1),
   conversationHistory: z.array(MessageSchema).optional(),
+  attachments: z.array(AttachmentSchema).optional(),
 });
 
 const SYSTEM_PROMPT = `Você é Ella Ribeiro, assistente operacional da Alcateia's Produções Gráficas.
@@ -30,6 +37,8 @@ Fluxos comuns:
 - Panorama: use dashboard_summary para números gerais.
 - Treinamento/aprendizado: quando o usuário disser "aprenda que...", "lembre que...", "guarda esse conhecimento...", "treinamento:", "isso aqui você usa no atendimento ao cliente", etc, chame add_knowledge com título curto, o conteúdo completo, e o escopo correto (admin/public/both). Se o admin pedir "isso vale para os clientes também" use scope='both' ou 'public'. Se disser "isso é só interno" use 'admin'.
 - Consultar aprendizados: use list_knowledge para procurar antes de responder algo específico da empresa (preços, políticas, produtos, prazos, formas de pagamento). Se houver conhecimento salvo relevante, priorize-o sobre suposições.
+- Anexos (imagens/PDF/vídeo/áudio): quando o usuário mandar arquivo, analise o conteúdo e responda com base nele. Áudios já vêm transcritos automaticamente.
+- Ações destrutivas (excluir cliente, cancelar OS, excluir cobrança): confirme brevemente antes de executar, a não ser que o usuário já tenha deixado claro na frase.
 
 Regras:
 - Execute direto criações e atualizações comuns (OS, cobrança, lembrete, cliente, status). Só peça confirmação para cancelar/excluir.
