@@ -141,7 +141,7 @@ function StoreHeader() {
 
         <nav className="hidden items-center gap-1 md:flex">
           <Link
-            to="/ella"
+            to="/assistente"
             className="flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-bold text-purple-600 hover:bg-purple-50 transition-colors"
           >
             <Sparkles className="h-4 w-4" />
@@ -229,7 +229,7 @@ function StoreHeader() {
                 </h3>
                 <div className="space-y-2">
                   <Link
-                    to="/ella"
+                    to="/assistente"
                     onClick={() => setMobileMenuOpen(false)}
                     className="flex items-center gap-3 px-3 py-3 rounded-lg text-sm font-bold text-purple-600 hover:bg-purple-50 transition-colors"
                   >
