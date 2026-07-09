@@ -90,7 +90,7 @@ function AssistantePage() {
       <div className="mx-auto flex max-w-3xl flex-col px-3 sm:px-6 py-6 min-h-[70vh]">
         <header className="grid grid-cols-[auto_minmax(0,1fr)] items-center gap-3 pb-4 border-b border-[var(--store-border)]">
           <img
-            src={ellaAvatar.url}
+            src={ellaAvatar}
             alt="Ella Ribeiro"
             width={48}
             height={48}
