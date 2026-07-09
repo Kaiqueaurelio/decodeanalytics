@@ -91,20 +91,22 @@ export function BriefingCenter({ order, onChanged }: { order: any; onChanged: ()
 
   async function uploadInternal(selected: FileList | null) {
     if (!link || !selected?.length) return;
-    setBusy(true);
-    const { data: auth } = await supabase.auth.getUser();
-    for (const file of Array.from(selected)) {
+    const arr = Array.from(selected);
+    // Valida todos os arquivos antes de subir.
+    for (const file of arr) {
       if (!isAllowedBriefingFile(file)) {
-        setBusy(false);
         return toast.error(`${file.name} não é permitido ou excede 50 MB.`);
       }
+    }
+    setBusy(true);
+    const { data: auth } = await supabase.auth.getUser();
+    const uploadOne = async (file: File) => {
       const path = `${link.token}/interno/${crypto.randomUUID()}-${safeFileName(file.name)}`;
-      const { error } = await supabase.storage.from("briefing-files").upload(path, file);
-      if (error) {
-        setBusy(false);
-        return toast.error(error.message);
-      }
-      await db.from("briefing_files").insert({
+      const { error: upErr } = await supabase.storage
+        .from("briefing-files")
+        .upload(path, file);
+      if (upErr) throw new Error(upErr.message);
+      const { error: insErr } = await db.from("briefing_files").insert({
         link_id: link.id,
         briefing_id: briefing?.id || null,
         order_id: order.id,
@@ -116,8 +118,20 @@ export function BriefingCenter({ order, onChanged }: { order: any; onChanged: ()
         uploaded_by: auth.user?.id,
         uploaded_by_client: false,
       });
-    }
+      if (insErr) {
+        // rollback do arquivo se falhar o insert.
+        await supabase.storage.from("briefing-files").remove([path]).catch(() => undefined);
+        throw new Error(insErr.message);
+      }
+    };
+    const results = await Promise.allSettled(arr.map(uploadOne));
     setBusy(false);
+    const failed = results.find((r) => r.status === "rejected") as
+      | PromiseRejectedResult
+      | undefined;
+    if (failed) {
+      toast.error(String((failed.reason as Error)?.message ?? failed.reason));
+    }
     toast.success("Arquivos adicionados.");
     load();
   }

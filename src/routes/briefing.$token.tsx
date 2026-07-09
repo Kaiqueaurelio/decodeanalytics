@@ -63,28 +63,45 @@ function PublicBriefing() {
     event.preventDefault();
     if (!form.client_name || !form.whatsapp || !form.product_type)
       return toast.error("Preencha nome, WhatsApp e produto.");
-    setSending(true);
-    const uploaded: any[] = [];
+    // Valida todos os arquivos ANTES de iniciar qualquer upload.
     for (const file of files) {
       if (!isAllowedBriefingFile(file)) {
-        setSending(false);
         return toast.error(`${file.name} não é permitido ou excede 50 MB.`);
       }
+    }
+    setSending(true);
+    // Upload em paralelo. Se algum falhar, remove os que já subiram para não deixar lixo.
+    const uploads = files.map(async (file) => {
       const path = `${token}/briefing/${crypto.randomUUID()}-${safeFileName(file.name)}`;
       const { error } = await supabase.storage
         .from("briefing-files")
         .upload(path, file, { upsert: false });
-      if (error) {
-        setSending(false);
-        return toast.error(`Falha no arquivo ${file.name}: ${error.message}`);
-      }
-      uploaded.push({
+      if (error) throw new Error(`Falha no arquivo ${file.name}: ${error.message}`);
+      return {
         storage_path: path,
         file_name: file.name,
         mime_type: file.type,
         size_bytes: file.size,
-        category: "referencia",
-      });
+        category: "referencia" as const,
+      };
+    });
+    const results = await Promise.allSettled(uploads);
+    const uploaded = results
+      .filter((r): r is PromiseFulfilledResult<any> => r.status === "fulfilled")
+      .map((r) => r.value);
+    const firstFailure = results.find((r) => r.status === "rejected") as
+      | PromiseRejectedResult
+      | undefined;
+    if (firstFailure) {
+      // Rollback dos que subiram para não deixar arquivos órfãos no storage.
+      if (uploaded.length) {
+        await supabase.storage
+          .from("briefing-files")
+          .remove(uploaded.map((u) => u.storage_path))
+          .catch(() => undefined);
+      }
+      setSending(false);
+      return toast.error(String((firstFailure.reason as Error)?.message ?? firstFailure.reason));
     }
     const { error } = await (supabase as any).rpc("submit_public_briefing", {
       _token: token,
@@ -92,7 +109,16 @@ function PublicBriefing() {
       _files: uploaded,
     });
     setSending(false);
-    if (error) return toast.error(error.message);
+    if (error) {
+      // rollback de arquivos se a chamada RPC final falhar.
+      if (uploaded.length) {
+        await supabase.storage
+          .from("briefing-files")
+          .remove(uploaded.map((u) => u.storage_path))
+          .catch(() => undefined);
+      }
+      return toast.error(error.message);
+    }
     setFiles([]);
     toast.success("Briefing enviado para a equipe!");
     load();
