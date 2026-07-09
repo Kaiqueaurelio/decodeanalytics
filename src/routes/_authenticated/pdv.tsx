@@ -770,34 +770,35 @@ function PDVPage() {
   }
 
   return (
-    <div className="min-h-[calc(100vh-9rem)] max-w-full overflow-x-hidden rounded-[2rem] bg-[#f8fafc] p-2 text-slate-950 sm:p-3 md:p-4">
-      <div className="mb-5 flex flex-col gap-3 rounded-[1.5rem] border border-slate-200 bg-white p-4 shadow-sm lg:flex-row lg:items-center lg:justify-between">
+    <div className="min-h-[calc(100vh-9rem)] max-w-full overflow-x-hidden rounded-[2rem] bg-[#f8fafc] p-2 text-slate-950 sm:p-3 md:p-3 lg:p-4 [zoom:0.9] xl:[zoom:0.85] 2xl:[zoom:0.85]">
+      <div className="mb-3 flex flex-col gap-2 rounded-2xl border border-slate-200 bg-white p-3 shadow-sm lg:flex-row lg:items-center lg:justify-between">
         <div>
-          <p className="text-xs font-black uppercase tracking-[0.22em] text-brand-blue">
+          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-brand-blue">
             PDV Mercado Alcateia
           </p>
-          <h2 className="text-2xl font-black tracking-tight">Frente de Caixa</h2>
+          <h2 className="text-xl font-black tracking-tight">Frente de Caixa</h2>
         </div>
-        <div className="flex flex-wrap items-center gap-2 text-sm">
-          <span className="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-2 font-bold text-emerald-700">
+        <div className="flex flex-wrap items-center gap-2 text-xs">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1.5 font-bold text-emerald-700">
             <span className="h-2 w-2 rounded-full bg-emerald-500" /> Online
           </span>
-          <span className="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-2 font-bold">
-            <CalendarDays className="h-4 w-4" /> {new Date().toLocaleDateString("pt-BR")}
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-2.5 py-1.5 font-bold">
+            <CalendarDays className="h-3.5 w-3.5" /> {new Date().toLocaleDateString("pt-BR")}
           </span>
           <span
             className={cn(
-              "inline-flex items-center gap-2 rounded-full px-3 py-2 font-bold",
+              "inline-flex items-center gap-1.5 rounded-full px-2.5 py-1.5 font-bold",
               cashSession
                 ? "bg-emerald-50 text-emerald-700"
                 : "bg-amber-50 text-amber-700",
             )}
           >
-            <Banknote className="h-4 w-4" />
+            <Banknote className="h-3.5 w-3.5" />
             {cashSession ? "Caixa aberto" : "Caixa fechado"}
           </span>
           {!cashSession && (
             <Button
+              size="sm"
               className="rounded-xl bg-brand-blue hover:bg-brand-blue-light"
               onClick={() => setShowOpenCash(true)}
             >
@@ -805,7 +806,8 @@ function PDVPage() {
             </Button>
           )}
           <Button
-            className="rounded-xl bg-red-600 px-4 font-black text-white hover:bg-red-700"
+            size="sm"
+            className="rounded-xl bg-red-600 px-3 font-black text-white hover:bg-red-700"
             onClick={() => {
               setSessionForm((current) => ({
                 ...current,
@@ -819,46 +821,46 @@ function PDVPage() {
         </div>
       </div>
 
-      <div className="mb-5 flex flex-col gap-4 rounded-[1.5rem] bg-brand-blue p-5 text-white shadow-lg shadow-blue-200 sm:flex-row sm:items-center sm:justify-between">
+      <div className="mb-3 flex flex-col gap-3 rounded-2xl bg-brand-blue p-4 text-white shadow-lg shadow-blue-200 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <p className="text-xs font-black uppercase tracking-[0.2em] text-blue-200">
+          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-200">
             Saldo somente de hoje
           </p>
-          <p className="mt-1 text-3xl font-black">{brl(dayBalance)}</p>
-          <p className="mt-1 text-sm text-blue-100">
+          <p className="mt-1 text-2xl font-black">{brl(dayBalance)}</p>
+          <p className="mt-0.5 text-xs text-blue-100">
             Entradas menos saídas de {new Date().toLocaleDateString("pt-BR")}.
           </p>
         </div>
         <Button
-          className="h-12 w-full rounded-xl bg-white font-black text-brand-blue hover:bg-blue-50 sm:w-auto"
+          className="h-10 w-full rounded-xl bg-white text-sm font-black text-brand-blue hover:bg-blue-50 sm:w-auto"
           onClick={() => setShowMachineEntry(true)}
         >
-          <ReceiptText className="mr-2 h-5 w-5" /> Lançar maquininha
+          <ReceiptText className="mr-2 h-4 w-4" /> Lançar maquininha
         </Button>
       </div>
 
-      <div className="mb-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-        <Card className="rounded-2xl border-slate-200 p-4">
-          <p className="text-xs font-black uppercase tracking-wide text-slate-500">Entradas</p>
-          <p className="mt-1 text-2xl font-black text-emerald-600">{brl(totalToday)}</p>
+      <div className="mb-3 grid gap-2 sm:grid-cols-2 xl:grid-cols-4">
+        <Card className="rounded-2xl border-slate-200 p-3">
+          <p className="text-[10px] font-black uppercase tracking-wide text-slate-500">Entradas</p>
+          <p className="mt-0.5 text-xl font-black text-emerald-600">{brl(totalToday)}</p>
         </Card>
-        <Card className="rounded-2xl border-slate-200 p-4">
-          <p className="text-xs font-black uppercase tracking-wide text-slate-500">Saídas</p>
-          <p className="mt-1 text-2xl font-black text-red-600">{brl(expenseTotal)}</p>
+        <Card className="rounded-2xl border-slate-200 p-3">
+          <p className="text-[10px] font-black uppercase tracking-wide text-slate-500">Saídas</p>
+          <p className="mt-0.5 text-xl font-black text-red-600">{brl(expenseTotal)}</p>
         </Card>
-        <Card className="rounded-2xl border-slate-200 p-4">
-          <p className="text-xs font-black uppercase tracking-wide text-slate-500">Cartões</p>
-          <p className="mt-1 text-2xl font-black text-brand-blue">
+        <Card className="rounded-2xl border-slate-200 p-3">
+          <p className="text-[10px] font-black uppercase tracking-wide text-slate-500">Cartões</p>
+          <p className="mt-0.5 text-xl font-black text-brand-blue">
             {brl(paymentTotals.debit + paymentTotals.credit)}
           </p>
         </Card>
-        <Card className="rounded-2xl border-slate-200 p-4">
-          <p className="text-xs font-black uppercase tracking-wide text-slate-500">PIX</p>
-          <p className="mt-1 text-2xl font-black text-brand-blue">{brl(paymentTotals.pix)}</p>
+        <Card className="rounded-2xl border-slate-200 p-3">
+          <p className="text-[10px] font-black uppercase tracking-wide text-slate-500">PIX</p>
+          <p className="mt-0.5 text-xl font-black text-brand-blue">{brl(paymentTotals.pix)}</p>
         </Card>
       </div>
 
-      <Card className="mb-5 overflow-hidden rounded-[1.5rem] border-slate-200 bg-white p-0 shadow-sm">
+      <Card className="mb-3 overflow-hidden rounded-2xl border-slate-200 bg-white p-0 shadow-sm">
         <div className="flex flex-col gap-2 border-b border-slate-100 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <p className="text-xs font-black uppercase tracking-[0.18em] text-brand-blue">
@@ -940,65 +942,65 @@ function PDVPage() {
         </div>
       </Card>
 
-      <div className="grid min-w-0 gap-4 lg:grid-cols-[minmax(0,1fr)_300px] xl:grid-cols-[minmax(0,1fr)_340px] 2xl:grid-cols-[minmax(0,1fr)_380px]">
-        <section className="min-w-0 space-y-4">
-          <div className="space-y-3">
+      <div className="grid min-w-0 gap-3 lg:grid-cols-[minmax(0,1fr)_260px] xl:grid-cols-[minmax(0,1fr)_290px] 2xl:grid-cols-[minmax(0,1fr)_320px]">
+        <section className="min-w-0 space-y-3">
+          <div className="space-y-2">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400 sm:left-4 sm:h-5 sm:w-5" />
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
               <Input
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
-                className="h-11 sm:h-14 rounded-2xl border-slate-200 bg-white pl-10 sm:pl-12 text-sm sm:text-base shadow-sm"
+                className="h-11 sm:h-12 rounded-2xl border-slate-200 bg-white pl-10 text-sm shadow-sm"
                 placeholder="Buscar produto, serviço ou código..."
               />
             </div>
             <div className="grid grid-cols-3 gap-1.5 sm:grid-cols-4 sm:gap-2 md:grid-cols-4 xl:grid-cols-7">
               <Button
-                className="h-10 w-full flex-col rounded-xl bg-brand-blue px-1 text-[10px] font-black leading-tight hover:bg-brand-blue-light sm:h-14 sm:flex-row sm:rounded-2xl sm:px-2 sm:text-sm"
+                className="h-10 w-full flex-col rounded-xl bg-brand-blue px-1 text-[10px] font-black leading-tight hover:bg-brand-blue-light sm:h-11 sm:flex-row sm:rounded-xl sm:px-2 sm:text-xs"
                 onClick={() => setShowFastSale(true)}
               >
-                <Plus className="h-3.5 w-3.5 sm:mr-2 sm:h-5 sm:w-5" />
+                <Plus className="h-3.5 w-3.5 sm:mr-1.5 sm:h-4 sm:w-4" />
                 <span className="sm:hidden">Venda</span>
                 <span className="hidden sm:inline">Venda Rápida</span>
               </Button>
               <Button
                 variant="outline"
-                className="h-10 w-full flex-col rounded-xl border-blue-200 bg-blue-50 px-1 text-[10px] font-black leading-tight text-brand-blue hover:bg-blue-100 sm:h-14 sm:flex-row sm:rounded-2xl sm:px-2 sm:text-sm"
+                className="h-10 w-full flex-col rounded-xl border-blue-200 bg-blue-50 px-1 text-[10px] font-black leading-tight text-brand-blue hover:bg-blue-100 sm:h-11 sm:flex-row sm:rounded-xl sm:px-2 sm:text-xs"
                 onClick={() => setShowSquareMeter(true)}
               >
-                <Calculator className="h-3.5 w-3.5 sm:mr-2 sm:h-5 sm:w-5" />
+                <Calculator className="h-3.5 w-3.5 sm:mr-1.5 sm:h-4 sm:w-4" />
                 <span className="sm:hidden">m²</span>
                 <span className="hidden sm:inline">Calcular m²</span>
               </Button>
               <Button
                 variant="outline"
-                className="h-10 w-full flex-col rounded-xl border-emerald-200 bg-emerald-50 px-1 text-[10px] font-black leading-tight text-emerald-700 hover:bg-emerald-100 sm:h-14 sm:flex-row sm:rounded-2xl sm:px-2 sm:text-sm"
+                className="h-10 w-full flex-col rounded-xl border-emerald-200 bg-emerald-50 px-1 text-[10px] font-black leading-tight text-emerald-700 hover:bg-emerald-100 sm:h-11 sm:flex-row sm:rounded-xl sm:px-2 sm:text-xs"
                 onClick={() => setShowCalculator(true)}
               >
-                <Calculator className="h-3.5 w-3.5 sm:mr-2 sm:h-5 sm:w-5" />
+                <Calculator className="h-3.5 w-3.5 sm:mr-1.5 sm:h-4 sm:w-4" />
                 <span className="sm:hidden">Calc</span>
                 <span className="hidden sm:inline">Calculadora</span>
               </Button>
               <Button
                 variant="outline"
-                className="h-10 w-full flex-col rounded-xl border-blue-200 bg-blue-50 px-1 text-[10px] font-black leading-tight text-brand-blue hover:bg-blue-100 sm:h-14 sm:flex-row sm:rounded-2xl sm:px-2 sm:text-sm"
+                className="h-10 w-full flex-col rounded-xl border-blue-200 bg-blue-50 px-1 text-[10px] font-black leading-tight text-brand-blue hover:bg-blue-100 sm:h-11 sm:flex-row sm:rounded-xl sm:px-2 sm:text-xs"
                 onClick={() => setShowOrderPicker(true)}
               >
-                <ClipboardList className="h-3.5 w-3.5 sm:mr-2 sm:h-5 sm:w-5" />
+                <ClipboardList className="h-3.5 w-3.5 sm:mr-1.5 sm:h-4 sm:w-4" />
                 <span className="sm:hidden">OS</span>
                 <span className="hidden sm:inline">Cobrar OS</span>
               </Button>
               <Button
                 variant="outline"
-                className="h-10 w-full flex-col rounded-xl bg-white px-1 text-[10px] font-black leading-tight sm:h-14 sm:flex-row sm:rounded-2xl sm:px-2 sm:text-sm"
+                className="h-10 w-full flex-col rounded-xl bg-white px-1 text-[10px] font-black leading-tight sm:h-11 sm:flex-row sm:rounded-xl sm:px-2 sm:text-xs"
                 onClick={() => setShowNewClient(true)}
               >
-                <UserPlus className="h-3.5 w-3.5 sm:mr-2 sm:h-5 sm:w-5" />
+                <UserPlus className="h-3.5 w-3.5 sm:mr-1.5 sm:h-4 sm:w-4" />
                 <span>Cliente</span>
               </Button>
-              <Button asChild variant="outline" className="h-10 w-full flex-col rounded-xl bg-white px-1 text-[10px] font-black leading-tight sm:h-14 sm:flex-row sm:rounded-2xl sm:px-2 sm:text-sm">
+              <Button asChild variant="outline" className="h-10 w-full flex-col rounded-xl bg-white px-1 text-[10px] font-black leading-tight sm:h-11 sm:flex-row sm:rounded-xl sm:px-2 sm:text-xs">
                 <a href="/services">
-                  <Settings2 className="h-3.5 w-3.5 sm:mr-2 sm:h-5 sm:w-5" />
+                  <Settings2 className="h-3.5 w-3.5 sm:mr-1.5 sm:h-4 sm:w-4" />
                   <span className="sm:hidden">Prod.</span>
                   <span className="hidden sm:inline">Produtos</span>
                 </a>
@@ -1036,14 +1038,14 @@ function PDVPage() {
             </div>
           )}
 
-          <div className="app-scrollbar flex gap-1.5 overflow-x-auto pb-1 sm:gap-2">
+          <div className="app-scrollbar flex gap-1.5 overflow-x-auto pb-1">
             {CATEGORIES.map((item) => (
               <button
                 key={item}
                 type="button"
                 onClick={() => setCategory(item)}
                 className={cn(
-                  "whitespace-nowrap rounded-xl border px-3 py-2 text-xs font-black shadow-sm transition sm:rounded-2xl sm:px-4 sm:py-3 sm:text-sm",
+                  "whitespace-nowrap rounded-xl border px-3 py-1.5 text-xs font-black shadow-sm transition",
                   category === item
                     ? "border-brand-blue bg-brand-blue text-white"
                     : "border-slate-200 bg-white text-slate-700 hover:border-brand-blue/40",
@@ -1054,14 +1056,14 @@ function PDVPage() {
             ))}
           </div>
 
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+          <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
             {filteredProducts.map((product) => (
               <Card
                 key={product.id}
-                className="overflow-hidden rounded-3xl border-slate-200 bg-white p-0 shadow-sm transition hover:-translate-y-0.5 hover:shadow-lg"
+                className="overflow-hidden rounded-2xl border-slate-200 bg-white p-0 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
               >
                 <div
-                  className="h-28 bg-slate-100"
+                  className="h-20 bg-slate-100"
                   style={{
                     background: product.imageUrl ? undefined : product.image,
                     backgroundImage: product.imageUrl ? `url(${product.imageUrl})` : product.image,
@@ -1069,19 +1071,19 @@ function PDVPage() {
                     backgroundPosition: "center",
                   }}
                 />
-                <div className="space-y-3 p-4">
+                <div className="space-y-2 p-3">
                   <div>
-                    <h3 className="line-clamp-1 font-black">{product.name}</h3>
-                    <p className="line-clamp-1 text-xs text-slate-500">{product.detail}</p>
+                    <h3 className="line-clamp-1 text-sm font-black">{product.name}</h3>
+                    <p className="line-clamp-1 text-[11px] text-slate-500">{product.detail}</p>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-lg font-black text-brand-blue">{brl(product.price)}</span>
+                    <span className="text-base font-black text-brand-blue">{brl(product.price)}</span>
                     <Button
                       size="icon"
-                      className="rounded-full bg-brand-blue hover:bg-brand-blue-light"
+                      className="h-8 w-8 rounded-full bg-brand-blue hover:bg-brand-blue-light"
                       onClick={() => addToCart(product)}
                     >
-                      <Plus className="h-4 w-4" />
+                      <Plus className="h-3.5 w-3.5" />
                     </Button>
                   </div>
                 </div>
@@ -1090,11 +1092,11 @@ function PDVPage() {
           </div>
         </section>
 
-        <aside className="min-w-0 rounded-[2rem] border border-slate-200 bg-white p-3 shadow-sm md:p-4">
-          <div className="mb-4 flex items-center justify-between">
-            <h2 className="text-xl font-black">Itens da venda</h2>
+        <aside className="min-w-0 rounded-2xl border border-slate-200 bg-white p-3 shadow-sm">
+          <div className="mb-3 flex items-center justify-between">
+            <h2 className="text-base font-black">Itens da venda</h2>
             <Button variant="ghost" size="sm" className="text-brand-blue" onClick={clearSale}>
-              <Trash2 className="mr-1 h-4 w-4" /> Limpar
+              <Trash2 className="mr-1 h-3.5 w-3.5" /> Limpar
             </Button>
           </div>
 
