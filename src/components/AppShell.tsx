@@ -473,7 +473,12 @@ export function AppShell({ children }: { children: ReactNode }) {
           </div>
         </header>
 
-        <main className="app-page min-w-0 flex-1 overflow-x-hidden">{children}</main>
+        <main
+          className="app-page min-w-0 flex-1 overflow-x-hidden pb-24 md:pb-6"
+          style={{ paddingBottom: "max(6rem, calc(env(safe-area-inset-bottom) + 5.5rem))" }}
+        >
+          {children}
+        </main>
       </div>
       <EllaFab />
     </div>
