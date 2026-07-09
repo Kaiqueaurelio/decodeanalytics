@@ -248,6 +248,7 @@ export function ProductionDetail({
                       <Button
                         size="icon"
                         variant="ghost"
+                        aria-label="Excluir atualização"
                         className="opacity-0 group-hover:opacity-100 h-6 w-6"
                         onClick={() => delUpdate(u.id)}
                       >
