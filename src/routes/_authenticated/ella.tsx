@@ -108,11 +108,16 @@ function EllaPage() {
       id: "welcome",
       role: "assistant",
       content:
-        "Olá! Sou a **Ella Ribeiro** 👋 — sua assistente operacional. Eu **executo** de verdade: crio OS, gero cobranças, atualizo status, cadastro clientes e guardo seus lembretes. É só me dizer o que precisa.",
+        "Olá! Sou a **Ella Ribeiro** 👋 — sua assistente operacional completa. Executo tudo: OS, cobranças, clientes, usuários e papéis, lembretes e mais. Você pode falar por **áudio** 🎤 ou anexar **arquivos** 📎 (imagem, PDF, vídeo, áudio) que eu analiso pra você.",
     },
   ]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
+  const [attachments, setAttachments] = useState<Attachment[]>([]);
+  const [recording, setRecording] = useState(false);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const recordChunksRef = useRef<Blob[]>([]);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const endRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
@@ -123,19 +128,141 @@ function EllaPage() {
     inputRef.current?.focus();
   }, []);
 
+  const blobToBase64 = (blob: Blob) =>
+    new Promise<string>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const result = reader.result as string;
+        const idx = result.indexOf(",");
+        resolve(idx >= 0 ? result.slice(idx + 1) : result);
+      };
+      reader.onerror = () => reject(reader.error);
+      reader.readAsDataURL(blob);
+    });
+
+  const addFiles = async (files: FileList | File[]) => {
+    const list = Array.from(files);
+    const MAX = 18 * 1024 * 1024;
+    for (const f of list) {
+      if (f.size > MAX) {
+        toast.error(`"${f.name}" passou de 18MB e foi ignorado.`);
+        continue;
+      }
+      try {
+        const dataBase64 = await blobToBase64(f);
+        const previewUrl = f.type.startsWith("image/") ? URL.createObjectURL(f) : undefined;
+        setAttachments((prev) => [
+          ...prev,
+          {
+            name: f.name,
+            mimeType: f.type || "application/octet-stream",
+            dataBase64,
+            size: f.size,
+            previewUrl,
+          },
+        ]);
+      } catch {
+        toast.error(`Falha ao ler "${f.name}"`);
+      }
+    }
+  };
+
+  const removeAttachment = (idx: number) => {
+    setAttachments((prev) => {
+      const copy = [...prev];
+      const [rem] = copy.splice(idx, 1);
+      if (rem?.previewUrl) URL.revokeObjectURL(rem.previewUrl);
+      return copy;
+    });
+  };
+
+  const startRecording = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const mime = MediaRecorder.isTypeSupported("audio/webm;codecs=opus")
+        ? "audio/webm;codecs=opus"
+        : MediaRecorder.isTypeSupported("audio/mp4")
+          ? "audio/mp4"
+          : "";
+      const rec = mime ? new MediaRecorder(stream, { mimeType: mime }) : new MediaRecorder(stream);
+      recordChunksRef.current = [];
+      rec.ondataavailable = (e) => e.data.size > 0 && recordChunksRef.current.push(e.data);
+      rec.onstop = async () => {
+        stream.getTracks().forEach((t) => t.stop());
+        const type = rec.mimeType || "audio/webm";
+        const blob = new Blob(recordChunksRef.current, { type });
+        if (blob.size < 1024) {
+          toast.error("Gravação muito curta.");
+          return;
+        }
+        const dataBase64 = await blobToBase64(blob);
+        const ext = type.includes("mp4") ? "m4a" : "webm";
+        setAttachments((prev) => [
+          ...prev,
+          {
+            name: `gravacao-${Date.now()}.${ext}`,
+            mimeType: type,
+            dataBase64,
+            size: blob.size,
+          },
+        ]);
+        toast.success("Áudio pronto — envie a mensagem para eu ouvir.");
+      };
+      mediaRecorderRef.current = rec;
+      rec.start();
+      setRecording(true);
+    } catch (e) {
+      console.error(e);
+      toast.error("Não consegui acessar o microfone.");
+    }
+  };
+
+  const stopRecording = () => {
+    mediaRecorderRef.current?.stop();
+    mediaRecorderRef.current = null;
+    setRecording(false);
+  };
+
+  const iconFor = (mt: string) => {
+    if (mt.startsWith("image/")) return <ImageIcon className="h-3.5 w-3.5" />;
+    if (mt.startsWith("audio/")) return <FileAudio className="h-3.5 w-3.5" />;
+    if (mt.startsWith("video/")) return <FileVideo className="h-3.5 w-3.5" />;
+    return <FileText className="h-3.5 w-3.5" />;
+  };
+
   const send = async (text: string) => {
     const content = text.trim();
-    if (!content || loading) return;
-    const userMsg: Message = { id: `u-${Date.now()}`, role: "user", content };
+    if (loading) return;
+    if (!content && attachments.length === 0) return;
+    const currentAtts = attachments;
+    const userMsg: Message = {
+      id: `u-${Date.now()}`,
+      role: "user",
+      content: content || "(arquivo enviado)",
+      attachments: currentAtts.map((a) => ({
+        name: a.name,
+        mimeType: a.mimeType,
+        previewUrl: a.previewUrl,
+      })),
+    };
     const history = messages
       .filter((m) => m.id !== "welcome")
       .map((m) => ({ role: m.role, content: m.content }));
     setMessages((prev) => [...prev, userMsg]);
     setInput("");
+    setAttachments([]);
     setLoading(true);
     try {
       const data: any = await chat({
-        data: { message: content, conversationHistory: history },
+        data: {
+          message: content || "Analise os arquivos anexados.",
+          conversationHistory: history,
+          attachments: currentAtts.map((a) => ({
+            name: a.name,
+            mimeType: a.mimeType,
+            dataBase64: a.dataBase64,
+          })),
+        },
       });
       setMessages((prev) => [
         ...prev,
