@@ -457,11 +457,19 @@ function ProductionBoard() {
                           </h3>
                           <p className="text-xs text-muted-foreground">{order.clients?.name}</p>
                         </div>
-                        {order.urgent && (
-                          <Badge className="bg-destructive text-destructive-foreground text-[9px]">
-                            URGENTE
+                        <div className="flex flex-col items-end gap-1">
+                          <Badge
+                            className={`${lifecycleFor(order.production_status).className} text-[9px]`}
+                            title={lifecycleFor(order.production_status).description}
+                          >
+                            {lifecycleFor(order.production_status).label}
                           </Badge>
-                        )}
+                          {order.urgent && (
+                            <Badge className="bg-destructive text-destructive-foreground text-[9px]">
+                              URGENTE
+                            </Badge>
+                          )}
+                        </div>
                       </div>
                       <div className="mt-3 rounded-lg bg-muted/60 p-2">
                         <p className="text-[10px] uppercase tracking-wide text-muted-foreground">
