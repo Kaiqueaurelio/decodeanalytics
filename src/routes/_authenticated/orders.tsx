@@ -257,9 +257,11 @@ function OrdersPage() {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Qualquer prazo</SelectItem>
+            <SelectItem value="atrasado">Atrasadas</SelectItem>
+            <SelectItem value="no_prazo">No prazo</SelectItem>
             <SelectItem value="hoje">Para hoje</SelectItem>
             <SelectItem value="proximos7">Próximos 7 dias</SelectItem>
-            <SelectItem value="atrasado">Atrasado</SelectItem>
+            <SelectItem value="sem_prazo">Sem prazo</SelectItem>
           </SelectContent>
         </Select>
         <Select value={responsibleFilter} onValueChange={setResponsibleFilter}>
