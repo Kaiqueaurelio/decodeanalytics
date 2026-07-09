@@ -1,5 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useId, useState } from "react";
+import { Eye, EyeOff } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -18,6 +19,12 @@ function AuthPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
+  const [showPwd, setShowPwd] = useState(false);
+  const loginEmailId = useId();
+  const loginPwdId = useId();
+  const signupNameId = useId();
+  const signupEmailId = useId();
+  const signupPwdId = useId();
 
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault();
@@ -53,29 +60,30 @@ function AuthPage() {
 
   return (
     <div
-      className="min-h-screen flex items-center justify-center p-4 overflow-y-auto"
+      className="min-h-screen-dvh flex items-center justify-center p-3 sm:p-4 overflow-y-auto safe-pt safe-pb"
       style={{ background: "linear-gradient(135deg, #031c18, #074531 58%, #d9a83f)" }}
     >
-      <div className="w-full max-w-md bg-card rounded-2xl shadow-2xl p-8 border border-border">
-        <div className="text-center mb-6">
+      <div className="w-full max-w-md bg-card rounded-2xl shadow-2xl p-5 sm:p-8 border border-border">
+        <div className="text-center mb-4 sm:mb-6">
           <img
             src="/brand/alcateia-logo.png"
             alt="Alcateia's Produções Gráficas - Criando impacto a cada imagem"
-            className="mx-auto mb-4 h-44 w-auto max-w-full object-contain"
+            className="mx-auto mb-3 sm:mb-4 h-24 sm:h-36 md:h-44 w-auto max-w-full object-contain"
           />
-          <h1 className="text-2xl font-bold text-primary">Alcateia's Gestão</h1>
+          <h1 className="text-xl sm:text-2xl font-bold text-primary">Alcateia's Gestão</h1>
           <p className="text-sm text-muted-foreground">Sistema de gestão da produção gráfica</p>
         </div>
         <Tabs defaultValue="login">
-          <TabsList className="grid grid-cols-2 w-full mb-4">
-            <TabsTrigger value="login">Entrar</TabsTrigger>
-            <TabsTrigger value="signup">Criar conta</TabsTrigger>
+          <TabsList className="grid grid-cols-2 w-full mb-4 h-11">
+            <TabsTrigger value="login" className="h-9">Entrar</TabsTrigger>
+            <TabsTrigger value="signup" className="h-9">Criar conta</TabsTrigger>
           </TabsList>
           <TabsContent value="login">
             <form onSubmit={handleLogin} className="space-y-3">
               <div>
-                <Label>E-mail</Label>
+                <Label htmlFor={loginEmailId}>E-mail</Label>
                 <Input
+                  id={loginEmailId}
                   name="email"
                   autoComplete="email"
                   autoCapitalize="none"
@@ -90,27 +98,39 @@ function AuthPage() {
                 />
               </div>
               <div>
-                <Label>Senha</Label>
-                <Input
-                  name="current-password"
-                  autoComplete="current-password"
-                  autoCapitalize="none"
-                  autoCorrect="off"
-                  spellCheck={false}
-                  enterKeyHint="go"
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                />
+                <Label htmlFor={loginPwdId}>Senha</Label>
+                <div className="relative">
+                  <Input
+                    id={loginPwdId}
+                    name="current-password"
+                    autoComplete="current-password"
+                    autoCapitalize="none"
+                    autoCorrect="off"
+                    spellCheck={false}
+                    enterKeyHint="go"
+                    type={showPwd ? "text" : "password"}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                    className="pr-11"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPwd((v) => !v)}
+                    aria-label={showPwd ? "Ocultar senha" : "Mostrar senha"}
+                    className="absolute right-1 top-1/2 -translate-y-1/2 grid h-9 w-9 place-items-center rounded-md text-muted-foreground hover:text-foreground"
+                  >
+                    {showPwd ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
+                </div>
               </div>
-              <Button type="submit" disabled={loading} className="w-full">
+              <Button type="submit" disabled={loading} className="w-full min-h-12 text-base">
                 {loading ? "Entrando..." : "Entrar"}
               </Button>
               <button
                 type="button"
                 onClick={handleReset}
-                className="text-xs text-muted-foreground hover:text-primary block w-full text-center mt-2"
+                className="text-sm text-muted-foreground hover:text-primary block w-full text-center mt-2 py-2"
               >
                 Esqueci minha senha
               </button>
@@ -119,8 +139,9 @@ function AuthPage() {
           <TabsContent value="signup">
             <form onSubmit={handleSignup} className="space-y-3">
               <div>
-                <Label>Nome</Label>
+                <Label htmlFor={signupNameId}>Nome</Label>
                 <Input
+                  id={signupNameId}
                   name="name"
                   autoComplete="name"
                   autoCapitalize="words"
@@ -131,8 +152,9 @@ function AuthPage() {
                 />
               </div>
               <div>
-                <Label>E-mail</Label>
+                <Label htmlFor={signupEmailId}>E-mail</Label>
                 <Input
+                  id={signupEmailId}
                   name="email"
                   autoComplete="email"
                   autoCapitalize="none"
@@ -147,22 +169,34 @@ function AuthPage() {
                 />
               </div>
               <div>
-                <Label>Senha</Label>
-                <Input
-                  name="new-password"
-                  autoComplete="new-password"
-                  autoCapitalize="none"
-                  autoCorrect="off"
-                  spellCheck={false}
-                  enterKeyHint="go"
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  minLength={6}
-                />
+                <Label htmlFor={signupPwdId}>Senha</Label>
+                <div className="relative">
+                  <Input
+                    id={signupPwdId}
+                    name="new-password"
+                    autoComplete="new-password"
+                    autoCapitalize="none"
+                    autoCorrect="off"
+                    spellCheck={false}
+                    enterKeyHint="go"
+                    type={showPwd ? "text" : "password"}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                    minLength={6}
+                    className="pr-11"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPwd((v) => !v)}
+                    aria-label={showPwd ? "Ocultar senha" : "Mostrar senha"}
+                    className="absolute right-1 top-1/2 -translate-y-1/2 grid h-9 w-9 place-items-center rounded-md text-muted-foreground hover:text-foreground"
+                  >
+                    {showPwd ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
+                </div>
               </div>
-              <Button type="submit" disabled={loading} className="w-full">
+              <Button type="submit" disabled={loading} className="w-full min-h-12 text-base">
                 {loading ? "Criando..." : "Criar conta"}
               </Button>
               <p className="text-xs text-muted-foreground text-center mt-2">
