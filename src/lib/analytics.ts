@@ -137,6 +137,21 @@ export function getAnalyticsSession(): SessionState {
   return readSession();
 }
 
+/* ----------------------- Dev subscriber bus ----------------------- */
+/**
+ * Barramento simples para o painel de debug em dev. Cada `track()` chama
+ * todos os listeners com o payload completo enviado ao dataLayer.
+ * Em produção ninguém se inscreve, então o custo é zero.
+ */
+export type AnalyticsListener = (payload: Record<string, unknown>) => void;
+const listeners = new Set<AnalyticsListener>();
+export function subscribeAnalytics(fn: AnalyticsListener) {
+  listeners.add(fn);
+  return () => {
+    listeners.delete(fn);
+  };
+}
+
 export function track(event: string, props: AnalyticsProps = {}) {
   if (typeof window === "undefined") return;
   const session = readSession();
@@ -157,6 +172,13 @@ export function track(event: string, props: AnalyticsProps = {}) {
   };
   w.dataLayer = w.dataLayer ?? [];
   w.dataLayer.push(payload);
+
+  // Notifica assinantes (painel de debug em dev, testes, etc.).
+  if (listeners.size) {
+    for (const fn of listeners) {
+      try { fn(payload); } catch { /* ignore */ }
+    }
+  }
 
   // Se estamos usando gtag direto (GA4 sem GTM), envia como evento
   // customizado. Com GTM, deixa a tag do container disparar o evento
