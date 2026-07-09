@@ -110,8 +110,8 @@ function ClientsPage() {
                   <td className="p-3 hidden md:table-cell">{c.city ?? "—"}</td>
                   <td className="p-3 hidden lg:table-cell">{fmtDate(c.created_at)}</td>
                   <td className="p-3 flex gap-1 justify-end">
-                    <Button size="icon" variant="ghost" onClick={() => { setEditing(c); setOpen(true); }}><Pencil className="w-4 h-4" /></Button>
-                    <Button size="icon" variant="ghost" onClick={() => remove(c.id, c.name)}><Trash2 className="w-4 h-4 text-destructive" /></Button>
+                    <Button size="icon" variant="ghost" aria-label={`Editar ${c.name}`} onClick={() => { setEditing(c); setOpen(true); }}><Pencil className="w-4 h-4" /></Button>
+                    <Button size="icon" variant="ghost" aria-label={`Excluir ${c.name}`} onClick={() => remove(c.id, c.name)}><Trash2 className="w-4 h-4 text-destructive" /></Button>
                   </td>
                 </tr>
               ))}
