@@ -176,7 +176,10 @@ function StoreHeader() {
               <Menu className="h-5 w-5 text-[var(--store-primary)]" />
             </button>
           </SheetTrigger>
-          <SheetContent side="left" className="w-full sm:w-80 bg-white p-0 flex flex-col">
+          <SheetContent
+            side="left"
+            className="w-full sm:w-80 bg-white p-0 flex flex-col [&>button.absolute]:hidden"
+          >
             <div className="flex items-center justify-between border-b border-[var(--store-border)] px-6 py-5">
               <div className="flex items-center gap-3">
                 <img
