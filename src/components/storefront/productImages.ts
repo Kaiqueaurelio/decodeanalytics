@@ -1,12 +1,12 @@
 import imgAdesivos from "@/assets/products/adesivos.jpg";
-import imgBanners from "@/assets/products/banners.webp";
-import imgBrindes from "@/assets/products/brindes.webp";
+import imgBanners from "@/assets/products/banners.jpg";
+import imgBrindes from "@/assets/products/brindes.jpg";
 import imgCamisetas from "@/assets/products/camisetas.jpg";
 import imgCanecas from "@/assets/products/canecas.jpg";
 import imgCartoes from "@/assets/products/cartoes.jpg";
-import imgEmbalagens from "@/assets/products/embalagens.webp";
+import imgEmbalagens from "@/assets/products/embalagens.jpg";
 import imgPanfletos from "@/assets/products/panfletos.jpg";
-import imgPlotagem from "@/assets/products/plotagem.webp";
+import imgPlotagem from "@/assets/products/plotagem.jpg";
 
 // Imagens específicas por subcategoria/produto
 import imgBusinessCard from "@/assets/products/sub/business-card.jpg";
@@ -118,17 +118,17 @@ const CATEGORY_IMAGES_BY_KEY: Record<string, string> = {
 const PRODUCT_IMAGES_BY_FILE: Record<string, string> = {
   "adesivos.jpg": imgAdesivos,
   "banners.jpg": imgBanners,
-  "banners.webp": imgBanners,
+  "banners.jpg": imgBanners,
   "brindes.jpg": imgBrindes,
-  "brindes.webp": imgBrindes,
+  "brindes.jpg": imgBrindes,
   "camisetas.jpg": imgCamisetas,
   "canecas.jpg": imgCanecas,
   "cartoes.jpg": imgCartoes,
   "embalagens.jpg": imgEmbalagens,
-  "embalagens.webp": imgEmbalagens,
+  "embalagens.jpg": imgEmbalagens,
   "panfletos.jpg": imgPanfletos,
   "plotagem.jpg": imgPlotagem,
-  "plotagem.webp": imgPlotagem,
+  "plotagem.jpg": imgPlotagem,
 };
 
 function getImageFromFileName(imageUrl: string): string | undefined {
