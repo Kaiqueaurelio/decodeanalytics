@@ -30,6 +30,9 @@ import {
   MessageSquarePlus,
   Search,
   UserRound,
+  Archive,
+  Eye,
+  EyeOff,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -76,17 +79,21 @@ function ProductionBoard() {
   const [view, setView] = useState<"detailed" | "kanban">("detailed");
   const [selected, setSelected] = useState<any | null>(null);
   const [updateOpen, setUpdateOpen] = useState(false);
+  const [showDelivered, setShowDelivered] = useState(false);
 
   const { data } = useQuery({
-    queryKey: ["production-board"],
+    queryKey: ["production-board", showDelivered],
     queryFn: async () => {
+      const statuses = showDelivered
+        ? (COLUMNS as readonly string[])
+        : (COLUMNS.filter((s) => s !== "entregue") as readonly string[]);
       const [ordersResult, profilesResult] = await Promise.all([
         supabase
           .from("orders")
           .select(
             "*, clients(name,whatsapp), assignee:profiles!orders_assigned_to_fkey(id,full_name,email)",
           )
-          .in("production_status", COLUMNS as readonly string[] as any)
+          .in("production_status", statuses as any)
           .order("urgent", { ascending: false })
           .order("deadline", { ascending: true }),
         supabase.from("profiles").select("id,full_name,email").order("full_name"),
