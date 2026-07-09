@@ -1,9 +1,10 @@
 import { Link } from "@tanstack/react-router";
 import { ArrowRight, Upload, Calculator, Sparkles, Tag } from "lucide-react";
-import { waLink } from "./tokens";
+import { useWaLink } from "@/hooks/useCompanyInfo";
 import { CATEGORY_IMAGES } from "./productImages";
 
 export function Hero() {
+  const waLink = useWaLink();
   return (
     <section className="mx-auto w-full max-w-[1280px] px-3 pt-3 sm:px-4 sm:pt-4 md:pt-6">
       {/* Big bright blue hero banner — Futuraim-style */}
