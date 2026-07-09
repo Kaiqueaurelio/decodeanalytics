@@ -401,6 +401,76 @@ export const ellaChat = createServerFn({ method: "POST" })
           return { activeOrders: active, pendingReceivables: pending, monthRevenue: revenue };
         },
       }),
+      add_knowledge: tool({
+        description:
+          "Salva um aprendizado/treinamento da Ella (informações sobre a gráfica, produtos, políticas, respostas prontas). scope: 'admin' (só interno), 'public' (só clientes), 'both' (ambos).",
+        inputSchema: z.object({
+          title: z.string(),
+          content: z.string(),
+          scope: z.enum(["admin", "public", "both"]).default("both"),
+          tags: z.array(z.string()).optional(),
+        }),
+        execute: async ({ title, content, scope, tags }) => {
+          const { data, error } = await supabase
+            .from("ella_knowledge" as any)
+            .insert({ title, content, scope, tags: tags ?? [], created_by: userId } as any)
+            .select("id,title,scope")
+            .single();
+          if (error) return { error: error.message };
+          return { success: true, knowledge: data };
+        },
+      }),
+      list_knowledge: tool({
+        description:
+          "Lista aprendizados salvos. Filtra por scope e/ou busca textual em título/conteúdo.",
+        inputSchema: z.object({
+          scope: z.enum(["admin", "public", "both"]).optional(),
+          search: z.string().optional(),
+        }),
+        execute: async ({ scope, search }) => {
+          let q = supabase
+            .from("ella_knowledge" as any)
+            .select("id,title,content,scope,tags,updated_at")
+            .order("updated_at", { ascending: false });
+          if (scope) q = q.eq("scope", scope);
+          if (search) q = q.or(`title.ilike.%${search}%,content.ilike.%${search}%`);
+          const { data, error } = await q.limit(30);
+          if (error) return { error: error.message };
+          return { knowledge: data ?? [] };
+        },
+      }),
+      update_knowledge: tool({
+        description: "Atualiza um aprendizado pelo id.",
+        inputSchema: z.object({
+          id: z.string().uuid(),
+          title: z.string().optional(),
+          content: z.string().optional(),
+          scope: z.enum(["admin", "public", "both"]).optional(),
+          tags: z.array(z.string()).optional(),
+        }),
+        execute: async ({ id, ...rest }) => {
+          const patch: any = {};
+          for (const [k, v] of Object.entries(rest)) if (v !== undefined) patch[k] = v;
+          const { error } = await supabase
+            .from("ella_knowledge" as any)
+            .update(patch)
+            .eq("id", id);
+          if (error) return { error: error.message };
+          return { success: true };
+        },
+      }),
+      delete_knowledge: tool({
+        description: "Remove um aprendizado pelo id.",
+        inputSchema: z.object({ id: z.string().uuid() }),
+        execute: async ({ id }) => {
+          const { error } = await supabase
+            .from("ella_knowledge" as any)
+            .delete()
+            .eq("id", id);
+          if (error) return { error: error.message };
+          return { success: true };
+        },
+      }),
     };
 
     const history = (data.conversationHistory ?? []).map((m) => ({
@@ -410,10 +480,24 @@ export const ellaChat = createServerFn({ method: "POST" })
 
     const today = new Date().toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo" });
 
+    // Injeta conhecimento salvo (admin+both) no contexto para tornar Ella "mais inteligente".
+    const { data: kb } = await supabase
+      .from("ella_knowledge" as any)
+      .select("title,content,scope")
+      .in("scope", ["admin", "both"])
+      .order("updated_at", { ascending: false })
+      .limit(40);
+    const kbBlock =
+      kb && kb.length
+        ? `\n\nBase de conhecimento (aprendizados salvos — priorize sobre suposições):\n${(kb as any[])
+            .map((k) => `• [${k.scope}] ${k.title}: ${k.content}`)
+            .join("\n")}`
+        : "";
+
     try {
       const result = await generateText({
         model,
-        system: `${SYSTEM_PROMPT}\n\nData/hora atual (America/Sao_Paulo): ${today}`,
+        system: `${SYSTEM_PROMPT}\n\nData/hora atual (America/Sao_Paulo): ${today}${kbBlock}`,
         messages: [...history, { role: "user", content: data.message }],
         tools,
         stopWhen: stepCountIs(50),
