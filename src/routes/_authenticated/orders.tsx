@@ -136,6 +136,19 @@ function OrdersPage() {
     };
   }, [rawOrders]);
 
+  const deadlineCounts = useMemo(() => {
+    const rows = rawOrders ?? [];
+    const openOs = rows.filter(
+      (r: any) => r.production_status !== "entregue" && r.production_status !== "cancelado",
+    );
+    return {
+      atrasado: openOs.filter((r: any) => isOverdue(r)).length,
+      no_prazo: openOs.filter((r: any) => !!r.deadline && !isOverdue(r)).length,
+      sem_prazo: openOs.filter((r: any) => !r.deadline).length,
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [rawOrders]);
+
   const activeChips: { key: string; label: string; onClear: () => void }[] = [];
   if (lifecycleTab !== "todas") {
     const map = { producao: "Em produção", concluidas: "Concluídas", arquivadas: "Arquivadas" } as const;
