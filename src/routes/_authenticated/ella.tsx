@@ -334,7 +334,31 @@ function EllaPage() {
                   )}
                 </>
               ) : (
-                m.content
+                <>
+                  {m.attachments && m.attachments.length > 0 && (
+                    <div className="mb-2 flex flex-wrap gap-1.5">
+                      {m.attachments.map((a, i) =>
+                        a.previewUrl ? (
+                          <img
+                            key={i}
+                            src={a.previewUrl}
+                            alt={a.name}
+                            className="h-16 w-16 rounded-md object-cover ring-1 ring-white/40"
+                          />
+                        ) : (
+                          <span
+                            key={i}
+                            className="inline-flex items-center gap-1 rounded-md bg-white/15 px-2 py-1 text-xs"
+                          >
+                            {iconFor(a.mimeType)}
+                            <span className="max-w-[10rem] truncate">{a.name}</span>
+                          </span>
+                        ),
+                      )}
+                    </div>
+                  )}
+                  {m.content}
+                </>
               )}
             </div>
           </div>
@@ -367,32 +391,98 @@ function EllaPage() {
 
       <form
         onSubmit={handleSubmit}
-        className="grid grid-cols-[minmax(0,1fr)_auto] items-end gap-2 pt-2 border-t"
+        className="flex flex-col gap-2 pt-2 border-t"
       >
-        <Textarea
-          ref={inputRef}
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" && !e.shiftKey) {
-              e.preventDefault();
-              send(input);
+        {attachments.length > 0 && (
+          <div className="flex flex-wrap gap-2">
+            {attachments.map((a, i) => (
+              <div
+                key={i}
+                className="group relative flex items-center gap-1.5 rounded-lg border bg-muted/50 px-2 py-1 text-xs"
+              >
+                {a.previewUrl ? (
+                  <img src={a.previewUrl} alt={a.name} className="h-8 w-8 rounded object-cover" />
+                ) : (
+                  iconFor(a.mimeType)
+                )}
+                <span className="max-w-[10rem] truncate">{a.name}</span>
+                <button
+                  type="button"
+                  onClick={() => removeAttachment(i)}
+                  className="ml-1 rounded-full p-0.5 text-muted-foreground hover:bg-background hover:text-foreground"
+                  aria-label="Remover"
+                >
+                  <X className="h-3 w-3" />
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+        <div className="grid grid-cols-[auto_auto_minmax(0,1fr)_auto] items-end gap-2">
+          <input
+            ref={fileInputRef}
+            type="file"
+            multiple
+            accept="image/*,audio/*,video/*,application/pdf,.pdf,.mp3,.mp4,.wav,.webm,.png,.jpg,.jpeg"
+            className="hidden"
+            onChange={(e) => {
+              if (e.target.files) addFiles(e.target.files);
+              e.target.value = "";
+            }}
+          />
+          <Button
+            type="button"
+            size="icon"
+            variant="outline"
+            disabled={loading}
+            onClick={() => fileInputRef.current?.click()}
+            className="h-11 w-11 shrink-0"
+            aria-label="Anexar arquivo"
+            title="Anexar arquivo"
+          >
+            <Paperclip className="h-4 w-4" />
+          </Button>
+          <Button
+            type="button"
+            size="icon"
+            variant={recording ? "destructive" : "outline"}
+            disabled={loading}
+            onClick={recording ? stopRecording : startRecording}
+            className="h-11 w-11 shrink-0"
+            aria-label={recording ? "Parar gravação" : "Gravar áudio"}
+            title={recording ? "Parar gravação" : "Gravar áudio"}
+          >
+            {recording ? <Square className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
+          </Button>
+          <Textarea
+            ref={inputRef}
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                send(input);
+              }
+            }}
+            placeholder={
+              recording
+                ? "Gravando… toque no quadrado para parar."
+                : "Fale, escreva ou anexe arquivos para a Ella…"
             }
-          }}
-          placeholder="Peça pra Ella criar OS, cobrança, lembrete, listar pedidos…"
-          rows={1}
-          disabled={loading}
-          className="min-h-[44px] max-h-40 resize-none"
-        />
-        <Button
-          type="submit"
-          size="icon"
-          disabled={loading || !input.trim()}
-          className="h-11 w-11 shrink-0 bg-brand-yellow hover:bg-brand-yellow/90 text-brand-blue"
-          aria-label="Enviar"
-        >
-          {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
-        </Button>
+            rows={1}
+            disabled={loading}
+            className="min-h-[44px] max-h-40 resize-none"
+          />
+          <Button
+            type="submit"
+            size="icon"
+            disabled={loading || (!input.trim() && attachments.length === 0)}
+            className="h-11 w-11 shrink-0 bg-brand-yellow hover:bg-brand-yellow/90 text-brand-blue"
+            aria-label="Enviar"
+          >
+            {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+          </Button>
+        </div>
       </form>
     </div>
   );
