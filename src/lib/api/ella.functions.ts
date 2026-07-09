@@ -78,6 +78,46 @@ async function resolveClientId(
   return data?.id ?? null;
 }
 
+async function transcribeAttachment(
+  key: string,
+  att: { name: string; mimeType: string; dataBase64: string },
+): Promise<string> {
+  try {
+    const bin = atob(att.dataBase64);
+    const bytes = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+    const blob = new Blob([bytes], { type: att.mimeType });
+    const mt = att.mimeType.toLowerCase();
+    const ext = mt.includes("wav")
+      ? "wav"
+      : mt.includes("mpeg") || mt.includes("mp3")
+        ? "mp3"
+        : mt.includes("mp4") || mt.includes("m4a") || mt.includes("aac")
+          ? "m4a"
+          : mt.includes("ogg")
+            ? "ogg"
+            : "webm";
+    const form = new FormData();
+    form.append("model", "openai/gpt-4o-mini-transcribe");
+    form.append("file", blob, `audio.${ext}`);
+    const res = await fetch("https://ai.gateway.lovable.dev/v1/audio/transcriptions", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${key}` },
+      body: form,
+    });
+    if (!res.ok) {
+      const txt = await res.text().catch(() => "");
+      console.error("STT failed", res.status, txt);
+      return "";
+    }
+    const json: any = await res.json();
+    return typeof json?.text === "string" ? json.text : "";
+  } catch (e) {
+    console.error("STT error", e);
+    return "";
+  }
+}
+
 export const ellaChat = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((v: unknown) => InputSchema.parse(v))
