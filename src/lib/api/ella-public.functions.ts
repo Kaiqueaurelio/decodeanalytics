@@ -4,6 +4,29 @@ import { generateText, tool, stepCountIs } from "ai";
 import { z } from "zod";
 import { createLovableGateway } from "@/lib/ai-gateway.server";
 import type { Database } from "@/integrations/supabase/types";
+import { getRequestIP, getRequestHeader } from "@tanstack/react-start/server";
+
+// Rate limit em memória: janela deslizante por IP.
+const RATE_LIMIT_WINDOW_MS = 60_000;
+const RATE_LIMIT_MAX = 12;
+const rateBuckets = new Map<string, number[]>();
+function checkRateLimit(key: string) {
+  const now = Date.now();
+  const arr = (rateBuckets.get(key) ?? []).filter((t) => now - t < RATE_LIMIT_WINDOW_MS);
+  if (arr.length >= RATE_LIMIT_MAX) {
+    rateBuckets.set(key, arr);
+    return false;
+  }
+  arr.push(now);
+  rateBuckets.set(key, arr);
+  // Limpeza leve para evitar crescimento indefinido.
+  if (rateBuckets.size > 5000) {
+    for (const [k, v] of rateBuckets) {
+      if (!v.length || now - v[v.length - 1] > RATE_LIMIT_WINDOW_MS) rateBuckets.delete(k);
+    }
+  }
+  return true;
+}
 
 const MessageSchema = z.object({
   role: z.enum(["user", "assistant"]),
@@ -41,6 +64,23 @@ Formato:
 export const ellaPublicChat = createServerFn({ method: "POST" })
   .inputValidator((v: unknown) => InputSchema.parse(v))
   .handler(async ({ data }) => {
+    // Anti-abuso: limita mensagens por IP.
+    let ipKey = "unknown";
+    try {
+      ipKey =
+        getRequestIP({ xForwardedFor: true }) ||
+        getRequestHeader("x-forwarded-for") ||
+        "unknown";
+    } catch {
+      ipKey = "unknown";
+    }
+    if (!checkRateLimit(ipKey)) {
+      return {
+        response:
+          "Estou recebendo muitas mensagens agora. Aguarde alguns segundos ou fale direto com a equipe pelo WhatsApp 💙",
+      };
+    }
+
     const key = process.env.LOVABLE_API_KEY;
     const url = process.env.SUPABASE_URL;
     const anonKey = process.env.SUPABASE_PUBLISHABLE_KEY;

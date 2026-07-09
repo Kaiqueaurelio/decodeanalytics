@@ -29,7 +29,8 @@ function QuotesPage() {
   const { data } = useQuery({
     queryKey: ["quotes"],
     queryFn: async () => {
-      const { data } = await supabase.from("quotes").select("*, clients(name)").order("created_at", { ascending: false }).limit(200);
+      const { data, error } = await supabase.from("quotes").select("*, clients(name)").order("created_at", { ascending: false }).limit(200);
+      if (error) throw error;
       return (data ?? []) as any[];
     },
   });

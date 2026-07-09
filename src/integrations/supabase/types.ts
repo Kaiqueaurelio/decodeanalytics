@@ -865,6 +865,10 @@ export type Database = {
         Returns: boolean
       }
       is_admin: { Args: { _user_id: string }; Returns: boolean }
+      replace_order_items: {
+        Args: { _items: Json; _order_id: string }
+        Returns: undefined
+      }
     }
     Enums: {
       app_role: "administrador" | "atendente" | "producao" | "financeiro"

@@ -98,12 +98,16 @@ export function OrderEditor({
       .then(({ data }) => setTeam(data ?? []));
     if (orderId) {
       (async () => {
-        const { data: o } = await supabase.from("orders").select("*").eq("id", orderId).single();
+        const { data: o, error: oErr } = await supabase.from("orders").select("*").eq("id", orderId).single();
+        if (oErr || !o) {
+          toast.error("Não consegui carregar a OS. Feche e tente novamente.");
+          return;
+        }
         const { data: its } = await supabase
           .from("order_items")
           .select("*")
           .eq("order_id", orderId);
-        if (o) setForm({ ...o, deadline: o.deadline ?? "" });
+        setForm({ ...o, deadline: o.deadline ?? "" });
         setItems(
           (its ?? []).map((i: any) => ({
             id: i.id,
@@ -209,7 +213,23 @@ export function OrderEditor({
         setLoading(false);
         return toast.error(error.message);
       }
-      await supabase.from("order_items").delete().eq("order_id", id);
+      // Substitui itens atomicamente via RPC (evita OS sem itens em caso de falha).
+      const { error: rpcErr } = await (supabase as any).rpc("replace_order_items", {
+        _order_id: id,
+        _items: items.map((i) => ({
+          description: i.description,
+          quantity: i.quantity,
+          unit_price: i.unit_price,
+          subtotal: i.subtotal,
+          service_id: i.service_id ?? null,
+        })),
+      });
+      setLoading(false);
+      if (rpcErr) return toast.error(rpcErr.message);
+      toast.success("Ordem salva");
+      onOpenChange(false);
+      onSaved?.();
+      return;
     } else {
       const { data, error } = await supabase.from("orders").insert(payload).select("id").single();
       if (error || !data) {

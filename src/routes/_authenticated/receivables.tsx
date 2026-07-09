@@ -84,10 +84,11 @@ function Page() {
   const { data } = useQuery({
     queryKey: ["receivables"],
     queryFn: async () => {
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from("receivables")
         .select("*, clients(name, whatsapp), orders(number)")
         .order("due_date", { ascending: true });
+      if (error) throw error;
       return (data ?? []) as any[];
     },
   });
