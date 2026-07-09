@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useEffect, useId, useRef, useState } from "react";
+import { useId, useRef, useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -28,38 +28,6 @@ function AuthPage() {
   const signupNameId = useId();
   const signupEmailId = useId();
   const signupPwdId = useId();
-
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-
-    const syncAuthViewport = () => {
-      const viewportHeight = window.visualViewport?.height ?? window.innerHeight;
-      const keyboardIsOpen =
-        !!window.visualViewport && viewportHeight < window.innerHeight - 120;
-
-      document.documentElement.style.setProperty("--auth-viewport-height", `${viewportHeight}px`);
-      document.documentElement.classList.toggle("auth-keyboard-open", keyboardIsOpen);
-    };
-
-    syncAuthViewport();
-    window.visualViewport?.addEventListener("resize", syncAuthViewport);
-    window.visualViewport?.addEventListener("scroll", syncAuthViewport);
-    window.addEventListener("resize", syncAuthViewport);
-
-    return () => {
-      window.visualViewport?.removeEventListener("resize", syncAuthViewport);
-      window.visualViewport?.removeEventListener("scroll", syncAuthViewport);
-      window.removeEventListener("resize", syncAuthViewport);
-      document.documentElement.style.removeProperty("--auth-viewport-height");
-      document.documentElement.classList.remove("auth-keyboard-open");
-    };
-  }, []);
-
-  function keepFocusedInputVisible(input: HTMLInputElement) {
-    window.requestAnimationFrame(() => {
-      input.scrollIntoView({ block: "nearest", inline: "nearest" });
-    });
-  }
 
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault();
@@ -95,7 +63,7 @@ function AuthPage() {
 
   return (
     <div
-      className="auth-screen min-h-screen-dvh flex items-center justify-center overflow-x-hidden overflow-y-auto p-3 safe-pt safe-pb sm:p-4"
+      className="auth-screen min-h-screen-dvh flex items-center justify-center overflow-x-hidden p-3 safe-pt safe-pb sm:p-4"
       style={{ background: "linear-gradient(135deg, #031c18, #074531 58%, #d9a83f)" }}
     >
       <div className="auth-card w-full max-w-md rounded-2xl border border-border bg-card p-5 shadow-2xl sm:p-8">
@@ -129,7 +97,6 @@ function AuthPage() {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  onFocus={(e) => keepFocusedInputVisible(e.currentTarget)}
                   onKeyDown={(e) => {
                     if (e.key === "Enter") loginPasswordRef.current?.focus();
                   }}
@@ -151,7 +118,6 @@ function AuthPage() {
                     type={showPwd ? "text" : "password"}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    onFocus={(e) => keepFocusedInputVisible(e.currentTarget)}
                     required
                     className="pr-11"
                   />
@@ -191,7 +157,6 @@ function AuthPage() {
                   type="text"
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
-                  onFocus={(e) => keepFocusedInputVisible(e.currentTarget)}
                   onKeyDown={(e) => {
                     if (e.key === "Enter") signupEmailRef.current?.focus();
                   }}
@@ -213,7 +178,6 @@ function AuthPage() {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  onFocus={(e) => keepFocusedInputVisible(e.currentTarget)}
                   onKeyDown={(e) => {
                     if (e.key === "Enter") signupPasswordRef.current?.focus();
                   }}
@@ -235,7 +199,6 @@ function AuthPage() {
                     type={showPwd ? "text" : "password"}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    onFocus={(e) => keepFocusedInputVisible(e.currentTarget)}
                     required
                     minLength={6}
                     className="pr-11"

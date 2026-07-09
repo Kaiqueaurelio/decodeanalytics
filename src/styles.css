@@ -450,13 +450,10 @@
     max-width: 100%;
     overflow-x: clip;
     overscroll-behavior-x: none;
-    touch-action: pan-y;
-    -webkit-overflow-scrolling: touch;
   }
 
   .auth-card {
     overflow: visible;
-    touch-action: auto;
   }
 
   .auth-card label {
@@ -469,7 +466,6 @@
     min-height: 48px;
     font-size: 16px;
     pointer-events: auto;
-    touch-action: auto;
     user-select: text;
     -webkit-user-select: text;
     -webkit-appearance: none;
@@ -498,14 +494,6 @@
       padding-bottom: max(9rem, calc(env(safe-area-inset-bottom) + 9rem));
     }
 
-    .auth-keyboard-open .auth-card {
-      margin-bottom: 1rem;
-    }
-
-    .auth-keyboard-open .auth-logo {
-      height: 4.5rem;
-      margin-bottom: 0.5rem;
-    }
   }
 
   @supports (-webkit-touch-callout: none) {
