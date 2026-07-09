@@ -102,8 +102,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "apple-mobile-web-app-capable", content: "yes" },
       { name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
       { name: "apple-mobile-web-app-title", content: "Alcateia's" },
-      { property: "og:description", content: "Sistema de gestão para a Alcateia's Produções Gráficas" },
-      { name: "twitter:description", content: "Sistema de gestão para a Alcateia's Produções Gráficas" },
     ],
     links: [
       {

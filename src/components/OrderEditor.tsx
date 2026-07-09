@@ -406,6 +406,7 @@ export function OrderEditor({
                     <Button
                       size="icon"
                       variant="ghost"
+                      aria-label="Remover item"
                       onClick={() => setItems(items.filter((_, i) => i !== idx))}
                     >
                       <Trash2 className="w-4 h-4 text-destructive" />

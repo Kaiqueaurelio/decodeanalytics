@@ -192,8 +192,8 @@ function ServicesPage() {
                   <td className="p-3 text-right font-mono">{brl(s.base_price)}</td>
                   <td className="p-3 text-center">{s.active ? "✓" : "—"}</td>
                   <td className="p-3 text-right">
-                    <Button size="icon" variant="ghost" onClick={() => { setEdit(s); setOpen(true); }}><Pencil className="w-4 h-4" /></Button>
-                    <Button size="icon" variant="ghost" onClick={() => remove(s.id)}><Trash2 className="w-4 h-4 text-destructive" /></Button>
+                    <Button size="icon" variant="ghost" aria-label={`Editar ${s.name}`} onClick={() => { setEdit(s); setOpen(true); }}><Pencil className="w-4 h-4" /></Button>
+                    <Button size="icon" variant="ghost" aria-label={`Excluir ${s.name}`} onClick={() => remove(s.id)}><Trash2 className="w-4 h-4 text-destructive" /></Button>
                   </td>
                 </tr>
               ))}
