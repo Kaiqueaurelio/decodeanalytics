@@ -297,6 +297,12 @@ function ProductionBoard() {
                           <span className="font-mono text-xs font-semibold text-primary">
                             OS #{order.number}
                           </span>
+                          <Badge
+                            className={lifecycleFor(order.production_status).className}
+                            title={lifecycleFor(order.production_status).description}
+                          >
+                            {lifecycleFor(order.production_status).label}
+                          </Badge>
                           <Badge variant="outline" className={STATUS_TONE[order.production_status]}>
                             {PRODUCTION_STATUS_LABEL[order.production_status]}
                           </Badge>
