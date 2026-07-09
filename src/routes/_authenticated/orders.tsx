@@ -307,6 +307,33 @@ function OrdersPage() {
           </TabsTrigger>
         </TabsList>
       </Tabs>
+      <div className="flex flex-wrap items-center gap-2">
+        <span className="text-xs font-medium text-muted-foreground">Prazo:</span>
+        {([
+          { key: "all", label: "Todos", icon: null, tone: "bg-muted text-foreground border-transparent", activeTone: "bg-primary text-primary-foreground" },
+          { key: "atrasado", label: `Atrasadas${deadlineCounts.atrasado ? ` (${deadlineCounts.atrasado})` : ""}`, icon: <AlertTriangle className="w-3.5 h-3.5" />, tone: "bg-red-50 text-red-700 border-red-200", activeTone: "bg-red-600 text-white border-red-600" },
+          { key: "no_prazo", label: `No prazo${deadlineCounts.no_prazo ? ` (${deadlineCounts.no_prazo})` : ""}`, icon: <Clock className="w-3.5 h-3.5" />, tone: "bg-emerald-50 text-emerald-700 border-emerald-200", activeTone: "bg-emerald-600 text-white border-emerald-600" },
+          { key: "hoje", label: "Para hoje", icon: <CalendarClock className="w-3.5 h-3.5" />, tone: "bg-amber-50 text-amber-700 border-amber-200", activeTone: "bg-amber-600 text-white border-amber-600" },
+          { key: "proximos7", label: "Próximos 7 dias", icon: <CalendarClock className="w-3.5 h-3.5" />, tone: "bg-blue-50 text-blue-700 border-blue-200", activeTone: "bg-blue-600 text-white border-blue-600" },
+          { key: "sem_prazo", label: `Sem prazo${deadlineCounts.sem_prazo ? ` (${deadlineCounts.sem_prazo})` : ""}`, icon: <CalendarX className="w-3.5 h-3.5" />, tone: "bg-slate-50 text-slate-600 border-slate-200", activeTone: "bg-slate-700 text-white border-slate-700" },
+        ] as const).map((opt) => {
+          const active = deadlineFilter === opt.key;
+          return (
+            <button
+              key={opt.key}
+              type="button"
+              onClick={() => setDeadlineFilter(opt.key)}
+              aria-pressed={active}
+              className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-medium transition-colors ${
+                active ? opt.activeTone : `${opt.tone} hover:brightness-95`
+              }`}
+            >
+              {opt.icon}
+              <span>{opt.label}</span>
+            </button>
+          );
+        })}
+      </div>
       {activeChips.length > 0 && (
         <div className="flex flex-wrap items-center gap-1.5">
           <span className="text-xs text-muted-foreground mr-1">Filtros ativos:</span>
