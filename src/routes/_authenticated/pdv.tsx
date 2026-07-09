@@ -393,7 +393,7 @@ function PDVPage() {
       category: service.category || "Outros",
       price: Number(service.base_price || 0),
       detail: service.description || service.category || "Serviço gráfico",
-      imageUrl: service.image_url && !service.image_url.includes('__l5e') ? service.image_url : undefined,
+      imageUrl: service.image_url || undefined,
     }));
     return serviceProducts.length ? serviceProducts : QUICK_PRODUCTS;
   }, [services]);

@@ -152,8 +152,6 @@ export function resolveProductImage(
     return PRODUCT_IMAGES_BY_SLUG[slug];
   }
 
-  const isLegacyUrl = imageUrl?.includes("__l5e");
-
   if (imageUrl) {
     const localProductImage = getImageFromFileName(imageUrl);
     if (localProductImage) {
@@ -161,11 +159,12 @@ export function resolveProductImage(
     }
   }
 
-  if (imageUrl?.startsWith("http") && !isLegacyUrl) {
+  if (imageUrl?.startsWith("http")) {
     return imageUrl;
   }
 
-  if (imageUrl?.startsWith("/") && !isLegacyUrl && !imageUrl.startsWith("/products/")) {
+  // URLs relativas (inclui `/__l5e/...` do CDN de assets do Lovable).
+  if (imageUrl?.startsWith("/") && !imageUrl.startsWith("/products/")) {
     return imageUrl;
   }
 
