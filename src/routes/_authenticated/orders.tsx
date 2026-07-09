@@ -160,6 +160,8 @@ function OrdersPage() {
       hoje: "Prazo: hoje",
       proximos7: "Prazo: próximos 7 dias",
       atrasado: "Prazo: atrasado",
+      no_prazo: "Prazo: no prazo",
+      sem_prazo: "Prazo: sem prazo",
     };
     activeChips.push({ key: "deadline", label: map[deadlineFilter] ?? deadlineFilter, onClear: () => setDeadlineFilter("all") });
   }
