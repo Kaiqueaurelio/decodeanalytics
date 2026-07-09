@@ -211,9 +211,11 @@ function FeaturedBento() {
 function BentoProductCard({
   product,
   animationDelay,
+  position,
 }: {
   product: StoreProduct;
   animationDelay: number;
+  position?: number;
 }) {
   const slug = product.slug ?? product.id;
   const rating = product.rating ? Number(product.rating) : null;
@@ -225,6 +227,17 @@ function BentoProductCard({
       params={{ slug }}
       className="store-bento-card group flex flex-col overflow-hidden bg-white p-3 text-[var(--store-ink)] animate-fade-in"
       style={{ animationDelay: `${animationDelay}ms`, animationFillMode: "both" }}
+      onClick={() =>
+        trackCardClick({
+          card_id: product.id,
+          card_title: product.name,
+          card_type: "product",
+          section: "featured_bento",
+          position,
+          price: product.base_price != null ? Number(product.base_price) : null,
+          category: product.category ?? null,
+        })
+      }
     >
       <div className="relative mb-3 flex aspect-square items-center justify-center overflow-hidden rounded-[var(--store-radius-md)] bg-slate-100">
         <SmartImage 
