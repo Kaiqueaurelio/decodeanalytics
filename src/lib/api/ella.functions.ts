@@ -617,7 +617,7 @@ export const ellaChat = createServerFn({ method: "POST" })
           "Define o papel de um usuário. role em: administrador, atendente, producao, financeiro, vendedor.",
         inputSchema: z.object({
           userId: z.string().uuid(),
-          role: z.enum(["administrador", "atendente", "producao", "financeiro", "vendedor"]),
+          role: z.enum(["administrador", "atendente", "producao", "financeiro"]),
           replaceExisting: z.boolean().optional(),
         }),
         execute: async ({ userId: uid, role, replaceExisting }) => {
