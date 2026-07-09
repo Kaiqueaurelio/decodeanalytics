@@ -1078,7 +1078,7 @@ function PDVPage() {
         </div>
       </Card>
 
-      <div className="grid min-w-0 gap-3 sm:grid-cols-[minmax(0,1fr)_240px] md:grid-cols-[minmax(0,1fr)_260px] xl:grid-cols-[minmax(0,1fr)_290px] 2xl:grid-cols-[minmax(0,1fr)_320px]">
+      <div className="min-w-0">
         <section className="min-w-0 space-y-3">
           <div className="space-y-2">
             <div className="relative">
