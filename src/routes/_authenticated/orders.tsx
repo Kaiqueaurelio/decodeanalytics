@@ -13,7 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Plus, Pencil, Trash2, Search, AlertTriangle, Eye, EyeOff, X } from "lucide-react";
+import { Plus, Pencil, Trash2, Search, AlertTriangle, Eye, EyeOff, X, Clock, CalendarClock, CalendarX } from "lucide-react";
 import { toast } from "sonner";
 import { brl, fmtDate, PRODUCTION_STATUS_LABEL, PAYMENT_STATUS_LABEL } from "@/lib/format";
 import { OrderEditor } from "@/components/OrderEditor";
@@ -89,6 +89,15 @@ function OrdersPage() {
       } else if (deadlineFilter === "proximos7") {
         const d = r.deadline ? new Date(r.deadline) : null;
         matchesDeadline = !!d && d >= today && d <= nextWeek;
+      } else if (deadlineFilter === "no_prazo") {
+        // Has a deadline, not overdue, and OS still open
+        matchesDeadline =
+          !!r.deadline &&
+          !isOverdue(r) &&
+          r.production_status !== "entregue" &&
+          r.production_status !== "cancelado";
+      } else if (deadlineFilter === "sem_prazo") {
+        matchesDeadline = !r.deadline;
       }
 
       let matchesLifecycle = true;
