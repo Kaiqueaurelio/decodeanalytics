@@ -2,7 +2,6 @@ import type { ReactNode } from "react";
 import { useMemo, useState } from "react";
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import {
-  Bell,
   BarChart3,
   Boxes,
   ChevronRight,
@@ -29,6 +28,7 @@ import type { LucideIcon } from "lucide-react";
 import { useAuth, ROLE_LABEL, type AppRole } from "@/lib/auth";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { NotificationsBell } from "@/components/NotificationsBell";
 
 type NavItem = {
   to: string;
@@ -458,14 +458,7 @@ export function AppShell({ children }: { children: ReactNode }) {
               )}
             </div>
 
-            <button
-              type="button"
-              className="relative hidden rounded-xl border border-border bg-white p-2.5 text-brand-blue shadow-sm transition-colors hover:bg-muted sm:block"
-              aria-label="Notificações"
-            >
-              <Bell className="h-5 w-5" />
-              <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-brand-orange ring-2 ring-white" />
-            </button>
+            <NotificationsBell />
 
             <ThemeToggle className="hidden sm:inline-flex" />
 
