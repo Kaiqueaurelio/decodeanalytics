@@ -20,8 +20,9 @@ export function SmartImage({
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  // Se não houver src ou a URL for do sistema legado (__l5e), já mostramos o fallback
-  const isInvalidUrl = !src || src.includes("__l5e");
+  // Só mostramos fallback quando não há src.
+  // URLs `/__l5e/...` são válidas no domínio *.lovable.app (CDN de assets).
+  const isInvalidUrl = !src;
 
   useEffect(() => {
     setError(false);
