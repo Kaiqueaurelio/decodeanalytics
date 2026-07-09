@@ -90,6 +90,7 @@ function LightBand({ children }: { children: React.ReactNode }) {
 function FeaturedBento() {
   const { data, isLoading } = useStoreProducts(24);
   const items = data ?? [];
+  const waLink = useWaLink();
   const featured = items.slice(0, 10);
 
   return (
@@ -278,6 +279,7 @@ function CategoriesSection() {
 }
 
 function HowItWorks() {
+  const waLink = useWaLink();
   const steps = [
     { icon: Sparkles, title: "Escolha o produto", desc: "Navegue pelo catálogo e selecione a opção ideal." },
     { icon: Upload, title: "Envie sua arte", desc: "Anexe o arquivo ou peça para nossa equipe criar." },
@@ -565,6 +567,8 @@ function TestimonialsSection() {
 }
 
 function _ContactSection() {
+  const info = useCompanyInfo();
+  const waLink = useWaLink();
   return (
     <section className="bg-[var(--store-primary-dark)] py-12 text-white sm:py-16">
       <div className="mx-auto grid max-w-[1280px] gap-8 px-4 lg:grid-cols-2 lg:items-start">
