@@ -40,16 +40,16 @@ export async function autoCloseMissingDays(): Promise<number> {
   const yesterdayIso = addDays(todayIso, -1);
 
   // Reference start: dia após o último fechamento OU primeira entrada.
-  const { data: lastClosure } = await supabase
+  const { data: lastClosure } = (await supabase
     .from("cash_closures" as any)
     .select("closure_date")
     .order("closure_date", { ascending: false })
     .limit(1)
-    .maybeSingle();
+    .maybeSingle()) as { data: { closure_date: string } | null };
 
   let startDate: string | null = null;
   if (lastClosure?.closure_date) {
-    startDate = addDays(lastClosure.closure_date as string, 1);
+    startDate = addDays(lastClosure.closure_date, 1);
   } else {
     const { data: firstEntry } = await supabase
       .from("cash_entries")
