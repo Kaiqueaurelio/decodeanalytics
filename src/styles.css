@@ -454,6 +454,7 @@
 
   .auth-card {
     overflow: visible;
+    max-width: min(28rem, calc(100vw - 1.5rem));
   }
 
   .auth-card label {
