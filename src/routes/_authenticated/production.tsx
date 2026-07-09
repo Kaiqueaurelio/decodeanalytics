@@ -202,6 +202,19 @@ function ProductionBoard() {
               Kanban
             </Button>
           </div>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => setShowDelivered((v) => !v)}
+            title={showDelivered ? "Ocultar OS entregues" : "Mostrar OS entregues"}
+          >
+            {showDelivered ? (
+              <EyeOff className="mr-2 h-4 w-4" />
+            ) : (
+              <Archive className="mr-2 h-4 w-4" />
+            )}
+            {showDelivered ? "Ocultar entregues" : "Ver entregues"}
+          </Button>
         </div>
       </div>
 
