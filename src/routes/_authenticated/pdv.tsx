@@ -860,25 +860,140 @@ function PDVPage() {
         </div>
       </div>
 
-      <div className="mb-3 grid gap-2 sm:grid-cols-2 xl:grid-cols-4">
-        <Card className="rounded-2xl border-slate-200 p-3">
-          <p className="text-[10px] font-black uppercase tracking-wide text-slate-500">Entradas</p>
-          <p className="mt-0.5 text-xl font-black text-emerald-600">{brl(totalToday)}</p>
-        </Card>
-        <Card className="rounded-2xl border-slate-200 p-3">
-          <p className="text-[10px] font-black uppercase tracking-wide text-slate-500">Saídas</p>
-          <p className="mt-0.5 text-xl font-black text-red-600">{brl(expenseTotal)}</p>
-        </Card>
-        <Card className="rounded-2xl border-slate-200 p-3">
-          <p className="text-[10px] font-black uppercase tracking-wide text-slate-500">Cartões</p>
-          <p className="mt-0.5 text-xl font-black text-brand-blue">
-            {brl(paymentTotals.debit + paymentTotals.credit)}
+      <div className="mb-3 grid gap-3 md:grid-cols-[minmax(0,1fr)_320px] xl:grid-cols-[minmax(0,1fr)_360px]">
+        <div className="grid gap-2 grid-cols-2 self-start">
+          <Card className="rounded-2xl border-slate-200 p-3">
+            <p className="text-[10px] font-black uppercase tracking-wide text-slate-500">Entradas</p>
+            <p className="mt-0.5 text-xl font-black text-emerald-600">{brl(totalToday)}</p>
+          </Card>
+          <Card className="rounded-2xl border-slate-200 p-3">
+            <p className="text-[10px] font-black uppercase tracking-wide text-slate-500">Saídas</p>
+            <p className="mt-0.5 text-xl font-black text-red-600">{brl(expenseTotal)}</p>
+          </Card>
+          <Card className="rounded-2xl border-slate-200 p-3">
+            <p className="text-[10px] font-black uppercase tracking-wide text-slate-500">Cartões</p>
+            <p className="mt-0.5 text-xl font-black text-brand-blue">
+              {brl(paymentTotals.debit + paymentTotals.credit)}
+            </p>
+          </Card>
+          <Card className="rounded-2xl border-slate-200 p-3">
+            <p className="text-[10px] font-black uppercase tracking-wide text-slate-500">PIX</p>
+            <p className="mt-0.5 text-xl font-black text-brand-blue">{brl(paymentTotals.pix)}</p>
+          </Card>
+        </div>
+        <aside
+          id="pdv-cart"
+          className="min-w-0 rounded-2xl border-2 border-brand-blue/30 bg-white p-3 shadow-lg md:border md:border-slate-200 md:shadow-sm"
+        >
+          <div className="mb-3 flex items-center justify-between">
+            <h2 className="text-base font-black">Itens da venda</h2>
+            <Button variant="ghost" size="sm" className="text-brand-blue" onClick={clearSale}>
+              <Trash2 className="mr-1 h-3.5 w-3.5" /> Limpar
+            </Button>
+          </div>
+          <div className="app-scrollbar max-h-[340px] space-y-2 overflow-y-auto pr-1">
+            {cart.length ? (
+              cart.map((item) => (
+                <div
+                  key={item.id}
+                  className="grid grid-cols-[80px_minmax(0,1fr)_auto] items-center gap-2 rounded-2xl border border-slate-100 p-2"
+                >
+                  <div className="flex items-center justify-center gap-1">
+                    <button
+                      className="grid h-7 w-7 place-items-center rounded-lg bg-blue-50 text-brand-blue"
+                      onClick={() => changeQty(item.id, -1)}
+                    >
+                      <Minus className="h-3.5 w-3.5" />
+                    </button>
+                    <span className="text-sm font-black">{item.quantity}</span>
+                    <button
+                      className="grid h-7 w-7 place-items-center rounded-lg bg-blue-50 text-brand-blue"
+                      onClick={() => changeQty(item.id, 1)}
+                    >
+                      <Plus className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
+                  <div className="min-w-0">
+                    <p className="truncate text-sm font-black">{item.name}</p>
+                    <p className="truncate text-[11px] text-slate-500">{item.detail}</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-sm font-black">{brl(item.price * item.quantity)}</p>
+                    <button
+                      className="text-[10px] text-red-500"
+                      onClick={() => changeQty(item.id, -999)}
+                    >
+                      remover
+                    </button>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="grid place-items-center rounded-2xl border border-dashed border-slate-200 py-8 text-center text-slate-500">
+                <ShoppingCart className="mb-2 h-8 w-8 text-slate-300" />
+                <p className="text-sm font-bold">Carrinho vazio</p>
+              </div>
+            )}
+          </div>
+          <div className="mt-3 space-y-2 border-t border-slate-100 pt-3">
+            <div className="flex justify-between text-xs">
+              <span className="text-slate-500">Subtotal</span>
+              <strong>{brl(subtotal)}</strong>
+            </div>
+            <div className="grid grid-cols-[1fr_100px] items-center gap-2">
+              <Label className="text-[11px] text-slate-500">Desconto</Label>
+              <Input
+                value={discount}
+                type="number"
+                min="0"
+                step="0.01"
+                onChange={(e) => setDiscount(toNumber(e.target.value))}
+                className="h-8 rounded-lg text-right text-sm"
+              />
+            </div>
+            <div className="flex items-end justify-between border-t border-slate-100 pt-2">
+              <span className="text-sm font-black">Total</span>
+              <strong className="text-xl font-black text-brand-blue">{brl(total)}</strong>
+            </div>
+            <Button
+              disabled={!cart.length}
+              className="h-10 w-full rounded-xl bg-brand-blue text-sm font-black hover:bg-brand-blue-light"
+              onClick={() => {
+                setPayments([{ method: "PIX QR Code", amount: String(total.toFixed(2)) }]);
+                setShowCheckout(true);
+              }}
+            >
+              Finalizar venda
+            </Button>
+          </div>
+          <p className="mt-3 text-[10px] font-black uppercase tracking-wider text-slate-500">
+            Finalizar rápido com o método:
           </p>
-        </Card>
-        <Card className="rounded-2xl border-slate-200 p-3">
-          <p className="text-[10px] font-black uppercase tracking-wide text-slate-500">PIX</p>
-          <p className="mt-0.5 text-xl font-black text-brand-blue">{brl(paymentTotals.pix)}</p>
-        </Card>
+          <div className="mt-1 grid grid-cols-3 gap-1.5">
+            {PAYMENT_OPTIONS.map((option) => {
+              const Icon = option.icon;
+              return (
+                <button
+                  key={option.id}
+                  type="button"
+                  disabled={!cart.length}
+                  onClick={() => {
+                    if (!cart.length) {
+                      toast.error("Adicione um produto ao carrinho primeiro.");
+                      return;
+                    }
+                    setExactPayment(option.id);
+                    setShowCheckout(true);
+                  }}
+                  className="rounded-lg border border-slate-200 bg-white p-1.5 text-center text-[10px] font-black text-slate-700 transition hover:border-brand-blue hover:text-brand-blue disabled:cursor-not-allowed disabled:opacity-40"
+                >
+                  <Icon className="mx-auto mb-0.5 h-3.5 w-3.5" />
+                  {option.label}
+                </button>
+              );
+            })}
+          </div>
+        </aside>
       </div>
 
       <Card className="mb-3 overflow-hidden rounded-2xl border-slate-200 bg-white p-0 shadow-sm">
