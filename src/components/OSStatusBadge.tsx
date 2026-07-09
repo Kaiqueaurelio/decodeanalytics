@@ -1,5 +1,11 @@
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 export type OSLifecycle = {
   label: string;
@@ -38,12 +44,21 @@ interface Props {
 export function OSStatusBadge({ status, className }: Props) {
   const lc = lifecycleFor(status);
   return (
-    <Badge
-      className={cn(lc.className, className)}
-      title={lc.description}
-      aria-label={`Status: ${lc.label}`}
-    >
-      {lc.label}
-    </Badge>
+    <TooltipProvider delayDuration={150}>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Badge
+            className={cn("cursor-help", lc.className, className)}
+            aria-label={`Status: ${lc.label}. ${lc.description}`}
+          >
+            {lc.label}
+          </Badge>
+        </TooltipTrigger>
+        <TooltipContent side="top" className="max-w-xs text-xs">
+          <p className="font-semibold">{lc.label}</p>
+          <p className="text-muted-foreground">{lc.description}</p>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
   );
 }
