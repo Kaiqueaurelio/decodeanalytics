@@ -224,6 +224,39 @@ export type Database = {
         }
         Relationships: []
       }
+      ella_knowledge: {
+        Row: {
+          content: string
+          created_at: string
+          created_by: string | null
+          id: string
+          scope: Database["public"]["Enums"]["ella_scope"]
+          tags: string[]
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          scope?: Database["public"]["Enums"]["ella_scope"]
+          tags?: string[]
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          scope?: Database["public"]["Enums"]["ella_scope"]
+          tags?: string[]
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       order_files: {
         Row: {
           client_id: string | null
@@ -836,6 +869,7 @@ export type Database = {
     Enums: {
       app_role: "administrador" | "atendente" | "producao" | "financeiro"
       cash_type: "entrada" | "saida"
+      ella_scope: "admin" | "public" | "both"
       payment_status:
         | "nao_pago"
         | "sinal_pago"
@@ -985,6 +1019,7 @@ export const Constants = {
     Enums: {
       app_role: ["administrador", "atendente", "producao", "financeiro"],
       cash_type: ["entrada", "saida"],
+      ella_scope: ["admin", "public", "both"],
       payment_status: [
         "nao_pago",
         "sinal_pago",
