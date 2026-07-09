@@ -637,10 +637,10 @@ function InventoryCard({
           </p>
         </div>
         <div className="flex shrink-0 gap-1">
-          <Button variant="ghost" size="icon" onClick={onEdit} className="h-8 w-8">
+          <Button variant="ghost" size="icon" aria-label="Editar item de estoque" onClick={onEdit} className="h-8 w-8">
             <Pencil className="h-4 w-4" />
           </Button>
-          <Button variant="ghost" size="icon" onClick={onDelete} className="h-8 w-8 text-destructive">
+          <Button variant="ghost" size="icon" aria-label="Excluir item de estoque" onClick={onDelete} className="h-8 w-8 text-destructive">
             <Trash2 className="h-4 w-4" />
           </Button>
         </div>
