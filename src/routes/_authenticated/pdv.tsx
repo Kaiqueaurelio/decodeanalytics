@@ -1146,29 +1146,29 @@ function PDVPage() {
             )}
           </div>
 
-          <div className="mt-5 space-y-3 border-t border-slate-100 pt-5">
+          <div className="mt-4 space-y-2 border-t border-slate-100 pt-4">
             <div className="flex justify-between text-sm">
               <span className="text-slate-500">Subtotal</span>
               <strong>{brl(subtotal)}</strong>
             </div>
-            <div className="grid grid-cols-[1fr_130px] items-center gap-3">
-              <Label className="text-sm text-slate-500">Desconto</Label>
+            <div className="grid grid-cols-[1fr_110px] items-center gap-3">
+              <Label className="text-xs text-slate-500">Desconto</Label>
               <Input
                 value={discount}
                 type="number"
                 min="0"
                 step="0.01"
                 onChange={(e) => setDiscount(toNumber(e.target.value))}
-                className="h-10 rounded-xl text-right"
+                className="h-9 rounded-xl text-right"
               />
             </div>
-            <div className="flex items-end justify-between border-t border-slate-100 pt-4">
-              <span className="text-lg font-black">Total</span>
-              <strong className="text-3xl font-black text-brand-blue">{brl(total)}</strong>
+            <div className="flex items-end justify-between border-t border-slate-100 pt-3">
+              <span className="text-base font-black">Total</span>
+              <strong className="text-2xl font-black text-brand-blue">{brl(total)}</strong>
             </div>
             <Button
               disabled={!cart.length}
-              className="h-14 w-full rounded-2xl bg-brand-blue text-base font-black hover:bg-brand-blue-light"
+              className="h-12 w-full rounded-2xl bg-brand-blue text-sm font-black hover:bg-brand-blue-light"
               onClick={() => {
                 setPayments([{ method: "PIX QR Code", amount: String(total.toFixed(2)) }]);
                 setShowCheckout(true);
@@ -1178,7 +1178,7 @@ function PDVPage() {
             </Button>
           </div>
 
-          <div className="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-3 2xl:grid-cols-5">
+          <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-3 2xl:grid-cols-5">
             {PAYMENT_OPTIONS.map((option) => {
               const Icon = option.icon;
               return (
@@ -1186,9 +1186,9 @@ function PDVPage() {
                   key={option.id}
                   type="button"
                   onClick={() => setExactPayment(option.id)}
-                  className="rounded-2xl border border-slate-200 bg-white p-3 text-center text-xs font-black text-slate-700 transition hover:border-brand-blue hover:text-brand-blue"
+                  className="rounded-xl border border-slate-200 bg-white p-2 text-center text-[11px] font-black text-slate-700 transition hover:border-brand-blue hover:text-brand-blue"
                 >
-                  <Icon className="mx-auto mb-1 h-5 w-5" />
+                  <Icon className="mx-auto mb-1 h-4 w-4" />
                   {option.label}
                 </button>
               );
