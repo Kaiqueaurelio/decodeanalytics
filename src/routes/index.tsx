@@ -36,6 +36,7 @@ import { useStoreProducts } from "@/components/storefront/useStoreProducts";
 import { InfiniteProducts } from "@/components/storefront/InfiniteProducts";
 import { CategoryCircles } from "@/components/storefront/CategoryCircles";
 import { Reveal } from "@/components/storefront/Reveal";
+import { CursorFollower } from "@/components/storefront/CursorFollower";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -60,6 +61,7 @@ export const Route = createFileRoute("/")({
 function HomePage() {
   return (
     <StoreShell>
+      <CursorFollower />
       <Hero />
       <CategoryCircles />
       <LightBand>
