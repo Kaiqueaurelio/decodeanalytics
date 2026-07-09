@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useEffect, useId, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -20,6 +20,9 @@ function AuthPage() {
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
   const [showPwd, setShowPwd] = useState(false);
+  const loginPasswordRef = useRef<HTMLInputElement>(null);
+  const signupEmailRef = useRef<HTMLInputElement>(null);
+  const signupPasswordRef = useRef<HTMLInputElement>(null);
   const loginEmailId = useId();
   const loginPwdId = useId();
   const signupNameId = useId();
@@ -52,28 +55,11 @@ function AuthPage() {
     };
   }, []);
 
-  function focusNativeKeyboard(input: HTMLInputElement) {
-    input.focus({ preventScroll: true });
-    window.setTimeout(() => {
-      input.scrollIntoView({ block: "center", inline: "nearest", behavior: "smooth" });
-    }, 80);
+  function keepFocusedInputVisible(input: HTMLInputElement) {
+    window.requestAnimationFrame(() => {
+      input.scrollIntoView({ block: "nearest", inline: "nearest" });
+    });
   }
-
-  const mobileFocusHandlers = {
-    onPointerUp: (event: React.PointerEvent<HTMLInputElement>) => {
-      if (event.pointerType === "touch" || event.pointerType === "pen") {
-        focusNativeKeyboard(event.currentTarget);
-      }
-    },
-    onClick: (event: React.MouseEvent<HTMLInputElement>) => {
-      focusNativeKeyboard(event.currentTarget);
-    },
-    onFocus: (event: React.FocusEvent<HTMLInputElement>) => {
-      window.setTimeout(() => {
-        event.currentTarget.scrollIntoView({ block: "center", inline: "nearest", behavior: "smooth" });
-      }, 120);
-    },
-  };
 
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault();
@@ -143,7 +129,10 @@ function AuthPage() {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  {...mobileFocusHandlers}
+                  onFocus={(e) => keepFocusedInputVisible(e.currentTarget)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") loginPasswordRef.current?.focus();
+                  }}
                   required
                 />
               </div>
@@ -151,6 +140,7 @@ function AuthPage() {
                 <Label htmlFor={loginPwdId}>Senha</Label>
                 <div className="relative">
                   <Input
+                    ref={loginPasswordRef}
                     id={loginPwdId}
                     name="current-password"
                     autoComplete="current-password"
@@ -161,8 +151,8 @@ function AuthPage() {
                     type={showPwd ? "text" : "password"}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
+                    onFocus={(e) => keepFocusedInputVisible(e.currentTarget)}
                     required
-                    {...mobileFocusHandlers}
                     className="pr-11"
                   />
                   <button
@@ -201,13 +191,17 @@ function AuthPage() {
                   type="text"
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
-                  {...mobileFocusHandlers}
+                  onFocus={(e) => keepFocusedInputVisible(e.currentTarget)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") signupEmailRef.current?.focus();
+                  }}
                   required
                 />
               </div>
               <div>
                 <Label htmlFor={signupEmailId}>E-mail</Label>
                 <Input
+                  ref={signupEmailRef}
                   id={signupEmailId}
                   name="email"
                   autoComplete="email"
@@ -219,7 +213,10 @@ function AuthPage() {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  {...mobileFocusHandlers}
+                  onFocus={(e) => keepFocusedInputVisible(e.currentTarget)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") signupPasswordRef.current?.focus();
+                  }}
                   required
                 />
               </div>
@@ -227,6 +224,7 @@ function AuthPage() {
                 <Label htmlFor={signupPwdId}>Senha</Label>
                 <div className="relative">
                   <Input
+                    ref={signupPasswordRef}
                     id={signupPwdId}
                     name="new-password"
                     autoComplete="new-password"
@@ -237,9 +235,9 @@ function AuthPage() {
                     type={showPwd ? "text" : "password"}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
+                    onFocus={(e) => keepFocusedInputVisible(e.currentTarget)}
                     required
                     minLength={6}
-                    {...mobileFocusHandlers}
                     className="pr-11"
                   />
                   <button
