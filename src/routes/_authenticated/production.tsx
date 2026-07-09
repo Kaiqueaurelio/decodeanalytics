@@ -71,6 +71,29 @@ function timeAgo(value?: string | null) {
   return `Há ${Math.floor(hours / 24)} dias`;
 }
 
+type Lifecycle = { label: string; className: string; description: string };
+
+function lifecycleFor(status?: string | null): Lifecycle {
+  if (status === "entregue")
+    return {
+      label: "CONCLUÍDA",
+      className: "bg-green-500 text-white border-green-500 hover:bg-green-500",
+      description: "OS concluída e entregue ao cliente",
+    };
+  if (status === "cancelado" || status === "pausado")
+    return {
+      label: "ARQUIVADA",
+      className: "bg-gray-500 text-white border-gray-500 hover:bg-gray-500",
+      description:
+        status === "cancelado" ? "OS cancelada" : "OS pausada / arquivada temporariamente",
+    };
+  return {
+    label: "EM PRODUÇÃO",
+    className: "bg-blue-500 text-white border-blue-500 hover:bg-blue-500",
+    description: "OS em andamento na produção",
+  };
+}
+
 function ProductionBoard() {
   const qc = useQueryClient();
   const [search, setSearch] = useState("");
@@ -274,6 +297,12 @@ function ProductionBoard() {
                           <span className="font-mono text-xs font-semibold text-primary">
                             OS #{order.number}
                           </span>
+                          <Badge
+                            className={lifecycleFor(order.production_status).className}
+                            title={lifecycleFor(order.production_status).description}
+                          >
+                            {lifecycleFor(order.production_status).label}
+                          </Badge>
                           <Badge variant="outline" className={STATUS_TONE[order.production_status]}>
                             {PRODUCTION_STATUS_LABEL[order.production_status]}
                           </Badge>
@@ -428,11 +457,19 @@ function ProductionBoard() {
                           </h3>
                           <p className="text-xs text-muted-foreground">{order.clients?.name}</p>
                         </div>
-                        {order.urgent && (
-                          <Badge className="bg-destructive text-destructive-foreground text-[9px]">
-                            URGENTE
+                        <div className="flex flex-col items-end gap-1">
+                          <Badge
+                            className={`${lifecycleFor(order.production_status).className} text-[9px]`}
+                            title={lifecycleFor(order.production_status).description}
+                          >
+                            {lifecycleFor(order.production_status).label}
                           </Badge>
-                        )}
+                          {order.urgent && (
+                            <Badge className="bg-destructive text-destructive-foreground text-[9px]">
+                              URGENTE
+                            </Badge>
+                          )}
+                        </div>
                       </div>
                       <div className="mt-3 rounded-lg bg-muted/60 p-2">
                         <p className="text-[10px] uppercase tracking-wide text-muted-foreground">
@@ -487,8 +524,23 @@ function ProductionBoard() {
       <Dialog open={!!selected} onOpenChange={(open) => !open && setSelected(null)}>
         <DialogContent className="max-w-4xl max-h-[92vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>
-              OS #{selected?.number} · {selected?.title || selected?.clients?.name}
+            <DialogTitle className="flex flex-wrap items-center gap-3">
+              <span>
+                OS #{selected?.number} · {selected?.title || selected?.clients?.name}
+              </span>
+              {selected && (
+                <Badge
+                  className={`${lifecycleFor(selected.production_status).className} px-3 py-1 text-xs`}
+                  title={lifecycleFor(selected.production_status).description}
+                >
+                  {lifecycleFor(selected.production_status).label}
+                </Badge>
+              )}
+              {selected?.urgent && (
+                <Badge variant="destructive" className="px-3 py-1 text-xs">
+                  URGENTE
+                </Badge>
+              )}
             </DialogTitle>
           </DialogHeader>
           {selected && (
