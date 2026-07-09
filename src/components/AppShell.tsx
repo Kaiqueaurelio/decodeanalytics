@@ -29,6 +29,7 @@ import { useAuth, ROLE_LABEL, type AppRole } from "@/lib/auth";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { NotificationsBell } from "@/components/NotificationsBell";
+import { EllaFab } from "@/components/EllaFab";
 
 type NavItem = {
   to: string;
@@ -474,6 +475,7 @@ export function AppShell({ children }: { children: ReactNode }) {
 
         <main className="app-page min-w-0 flex-1 overflow-x-hidden">{children}</main>
       </div>
+      <EllaFab />
     </div>
   );
 }
