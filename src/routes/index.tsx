@@ -30,7 +30,8 @@ import {
   type StoreProduct,
 } from "@/components/storefront/ProductCard";
 import { SmartImage } from "@/components/storefront/SmartImage";
-import { STORE_CATEGORIES, STORE_CONTACT, brl, waLink } from "@/components/storefront/tokens";
+import { STORE_CATEGORIES, brl } from "@/components/storefront/tokens";
+import { useCompanyInfo, useWaLink } from "@/hooks/useCompanyInfo";
 import { useStoreProducts } from "@/components/storefront/useStoreProducts";
 import { InfiniteProducts } from "@/components/storefront/InfiniteProducts";
 import { CategoryCircles } from "@/components/storefront/CategoryCircles";
