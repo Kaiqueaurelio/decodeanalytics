@@ -1,10 +1,11 @@
 import { useState, useRef, useEffect } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { Send, Loader2, Sparkles } from "lucide-react";
+import { Send, Loader2, Sparkles, Wrench, ChevronDown } from "lucide-react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Card } from "@/components/ui/card";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { ellaChat } from "@/lib/api/ella.functions";
@@ -13,18 +14,69 @@ export const Route = createFileRoute("/_authenticated/ella")({
   component: EllaPage,
 });
 
+type ToolActivity = { name: string; input: any; output: any };
 interface Message {
   id: string;
   role: "user" | "assistant";
   content: string;
+  tools?: ToolActivity[];
 }
 
 const SUGGESTIONS = [
-  "Crie um orçamento para o cliente João de 500 cartões de visita",
-  "Atualize o preço do banner para R$ 80",
-  "Quais pedidos estão em produção?",
-  "Resumo de vendas da semana",
+  "Panorama do dia: OS ativas, cobranças pendentes e faturamento do mês",
+  "Crie uma OS para Flavia — 100 cartões de visita a R$ 0,50, prazo em 5 dias",
+  "Gere uma cobrança de R$ 250 para o cliente Flavia com vencimento em 7 dias",
+  "Me lembra amanhã às 10h de ligar para o cliente Silva sobre a OS #1004",
+  "Liste as OS em produção",
+  "Quais cobranças estão pendentes?",
 ];
+
+const TOOL_LABELS: Record<string, string> = {
+  list_clients: "Buscando clientes",
+  create_client: "Criando cliente",
+  list_services: "Consultando catálogo",
+  update_service_price: "Atualizando preço",
+  list_orders: "Listando OS",
+  get_order: "Buscando OS",
+  create_order: "Criando OS",
+  update_order_status: "Atualizando status da OS",
+  create_receivable: "Gerando cobrança",
+  list_receivables: "Listando cobranças",
+  mark_receivable_paid: "Baixando cobrança",
+  create_reminder: "Salvando lembrete",
+  list_reminders: "Listando lembretes",
+  complete_reminder: "Concluindo lembrete",
+  dashboard_summary: "Compilando panorama",
+};
+
+function ToolChip({ t }: { t: ToolActivity }) {
+  const [open, setOpen] = useState(false);
+  const isErr = t.output && typeof t.output === "object" && (t.output as any).error;
+  return (
+    <div
+      className={cn(
+        "rounded-lg border text-xs",
+        isErr ? "border-red-300 bg-red-50" : "border-border bg-background/60",
+      )}
+    >
+      <button
+        onClick={() => setOpen((o) => !o)}
+        className="flex w-full items-center gap-2 px-2 py-1.5 text-left"
+      >
+        <Wrench className="h-3.5 w-3.5 text-brand-orange" />
+        <span className="font-medium">{TOOL_LABELS[t.name] ?? t.name}</span>
+        <ChevronDown
+          className={cn("ml-auto h-3.5 w-3.5 transition-transform", open && "rotate-180")}
+        />
+      </button>
+      {open && (
+        <pre className="max-h-52 overflow-auto border-t bg-muted/50 px-2 py-1.5 text-[11px] leading-snug">
+{JSON.stringify({ input: t.input, output: t.output }, null, 2)}
+        </pre>
+      )}
+    </div>
+  );
+}
 
 function EllaPage() {
   const chat = useServerFn(ellaChat);
@@ -33,7 +85,7 @@ function EllaPage() {
       id: "welcome",
       role: "assistant",
       content:
-        "Olá! Sou a Ella Ribeiro, sua assistente operacional da Alcateia. Posso ajudar com orçamentos, produtos, ordens de serviço e cobranças. O que vamos fazer hoje?",
+        "Olá! Sou a **Ella Ribeiro** 👋 — sua assistente operacional. Eu **executo** de verdade: crio OS, gero cobranças, atualizo status, cadastro clientes e guardo seus lembretes. É só me dizer o que precisa.",
     },
   ]);
   const [input, setInput] = useState("");
@@ -44,7 +96,6 @@ function EllaPage() {
   useEffect(() => {
     endRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, loading]);
-
   useEffect(() => {
     inputRef.current?.focus();
   }, []);
@@ -60,14 +111,21 @@ function EllaPage() {
     setInput("");
     setLoading(true);
     try {
-      const data = await chat({ data: { message: content, conversationHistory: history } });
+      const data: any = await chat({
+        data: { message: content, conversationHistory: history },
+      });
       setMessages((prev) => [
         ...prev,
-        { id: `a-${Date.now()}`, role: "assistant", content: data.response },
+        {
+          id: `a-${Date.now()}`,
+          role: "assistant",
+          content: data.response,
+          tools: data.toolActivity,
+        },
       ]);
     } catch (err) {
       console.error(err);
-      toast.error("Não consegui falar com a Ella agora. Tente novamente.");
+      toast.error("Não consegui falar com a Ella agora.");
     } finally {
       setLoading(false);
       setTimeout(() => inputRef.current?.focus(), 0);
@@ -88,7 +146,7 @@ function EllaPage() {
         <div className="min-w-0">
           <h1 className="truncate text-lg sm:text-xl font-black tracking-tight">Ella Ribeiro</h1>
           <p className="truncate text-xs sm:text-sm text-muted-foreground">
-            Assistente operacional da Alcateia
+            Assistente operacional — cria OS, cobranças, lembretes e faz consultas
           </p>
         </div>
       </header>
@@ -101,13 +159,28 @@ function EllaPage() {
           >
             <div
               className={cn(
-                "max-w-[85%] sm:max-w-[75%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed whitespace-pre-wrap break-words",
+                "max-w-[90%] sm:max-w-[80%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed",
                 m.role === "user"
-                  ? "bg-brand-blue text-white rounded-br-sm"
+                  ? "bg-brand-blue text-white rounded-br-sm whitespace-pre-wrap break-words"
                   : "bg-muted text-foreground rounded-bl-sm",
               )}
             >
-              {m.content}
+              {m.role === "assistant" ? (
+                <>
+                  <div className="prose prose-sm max-w-none prose-p:my-1.5 prose-ul:my-1.5 prose-li:my-0.5 prose-headings:mt-2 prose-headings:mb-1 prose-table:my-2">
+                    <ReactMarkdown remarkPlugins={[remarkGfm]}>{m.content}</ReactMarkdown>
+                  </div>
+                  {m.tools && m.tools.length > 0 && (
+                    <div className="mt-2 space-y-1">
+                      {m.tools.map((t, i) => (
+                        <ToolChip key={i} t={t} />
+                      ))}
+                    </div>
+                  )}
+                </>
+              ) : (
+                m.content
+              )}
             </div>
           </div>
         ))}
@@ -115,7 +188,7 @@ function EllaPage() {
           <div className="flex justify-start">
             <div className="bg-muted rounded-2xl rounded-bl-sm px-4 py-2.5 flex items-center gap-2 text-sm text-muted-foreground">
               <Loader2 className="h-4 w-4 animate-spin" />
-              Ella está pensando…
+              Ella está trabalhando…
             </div>
           </div>
         )}
@@ -125,14 +198,14 @@ function EllaPage() {
       {messages.length <= 1 && !loading && (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pb-3">
           {SUGGESTIONS.map((s) => (
-            <Card
+            <button
               key={s}
               onClick={() => send(s)}
-              className="cursor-pointer p-3 text-sm hover:bg-muted transition-colors flex items-start gap-2"
+              className="rounded-xl border p-3 text-left text-sm hover:bg-muted transition-colors flex items-start gap-2"
             >
               <Sparkles className="h-4 w-4 text-brand-orange shrink-0 mt-0.5" />
               <span className="min-w-0">{s}</span>
-            </Card>
+            </button>
           ))}
         </div>
       )}
@@ -151,7 +224,7 @@ function EllaPage() {
               send(input);
             }
           }}
-          placeholder="Pergunte algo para a Ella…"
+          placeholder="Peça pra Ella criar OS, cobrança, lembrete, listar pedidos…"
           rows={1}
           disabled={loading}
           className="min-h-[44px] max-h-40 resize-none"
