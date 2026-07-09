@@ -170,7 +170,7 @@ function CashPage() {
                   <td className="p-3">{e.description}<div className="text-xs text-muted-foreground">{e.clients?.name}</div></td>
                   <td className="p-3 hidden md:table-cell"><Badge variant="outline">{e.category || "—"}</Badge></td>
                   <td className={`p-3 text-right font-mono ${e.type === "entrada" ? "text-emerald-600" : "text-destructive"}`}>{e.type === "entrada" ? "+" : "-"} {brl(e.amount)}</td>
-                  <td className="p-3"><Button size="icon" variant="ghost" onClick={() => remove(e.id)}><Trash2 className="w-4 h-4 text-destructive" /></Button></td>
+                  <td className="p-3"><Button size="icon" variant="ghost" aria-label="Excluir lançamento" onClick={() => remove(e.id)}><Trash2 className="w-4 h-4 text-destructive" /></Button></td>
                 </tr>
               ))}
               {!data?.length && (<tr><td colSpan={6} className="p-8 text-center text-muted-foreground">Sem lançamentos</td></tr>)}
