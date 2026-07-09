@@ -129,8 +129,8 @@ function Page() {
           </div>
           <div className="md:col-span-2">
             <Label>Logo da empresa</Label>
-            <div className="mt-1 grid gap-3 rounded-xl border border-dashed p-4 md:grid-cols-[1fr_auto] md:items-center">
-              <div>
+            <div className="mt-1 grid gap-3 rounded-xl border border-dashed p-4 md:grid-cols-[minmax(0,1fr)_auto] md:items-center">
+              <div className="min-w-0">
                 <p className="text-sm font-medium">Enviar logo em PNG, PDF, CDR ou SVG</p>
                 <p className="text-xs text-muted-foreground">
                   PNG e SVG permitem pré-visualização. Arquivos técnicos ficam armazenados para
