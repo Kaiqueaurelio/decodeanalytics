@@ -75,13 +75,13 @@ function QuotesPage() {
                   <td className="p-3 text-right font-mono">{brl(q.total)}</td>
                   <td className="p-3 text-right whitespace-nowrap">
                     {q.status === "aprovado" && (
-                      <Button size="icon" variant="ghost" title="Gerar OS" onClick={() => { setConvertFrom(q.id); }}>
+                      <Button size="icon" variant="ghost" aria-label={`Gerar OS a partir do orçamento #${q.number}`} title="Gerar OS" onClick={() => { setConvertFrom(q.id); }}>
                         <CheckCircle2 className="w-4 h-4 text-primary" />
                       </Button>
                     )}
-                    <Button size="icon" variant="ghost" onClick={() => printQuote(q.id)}><FileText className="w-4 h-4" /></Button>
-                    <Button size="icon" variant="ghost" onClick={() => { setEditId(q.id); setOpen(true); }}><Pencil className="w-4 h-4" /></Button>
-                    <Button size="icon" variant="ghost" onClick={() => remove(q.id, q.number)}><Trash2 className="w-4 h-4 text-destructive" /></Button>
+                    <Button size="icon" variant="ghost" aria-label={`Imprimir orçamento #${q.number}`} onClick={() => printQuote(q.id)}><FileText className="w-4 h-4" /></Button>
+                    <Button size="icon" variant="ghost" aria-label={`Editar orçamento #${q.number}`} onClick={() => { setEditId(q.id); setOpen(true); }}><Pencil className="w-4 h-4" /></Button>
+                    <Button size="icon" variant="ghost" aria-label={`Excluir orçamento #${q.number}`} onClick={() => remove(q.id, q.number)}><Trash2 className="w-4 h-4 text-destructive" /></Button>
                   </td>
                 </tr>
               ))}
