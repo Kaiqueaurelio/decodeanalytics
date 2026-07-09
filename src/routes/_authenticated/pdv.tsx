@@ -849,7 +849,7 @@ function PDVPage() {
       </div>
 
       <div className="mb-3 grid gap-3 md:grid-cols-[minmax(0,1fr)_320px] xl:grid-cols-[minmax(0,1fr)_360px]">
-        <div className="grid gap-2 grid-cols-2 self-start">
+        <div className="grid h-full gap-2 grid-cols-2 grid-rows-2 content-stretch">
           <Card className="rounded-2xl border-slate-200 p-3">
             <p className="text-[10px] font-black uppercase tracking-wide text-slate-500">Entradas</p>
             <p className="mt-0.5 text-xl font-black text-emerald-600">{brl(totalToday)}</p>
