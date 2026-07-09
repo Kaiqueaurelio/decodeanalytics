@@ -440,6 +440,59 @@
     border-radius: 999px;
     background: color-mix(in oklab, var(--primary) 22%, transparent);
   }
+
+  .auth-screen {
+    min-height: 100vh;
+    min-height: var(--auth-viewport-height, 100dvh);
+    max-width: 100dvw;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .auth-card {
+    max-height: calc(
+      var(--auth-viewport-height, 100dvh) - env(safe-area-inset-top) -
+        env(safe-area-inset-bottom) - 1.5rem
+    );
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .auth-card label {
+    cursor: text;
+  }
+
+  .auth-card input {
+    pointer-events: auto;
+    touch-action: manipulation;
+    user-select: text;
+    -webkit-user-select: text;
+  }
+
+  .auth-card input:focus {
+    scroll-margin-block: 7rem;
+  }
+
+  @media (max-width: 768px) {
+    .auth-screen {
+      align-items: flex-start;
+      padding-top: max(0.75rem, env(safe-area-inset-top));
+      padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
+    }
+
+    .auth-keyboard-open .auth-card {
+      max-height: calc(
+        var(--auth-viewport-height, 100dvh) - env(safe-area-inset-top) -
+          env(safe-area-inset-bottom) - 0.75rem
+      );
+    }
+
+    .auth-keyboard-open .auth-logo {
+      height: 4.5rem;
+      margin-bottom: 0.5rem;
+    }
+  }
 }
 
 @keyframes float-y {
