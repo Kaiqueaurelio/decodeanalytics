@@ -256,6 +256,34 @@
     background: color-mix(in oklab, var(--brand-yellow) 55%, white);
     color: var(--foreground);
   }
+
+  /* Defesa contra overflow horizontal:
+     - imagens/vídeos nunca ultrapassam o container
+     - palavras muito longas (URLs, e-mails) quebram em vez de esticar o layout */
+  img,
+  video,
+  canvas,
+  svg {
+    max-width: 100%;
+    height: auto;
+  }
+
+  p,
+  li,
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  span,
+  a,
+  td,
+  th,
+  dd,
+  dt {
+    overflow-wrap: anywhere;
+  }
 }
 
 @layer components {
