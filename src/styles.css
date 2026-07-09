@@ -273,6 +273,55 @@
     }
   }
 
+  /* Safe area helpers para iPhone (notch e barra de gestos) */
+  .safe-pt {
+    padding-top: env(safe-area-inset-top);
+  }
+  .safe-pb {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  .safe-pl {
+    padding-left: env(safe-area-inset-left);
+  }
+  .safe-pr {
+    padding-right: env(safe-area-inset-right);
+  }
+  .safe-bottom {
+    bottom: calc(env(safe-area-inset-bottom) + 1.25rem);
+  }
+
+  /* Wrapper para tabelas em telas pequenas: scroll horizontal isolado */
+  .table-scroll {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .table-scroll > table {
+    min-width: max-content;
+  }
+
+  /* Alvo de toque mínimo 44x44 (WCAG AAA) */
+  .tap-target {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* iOS: evitar zoom automático ao focar inputs */
+  @media (max-width: 768px) {
+    input,
+    textarea,
+    select {
+      font-size: 16px;
+    }
+  }
+
+  /* App usa 100dvh no lugar de 100vh onde possível para o teclado móvel
+     não empurrar a interface para fora */
+  .min-h-screen-dvh {
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+
   .font-display {
     font-family: var(--store-display-font);
     font-weight: 400;
