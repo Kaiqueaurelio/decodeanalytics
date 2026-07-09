@@ -35,6 +35,7 @@ import {
   EyeOff,
 } from "lucide-react";
 import { toast } from "sonner";
+import { OSStatusBadge, lifecycleFor } from "@/components/OSStatusBadge";
 
 export const Route = createFileRoute("/_authenticated/production")({ component: ProductionBoard });
 
@@ -71,28 +72,6 @@ function timeAgo(value?: string | null) {
   return `Há ${Math.floor(hours / 24)} dias`;
 }
 
-type Lifecycle = { label: string; className: string; description: string };
-
-function lifecycleFor(status?: string | null): Lifecycle {
-  if (status === "entregue")
-    return {
-      label: "CONCLUÍDA",
-      className: "bg-green-500 text-white border-green-500 hover:bg-green-500",
-      description: "OS concluída e entregue ao cliente",
-    };
-  if (status === "cancelado" || status === "pausado")
-    return {
-      label: "ARQUIVADA",
-      className: "bg-gray-500 text-white border-gray-500 hover:bg-gray-500",
-      description:
-        status === "cancelado" ? "OS cancelada" : "OS pausada / arquivada temporariamente",
-    };
-  return {
-    label: "EM PRODUÇÃO",
-    className: "bg-blue-500 text-white border-blue-500 hover:bg-blue-500",
-    description: "OS em andamento na produção",
-  };
-}
 
 function ProductionBoard() {
   const qc = useQueryClient();
