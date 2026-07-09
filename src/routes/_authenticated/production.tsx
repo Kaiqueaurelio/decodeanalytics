@@ -524,8 +524,23 @@ function ProductionBoard() {
       <Dialog open={!!selected} onOpenChange={(open) => !open && setSelected(null)}>
         <DialogContent className="max-w-4xl max-h-[92vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>
-              OS #{selected?.number} · {selected?.title || selected?.clients?.name}
+            <DialogTitle className="flex flex-wrap items-center gap-3">
+              <span>
+                OS #{selected?.number} · {selected?.title || selected?.clients?.name}
+              </span>
+              {selected && (
+                <Badge
+                  className={`${lifecycleFor(selected.production_status).className} px-3 py-1 text-xs`}
+                  title={lifecycleFor(selected.production_status).description}
+                >
+                  {lifecycleFor(selected.production_status).label}
+                </Badge>
+              )}
+              {selected?.urgent && (
+                <Badge variant="destructive" className="px-3 py-1 text-xs">
+                  URGENTE
+                </Badge>
+              )}
             </DialogTitle>
           </DialogHeader>
           {selected && (
