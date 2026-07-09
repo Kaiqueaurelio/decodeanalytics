@@ -55,7 +55,7 @@ function CartPage() {
 
   return (
     <StoreShell>
-      <section className="mx-auto max-w-[1280px] px-4 py-8 sm:py-12">
+      <section className="mx-auto max-w-[1280px] px-3 sm:px-4 py-6 sm:py-12 pb-32 lg:pb-12">
         <h1 className="text-2xl font-extrabold text-[var(--store-primary)] sm:text-3xl">
           Carrinho
         </h1>
@@ -89,25 +89,25 @@ function CartPage() {
                     {item.category ?? "Personalizado"} · {brl(item.price)} un
                   </p>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1.5 sm:gap-2">
                   <button
                     type="button"
                     onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                    className="grid h-8 w-8 place-items-center rounded-lg border border-[var(--store-border)] bg-white text-[var(--store-text)] hover:bg-[var(--store-surface-soft)]"
+                    className="grid h-10 w-10 sm:h-9 sm:w-9 place-items-center rounded-lg border border-[var(--store-border)] bg-white text-[var(--store-text)] hover:bg-[var(--store-surface-soft)] active:scale-95"
                     aria-label="Diminuir quantidade"
                   >
-                    <Minus className="h-3.5 w-3.5" />
+                    <Minus className="h-4 w-4" />
                   </button>
-                  <span className="w-6 text-center text-sm font-bold text-[var(--store-text)]">
+                  <span className="w-7 text-center text-sm font-bold text-[var(--store-text)]">
                     {item.quantity}
                   </span>
                   <button
                     type="button"
                     onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                    className="grid h-8 w-8 place-items-center rounded-lg border border-[var(--store-border)] bg-white text-[var(--store-text)] hover:bg-[var(--store-surface-soft)]"
+                    className="grid h-10 w-10 sm:h-9 sm:w-9 place-items-center rounded-lg border border-[var(--store-border)] bg-white text-[var(--store-text)] hover:bg-[var(--store-surface-soft)] active:scale-95"
                     aria-label="Aumentar quantidade"
                   >
-                    <Plus className="h-3.5 w-3.5" />
+                    <Plus className="h-4 w-4" />
                   </button>
                 </div>
                 <p className="hidden min-w-[5rem] text-right text-sm font-bold text-[var(--store-primary)] sm:block">
@@ -116,10 +116,10 @@ function CartPage() {
                 <button
                   type="button"
                   onClick={() => removeItem(item.id)}
-                  className="grid h-8 w-8 place-items-center rounded-lg text-[var(--store-text-light)] hover:bg-red-50 hover:text-red-600"
+                  className="grid h-10 w-10 sm:h-9 sm:w-9 place-items-center rounded-lg text-[var(--store-text-light)] hover:bg-red-50 hover:text-red-600"
                   aria-label="Remover item"
                 >
-                  <Trash2 className="h-4 w-4" />
+                  <Trash2 className="h-4 w-4 sm:h-4 sm:w-4" />
                 </button>
               </div>
             ))}
@@ -135,7 +135,7 @@ function CartPage() {
             </div>
           </div>
 
-          <aside className="space-y-4">
+          <aside className="space-y-4 hidden lg:block">
             <div className="rounded-[var(--store-radius-xl)] border border-[var(--store-border)] bg-white p-6 shadow-[var(--store-shadow-sm)]">
               <h2 className="text-lg font-extrabold text-[var(--store-primary)]">Resumo</h2>
               <div className="mt-4 space-y-2">
@@ -178,6 +178,31 @@ function CartPage() {
           </aside>
         </div>
       </section>
+
+      {/* Barra fixa de checkout no mobile/tablet */}
+      <div
+        className="fixed inset-x-0 bottom-0 z-40 border-t border-[var(--store-border)] bg-white/95 backdrop-blur lg:hidden"
+        style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
+      >
+        <div className="mx-auto flex max-w-[1280px] items-center gap-3 px-3 py-3 sm:px-4">
+          <div className="min-w-0 flex-1">
+            <p className="text-[11px] font-semibold uppercase tracking-wide text-[var(--store-text-muted)]">
+              Total ({count} {count === 1 ? "item" : "itens"})
+            </p>
+            <p className="truncate text-lg font-extrabold text-[var(--store-primary)]">
+              {brl(total)}
+            </p>
+          </div>
+          <a
+            href={waLink(message)}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex h-12 shrink-0 items-center justify-center gap-2 rounded-[var(--store-radius-md)] bg-[var(--store-success)] px-5 text-sm font-extrabold uppercase tracking-wide text-white shadow-[var(--store-shadow-md)] active:scale-[0.98]"
+          >
+            <MessageCircle className="h-5 w-5" /> Finalizar
+          </a>
+        </div>
+      </div>
     </StoreShell>
   );
 }
