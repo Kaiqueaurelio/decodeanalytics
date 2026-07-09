@@ -88,3 +88,36 @@ test.describe("EllaAvatar sucesso (sem bloqueio)", () => {
       .toBeGreaterThan(0);
   });
 });
+
+test.describe("EllaFab — URL inválida do avatar", () => {
+  test("responde 404 no avatar e mostra fallback 'ER' no FAB após retries", async ({ page }) => {
+    // Cenário: a URL do avatar resolve para um recurso inexistente/inválido.
+    // Diferente do abort de rede, aqui o servidor responde 404 — a imagem
+    // dispara onError e o EllaAvatar deve, após esgotar as 3 tentativas,
+    // renderizar o fallback com as iniciais "ER".
+    const attempts: string[] = [];
+    await page.route(AVATAR_URL_RE, async (route) => {
+      attempts.push(route.request().url());
+      await route.fulfill({
+        status: 404,
+        contentType: "text/plain",
+        body: "Not Found",
+      });
+    });
+
+    await page.goto(`${BASE}/`, { waitUntil: "domcontentloaded" });
+
+    const fab = page.getByRole("link", { name: /Abrir Ella/i });
+    if ((await fab.count()) === 0) {
+      test.skip(true, "EllaFab só aparece para admins; forneça sessão de admin para validar.");
+      return;
+    }
+
+    const fallback = fab.getByRole("img", { name: /Avatar de Ella/i }).first();
+    await expect(fallback).toBeVisible({ timeout: FALLBACK_TIMEOUT_MS });
+    await expect(fallback).toContainText("ER");
+
+    // Confirma que o retry ocorreu (mais de uma tentativa foi feita antes do fallback).
+    expect(attempts.length).toBeGreaterThanOrEqual(2);
+  });
+});
