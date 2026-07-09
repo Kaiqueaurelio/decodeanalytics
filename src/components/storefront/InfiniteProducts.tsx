@@ -5,6 +5,7 @@ import { useStoreProducts } from "./useStoreProducts";
 import { brl } from "./tokens";
 import type { StoreProduct } from "./ProductCard";
 import { SmartImage } from "./SmartImage";
+import { trackCardClick, trackCta, trackInfinitePage } from "@/lib/analytics";
 
 const PAGE = 8;
 
@@ -27,6 +28,12 @@ export function InfiniteProducts() {
 
   // Reset quando o catálogo carrega
   useEffect(() => setPages(1), [all.length]);
+
+  // Analytics: emite um evento por página carregada pelo scroll infinito.
+  useEffect(() => {
+    if (!all.length) return;
+    trackInfinitePage(pages, Math.min(pages * PAGE, all.length * pages));
+  }, [pages, all.length]);
 
   useEffect(() => {
     if (!sentinel.current) return;
@@ -89,6 +96,15 @@ export function InfiniteProducts() {
           <Link
             to="/produtos"
             className="inline-flex items-center gap-1 text-xs font-extrabold uppercase tracking-[0.18em] text-[var(--store-primary)] hover:text-[var(--store-accent)]"
+            onClick={() =>
+              trackCta({
+                cta_id: "infinite_view_all",
+                cta_label: "Ver catálogo completo",
+                section: "infinite_products",
+                destination: "/produtos",
+                channel: "internal",
+              })
+            }
           >
             Ver catálogo completo →
           </Link>
@@ -96,7 +112,12 @@ export function InfiniteProducts() {
 
         <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-4">
           {visible.map((p, idx) => (
-            <FeedCard key={`${p.id}-${idx}`} product={p} index={idx} />
+            <FeedCard
+              key={`${p.id}-${idx}`}
+              product={p}
+              index={idx}
+              page={Math.floor(idx / PAGE) + 1}
+            />
           ))}
         </div>
 
@@ -112,7 +133,15 @@ export function InfiniteProducts() {
   );
 }
 
-function FeedCard({ product, index }: { product: StoreProduct; index: number }) {
+function FeedCard({
+  product,
+  index,
+  page,
+}: {
+  product: StoreProduct;
+  index: number;
+  page: number;
+}) {
   const slug = product.slug ?? product.id;
   const rating = product.rating ? Number(product.rating) : null;
   return (
@@ -121,6 +150,18 @@ function FeedCard({ product, index }: { product: StoreProduct; index: number }) 
       params={{ slug }}
       className="store-bento-card group flex flex-col overflow-hidden bg-white p-3 text-[var(--store-ink)] animate-fade-in"
       style={{ animationDelay: `${(index % PAGE) * 50}ms`, animationFillMode: "both" }}
+      onClick={() =>
+        trackCardClick({
+          card_id: product.id,
+          card_title: product.name,
+          card_type: "product",
+          section: "infinite_products",
+          position: index + 1,
+          infinite_page_at_click: page,
+          price: product.base_price ?? null,
+          category: product.category ?? null,
+        })
+      }
     >
       <div className="relative mb-3 aspect-square overflow-hidden rounded-[var(--store-radius-md)] bg-slate-100">
         <SmartImage 
