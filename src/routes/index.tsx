@@ -37,6 +37,7 @@ import { InfiniteProducts } from "@/components/storefront/InfiniteProducts";
 import { CategoryCircles } from "@/components/storefront/CategoryCircles";
 import { Reveal } from "@/components/storefront/Reveal";
 import { CursorFollower } from "@/components/storefront/CursorFollower";
+import { trackCardClick, trackCta } from "@/lib/analytics";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -112,6 +113,15 @@ function FeaturedBento() {
         <Link
           to="/produtos"
           className="inline-flex items-center gap-1 text-xs font-extrabold uppercase tracking-[0.18em] text-[#172554] hover:text-[var(--store-primary-dark)]"
+          onClick={() =>
+            trackCta({
+              cta_id: "bento_view_all",
+              cta_label: "Ver tudo",
+              section: "featured_bento",
+              destination: "/produtos",
+              channel: "internal",
+            })
+          }
         >
           Ver tudo <ArrowRight className="h-4 w-4" />
         </Link>
@@ -131,6 +141,7 @@ function FeaturedBento() {
                 key={p.id}
                 product={p}
                 animationDelay={120 + idx * 80}
+                position={idx + 1}
               />
             ))}
 
@@ -141,6 +152,14 @@ function FeaturedBento() {
           rel="noopener noreferrer"
           className="store-bento-card group flex flex-col items-center justify-center bg-[var(--store-gold)] p-5 text-center text-[var(--store-ink)] animate-fade-in"
           style={{ animationDelay: "280ms", animationFillMode: "both" }}
+          onClick={() =>
+            trackCta({
+              cta_id: "bento_criar_arte",
+              cta_label: "Criamos sua arte",
+              section: "featured_bento",
+              channel: "whatsapp",
+            })
+          }
         >
           <Palette className="mb-2 h-7 w-7" />
           <p className="font-display text-2xl leading-none sm:text-3xl">CRIAMOS SUA ARTE</p>
@@ -157,6 +176,15 @@ function FeaturedBento() {
           to="/produtos"
           className="store-bento-card group flex flex-col items-center justify-center bg-[#172554] p-5 text-center text-white animate-fade-in"
           style={{ animationDelay: "360ms", animationFillMode: "both" }}
+          onClick={() =>
+            trackCta({
+              cta_id: "bento_mais_produtos",
+              cta_label: "Mais produtos",
+              section: "featured_bento",
+              destination: "/produtos",
+              channel: "internal",
+            })
+          }
         >
           <div className="grid h-12 w-12 place-items-center rounded-full border-2 border-white text-white transition-transform group-hover:rotate-90">
             <Plus className="h-5 w-5" />
@@ -172,6 +200,7 @@ function FeaturedBento() {
               key={p.id}
               product={p}
               animationDelay={440 + idx * 80}
+              position={idx + 3}
             />
           ))}
       </div>
