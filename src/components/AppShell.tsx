@@ -28,6 +28,7 @@ import {
 import type { LucideIcon } from "lucide-react";
 import { useAuth, ROLE_LABEL, type AppRole } from "@/lib/auth";
 import { cn } from "@/lib/utils";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 type NavItem = {
   to: string;
@@ -465,6 +466,8 @@ export function AppShell({ children }: { children: ReactNode }) {
               <Bell className="h-5 w-5" />
               <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-brand-orange ring-2 ring-white" />
             </button>
+
+            <ThemeToggle className="hidden sm:inline-flex" />
 
             <Link
               to="/orders"
