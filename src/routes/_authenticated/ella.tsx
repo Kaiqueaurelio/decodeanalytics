@@ -1,7 +1,21 @@
 import { useState, useRef, useEffect } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { Send, Loader2, Sparkles, Wrench, ChevronDown } from "lucide-react";
+import {
+  Send,
+  Loader2,
+  Sparkles,
+  Wrench,
+  ChevronDown,
+  Paperclip,
+  Mic,
+  Square,
+  X,
+  FileText,
+  FileAudio,
+  FileVideo,
+  Image as ImageIcon,
+} from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { Button } from "@/components/ui/button";
@@ -16,11 +30,19 @@ export const Route = createFileRoute("/_authenticated/ella")({
 });
 
 type ToolActivity = { name: string; input: any; output: any };
+type Attachment = {
+  name: string;
+  mimeType: string;
+  dataBase64: string;
+  size: number;
+  previewUrl?: string;
+};
 interface Message {
   id: string;
   role: "user" | "assistant";
   content: string;
   tools?: ToolActivity[];
+  attachments?: { name: string; mimeType: string; previewUrl?: string }[];
 }
 
 const SUGGESTIONS = [
@@ -86,11 +108,16 @@ function EllaPage() {
       id: "welcome",
       role: "assistant",
       content:
-        "Olá! Sou a **Ella Ribeiro** 👋 — sua assistente operacional. Eu **executo** de verdade: crio OS, gero cobranças, atualizo status, cadastro clientes e guardo seus lembretes. É só me dizer o que precisa.",
+        "Olá! Sou a **Ella Ribeiro** 👋 — sua assistente operacional completa. Executo tudo: OS, cobranças, clientes, usuários e papéis, lembretes e mais. Você pode falar por **áudio** 🎤 ou anexar **arquivos** 📎 (imagem, PDF, vídeo, áudio) que eu analiso pra você.",
     },
   ]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
+  const [attachments, setAttachments] = useState<Attachment[]>([]);
+  const [recording, setRecording] = useState(false);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const recordChunksRef = useRef<Blob[]>([]);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const endRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
@@ -101,19 +128,141 @@ function EllaPage() {
     inputRef.current?.focus();
   }, []);
 
+  const blobToBase64 = (blob: Blob) =>
+    new Promise<string>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const result = reader.result as string;
+        const idx = result.indexOf(",");
+        resolve(idx >= 0 ? result.slice(idx + 1) : result);
+      };
+      reader.onerror = () => reject(reader.error);
+      reader.readAsDataURL(blob);
+    });
+
+  const addFiles = async (files: FileList | File[]) => {
+    const list = Array.from(files);
+    const MAX = 18 * 1024 * 1024;
+    for (const f of list) {
+      if (f.size > MAX) {
+        toast.error(`"${f.name}" passou de 18MB e foi ignorado.`);
+        continue;
+      }
+      try {
+        const dataBase64 = await blobToBase64(f);
+        const previewUrl = f.type.startsWith("image/") ? URL.createObjectURL(f) : undefined;
+        setAttachments((prev) => [
+          ...prev,
+          {
+            name: f.name,
+            mimeType: f.type || "application/octet-stream",
+            dataBase64,
+            size: f.size,
+            previewUrl,
+          },
+        ]);
+      } catch {
+        toast.error(`Falha ao ler "${f.name}"`);
+      }
+    }
+  };
+
+  const removeAttachment = (idx: number) => {
+    setAttachments((prev) => {
+      const copy = [...prev];
+      const [rem] = copy.splice(idx, 1);
+      if (rem?.previewUrl) URL.revokeObjectURL(rem.previewUrl);
+      return copy;
+    });
+  };
+
+  const startRecording = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const mime = MediaRecorder.isTypeSupported("audio/webm;codecs=opus")
+        ? "audio/webm;codecs=opus"
+        : MediaRecorder.isTypeSupported("audio/mp4")
+          ? "audio/mp4"
+          : "";
+      const rec = mime ? new MediaRecorder(stream, { mimeType: mime }) : new MediaRecorder(stream);
+      recordChunksRef.current = [];
+      rec.ondataavailable = (e) => e.data.size > 0 && recordChunksRef.current.push(e.data);
+      rec.onstop = async () => {
+        stream.getTracks().forEach((t) => t.stop());
+        const type = rec.mimeType || "audio/webm";
+        const blob = new Blob(recordChunksRef.current, { type });
+        if (blob.size < 1024) {
+          toast.error("Gravação muito curta.");
+          return;
+        }
+        const dataBase64 = await blobToBase64(blob);
+        const ext = type.includes("mp4") ? "m4a" : "webm";
+        setAttachments((prev) => [
+          ...prev,
+          {
+            name: `gravacao-${Date.now()}.${ext}`,
+            mimeType: type,
+            dataBase64,
+            size: blob.size,
+          },
+        ]);
+        toast.success("Áudio pronto — envie a mensagem para eu ouvir.");
+      };
+      mediaRecorderRef.current = rec;
+      rec.start();
+      setRecording(true);
+    } catch (e) {
+      console.error(e);
+      toast.error("Não consegui acessar o microfone.");
+    }
+  };
+
+  const stopRecording = () => {
+    mediaRecorderRef.current?.stop();
+    mediaRecorderRef.current = null;
+    setRecording(false);
+  };
+
+  const iconFor = (mt: string) => {
+    if (mt.startsWith("image/")) return <ImageIcon className="h-3.5 w-3.5" />;
+    if (mt.startsWith("audio/")) return <FileAudio className="h-3.5 w-3.5" />;
+    if (mt.startsWith("video/")) return <FileVideo className="h-3.5 w-3.5" />;
+    return <FileText className="h-3.5 w-3.5" />;
+  };
+
   const send = async (text: string) => {
     const content = text.trim();
-    if (!content || loading) return;
-    const userMsg: Message = { id: `u-${Date.now()}`, role: "user", content };
+    if (loading) return;
+    if (!content && attachments.length === 0) return;
+    const currentAtts = attachments;
+    const userMsg: Message = {
+      id: `u-${Date.now()}`,
+      role: "user",
+      content: content || "(arquivo enviado)",
+      attachments: currentAtts.map((a) => ({
+        name: a.name,
+        mimeType: a.mimeType,
+        previewUrl: a.previewUrl,
+      })),
+    };
     const history = messages
       .filter((m) => m.id !== "welcome")
       .map((m) => ({ role: m.role, content: m.content }));
     setMessages((prev) => [...prev, userMsg]);
     setInput("");
+    setAttachments([]);
     setLoading(true);
     try {
       const data: any = await chat({
-        data: { message: content, conversationHistory: history },
+        data: {
+          message: content || "Analise os arquivos anexados.",
+          conversationHistory: history,
+          attachments: currentAtts.map((a) => ({
+            name: a.name,
+            mimeType: a.mimeType,
+            dataBase64: a.dataBase64,
+          })),
+        },
       });
       setMessages((prev) => [
         ...prev,
@@ -185,7 +334,31 @@ function EllaPage() {
                   )}
                 </>
               ) : (
-                m.content
+                <>
+                  {m.attachments && m.attachments.length > 0 && (
+                    <div className="mb-2 flex flex-wrap gap-1.5">
+                      {m.attachments.map((a, i) =>
+                        a.previewUrl ? (
+                          <img
+                            key={i}
+                            src={a.previewUrl}
+                            alt={a.name}
+                            className="h-16 w-16 rounded-md object-cover ring-1 ring-white/40"
+                          />
+                        ) : (
+                          <span
+                            key={i}
+                            className="inline-flex items-center gap-1 rounded-md bg-white/15 px-2 py-1 text-xs"
+                          >
+                            {iconFor(a.mimeType)}
+                            <span className="max-w-[10rem] truncate">{a.name}</span>
+                          </span>
+                        ),
+                      )}
+                    </div>
+                  )}
+                  {m.content}
+                </>
               )}
             </div>
           </div>
@@ -218,32 +391,98 @@ function EllaPage() {
 
       <form
         onSubmit={handleSubmit}
-        className="grid grid-cols-[minmax(0,1fr)_auto] items-end gap-2 pt-2 border-t"
+        className="flex flex-col gap-2 pt-2 border-t"
       >
-        <Textarea
-          ref={inputRef}
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" && !e.shiftKey) {
-              e.preventDefault();
-              send(input);
+        {attachments.length > 0 && (
+          <div className="flex flex-wrap gap-2">
+            {attachments.map((a, i) => (
+              <div
+                key={i}
+                className="group relative flex items-center gap-1.5 rounded-lg border bg-muted/50 px-2 py-1 text-xs"
+              >
+                {a.previewUrl ? (
+                  <img src={a.previewUrl} alt={a.name} className="h-8 w-8 rounded object-cover" />
+                ) : (
+                  iconFor(a.mimeType)
+                )}
+                <span className="max-w-[10rem] truncate">{a.name}</span>
+                <button
+                  type="button"
+                  onClick={() => removeAttachment(i)}
+                  className="ml-1 rounded-full p-0.5 text-muted-foreground hover:bg-background hover:text-foreground"
+                  aria-label="Remover"
+                >
+                  <X className="h-3 w-3" />
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+        <div className="grid grid-cols-[auto_auto_minmax(0,1fr)_auto] items-end gap-2">
+          <input
+            ref={fileInputRef}
+            type="file"
+            multiple
+            accept="image/*,audio/*,video/*,application/pdf,.pdf,.mp3,.mp4,.wav,.webm,.png,.jpg,.jpeg"
+            className="hidden"
+            onChange={(e) => {
+              if (e.target.files) addFiles(e.target.files);
+              e.target.value = "";
+            }}
+          />
+          <Button
+            type="button"
+            size="icon"
+            variant="outline"
+            disabled={loading}
+            onClick={() => fileInputRef.current?.click()}
+            className="h-11 w-11 shrink-0"
+            aria-label="Anexar arquivo"
+            title="Anexar arquivo"
+          >
+            <Paperclip className="h-4 w-4" />
+          </Button>
+          <Button
+            type="button"
+            size="icon"
+            variant={recording ? "destructive" : "outline"}
+            disabled={loading}
+            onClick={recording ? stopRecording : startRecording}
+            className="h-11 w-11 shrink-0"
+            aria-label={recording ? "Parar gravação" : "Gravar áudio"}
+            title={recording ? "Parar gravação" : "Gravar áudio"}
+          >
+            {recording ? <Square className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
+          </Button>
+          <Textarea
+            ref={inputRef}
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                send(input);
+              }
+            }}
+            placeholder={
+              recording
+                ? "Gravando… toque no quadrado para parar."
+                : "Fale, escreva ou anexe arquivos para a Ella…"
             }
-          }}
-          placeholder="Peça pra Ella criar OS, cobrança, lembrete, listar pedidos…"
-          rows={1}
-          disabled={loading}
-          className="min-h-[44px] max-h-40 resize-none"
-        />
-        <Button
-          type="submit"
-          size="icon"
-          disabled={loading || !input.trim()}
-          className="h-11 w-11 shrink-0 bg-brand-yellow hover:bg-brand-yellow/90 text-brand-blue"
-          aria-label="Enviar"
-        >
-          {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
-        </Button>
+            rows={1}
+            disabled={loading}
+            className="min-h-[44px] max-h-40 resize-none"
+          />
+          <Button
+            type="submit"
+            size="icon"
+            disabled={loading || (!input.trim() && attachments.length === 0)}
+            className="h-11 w-11 shrink-0 bg-brand-yellow hover:bg-brand-yellow/90 text-brand-blue"
+            aria-label="Enviar"
+          >
+            {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+          </Button>
+        </div>
       </form>
     </div>
   );
