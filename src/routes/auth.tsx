@@ -53,7 +53,7 @@ function AuthPage() {
 
   return (
     <div
-      className="min-h-screen flex items-center justify-center p-4"
+      className="min-h-screen flex items-center justify-center p-4 overflow-y-auto"
       style={{ background: "linear-gradient(135deg, #031c18, #074531 58%, #d9a83f)" }}
     >
       <div className="w-full max-w-md bg-card rounded-2xl shadow-2xl p-8 border border-border">
@@ -76,6 +76,13 @@ function AuthPage() {
               <div>
                 <Label>E-mail</Label>
                 <Input
+                  name="email"
+                  autoComplete="email"
+                  autoCapitalize="none"
+                  autoCorrect="off"
+                  spellCheck={false}
+                  inputMode="email"
+                  enterKeyHint="next"
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
@@ -85,6 +92,12 @@ function AuthPage() {
               <div>
                 <Label>Senha</Label>
                 <Input
+                  name="current-password"
+                  autoComplete="current-password"
+                  autoCapitalize="none"
+                  autoCorrect="off"
+                  spellCheck={false}
+                  enterKeyHint="go"
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
@@ -107,11 +120,26 @@ function AuthPage() {
             <form onSubmit={handleSignup} className="space-y-3">
               <div>
                 <Label>Nome</Label>
-                <Input value={fullName} onChange={(e) => setFullName(e.target.value)} required />
+                <Input
+                  name="name"
+                  autoComplete="name"
+                  autoCapitalize="words"
+                  enterKeyHint="next"
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                  required
+                />
               </div>
               <div>
                 <Label>E-mail</Label>
                 <Input
+                  name="email"
+                  autoComplete="email"
+                  autoCapitalize="none"
+                  autoCorrect="off"
+                  spellCheck={false}
+                  inputMode="email"
+                  enterKeyHint="next"
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
@@ -121,6 +149,12 @@ function AuthPage() {
               <div>
                 <Label>Senha</Label>
                 <Input
+                  name="new-password"
+                  autoComplete="new-password"
+                  autoCapitalize="none"
+                  autoCorrect="off"
+                  spellCheck={false}
+                  enterKeyHint="go"
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
