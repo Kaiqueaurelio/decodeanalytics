@@ -583,41 +583,50 @@ function PDVPage() {
   }
 
   async function closeCashAndSave() {
-    const counted = toNumber(sessionForm.informedCash);
-    const expectedCash = paymentTotals.cash + Number(cashSession?.initialAmount || 0);
-    const diff = counted - expectedCash;
-    const payload = {
-      closure_date: today(),
-      opened_at: cashSession?.openedAt || null,
-      operator: cashSession?.operator || sessionForm.operator || "Operador",
-      initial_amount: Number(cashSession?.initialAmount || 0),
-      expected_cash: expectedCash,
-      counted_cash: counted,
-      difference: diff,
-      total_in: totalToday,
-      total_out: expenseTotal,
-      by_method: {
-        cash: paymentTotals.cash,
-        pix: paymentTotals.pix,
-        debit: paymentTotals.debit,
-        credit: paymentTotals.credit,
-        other: paymentTotals.other,
-      },
-      entries_count: todayEntries.length,
-      notes: sessionForm.notes || null,
-    };
-    const { error } = await supabase.from("cash_closures" as any).insert(payload);
-    if (error) return toast.error(error.message);
-    localStorage.removeItem(SESSION_KEY);
-    setCashSession(null);
-    setShowCloseCash(false);
-    qc.invalidateQueries({ queryKey: ["cash_closures"] });
-    openClosureReceipt({ ...payload, closed_at: new Date().toISOString() }, todayEntries);
-    toast.success(
-      Math.abs(diff) < 0.01
-        ? "Caixa fechado certinho!"
-        : `Caixa fechado. Diferença: ${brl(diff)}.`,
-    );
+    try {
+      const counted = toNumber(sessionForm.informedCash);
+      const expectedCash = paymentTotals.cash + Number(cashSession?.initialAmount || 0);
+      const diff = counted - expectedCash;
+      const payload = {
+        closure_date: today(),
+        opened_at: cashSession?.openedAt || null,
+        operator: cashSession?.operator || sessionForm.operator || "Operador",
+        initial_amount: Number(cashSession?.initialAmount || 0),
+        expected_cash: expectedCash,
+        counted_cash: counted,
+        difference: diff,
+        total_in: totalToday,
+        total_out: expenseTotal,
+        by_method: {
+          cash: paymentTotals.cash,
+          pix: paymentTotals.pix,
+          debit: paymentTotals.debit,
+          credit: paymentTotals.credit,
+          other: paymentTotals.other,
+        },
+        entries_count: todayEntries.length,
+        notes: sessionForm.notes || null,
+      };
+      const { error } = await supabase.from("cash_closures" as any).insert(payload);
+      if (error) {
+        console.error("[closeCashAndSave] insert error", error);
+        toast.error(`Não consegui fechar o caixa: ${error.message}`);
+        return;
+      }
+      localStorage.removeItem(SESSION_KEY);
+      setCashSession(null);
+      setShowCloseCash(false);
+      qc.invalidateQueries({ queryKey: ["cash_closures"] });
+      openClosureReceipt({ ...payload, closed_at: new Date().toISOString() }, todayEntries);
+      toast.success(
+        Math.abs(diff) < 0.01
+          ? "Caixa fechado certinho!"
+          : `Caixa fechado. Diferença: ${brl(diff)}.`,
+      );
+    } catch (err: any) {
+      console.error("[closeCashAndSave] unexpected", err);
+      toast.error(err?.message || "Falha inesperada ao fechar o caixa.");
+    }
   }
 
   async function registerMachineEntry() {

@@ -1,27 +1,47 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useEffect, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { autoCloseMissingDays } from "@/lib/auto-close-cash";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { brl, fmtDate, fmtDateTime } from "@/lib/format";
-import { Printer, Wallet, ArrowDownCircle, ArrowUpCircle, AlertTriangle, CheckCircle2 } from "lucide-react";
+import { Printer, Wallet, ArrowDownCircle, ArrowUpCircle, AlertTriangle, CheckCircle2, Sparkles, MinusCircle } from "lucide-react";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/closures")({ component: ClosuresPage });
 
 function ClosuresPage() {
+  const qc = useQueryClient();
+  const ran = useRef(false);
   const { data } = useQuery({
     queryKey: ["cash_closures"],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("cash_closures" as any)
         .select("*")
+        .order("closure_date", { ascending: false })
         .order("closed_at", { ascending: false })
         .limit(120);
       if (error) throw error;
       return (data ?? []) as any[];
     },
   });
+
+  // Ao abrir a tela, garante que todos os dias anteriores estejam fechados.
+  useEffect(() => {
+    if (ran.current) return;
+    ran.current = true;
+    autoCloseMissingDays()
+      .then((n) => {
+        if (n > 0) {
+          toast.success(`${n} fechamento${n > 1 ? "s" : ""} automático${n > 1 ? "s" : ""} gerado${n > 1 ? "s" : ""}.`);
+          qc.invalidateQueries({ queryKey: ["cash_closures"] });
+        }
+      })
+      .catch((err) => console.error("[auto-close]", err));
+  }, [qc]);
 
   function printOne(c: any) {
     const m = c.by_method || {};
@@ -67,14 +87,40 @@ function ClosuresPage() {
     w.document.close();
   }
 
+  // Só mantém 1 registro por dia na visualização (o mais recente/manual). Isto
+  // deixa o histórico sequencial e limpo mesmo quando o operador refaz um fechamento.
+  const byDay = new Map<string, any>();
+  (data ?? []).forEach((c) => {
+    const key = c.closure_date as string;
+    const existing = byDay.get(key);
+    if (!existing) {
+      byDay.set(key, c);
+      return;
+    }
+    // Prefere manual sobre automático; senão o mais recente.
+    const existingAuto = existing.operator === "Automático";
+    const currentAuto = c.operator === "Automático";
+    if (existingAuto && !currentAuto) byDay.set(key, c);
+    else if (existingAuto === currentAuto) {
+      const a = new Date(existing.closed_at).getTime();
+      const b = new Date(c.closed_at).getTime();
+      if (b > a) byDay.set(key, c);
+    }
+  });
+  const sorted = Array.from(byDay.values()).sort((a, b) =>
+    (b.closure_date as string).localeCompare(a.closure_date as string),
+  );
+
   return (
     <div className="space-y-4">
       <div>
         <h1 className="text-2xl font-bold text-primary">Fechamentos de Caixa</h1>
-        <p className="text-sm text-muted-foreground">Histórico dos fechamentos do PDV com totais e conferência.</p>
+        <p className="text-sm text-muted-foreground">
+          Histórico sequencial dos fechamentos do PDV. Dias esquecidos são fechados automaticamente ao abrir esta tela.
+        </p>
       </div>
 
-      {!data?.length && (
+      {!sorted.length && (
         <Card className="p-12 text-center text-muted-foreground">
           <Wallet className="mx-auto w-10 h-10 text-slate-300 mb-2" />
           Nenhum fechamento salvo ainda. Abra e feche o caixa no PDV para gerar o primeiro.
@@ -82,9 +128,11 @@ function ClosuresPage() {
       )}
 
       <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
-        {(data ?? []).map((c) => {
+        {sorted.map((c) => {
           const m = c.by_method || {};
           const ok = Math.abs(Number(c.difference || 0)) < 0.01;
+          const isAuto = c.operator === "Automático";
+          const isEmpty = Number(c.total_in || 0) === 0 && Number(c.total_out || 0) === 0;
           return (
             <Card key={c.id} className="p-4 space-y-3">
               <div className="flex items-start justify-between gap-2">
@@ -94,13 +142,26 @@ function ClosuresPage() {
                     {fmtDateTime(c.closed_at)} · {c.operator || "—"}
                   </p>
                 </div>
-                <Badge variant="outline" className={ok ? "border-emerald-200 bg-emerald-50 text-emerald-700" : "border-amber-200 bg-amber-50 text-amber-800"}>
-                  {ok ? (
-                    <><CheckCircle2 className="w-3 h-3 mr-1" />Bate</>
-                  ) : (
-                    <><AlertTriangle className="w-3 h-3 mr-1" />Diferença</>
+                <div className="flex flex-col items-end gap-1">
+                  {isAuto && (
+                    <Badge variant="outline" className="border-sky-200 bg-sky-50 text-sky-700">
+                      <Sparkles className="w-3 h-3 mr-1" />Automático
+                    </Badge>
                   )}
-                </Badge>
+                  {isEmpty ? (
+                    <Badge variant="outline" className="border-slate-200 bg-slate-50 text-slate-600">
+                      <MinusCircle className="w-3 h-3 mr-1" />Sem movimento
+                    </Badge>
+                  ) : (
+                    <Badge variant="outline" className={ok ? "border-emerald-200 bg-emerald-50 text-emerald-700" : "border-amber-200 bg-amber-50 text-amber-800"}>
+                      {ok ? (
+                        <><CheckCircle2 className="w-3 h-3 mr-1" />Bate</>
+                      ) : (
+                        <><AlertTriangle className="w-3 h-3 mr-1" />Diferença</>
+                      )}
+                    </Badge>
+                  )}
+                </div>
               </div>
 
               <div className="grid grid-cols-2 gap-2 text-xs">
