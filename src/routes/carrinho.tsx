@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useCart } from "@/lib/cart-context";
-import { brl, waLink } from "@/components/storefront/tokens";
+import { brl } from "@/components/storefront/tokens";
+import { useWaLink } from "@/hooks/useCompanyInfo";
 import { StoreShell } from "@/components/storefront/StoreShell";
 import { ShoppingCart, Trash2, Minus, Plus, ArrowRight, MessageCircle } from "lucide-react";
 import { useMemo } from "react";

@@ -14,7 +14,8 @@ import {
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { StoreShell } from "@/components/storefront/StoreShell";
-import { brl, waLink } from "@/components/storefront/tokens";
+import { brl } from "@/components/storefront/tokens";
+import { useWaLink } from "@/hooks/useCompanyInfo";
 import { useCart } from "@/lib/cart-context";
 import {
   ProductCard,
