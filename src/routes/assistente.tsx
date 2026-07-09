@@ -10,7 +10,7 @@ import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { ellaPublicChat } from "@/lib/api/ella-public.functions";
 import { StoreShell } from "@/components/storefront/StoreShell";
-import ellaAvatar from "@/assets/ella-avatar.jpg";
+import { EllaAvatar } from "@/components/EllaAvatar";
 
 export const Route = createFileRoute("/assistente")({
   component: AssistantePage,
@@ -89,13 +89,10 @@ function AssistantePage() {
     <StoreShell>
       <div className="mx-auto flex max-w-3xl flex-col px-3 sm:px-6 py-6 min-h-[70vh]">
         <header className="grid grid-cols-[auto_minmax(0,1fr)] items-center gap-3 pb-4 border-b border-[var(--store-border)]">
-          <img
-            src={ellaAvatar}
-            alt="Ella Ribeiro"
-            width={48}
-            height={48}
-            loading="lazy"
-            className="h-12 w-12 shrink-0 rounded-full object-cover object-top ring-2 ring-[var(--store-secondary)]"
+          <EllaAvatar
+            size={48}
+            alt="Avatar de Ella Ribeiro"
+            ringClassName="ring-2 ring-[var(--store-secondary)]"
           />
           <div className="min-w-0">
             <h1 className="truncate text-xl font-black tracking-tight text-[var(--store-primary)]">

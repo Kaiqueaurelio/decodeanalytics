@@ -23,7 +23,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { ellaChat } from "@/lib/api/ella.functions";
-import ellaAvatar from "@/assets/ella-avatar.jpg";
+import { EllaAvatar } from "@/components/EllaAvatar";
 
 export const Route = createFileRoute("/_authenticated/ella")({
   component: EllaPage,
@@ -290,14 +290,7 @@ function EllaPage() {
   return (
     <div className="flex flex-col h-[calc(100dvh-4rem)] sm:h-[calc(100dvh-5rem)] max-w-3xl mx-auto w-full px-3 sm:px-6 py-3 sm:py-6">
       <header className="grid grid-cols-[auto_minmax(0,1fr)] items-center gap-3 pb-3 sm:pb-4 border-b">
-        <img
-          src={ellaAvatar}
-          alt="Ella Ribeiro"
-          width={44}
-          height={44}
-          loading="lazy"
-          className="h-11 w-11 shrink-0 rounded-full object-cover object-top ring-2 ring-brand-yellow"
-        />
+        <EllaAvatar size={44} alt="Avatar de Ella Ribeiro" />
         <div className="min-w-0">
           <h1 className="truncate text-lg sm:text-xl font-black tracking-tight">Ella Ribeiro</h1>
           <p className="truncate text-xs sm:text-sm text-muted-foreground">

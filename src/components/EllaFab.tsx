@@ -1,7 +1,7 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { Sparkles } from "lucide-react";
 import { useAuth } from "@/lib/auth";
-import ellaAvatar from "@/assets/ella-avatar.jpg";
+import { EllaAvatar } from "@/components/EllaAvatar";
 import { cn } from "@/lib/utils";
 
 /**
@@ -34,11 +34,11 @@ export function EllaFab() {
       )}
     >
       <span className="relative grid h-11 w-11 shrink-0 place-items-center overflow-hidden rounded-full bg-white ring-2 ring-brand-yellow">
-        <img
-          src={ellaAvatar}
-          alt=""
-          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
-          loading="lazy"
+        <EllaAvatar
+          size={44}
+          alt="Avatar de Ella"
+          ringClassName=""
+          imgClassName="transition-transform duration-500 group-hover:scale-110"
         />
         <span
           aria-hidden
