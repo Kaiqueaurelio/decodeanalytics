@@ -23,6 +23,7 @@ import { Trash2, Plus, FileText } from "lucide-react";
 import { toast } from "sonner";
 import { brl, PAYMENT_METHODS, PRODUCTION_STATUS_LABEL } from "@/lib/format";
 import { generateOrderPDF } from "@/lib/pdf";
+import { OSStatusBadge } from "@/components/OSStatusBadge";
 
 export interface OrderEditorProps {
   open: boolean;
@@ -255,7 +256,12 @@ export function OrderEditor({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>{orderId ? "Editar Ordem de Serviço" : "Nova Ordem de Serviço"}</DialogTitle>
+          <DialogTitle className="flex items-center gap-3">
+            <span>{orderId ? "Editar Ordem de Serviço" : "Nova Ordem de Serviço"}</span>
+            {orderId && (
+              <OSStatusBadge status={form.production_status} className="px-3 py-1 text-xs" />
+            )}
+          </DialogTitle>
         </DialogHeader>
         <div className="space-y-4">
           <div className="grid md:grid-cols-3 gap-3">

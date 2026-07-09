@@ -17,6 +17,7 @@ import { Plus, Pencil, Trash2, Search, AlertTriangle, Eye, EyeOff } from "lucide
 import { toast } from "sonner";
 import { brl, fmtDate, PRODUCTION_STATUS_LABEL, PAYMENT_STATUS_LABEL } from "@/lib/format";
 import { OrderEditor } from "@/components/OrderEditor";
+import { OSStatusBadge } from "@/components/OSStatusBadge";
 
 export const Route = createFileRoute("/_authenticated/orders")({ component: OrdersPage });
 
@@ -210,6 +211,7 @@ function OrdersPage() {
                   <td className="p-3 font-medium">
                     <div className="flex items-center gap-2">
                       {o.clients?.name}
+                      <OSStatusBadge status={o.production_status} className="text-[10px] px-2 py-0.5" />
                       {o.urgent && (
                         <Badge className="bg-destructive text-destructive-foreground">
                           Urgente
