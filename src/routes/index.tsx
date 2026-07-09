@@ -365,6 +365,14 @@ function HowItWorks() {
           target="_blank"
           rel="noopener noreferrer"
           className="inline-flex h-11 items-center justify-center gap-2 rounded-[var(--store-radius-md)] bg-[var(--store-success)] px-5 text-sm font-bold text-white shadow-[var(--store-shadow-md)] hover:brightness-110"
+          onClick={() =>
+            trackCta({
+              cta_id: "how_it_works_whatsapp",
+              cta_label: "Falar com a equipe no WhatsApp",
+              section: "how_it_works",
+              channel: "whatsapp",
+            })
+          }
         >
           Falar com a equipe no WhatsApp
         </a>
@@ -632,6 +640,14 @@ function _ContactSection() {
             target="_blank"
             rel="noopener noreferrer"
             className="mt-6 inline-flex h-12 items-center justify-center gap-2 rounded-[var(--store-radius-md)] bg-[var(--store-success)] px-6 text-sm font-extrabold uppercase tracking-wide text-white shadow-[var(--store-shadow-md)] hover:brightness-110"
+            onClick={() =>
+              trackCta({
+                cta_id: "contact_whatsapp",
+                cta_label: "Falar no WhatsApp",
+                section: "contact",
+                channel: "whatsapp",
+              })
+            }
           >
             <Send className="h-4 w-4" /> Falar no WhatsApp
           </a>
