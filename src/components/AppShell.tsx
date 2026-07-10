@@ -24,6 +24,7 @@ import {
   Users,
   Activity,
   GraduationCap,
+  Beaker,
   X,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
@@ -151,6 +152,14 @@ const NAV: NavItem[] = [
     label: "Treinar a Ella",
     description: "Base de conhecimento e comportamento da assistente",
     icon: GraduationCap,
+    section: "Administração",
+    roles: ["administrador"],
+  },
+  {
+    to: "/ella-sandbox",
+    label: "Sandbox da Ella",
+    description: "Testar respostas e ver treinamento aplicado",
+    icon: Beaker,
     section: "Administração",
     roles: ["administrador"],
   },
