@@ -112,7 +112,38 @@ export const ellaSandboxChat = createServerFn({ method: "POST" })
         extra: { kb_used: used.length, scope: data.scope },
       });
 
+      const knowledgeUsed = used.map((k) => ({
+        id: k.id,
+        title: k.title,
+        content: k.content,
+        scope: k.scope,
+        tags: k.tags,
+        score: k.score,
+        matched: k.matched,
+      }));
+
+      const { data: run } = await supabase
+        .from("ella_sandbox_runs" as any)
+        .insert({
+          created_by: userId,
+          question: data.message,
+          answer: result.text || "(sem resposta)",
+          scope: data.scope,
+          model: modelName,
+          provider: "Lovable AI Gateway",
+          temperature,
+          duration_ms: duration,
+          trace_id: traceId,
+          base_prompt_name: data.scope === "admin" ? "ADMIN_SYSTEM_PROMPT" : "PUBLIC_SYSTEM_PROMPT",
+          system_prompt: systemPrompt,
+          knowledge_used: knowledgeUsed,
+          knowledge_total: kbAll.length,
+        } as any)
+        .select("id")
+        .single();
+
       return {
+        run_id: (run as any)?.id ?? null,
         answer: result.text || "(sem resposta)",
         trace_id: traceId,
         duration_ms: duration,
@@ -123,15 +154,7 @@ export const ellaSandboxChat = createServerFn({ method: "POST" })
         systemPrompt,
         basePromptName: data.scope === "admin" ? "ADMIN_SYSTEM_PROMPT" : "PUBLIC_SYSTEM_PROMPT",
         knowledgeTotal: kbAll.length,
-        knowledgeUsed: used.map((k) => ({
-          id: k.id,
-          title: k.title,
-          content: k.content,
-          scope: k.scope,
-          tags: k.tags,
-          score: k.score,
-          matched: k.matched,
-        })),
+        knowledgeUsed,
       };
     } catch (err: any) {
       const cls = classifyAiError(err);
