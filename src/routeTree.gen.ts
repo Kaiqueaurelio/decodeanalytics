@@ -32,6 +32,7 @@ import { Route as AuthenticatedClosuresRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedClientsRouteImport } from './routes/_authenticated/clients'
 import { Route as AuthenticatedCashRouteImport } from './routes/_authenticated/cash'
 import { Route as AuthenticatedCalculatorRouteImport } from './routes/_authenticated/calculator'
+import { Route as AuthenticatedAiLogsRouteImport } from './routes/_authenticated/ai-logs'
 import { Route as ApiPublicAiHealthRouteImport } from './routes/api/public/ai-health'
 
 const ProdutosRoute = ProdutosRouteImport.update({
@@ -149,6 +150,11 @@ const AuthenticatedCalculatorRoute = AuthenticatedCalculatorRouteImport.update({
   path: '/calculator',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedAiLogsRoute = AuthenticatedAiLogsRouteImport.update({
+  id: '/ai-logs',
+  path: '/ai-logs',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const ApiPublicAiHealthRoute = ApiPublicAiHealthRouteImport.update({
   id: '/api/public/ai-health',
   path: '/api/public/ai-health',
@@ -161,6 +167,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/carrinho': typeof CarrinhoRoute
   '/produtos': typeof ProdutosRoute
+  '/ai-logs': typeof AuthenticatedAiLogsRoute
   '/calculator': typeof AuthenticatedCalculatorRoute
   '/cash': typeof AuthenticatedCashRoute
   '/clients': typeof AuthenticatedClientsRoute
@@ -186,6 +193,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/carrinho': typeof CarrinhoRoute
   '/produtos': typeof ProdutosRoute
+  '/ai-logs': typeof AuthenticatedAiLogsRoute
   '/calculator': typeof AuthenticatedCalculatorRoute
   '/cash': typeof AuthenticatedCashRoute
   '/clients': typeof AuthenticatedClientsRoute
@@ -213,6 +221,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/carrinho': typeof CarrinhoRoute
   '/produtos': typeof ProdutosRoute
+  '/_authenticated/ai-logs': typeof AuthenticatedAiLogsRoute
   '/_authenticated/calculator': typeof AuthenticatedCalculatorRoute
   '/_authenticated/cash': typeof AuthenticatedCashRoute
   '/_authenticated/clients': typeof AuthenticatedClientsRoute
@@ -240,6 +249,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/carrinho'
     | '/produtos'
+    | '/ai-logs'
     | '/calculator'
     | '/cash'
     | '/clients'
@@ -265,6 +275,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/carrinho'
     | '/produtos'
+    | '/ai-logs'
     | '/calculator'
     | '/cash'
     | '/clients'
@@ -291,6 +302,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/carrinho'
     | '/produtos'
+    | '/_authenticated/ai-logs'
     | '/_authenticated/calculator'
     | '/_authenticated/cash'
     | '/_authenticated/clients'
@@ -487,6 +499,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedCalculatorRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/ai-logs': {
+      id: '/_authenticated/ai-logs'
+      path: '/ai-logs'
+      fullPath: '/ai-logs'
+      preLoaderRoute: typeof AuthenticatedAiLogsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/api/public/ai-health': {
       id: '/api/public/ai-health'
       path: '/api/public/ai-health'
@@ -498,6 +517,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAiLogsRoute: typeof AuthenticatedAiLogsRoute
   AuthenticatedCalculatorRoute: typeof AuthenticatedCalculatorRoute
   AuthenticatedCashRoute: typeof AuthenticatedCashRoute
   AuthenticatedClientsRoute: typeof AuthenticatedClientsRoute
@@ -515,6 +535,7 @@ interface AuthenticatedRouteRouteChildren {
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAiLogsRoute: AuthenticatedAiLogsRoute,
   AuthenticatedCalculatorRoute: AuthenticatedCalculatorRoute,
   AuthenticatedCashRoute: AuthenticatedCashRoute,
   AuthenticatedClientsRoute: AuthenticatedClientsRoute,
@@ -549,3 +570,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
