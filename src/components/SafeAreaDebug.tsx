@@ -1,5 +1,11 @@
 import { useEffect, useState } from "react";
 
+type Violation = {
+  rect: { top: number; left: number; width: number; height: number };
+  label: string;
+  sides: string[]; // which insets it invades
+};
+
 /**
  * Overlay de depuração para visualizar as safe areas do dispositivo
  * (env(safe-area-inset-*)). Ativa via:
@@ -14,6 +20,7 @@ import { useEffect, useState } from "react";
 export function SafeAreaDebug() {
   const [enabled, setEnabled] = useState(false);
   const [insets, setInsets] = useState({ top: 0, right: 0, bottom: 0, left: 0 });
+  const [violations, setViolations] = useState<Violation[]>([]);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -63,6 +70,76 @@ export function SafeAreaDebug() {
     };
   }, []);
 
+  // Varre elementos fixed/sticky e detecta invasão nas insets
+  useEffect(() => {
+    if (!enabled || typeof window === "undefined") return;
+    let raf = 0;
+
+    const describe = (el: Element) => {
+      const id = el.id ? `#${el.id}` : "";
+      const cls =
+        el.classList.length > 0
+          ? "." + Array.from(el.classList).slice(0, 2).join(".")
+          : "";
+      return `${el.tagName.toLowerCase()}${id}${cls}`;
+    };
+
+    const scan = () => {
+      const vw = window.innerWidth;
+      const vh = window.innerHeight;
+      const found: Violation[] = [];
+      const all = document.body.querySelectorAll<HTMLElement>("*");
+      for (const el of Array.from(all)) {
+        // pula o próprio overlay
+        if (el.closest("[data-safe-area-debug]")) continue;
+        const cs = getComputedStyle(el);
+        if (cs.position !== "fixed" && cs.position !== "sticky") continue;
+        if (cs.visibility === "hidden" || cs.display === "none") continue;
+        const r = el.getBoundingClientRect();
+        if (r.width < 4 || r.height < 4) continue;
+        // rects totalmente fora do viewport
+        if (r.bottom < 0 || r.top > vh || r.right < 0 || r.left > vw) continue;
+
+        const sides: string[] = [];
+        if (insets.top > 0 && r.top < insets.top) sides.push("top");
+        if (insets.bottom > 0 && r.bottom > vh - insets.bottom) sides.push("bottom");
+        if (insets.left > 0 && r.left < insets.left) sides.push("left");
+        if (insets.right > 0 && r.right > vw - insets.right) sides.push("right");
+        if (sides.length === 0) continue;
+
+        found.push({
+          rect: {
+            top: Math.max(0, r.top),
+            left: Math.max(0, r.left),
+            width: Math.min(vw, r.right) - Math.max(0, r.left),
+            height: Math.min(vh, r.bottom) - Math.max(0, r.top),
+          },
+          label: describe(el),
+          sides,
+        });
+      }
+      setViolations(found);
+    };
+
+    const tick = () => {
+      scan();
+      raf = window.requestAnimationFrame(() => {
+        // amostra ~4x/s pra não pesar
+        window.setTimeout(tick, 250);
+      });
+    };
+    tick();
+
+    const onScroll = () => scan();
+    window.addEventListener("scroll", onScroll, { passive: true, capture: true });
+    window.addEventListener("resize", scan);
+    return () => {
+      window.cancelAnimationFrame(raf);
+      window.removeEventListener("scroll", onScroll, { capture: true } as EventListenerOptions);
+      window.removeEventListener("resize", scan);
+    };
+  }, [enabled, insets]);
+
   if (!enabled) return null;
 
   const bar = "absolute flex items-center justify-center text-[10px] font-bold text-white";
@@ -72,6 +149,7 @@ export function SafeAreaDebug() {
   return (
     <div
       aria-hidden
+      data-safe-area-debug
       className="pointer-events-none fixed inset-0 z-[2147483647]"
       style={{ contain: "strict" }}
     >
@@ -136,8 +214,47 @@ export function SafeAreaDebug() {
         <div>right: {Math.round(insets.right)}px</div>
         <div>bottom: {Math.round(insets.bottom)}px</div>
         <div>left: {Math.round(insets.left)}px</div>
+        <div className="mt-1 border-t border-white/20 pt-1 font-bold text-amber-300">
+          {violations.length} sobrepos{violations.length === 1 ? "ição" : "ições"}
+        </div>
         <div className="mt-1 text-[9px] text-white/60">__toggleSafeArea() p/ desligar</div>
       </div>
+
+      {/* Destaques em elementos fixed/sticky que invadem safe areas */}
+      {violations.map((v, i) => (
+        <div key={i}>
+          <div
+            className="absolute animate-pulse"
+            style={{
+              top: v.rect.top,
+              left: v.rect.left,
+              width: v.rect.width,
+              height: v.rect.height,
+              outline: "3px solid rgba(239, 68, 68, 0.95)",
+              outlineOffset: "-3px",
+              background:
+                "repeating-linear-gradient(45deg, rgba(239,68,68,0.18) 0 8px, rgba(239,68,68,0.35) 8px 16px)",
+              boxShadow: "0 0 0 1px rgba(255,255,255,0.6) inset",
+            }}
+          />
+          <div
+            className="absolute rounded bg-red-600 px-2 py-1 font-mono text-[10px] font-bold text-white shadow"
+            style={{
+              top: Math.max(insets.top + 2, v.rect.top - 22),
+              left: Math.min(
+                window.innerWidth - insets.right - 220,
+                Math.max(insets.left + 2, v.rect.left),
+              ),
+              maxWidth: 220,
+            }}
+          >
+            ⚠ {v.label}
+            <span className="ml-1 rounded bg-white/25 px-1 text-[9px] uppercase">
+              {v.sides.join(" · ")}
+            </span>
+          </div>
+        </div>
+      ))}
     </div>
   );
 }
