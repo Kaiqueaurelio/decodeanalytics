@@ -20,7 +20,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Beaker, Send, Sparkles, BookOpen, Cpu, Clock, Loader2, Copy, Link2 } from "lucide-react";
+import { Beaker, Send, Sparkles, BookOpen, Cpu, Clock, Loader2, Copy, Link2, AlertTriangle, ListChecks, CheckCircle2, XCircle } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { toast } from "sonner";
 
@@ -30,16 +30,35 @@ export const Route = createFileRoute("/_authenticated/ella-sandbox")({
 
 type SandboxResult = Awaited<ReturnType<typeof ellaSandboxChat>>;
 
+type FailureCtx = {
+  run_id?: string;
+  message: string;
+  error_type?: string;
+  stack_trace?: string | null;
+  steps?: Array<{ name: string; status: "ok" | "error"; at_ms: number; duration_ms?: number; detail?: any; error?: string }>;
+};
+
 function EllaSandboxPage() {
   const [message, setMessage] = useState("");
   const [scope, setScope] = useState<"admin" | "public">("admin");
   const [result, setResult] = useState<SandboxResult | null>(null);
+  const [failure, setFailure] = useState<FailureCtx | null>(null);
   const call = useServerFn(ellaSandboxChat);
 
   const mutation = useMutation({
     mutationFn: async () => call({ data: { message: message.trim(), scope } }),
-    onSuccess: (data) => setResult(data),
-    onError: (err: any) => toast.error(err?.message ?? "Falha ao consultar a Ella"),
+    onSuccess: (data) => { setResult(data); setFailure(null); },
+    onError: (err: any) => {
+      toast.error(err?.message ?? "Falha ao consultar a Ella");
+      setResult(null);
+      setFailure({
+        run_id: err?.run_id,
+        message: err?.message ?? "Falha ao consultar a Ella",
+        error_type: err?.error_type,
+        stack_trace: err?.stack_trace ?? err?.stack ?? null,
+        steps: err?.steps,
+      });
+    },
   });
 
   const submit = () => {
@@ -104,6 +123,66 @@ function EllaSandboxPage() {
         </div>
       </Card>
 
+      {failure && (
+        <Card className="space-y-4 border-destructive/40 bg-destructive/5 p-4 md:p-6">
+          <div className="flex items-center gap-2">
+            <AlertTriangle className="h-5 w-5 text-destructive" />
+            <h2 className="text-lg font-semibold text-destructive">Falha no teste</h2>
+            {failure.error_type && (
+              <Badge variant="destructive" className="ml-auto">{failure.error_type}</Badge>
+            )}
+          </div>
+          <p className="text-sm text-destructive">{failure.message}</p>
+          {failure.run_id && (
+            <div className="flex flex-wrap gap-2">
+              <Button size="sm" variant="outline" onClick={() => { navigator.clipboard.writeText(failure.run_id!); toast.success("ID copiado"); }}>
+                <Copy className="mr-2 h-4 w-4" />Copiar ID ({failure.run_id.slice(0, 8)}…)
+              </Button>
+              <Button size="sm" variant="outline" onClick={() => { navigator.clipboard.writeText(`${window.location.origin}/sandbox-run/${failure.run_id}`); toast.success("Link copiado"); }}>
+                <Link2 className="mr-2 h-4 w-4" />Copiar link
+              </Button>
+              <Button size="sm" variant="ghost" asChild>
+                <Link to="/sandbox-run/$id" params={{ id: failure.run_id }}>Abrir evidência</Link>
+              </Button>
+            </div>
+          )}
+          <Accordion type="multiple" defaultValue={["steps", "stack"]}>
+            {failure.steps && failure.steps.length > 0 && (
+              <AccordionItem value="steps">
+                <AccordionTrigger>
+                  <span className="flex items-center gap-2"><ListChecks className="h-4 w-4" />Passos executados ({failure.steps.length})</span>
+                </AccordionTrigger>
+                <AccordionContent>
+                  <ol className="space-y-2 text-sm">
+                    {failure.steps.map((s, i) => (
+                      <li key={i} className="rounded border p-2">
+                        <div className="flex items-center gap-2">
+                          {s.status === "ok" ? <CheckCircle2 className="h-4 w-4 text-emerald-500" /> : <XCircle className="h-4 w-4 text-destructive" />}
+                          <span className="font-mono text-xs">{s.name}</span>
+                          <span className="ml-auto text-[11px] text-muted-foreground">+{s.at_ms}ms{typeof s.duration_ms === "number" ? ` · ${s.duration_ms}ms` : ""}</span>
+                        </div>
+                        {s.error && <div className="mt-1 text-xs text-destructive">{s.error}</div>}
+                        {s.detail && (
+                          <pre className="mt-1 overflow-auto rounded bg-muted/50 p-2 text-[11px]">{JSON.stringify(s.detail, null, 2)}</pre>
+                        )}
+                      </li>
+                    ))}
+                  </ol>
+                </AccordionContent>
+              </AccordionItem>
+            )}
+            {failure.stack_trace && (
+              <AccordionItem value="stack">
+                <AccordionTrigger>Stack trace</AccordionTrigger>
+                <AccordionContent>
+                  <pre className="max-h-[420px] overflow-auto whitespace-pre-wrap rounded-lg border bg-muted/30 p-3 text-xs">{failure.stack_trace}</pre>
+                </AccordionContent>
+              </AccordionItem>
+            )}
+          </Accordion>
+        </Card>
+      )}
+
       {result && (
         <Card className="space-y-4 p-4 md:p-6">
           {result.run_id && (
@@ -163,6 +242,35 @@ function EllaSandboxPage() {
           </div>
 
           <Accordion type="multiple" className="pt-2">
+            {result.steps && result.steps.length > 0 && (
+              <AccordionItem value="steps">
+                <AccordionTrigger>
+                  <span className="flex items-center gap-2"><ListChecks className="h-4 w-4" />Passos executados ({result.steps.length})</span>
+                </AccordionTrigger>
+                <AccordionContent>
+                  <ol className="space-y-2 text-sm">
+                    {result.steps.map((s: any, i: number) => (
+                      <li key={i} className="rounded border p-2">
+                        <div className="flex items-center gap-2">
+                          {s.status === "ok" ? <CheckCircle2 className="h-4 w-4 text-emerald-500" /> : <XCircle className="h-4 w-4 text-destructive" />}
+                          <span className="font-mono text-xs">{s.name}</span>
+                          <span className="ml-auto text-[11px] text-muted-foreground">+{s.at_ms}ms{typeof s.duration_ms === "number" ? ` · ${s.duration_ms}ms` : ""}</span>
+                        </div>
+                        {s.detail && (
+                          <pre className="mt-1 overflow-auto rounded bg-muted/50 p-2 text-[11px]">{JSON.stringify(s.detail, null, 2)}</pre>
+                        )}
+                      </li>
+                    ))}
+                  </ol>
+                </AccordionContent>
+              </AccordionItem>
+            )}
+            <AccordionItem value="inputs">
+              <AccordionTrigger>Inputs do teste</AccordionTrigger>
+              <AccordionContent>
+                <pre className="max-h-[280px] overflow-auto rounded-lg border bg-muted/30 p-3 text-xs">{JSON.stringify(result.inputs, null, 2)}</pre>
+              </AccordionContent>
+            </AccordionItem>
             <AccordionItem value="kb">
               <AccordionTrigger>
                 <span className="flex items-center gap-2">
