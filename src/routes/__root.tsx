@@ -104,7 +104,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "twitter:image", content: "/brand/app-icon-full.png" },
       { name: "theme-color", content: "#172554" },
       { name: "apple-mobile-web-app-capable", content: "yes" },
-      { name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
+      { name: "mobile-web-app-capable", content: "yes" },
+      // "default" faz o iOS reservar a área do notch/status bar automaticamente,
+      // evitando que o conteúdo do PWA suba pra baixo da barra de status.
+      { name: "apple-mobile-web-app-status-bar-style", content: "default" },
       { name: "apple-mobile-web-app-title", content: "Alcateia's" },
     ],
     links: [
