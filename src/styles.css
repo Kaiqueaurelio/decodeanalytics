@@ -269,6 +269,18 @@
   .safe-area-footer {
     padding-bottom: env(safe-area-inset-bottom);
   }
+  .store-sticky-header {
+    top: env(safe-area-inset-top);
+  }
+
+  @media (display-mode: standalone) {
+    .safe-area-top {
+      padding-top: max(env(safe-area-inset-top), 1.5rem);
+    }
+    .store-sticky-header {
+      top: max(env(safe-area-inset-top), 1.5rem);
+    }
+  }
 
   h1,
   h2,

@@ -91,7 +91,7 @@ function StoreHeader() {
   const info = useCompanyInfo();
   const waLink = useWaLink();
   return (
-    <header className="sticky top-0 z-30 border-b border-[var(--store-border)] bg-[var(--store-surface)]/95 backdrop-blur">
+    <header className="store-sticky-header sticky z-30 border-b border-[var(--store-border)] bg-[var(--store-surface)]/95 backdrop-blur">
       <div className="mx-auto grid max-w-[1280px] grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2 px-3 py-2 sm:gap-3 sm:px-4 sm:py-3 md:flex md:gap-6 md:py-4">
         <Link to="/" className="flex shrink-0 items-center gap-2 sm:gap-3">
           <img
