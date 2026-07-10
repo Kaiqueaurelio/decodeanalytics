@@ -22,6 +22,7 @@ import {
   ShoppingCart,
   Sparkles,
   Users,
+  Activity,
   X,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
@@ -141,6 +142,14 @@ const NAV: NavItem[] = [
     label: "Ella Ribeiro",
     description: "Assistente de IA para gestão",
     icon: Sparkles,
+    section: "Administração",
+    roles: ["administrador"],
+  },
+  {
+    to: "/ai-logs",
+    label: "Logs do Assistente",
+    description: "Falhas e chamadas do gateway de IA",
+    icon: Activity,
     section: "Administração",
     roles: ["administrador"],
   },

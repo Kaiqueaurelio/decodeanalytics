@@ -6,6 +6,7 @@ import { createLovableGateway } from "@/lib/ai-gateway.server";
 import type { Database } from "@/integrations/supabase/types";
 import { getRequestIP, getRequestHeader } from "@tanstack/react-start/server";
 import { PUBLIC_SYSTEM_PROMPT, checkPublicRateLimit } from "./ella.helpers.server";
+import { classifyAiError, logAiEvent, newTraceId } from "./ai-logs.server";
 
 const MessageSchema = z.object({
   role: z.enum(["user", "assistant"]),
@@ -49,6 +50,8 @@ export const ellaPublicChat = createServerFn({ method: "POST" })
     });
 
     const model = createLovableGateway(key)("google/gemini-2.5-flash");
+    const traceId = newTraceId();
+    const startedAt = Date.now();
 
     const tools = {
       list_products: tool({
@@ -112,16 +115,39 @@ export const ellaPublicChat = createServerFn({ method: "POST" })
         tools,
         stopWhen: stepCountIs(8),
       });
+      logAiEvent({
+        provider: "lovable-ai-gateway",
+        model: "google/gemini-2.5-flash",
+        endpoint: "/assistente",
+        trace_id: traceId,
+        status: "success",
+        duration_ms: Date.now() - startedAt,
+        ip: ipKey,
+      });
       return {
         response:
           result.text ||
           "Posso te ajudar a escolher um produto — me conta o que você precisa imprimir 😉",
+        trace_id: traceId,
       };
     } catch (err: any) {
-      console.error("ellaPublicChat error:", err?.message, err?.responseBody || err?.cause?.responseBody || err?.data || err);
+      const cls = classifyAiError(err);
+      console.error("ellaPublicChat error:", traceId, cls);
+      logAiEvent({
+        provider: "lovable-ai-gateway",
+        model: "google/gemini-2.5-flash",
+        endpoint: "/assistente",
+        trace_id: traceId,
+        status: "error",
+        duration_ms: Date.now() - startedAt,
+        ip: ipKey,
+        ...cls,
+      });
       return {
         response:
           "Tive um probleminha aqui. Se quiser falar direto com a equipe, o WhatsApp está no topo do site.",
+        trace_id: traceId,
+        error: cls.error_type,
       };
     }
   });

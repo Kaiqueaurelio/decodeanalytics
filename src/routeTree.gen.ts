@@ -32,6 +32,8 @@ import { Route as AuthenticatedClosuresRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedClientsRouteImport } from './routes/_authenticated/clients'
 import { Route as AuthenticatedCashRouteImport } from './routes/_authenticated/cash'
 import { Route as AuthenticatedCalculatorRouteImport } from './routes/_authenticated/calculator'
+import { Route as AuthenticatedAiLogsRouteImport } from './routes/_authenticated/ai-logs'
+import { Route as ApiPublicAiHealthRouteImport } from './routes/api/public/ai-health'
 
 const ProdutosRoute = ProdutosRouteImport.update({
   id: '/produtos',
@@ -148,6 +150,16 @@ const AuthenticatedCalculatorRoute = AuthenticatedCalculatorRouteImport.update({
   path: '/calculator',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedAiLogsRoute = AuthenticatedAiLogsRouteImport.update({
+  id: '/ai-logs',
+  path: '/ai-logs',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const ApiPublicAiHealthRoute = ApiPublicAiHealthRouteImport.update({
+  id: '/api/public/ai-health',
+  path: '/api/public/ai-health',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -155,6 +167,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/carrinho': typeof CarrinhoRoute
   '/produtos': typeof ProdutosRoute
+  '/ai-logs': typeof AuthenticatedAiLogsRoute
   '/calculator': typeof AuthenticatedCalculatorRoute
   '/cash': typeof AuthenticatedCashRoute
   '/clients': typeof AuthenticatedClientsRoute
@@ -172,6 +185,7 @@ export interface FileRoutesByFullPath {
   '/briefing/$token': typeof BriefingTokenRoute
   '/produto/$slug': typeof ProdutoSlugRoute
   '/sitemap/xml': typeof SitemapXmlRoute
+  '/api/public/ai-health': typeof ApiPublicAiHealthRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -179,6 +193,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/carrinho': typeof CarrinhoRoute
   '/produtos': typeof ProdutosRoute
+  '/ai-logs': typeof AuthenticatedAiLogsRoute
   '/calculator': typeof AuthenticatedCalculatorRoute
   '/cash': typeof AuthenticatedCashRoute
   '/clients': typeof AuthenticatedClientsRoute
@@ -196,6 +211,7 @@ export interface FileRoutesByTo {
   '/briefing/$token': typeof BriefingTokenRoute
   '/produto/$slug': typeof ProdutoSlugRoute
   '/sitemap/xml': typeof SitemapXmlRoute
+  '/api/public/ai-health': typeof ApiPublicAiHealthRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -205,6 +221,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/carrinho': typeof CarrinhoRoute
   '/produtos': typeof ProdutosRoute
+  '/_authenticated/ai-logs': typeof AuthenticatedAiLogsRoute
   '/_authenticated/calculator': typeof AuthenticatedCalculatorRoute
   '/_authenticated/cash': typeof AuthenticatedCashRoute
   '/_authenticated/clients': typeof AuthenticatedClientsRoute
@@ -222,6 +239,7 @@ export interface FileRoutesById {
   '/briefing/$token': typeof BriefingTokenRoute
   '/produto/$slug': typeof ProdutoSlugRoute
   '/sitemap/xml': typeof SitemapXmlRoute
+  '/api/public/ai-health': typeof ApiPublicAiHealthRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -231,6 +249,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/carrinho'
     | '/produtos'
+    | '/ai-logs'
     | '/calculator'
     | '/cash'
     | '/clients'
@@ -248,6 +267,7 @@ export interface FileRouteTypes {
     | '/briefing/$token'
     | '/produto/$slug'
     | '/sitemap/xml'
+    | '/api/public/ai-health'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -255,6 +275,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/carrinho'
     | '/produtos'
+    | '/ai-logs'
     | '/calculator'
     | '/cash'
     | '/clients'
@@ -272,6 +293,7 @@ export interface FileRouteTypes {
     | '/briefing/$token'
     | '/produto/$slug'
     | '/sitemap/xml'
+    | '/api/public/ai-health'
   id:
     | '__root__'
     | '/'
@@ -280,6 +302,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/carrinho'
     | '/produtos'
+    | '/_authenticated/ai-logs'
     | '/_authenticated/calculator'
     | '/_authenticated/cash'
     | '/_authenticated/clients'
@@ -297,6 +320,7 @@ export interface FileRouteTypes {
     | '/briefing/$token'
     | '/produto/$slug'
     | '/sitemap/xml'
+    | '/api/public/ai-health'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -309,6 +333,7 @@ export interface RootRouteChildren {
   BriefingTokenRoute: typeof BriefingTokenRoute
   ProdutoSlugRoute: typeof ProdutoSlugRoute
   SitemapXmlRoute: typeof SitemapXmlRoute
+  ApiPublicAiHealthRoute: typeof ApiPublicAiHealthRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -474,10 +499,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedCalculatorRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/ai-logs': {
+      id: '/_authenticated/ai-logs'
+      path: '/ai-logs'
+      fullPath: '/ai-logs'
+      preLoaderRoute: typeof AuthenticatedAiLogsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/api/public/ai-health': {
+      id: '/api/public/ai-health'
+      path: '/api/public/ai-health'
+      fullPath: '/api/public/ai-health'
+      preLoaderRoute: typeof ApiPublicAiHealthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAiLogsRoute: typeof AuthenticatedAiLogsRoute
   AuthenticatedCalculatorRoute: typeof AuthenticatedCalculatorRoute
   AuthenticatedCashRoute: typeof AuthenticatedCashRoute
   AuthenticatedClientsRoute: typeof AuthenticatedClientsRoute
@@ -495,6 +535,7 @@ interface AuthenticatedRouteRouteChildren {
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAiLogsRoute: AuthenticatedAiLogsRoute,
   AuthenticatedCalculatorRoute: AuthenticatedCalculatorRoute,
   AuthenticatedCashRoute: AuthenticatedCashRoute,
   AuthenticatedClientsRoute: AuthenticatedClientsRoute,
@@ -524,7 +565,18 @@ const rootRouteChildren: RootRouteChildren = {
   BriefingTokenRoute: BriefingTokenRoute,
   ProdutoSlugRoute: ProdutoSlugRoute,
   SitemapXmlRoute: SitemapXmlRoute,
+  ApiPublicAiHealthRoute: ApiPublicAiHealthRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}

@@ -14,6 +14,57 @@ export type Database = {
   }
   public: {
     Tables: {
+      ai_provider_logs: {
+        Row: {
+          duration_ms: number | null
+          endpoint: string
+          error_message: string | null
+          error_type: string | null
+          extra: Json | null
+          http_status: number | null
+          id: string
+          ip: string | null
+          model: string | null
+          occurred_at: string
+          provider: string
+          status: string
+          trace_id: string
+          user_id: string | null
+        }
+        Insert: {
+          duration_ms?: number | null
+          endpoint: string
+          error_message?: string | null
+          error_type?: string | null
+          extra?: Json | null
+          http_status?: number | null
+          id?: string
+          ip?: string | null
+          model?: string | null
+          occurred_at?: string
+          provider: string
+          status: string
+          trace_id: string
+          user_id?: string | null
+        }
+        Update: {
+          duration_ms?: number | null
+          endpoint?: string
+          error_message?: string | null
+          error_type?: string | null
+          extra?: Json | null
+          http_status?: number | null
+          id?: string
+          ip?: string | null
+          model?: string | null
+          occurred_at?: string
+          provider?: string
+          status?: string
+          trace_id?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       cash_closures: {
         Row: {
           by_method: Json
