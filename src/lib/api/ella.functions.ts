@@ -2,7 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { generateText, tool, stepCountIs } from "ai";
 import { z } from "zod";
-import { createLovableGateway } from "@/lib/ai-gateway.server";
+import { createLovableGateway, createGeminiProvider } from "@/lib/ai-gateway.server";
 import {
   ADMIN_SYSTEM_PROMPT,
   STATUS_ENUM,
@@ -31,13 +31,15 @@ export const ellaChat = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((v: unknown) => InputSchema.parse(v))
   .handler(async ({ data, context }) => {
+    const geminiKey = process.env.GEMINI_API_KEY;
     const key = process.env.LOVABLE_API_KEY;
-    if (!key) throw new Error("LOVABLE_API_KEY ausente");
+    if (!geminiKey && !key) throw new Error("Nenhuma chave de IA configurada");
     const supabase = context.supabase;
     const userId = context.userId;
 
-    const gateway = createLovableGateway(key);
-    const model = gateway("google/gemini-2.5-flash");
+    const model = geminiKey
+      ? createGeminiProvider(geminiKey)("gemini-2.5-flash")
+      : createLovableGateway(key!)("google/gemini-2.5-flash");
 
     const tools = {
       list_clients: tool({
