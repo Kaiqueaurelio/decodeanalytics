@@ -541,6 +541,352 @@ export const ellaChat = createServerFn({ method: "POST" })
           return { success: true };
         },
       }),
+      create_service: tool({
+        description:
+          "Cria um produto/serviço no catálogo. Categoria obrigatória (ex.: Cartões, Banners, Adesivos). unit padrão 'un'.",
+        inputSchema: z.object({
+          name: z.string(),
+          category: z.string(),
+          base_price: z.number(),
+          unit: z.string().optional(),
+          description: z.string().optional(),
+          short_description: z.string().optional(),
+          default_deadline_days: z.number().optional(),
+          min_quantity: z.number().optional(),
+          badge: z.string().optional(),
+          slug: z.string().optional(),
+          image_url: z.string().optional(),
+          active: z.boolean().optional(),
+        }),
+        execute: async (input) => {
+          const { data, error } = await supabase
+            .from("services")
+            .insert({ ...input })
+            .select("id,name,category,base_price")
+            .single();
+          if (error) return { error: error.message };
+          return { success: true, service: data };
+        },
+      }),
+      update_service: tool({
+        description:
+          "Atualiza um produto/serviço. Localize pelo id OU pelo nome (busca aproximada).",
+        inputSchema: z.object({
+          id: z.string().uuid().optional(),
+          name_query: z.string().optional(),
+          name: z.string().optional(),
+          category: z.string().optional(),
+          base_price: z.number().optional(),
+          unit: z.string().optional(),
+          description: z.string().optional(),
+          short_description: z.string().optional(),
+          default_deadline_days: z.number().optional(),
+          min_quantity: z.number().optional(),
+          badge: z.string().optional(),
+          image_url: z.string().optional(),
+          active: z.boolean().optional(),
+        }),
+        execute: async ({ id, name_query, ...rest }) => {
+          let sid = id;
+          if (!sid && name_query) {
+            const { data: found } = await supabase
+              .from("services")
+              .select("id")
+              .ilike("name", `%${name_query}%`)
+              .limit(1)
+              .maybeSingle();
+            sid = found?.id;
+          }
+          if (!sid) return { error: "Produto não localizado." };
+          const patch: any = {};
+          for (const [k, v] of Object.entries(rest)) if (v !== undefined) patch[k] = v;
+          const { error } = await supabase.from("services").update(patch).eq("id", sid);
+          if (error) return { error: error.message };
+          return { success: true, id: sid };
+        },
+      }),
+      delete_service: tool({
+        description:
+          "Remove um produto/serviço. Ação destrutiva — confirme antes. Use soft delete (active=false) quando o produto já foi usado em OS.",
+        inputSchema: z.object({
+          id: z.string().uuid().optional(),
+          name_query: z.string().optional(),
+          soft: z.boolean().optional(),
+        }),
+        execute: async ({ id, name_query, soft }) => {
+          let sid = id;
+          if (!sid && name_query) {
+            const { data: found } = await supabase
+              .from("services")
+              .select("id")
+              .ilike("name", `%${name_query}%`)
+              .limit(1)
+              .maybeSingle();
+            sid = found?.id;
+          }
+          if (!sid) return { error: "Produto não localizado." };
+          if (soft) {
+            const { error } = await supabase
+              .from("services")
+              .update({ active: false })
+              .eq("id", sid);
+            if (error) return { error: error.message };
+            return { success: true, mode: "soft" };
+          }
+          const { error } = await supabase.from("services").delete().eq("id", sid);
+          if (error) {
+            // Fallback pra soft se houver FK
+            await supabase.from("services").update({ active: false }).eq("id", sid);
+            return { success: true, mode: "soft_fallback", note: error.message };
+          }
+          return { success: true, mode: "hard" };
+        },
+      }),
+      add_cash_entry: tool({
+        description:
+          "Lança entrada ou saída no caixa. type='entrada' (recebimento) ou 'saida' (despesa). Opcional vincular a order/receivable.",
+        inputSchema: z.object({
+          type: z.enum(["entrada", "saida"]),
+          amount: z.number().positive(),
+          description: z.string(),
+          category: z.string().optional(),
+          payment_method: z
+            .enum(["dinheiro", "pix", "credito", "debito", "boleto", "transferencia", "outro"])
+            .optional(),
+          entry_date: z.string().optional().describe("YYYY-MM-DD — padrão: hoje"),
+          orderNumber: z.number().optional(),
+          clientName: z.string().optional(),
+          notes: z.string().optional(),
+        }),
+        execute: async ({ type, amount, description, category, payment_method, entry_date, orderNumber, clientName, notes }) => {
+          let order_id: string | null = null;
+          let client_id: string | null = null;
+          if (orderNumber) {
+            const { data: o } = await supabase
+              .from("orders")
+              .select("id,client_id")
+              .eq("number", orderNumber)
+              .maybeSingle();
+            if (o) {
+              order_id = o.id;
+              client_id = o.client_id;
+            }
+          }
+          if (!client_id && clientName) {
+            client_id = await resolveClientId(supabase, null, clientName);
+          }
+          const { data, error } = await supabase
+            .from("cash_entries")
+            .insert({
+              type,
+              amount,
+              description,
+              category,
+              payment_method,
+              entry_date: entry_date ?? new Date().toISOString().slice(0, 10),
+              order_id,
+              client_id,
+              notes,
+              created_by: userId,
+            })
+            .select("id,type,amount,entry_date")
+            .single();
+          if (error) return { error: error.message };
+          return { success: true, entry: data };
+        },
+      }),
+      list_cash_entries: tool({
+        description: "Lista lançamentos de caixa de um período. Padrão: hoje.",
+        inputSchema: z.object({
+          from: z.string().optional().describe("YYYY-MM-DD"),
+          to: z.string().optional().describe("YYYY-MM-DD"),
+          type: z.enum(["entrada", "saida"]).optional(),
+        }),
+        execute: async ({ from, to, type }) => {
+          const today = new Date().toISOString().slice(0, 10);
+          let q = supabase
+            .from("cash_entries")
+            .select(
+              "id,type,amount,description,category,payment_method,entry_date,clients(name),orders(number)",
+            )
+            .gte("entry_date", from ?? today)
+            .lte("entry_date", to ?? from ?? today)
+            .order("created_at", { ascending: false });
+          if (type) q = q.eq("type", type);
+          const { data, error } = await q.limit(100);
+          if (error) return { error: error.message };
+          return { entries: data ?? [] };
+        },
+      }),
+      cash_status: tool({
+        description:
+          "Panorama do caixa do dia: total de entradas, saídas, saldo, e se o dia já foi fechado.",
+        inputSchema: z.object({ date: z.string().optional().describe("YYYY-MM-DD — padrão: hoje") }),
+        execute: async ({ date }) => {
+          const day = date ?? new Date().toISOString().slice(0, 10);
+          const [entriesRes, closureRes] = await Promise.all([
+            supabase
+              .from("cash_entries")
+              .select("type,amount,payment_method")
+              .eq("entry_date", day),
+            supabase.from("cash_closures").select("*").eq("closure_date", day).maybeSingle(),
+          ]);
+          const entries = entriesRes.data ?? [];
+          const total_in = entries
+            .filter((e: any) => e.type === "entrada")
+            .reduce((s: number, e: any) => s + Number(e.amount), 0);
+          const total_out = entries
+            .filter((e: any) => e.type === "saida")
+            .reduce((s: number, e: any) => s + Number(e.amount), 0);
+          const by_method: Record<string, number> = {};
+          for (const e of entries) {
+            const k = e.payment_method ?? "outro";
+            const sign = e.type === "entrada" ? 1 : -1;
+            by_method[k] = (by_method[k] ?? 0) + sign * Number(e.amount);
+          }
+          return {
+            date: day,
+            total_in,
+            total_out,
+            balance: total_in - total_out,
+            entries_count: entries.length,
+            by_method,
+            closed: !!closureRes.data,
+            closure: closureRes.data ?? null,
+          };
+        },
+      }),
+      close_cash: tool({
+        description:
+          "Fecha o caixa de um dia. Informe o dinheiro contado; o sistema calcula a diferença vs esperado.",
+        inputSchema: z.object({
+          date: z.string().optional().describe("YYYY-MM-DD — padrão: hoje"),
+          initial_amount: z.number().default(0),
+          counted_cash: z.number(),
+          notes: z.string().optional(),
+        }),
+        execute: async ({ date, initial_amount, counted_cash, notes }) => {
+          const day = date ?? new Date().toISOString().slice(0, 10);
+          const { data: existing } = await supabase
+            .from("cash_closures")
+            .select("id")
+            .eq("closure_date", day)
+            .maybeSingle();
+          if (existing) return { error: `Caixa do dia ${day} já foi fechado.` };
+          const { data: entries } = await supabase
+            .from("cash_entries")
+            .select("type,amount,payment_method")
+            .eq("entry_date", day);
+          const rows = entries ?? [];
+          const total_in = rows
+            .filter((e: any) => e.type === "entrada")
+            .reduce((s: number, e: any) => s + Number(e.amount), 0);
+          const total_out = rows
+            .filter((e: any) => e.type === "saida")
+            .reduce((s: number, e: any) => s + Number(e.amount), 0);
+          const by_method: Record<string, number> = {};
+          for (const e of rows) {
+            const k = e.payment_method ?? "outro";
+            const sign = e.type === "entrada" ? 1 : -1;
+            by_method[k] = (by_method[k] ?? 0) + sign * Number(e.amount);
+          }
+          const cashIn = rows
+            .filter((e: any) => e.type === "entrada" && (e.payment_method ?? "dinheiro") === "dinheiro")
+            .reduce((s: number, e: any) => s + Number(e.amount), 0);
+          const cashOut = rows
+            .filter((e: any) => e.type === "saida" && (e.payment_method ?? "dinheiro") === "dinheiro")
+            .reduce((s: number, e: any) => s + Number(e.amount), 0);
+          const expected_cash = initial_amount + cashIn - cashOut;
+          const difference = counted_cash - expected_cash;
+          const { data, error } = await supabase
+            .from("cash_closures")
+            .insert({
+              closure_date: day,
+              closed_at: new Date().toISOString(),
+              initial_amount,
+              expected_cash,
+              counted_cash,
+              difference,
+              total_in,
+              total_out,
+              by_method,
+              entries_count: rows.length,
+              notes,
+              created_by: userId,
+            })
+            .select("id,closure_date,expected_cash,counted_cash,difference,total_in,total_out")
+            .single();
+          if (error) return { error: error.message };
+          return { success: true, closure: data };
+        },
+      }),
+      create_pdv_sale: tool({
+        description:
+          "Registra uma venda no PDV: cria OS com os itens, marca como paga se payment=total, e lança entrada no caixa. Ideal para venda balcão.",
+        inputSchema: z.object({
+          clientId: z.string().uuid().optional(),
+          clientName: z.string().optional(),
+          items: z
+            .array(
+              z.object({
+                description: z.string(),
+                quantity: z.number().default(1),
+                unit_price: z.number(),
+              }),
+            )
+            .min(1),
+          payment_method: z
+            .enum(["dinheiro", "pix", "credito", "debito", "boleto", "transferencia", "outro"])
+            .default("dinheiro"),
+          amount_paid: z.number().optional().describe("Se omitido, considera total."),
+          notes: z.string().optional(),
+        }),
+        execute: async ({ clientId, clientName, items, payment_method, amount_paid, notes }) => {
+          const cId = await resolveClientId(supabase, clientId, clientName);
+          if (!cId) return { error: "Cliente não localizado. Crie primeiro com create_client." };
+          const total = items.reduce((s, i) => s + i.quantity * i.unit_price, 0);
+          const paid = amount_paid ?? total;
+          const { data: order, error } = await supabase
+            .from("orders")
+            .insert({
+              client_id: cId,
+              title: "Venda balcão",
+              total,
+              paid,
+              payment_method,
+              production_status: paid >= total ? "entregue" : "pronto_para_retirada",
+              created_by: userId,
+              attendant_id: userId,
+              client_notes: notes,
+            })
+            .select("id,number,total,paid")
+            .single();
+          if (error) return { error: error.message };
+          const rows = items.map((i) => ({
+            order_id: order.id,
+            description: i.description,
+            quantity: i.quantity,
+            unit_price: i.unit_price,
+            subtotal: i.quantity * i.unit_price,
+          }));
+          const { error: itemsErr } = await supabase.from("order_items").insert(rows);
+          if (itemsErr) return { error: itemsErr.message };
+          if (paid > 0) {
+            await supabase.from("cash_entries").insert({
+              type: "entrada",
+              amount: paid,
+              description: `PDV #${order.number}`,
+              category: "venda",
+              payment_method,
+              entry_date: new Date().toISOString().slice(0, 10),
+              order_id: order.id,
+              client_id: cId,
+              created_by: userId,
+            });
+          }
+          return { success: true, sale: { order_number: order.number, total, paid, payment_method } };
+        },
+      }),
     };
 
     const history = (data.conversationHistory ?? []).map((m) => ({
