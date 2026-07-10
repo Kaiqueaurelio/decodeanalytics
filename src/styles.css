@@ -257,6 +257,16 @@
     padding-right: env(safe-area-inset-right);
   }
 
+  /* Safe-area helpers para headers sticky/fixed e barras inferiores.
+     Aplicados via classe para que o próprio header estenda seu fundo
+     sobre a área do notch, em vez de deixar o conteúdo passar por baixo. */
+  .safe-area-header {
+    padding-top: env(safe-area-inset-top);
+  }
+  .safe-area-footer {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
   h1,
   h2,
   h3 {

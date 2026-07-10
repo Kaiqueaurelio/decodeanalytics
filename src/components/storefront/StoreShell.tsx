@@ -91,7 +91,7 @@ function StoreHeader() {
   const info = useCompanyInfo();
   const waLink = useWaLink();
   return (
-    <header className="sticky top-0 z-30 border-b border-[var(--store-border)] bg-[var(--store-surface)]/95 backdrop-blur">
+    <header className="safe-area-header sticky top-0 z-30 border-b border-[var(--store-border)] bg-[var(--store-surface)]/95 backdrop-blur">
       <div className="mx-auto flex max-w-[1280px] items-center gap-2 px-3 py-2 sm:gap-3 sm:px-4 sm:py-3 md:gap-6 md:py-4">
         <Link to="/" className="flex shrink-0 items-center gap-2 sm:gap-3">
           <img
@@ -482,7 +482,11 @@ function FloatingWhatsApp() {
       target="_blank"
       rel="noopener noreferrer"
       aria-label="Falar no WhatsApp"
-      className="fixed bottom-5 right-5 z-40 grid h-14 w-14 place-items-center rounded-full bg-[var(--store-success)] text-white shadow-lg transition-transform hover:scale-110"
+      style={{
+        bottom: "max(1.25rem, env(safe-area-inset-bottom))",
+        right: "max(1.25rem, env(safe-area-inset-right))",
+      }}
+      className="fixed z-40 grid h-14 w-14 place-items-center rounded-full bg-[var(--store-success)] text-white shadow-lg transition-transform hover:scale-110"
     >
       <MessageCircle className="h-7 w-7" />
     </a>

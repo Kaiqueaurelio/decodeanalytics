@@ -411,7 +411,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           <span className="font-semibold text-brand-yellow">Alcateia's Produções Gráficas</span>
         </div>
 
-        <header className="sticky top-0 z-20 border-b border-border/80 bg-white/92 px-2 backdrop-blur-xl md:px-4 lg:top-0">
+        <header className="safe-area-header sticky top-0 z-20 border-b border-border/80 bg-white/92 px-2 backdrop-blur-xl md:px-4 lg:top-0">
           <div className="flex h-16 md:h-[72px] items-center gap-2 md:gap-3">
             {isAdmin && (
               <Link
