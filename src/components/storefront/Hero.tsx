@@ -9,7 +9,7 @@ export function Hero() {
     <section className="mx-auto w-full max-w-[1280px] px-3 pt-3 sm:px-4 sm:pt-4 md:pt-6">
       {/* Big bright blue hero banner — Futuraim-style */}
       <div
-        className="relative overflow-hidden rounded-[var(--store-radius-xl)] bg-gradient-to-br from-[#1e3a8a] via-[#172554] to-[#0b1a3f] p-4 text-white shadow-[var(--store-shadow-lg)] sm:p-6 md:p-10 lg:p-12 animate-fade-in"
+        className="relative min-w-0 overflow-hidden rounded-[var(--store-radius-xl)] bg-gradient-to-br from-[#1e3a8a] via-[#172554] to-[#0b1a3f] p-4 text-white shadow-[var(--store-shadow-lg)] sm:p-6 md:p-10 lg:p-12 animate-fade-in"
         style={{ animationDelay: "60ms", animationFillMode: "both" }}
       >
         {/* Decorative percent marks */}
@@ -22,14 +22,14 @@ export function Hero() {
           }}
         />
         <div className="relative grid items-center gap-6 sm:gap-8 md:grid-cols-2">
-          <div>
-            <span className="inline-flex items-center gap-2 rounded-full bg-white/15 px-3 py-1 text-[11px] font-extrabold uppercase tracking-[0.18em] text-white backdrop-blur">
+          <div className="min-w-0">
+            <span className="inline-flex max-w-full items-center gap-2 rounded-full bg-white/15 px-3 py-1 text-[10px] font-extrabold uppercase text-white backdrop-blur sm:text-[11px]" style={{ letterSpacing: "0.08em" }}>
               <Sparkles className="h-3 w-3" /> Alcateia · produções gráficas · 48h
             </span>
-            <h1 className="font-display mt-5 text-4xl leading-[0.95] sm:text-5xl md:text-6xl lg:text-7xl">
+            <h1 className="font-display mt-5 text-[2rem] leading-[0.98] sm:text-5xl md:text-6xl lg:text-7xl">
               IMPRESSÃO
               <br />
-              <span className="rounded-md bg-[var(--store-secondary)] px-3 py-1 text-[var(--store-primary-dark)]">
+              <span className="inline-block max-w-full rounded-md bg-[var(--store-secondary)] px-2 py-1 text-[var(--store-primary-dark)] sm:px-3">
                 PRODUÇÕES GRÁFICAS
               </span>
             </h1>
@@ -38,9 +38,9 @@ export function Hero() {
               acabamento profissional pela Alcateia — gráfica que uiva por qualidade.
             </p>
 
-            <div className="mt-6 inline-flex items-center gap-2 rounded-lg bg-white/10 px-4 py-2 text-sm font-bold backdrop-blur">
+            <div className="mt-6 inline-flex max-w-full items-center gap-2 rounded-lg bg-white/10 px-3 py-2 text-xs font-bold backdrop-blur sm:px-4 sm:text-sm">
               <Tag className="h-4 w-4 text-[var(--store-secondary)]" />
-              <span>
+              <span className="min-w-0">
                 10% OFF na 1ª compra ·{" "}
                 <span className="rounded bg-[var(--store-secondary)] px-1.5 py-0.5 text-[12px] text-[var(--store-primary-dark)]">
                   BEMVINDO10
@@ -48,10 +48,10 @@ export function Hero() {
               </span>
             </div>
 
-            <div className="mt-7 flex flex-wrap gap-3">
+            <div className="mt-7 flex flex-col gap-3 min-[420px]:flex-row min-[420px]:flex-wrap">
               <Link
                 to="/produtos"
-                className="inline-flex items-center justify-center gap-2 rounded-[var(--store-radius-md)] bg-white px-6 py-3 text-sm font-extrabold uppercase tracking-wide text-[#172554] shadow-md transition-transform hover:scale-[1.03] sm:px-8"
+                className="inline-flex min-h-12 items-center justify-center gap-2 rounded-[var(--store-radius-md)] bg-white px-5 py-3 text-sm font-extrabold uppercase tracking-wide text-[#172554] shadow-md transition-transform hover:scale-[1.03] sm:px-8"
               >
                 Ver produtos <ArrowRight className="h-4 w-4" />
               </Link>
@@ -59,7 +59,7 @@ export function Hero() {
                 href={waLink("Olá! Quero enviar minha arte para um orçamento.")}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-2 rounded-[var(--store-radius-md)] border-2 border-white/70 bg-transparent px-6 py-3 text-sm font-extrabold uppercase tracking-wide text-white transition-colors hover:bg-white hover:text-[#172554] sm:px-8"
+                className="inline-flex min-h-12 items-center justify-center gap-2 rounded-[var(--store-radius-md)] border-2 border-white/70 bg-transparent px-5 py-3 text-sm font-extrabold uppercase tracking-wide text-white transition-colors hover:bg-white hover:text-[#172554] sm:px-8"
               >
                 <Upload className="h-4 w-4" /> Enviar minha arte
               </a>
@@ -93,7 +93,7 @@ export function Hero() {
           <span className="grid h-10 w-10 shrink-0 place-items-center rounded-lg sm:h-11 sm:w-11 sm:rounded-xl bg-[#172554]/10 text-[#172554]">
             <Calculator className="h-4 w-4 sm:h-5 sm:w-5" />
           </span>
-          <div>
+          <div className="min-w-0">
             <p className="text-xs sm:text-sm font-extrabold text-[var(--store-text)]">Orçamento rápido</p>
             <p className="text-[10px] sm:text-xs text-[var(--store-text-muted)]">Calcule o preço em segundos</p>
           </div>
@@ -108,7 +108,7 @@ export function Hero() {
           <span className="grid h-10 w-10 shrink-0 place-items-center rounded-lg sm:h-11 sm:w-11 sm:rounded-xl bg-[var(--store-secondary)]/20 text-[var(--store-secondary-dark)]">
             <Sparkles className="h-4 w-4 sm:h-5 sm:w-5" />
           </span>
-          <div>
+          <div className="min-w-0">
             <p className="text-xs sm:text-sm font-extrabold text-[var(--store-text)]">Criamos sua arte</p>
             <p className="text-[10px] sm:text-xs text-[var(--store-text-muted)]">Designers prontos pra ajudar</p>
           </div>
@@ -123,7 +123,7 @@ export function Hero() {
           <span className="grid h-10 w-10 shrink-0 place-items-center rounded-lg sm:h-11 sm:w-11 sm:rounded-xl bg-[var(--store-success)]/15 text-[var(--store-success)]">
             <Upload className="h-4 w-4 sm:h-5 sm:w-5" />
           </span>
-          <div>
+          <div className="min-w-0">
             <p className="text-xs sm:text-sm font-extrabold text-[var(--store-text)]">Envie sua arte</p>
             <p className="text-[10px] sm:text-xs text-[var(--store-text-muted)]">PDF, AI, PSD, PNG até 50MB</p>
           </div>

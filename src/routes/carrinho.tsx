@@ -182,7 +182,7 @@ function CartPage() {
       {/* Barra fixa de checkout no mobile/tablet */}
       <div
         className="fixed inset-x-0 bottom-0 z-40 border-t border-[var(--store-border)] bg-white/95 backdrop-blur lg:hidden"
-        style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
+        style={{ paddingBottom: "calc(env(safe-area-inset-bottom) + 0.5rem)" }}
       >
         <div className="mx-auto flex max-w-[1280px] items-center gap-3 px-3 py-3 sm:px-4">
           <div className="min-w-0 flex-1">
