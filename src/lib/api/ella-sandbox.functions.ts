@@ -41,16 +41,17 @@ export const ellaSandboxChat = createServerFn({ method: "POST" })
     const startedAt = Date.now();
     const temperature = 0.4;
 
-    const steps: Array<{
+    type Step = {
       name: string;
       status: "ok" | "error";
       at_ms: number;
       duration_ms?: number;
-      detail?: Record<string, unknown>;
+      detail?: Record<string, any>;
       error?: string;
-    }> = [];
+    };
+    const steps: Step[] = [];
     const t0 = Date.now();
-    const step = <T,>(name: string, fn: () => Promise<T> | T, detail?: () => Record<string, unknown>) =>
+    const step = <T,>(name: string, fn: () => Promise<T> | T, detail?: () => Record<string, any>) =>
       Promise.resolve().then(async () => {
         const s = Date.now();
         try {
@@ -75,7 +76,7 @@ export const ellaSandboxChat = createServerFn({ method: "POST" })
         }
       });
 
-    const inputs = {
+    const inputs: Record<string, any> = {
       message: data.message,
       scope: data.scope,
       topK: data.topK ?? 6,
