@@ -574,7 +574,7 @@ export const ellaChat = createServerFn({ method: "POST" })
     for (const att of attachments) {
       const mt = att.mimeType.toLowerCase();
       if (mt.startsWith("audio/")) {
-        const transcript = await transcribeAttachment(key, att);
+        const transcript = key ? await transcribeAttachment(key, att) : "";
         userText += transcript
           ? `\n\n[Áudio "${att.name}" — transcrição]: ${transcript}`
           : `\n\n[Áudio "${att.name}" enviado mas não foi possível transcrever.]`;
