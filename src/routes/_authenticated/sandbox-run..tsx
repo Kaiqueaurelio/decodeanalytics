@@ -13,7 +13,7 @@ import {
 import { ArrowLeft, BookOpen, Clock, Copy, Cpu, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 
-export const Route = createFileRoute("/_authenticated/sandbox-run/$id")({
+export const Route = createFileRoute("/_authenticated/sandbox-run/")({
   component: SandboxRunDetail,
 });
 

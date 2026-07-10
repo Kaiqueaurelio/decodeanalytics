@@ -20,7 +20,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Beaker, Send, Sparkles, BookOpen, Cpu, Clock, Loader2 } from "lucide-react";
+import { Beaker, Send, Sparkles, BookOpen, Cpu, Clock, Loader2, Copy, Link2 } from "lucide-react";
+import { Link } from "@tanstack/react-router";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/ella-sandbox")({
@@ -105,6 +106,41 @@ function EllaSandboxPage() {
 
       {result && (
         <Card className="space-y-4 p-4 md:p-6">
+          {result.run_id && (
+            <div className="flex flex-col gap-2 rounded-lg border bg-muted/30 p-3 md:flex-row md:items-center md:justify-between">
+              <div className="min-w-0">
+                <div className="text-xs text-muted-foreground">ID do teste (compartilhável)</div>
+                <div className="truncate font-mono text-sm">{result.run_id}</div>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => {
+                    navigator.clipboard.writeText(result.run_id!);
+                    toast.success("ID copiado");
+                  }}
+                >
+                  <Copy className="mr-2 h-4 w-4" />Copiar ID
+                </Button>
+                <Button
+                  size="sm"
+                  onClick={() => {
+                    const url = `${window.location.origin}/sandbox-run/${result.run_id}`;
+                    navigator.clipboard.writeText(url);
+                    toast.success("Link copiado");
+                  }}
+                >
+                  <Link2 className="mr-2 h-4 w-4" />Copiar link
+                </Button>
+                <Button size="sm" variant="ghost" asChild>
+                  <Link to="/sandbox-run/$id" params={{ id: result.run_id }}>
+                    Abrir evidência
+                  </Link>
+                </Button>
+              </div>
+            </div>
+          )}
           <div className="flex items-center gap-2">
             <Sparkles className="h-5 w-5 text-primary" />
             <h2 className="text-lg font-semibold">Resposta da Ella</h2>
