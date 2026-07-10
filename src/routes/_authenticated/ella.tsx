@@ -70,6 +70,11 @@ const TOOL_LABELS: Record<string, string> = {
   list_reminders: "Listando lembretes",
   complete_reminder: "Concluindo lembrete",
   dashboard_summary: "Compilando panorama",
+  create_service: "Criando produto/serviço",
+  update_service: "Atualizando produto/serviço",
+  delete_service: "Removendo produto/serviço",
+  create_inventory_item: "Criando item no estoque",
+  update_inventory_quantity: "Atualizando estoque",
 };
 
 function ToolChip({ t }: { t: ToolActivity }) {

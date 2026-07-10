@@ -28,14 +28,265 @@ const InputSchema = z.object({
   attachments: z.array(AttachmentSchema).optional(),
 });
 
+function normalizeText(value: unknown) {
+  return String(value ?? "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .trim();
+}
+
+function toNumber(value: unknown) {
+  if (typeof value === "number") return Number.isFinite(value) ? value : 0;
+  const clean = String(value ?? "0")
+    .replace(/[^\d,.-]/g, "")
+    .replace(/\.(?=\d{3}(?:\D|$))/g, "")
+    .replace(",", ".");
+  return Number(clean) || 0;
+}
+
+function inferCategory(name: string, category?: string) {
+  const text = normalizeText(`${name} ${category ?? ""}`);
+  if (/cartao|cartoes|visita|card/.test(text)) return "Cartões";
+  if (/panfleto|flyer|folder|folheto/.test(text)) return "Panfletos";
+  if (/adesivo|etiqueta|recorte|sticker/.test(text)) return "Adesivos";
+  if (/banner|lona|faixa|cavalete/.test(text)) return "Banners";
+  if (/caneca|copo/.test(text)) return "Canecas";
+  if (/camiseta|camisa|uniforme/.test(text)) return "Camisetas";
+  if (/embalagem|caixa|sacola/.test(text)) return "Embalagens";
+  if (/plotagem|planta|projeto/.test(text)) return "Plotagem";
+  if (/brinde|chaveiro|squeeze|personalizado/.test(text)) return "Brindes";
+  return category?.trim() || "Outros";
+}
+
+function imagePathFor(category: string, name: string) {
+  const resolved = inferCategory(name, category);
+  const paths: Record<string, string> = {
+    Cartões: "/products/cartoes.jpg",
+    Panfletos: "/products/panfletos.jpg",
+    Adesivos: "/products/adesivos.jpg",
+    Banners: "/products/banners.webp",
+    Canecas: "/products/canecas.jpg",
+    Camisetas: "/products/camisetas.jpg",
+    Brindes: "/products/brindes.webp",
+    Embalagens: "/products/embalagens.webp",
+    Plotagem: "/products/plotagem.webp",
+  };
+  return paths[resolved] ?? null;
+}
+
+function buildServiceDescription(name: string, category: string, custom?: string) {
+  if (custom?.trim()) return custom.trim();
+  const descriptions: Record<string, string> = {
+    Cartões: "Material impresso para apresentação profissional da marca, com acabamento de qualidade e produção sob demanda.",
+    Panfletos: "Impresso promocional para divulgar ofertas, eventos e serviços com boa leitura e impacto visual.",
+    Adesivos: "Adesivo personalizado para identificação, embalagem, decoração ou campanhas promocionais.",
+    Banners: "Comunicação visual em lona ou material similar para loja, evento, fachada ou ação promocional.",
+    Canecas: "Produto personalizado para presente, brinde corporativo ou venda com arte aplicada.",
+    Camisetas: "Vestuário personalizado para equipe, evento, uniforme ou ação de marca.",
+    Embalagens: "Solução de embalagem personalizada para valorizar o produto e reforçar a identidade visual.",
+    Plotagem: "Impressão técnica ou visual em grande formato para projetos, plantas e comunicação.",
+    Brindes: "Item personalizado para ações promocionais, relacionamento com clientes e lembranças de marca.",
+  };
+  return descriptions[category] || `${name} personalizado produzido pela Alcateia's Produções Gráficas.`;
+}
+
+async function ellaLocalFallback({
+  message,
+  supabase,
+  userId,
+}: {
+  message: string;
+  supabase: any;
+  userId: string;
+}) {
+  const text = message.trim();
+  const normalized = normalizeText(text);
+  const toolActivity: Array<{ name: string; input: any; output: any }> = [];
+
+  const pushTool = (name: string, input: any, output: any) => {
+    toolActivity.push({ name, input, output });
+    return output;
+  };
+
+  if (/panorama|resumo|dashboard|faturamento|ativas|pendentes/.test(normalized)) {
+    const [ordersRes, recRes] = await Promise.all([
+      supabase
+        .from("orders")
+        .select("id,production_status,total,paid,created_at")
+        .not("production_status", "in", "(entregue,cancelado)"),
+      supabase.from("receivables").select("amount,status").eq("status", "pendente"),
+    ]);
+    if (ordersRes.error) return { response: `Não consegui consultar OS: ${ordersRes.error.message}`, toolActivity };
+    if (recRes.error) return { response: `Não consegui consultar cobranças: ${recRes.error.message}`, toolActivity };
+    const activeOrders = ordersRes.data?.length ?? 0;
+    const pendingReceivables =
+      recRes.data?.reduce((sum: number, row: any) => sum + Number(row.amount || 0), 0) ?? 0;
+    pushTool("dashboard_summary", {}, { activeOrders, pendingReceivables });
+    return {
+      response: `Estou em modo Vercel básico, mas consegui consultar: ${activeOrders} OS ativas e R$ ${pendingReceivables.toFixed(2)} em cobranças pendentes.`,
+      toolActivity,
+    };
+  }
+
+  if (/os|ordem|pedido/.test(normalized) && /listar|liste|producao|produção|ativas/.test(normalized)) {
+    const { data, error } = await supabase
+      .from("orders")
+      .select("number,title,total,production_status,deadline,clients(name)")
+      .not("production_status", "in", "(entregue,cancelado)")
+      .order("created_at", { ascending: false })
+      .limit(10);
+    pushTool("list_orders", { limit: 10 }, error ? { error: error.message } : { orders: data ?? [] });
+    if (error) return { response: `Não consegui listar as OS: ${error.message}`, toolActivity };
+    const lines = (data ?? [])
+      .map((order: any) => `#${order.number} - ${order.title || "OS"} (${order.production_status})`)
+      .join("\n");
+    return { response: lines ? `OS ativas:\n${lines}` : "Não encontrei OS ativas.", toolActivity };
+  }
+
+  const priceMatch = text.match(/(?:preco|preço|valor).+?(?:de|do|da)\s+(.+?)\s+(?:para|por)\s+r?\$?\s*([\d.,]+)/i);
+  if (priceMatch) {
+    const name = priceMatch[1].trim();
+    const newPrice = toNumber(priceMatch[2]);
+    const { data: found } = await supabase
+      .from("services")
+      .select("id,name")
+      .ilike("name", `%${name}%`)
+      .limit(1)
+      .maybeSingle();
+    if (!found) return { response: `Não encontrei "${name}" no catálogo.`, toolActivity };
+    const { error } = await supabase.from("services").update({ base_price: newPrice }).eq("id", found.id);
+    pushTool("update_service_price", { name, newPrice }, error ? { error: error.message } : { success: true });
+    return {
+      response: error
+        ? `Não consegui atualizar o preço: ${error.message}`
+        : `Pronto. Atualizei "${found.name}" para R$ ${newPrice.toFixed(2)}.`,
+      toolActivity,
+    };
+  }
+
+  const createProductMatch = text.match(
+    /(?:crie|criar|cadastre|cadastrar|adicione|adicionar)\s+(?:um\s+|uma\s+)?(?:produto|servico|serviço)?\s*([^,.]+?)(?:\s+(?:por|preco|preço|valor)\s*r?\$?\s*([\d.,]+))?(?:,|\s|$)/i,
+  );
+  if (createProductMatch && /(produto|servico|serviço|preco|preço|valor)/i.test(text)) {
+    const name = createProductMatch[1].trim();
+    const category = inferCategory(name);
+    const description = buildServiceDescription(name, category);
+    const payload = {
+      name,
+      category,
+      description,
+      short_description: description,
+      base_price: toNumber(createProductMatch[2] ?? 0),
+      unit: "un",
+      image_url: imagePathFor(category, name),
+      active: true,
+    };
+    const { data, error } = await supabase
+      .from("services")
+      .insert(payload)
+      .select("id,name,category,base_price")
+      .single();
+    pushTool("create_service", payload, error ? { error: error.message } : { service: data });
+    return {
+      response: error
+        ? `Não consegui criar o produto/serviço: ${error.message}`
+        : `Pronto. Criei "${name}" no catálogo em ${category}.`,
+      toolActivity,
+    };
+  }
+
+  const quantityMatch = normalized.match(
+    /(?:adicione|adicionar|dar entrada|entrada|coloque|ajuste|ajustar|atualize|atualizar)\s+(\d+(?:[,.]\d+)?)\s+(?:unidades?\s+de\s+|un\s+de\s+|de\s+)?(.+?)(?:\s+(?:no|na|em)\s+estoque)?$/i,
+  );
+  if (quantityMatch && /estoque|entrada|adicione|adicionar|ajuste|atualize|atualizar|coloque/.test(normalized)) {
+    const quantity = toNumber(quantityMatch[1]);
+    const name = quantityMatch[2].replace(/\s+(no|na|em)\s+estoque$/i, "").trim();
+    const operation = /ajuste|ajustar|atualize|atualizar/.test(normalized) ? "ajuste" : "entrada";
+    const found = await supabase
+      .from("inventory_items" as any)
+      .select("*")
+      .ilike("name", `%${name}%`)
+      .limit(1)
+      .maybeSingle();
+    if (found.error) return { response: `Não consegui consultar o estoque: ${found.error.message}`, toolActivity };
+    if (!found.data) {
+      const inserted = await supabase
+        .from("inventory_items" as any)
+        .insert({
+          name,
+          unit: "un",
+          current_quantity: quantity,
+          min_quantity: 0,
+          cost_price: 0,
+          notes: "Criado pela Ella",
+          active: true,
+          created_by: userId,
+        })
+        .select("id,name,current_quantity")
+        .single();
+      pushTool("create_inventory_item", { name, quantity }, inserted.error ? { error: inserted.error.message } : inserted.data);
+      return {
+        response: inserted.error
+          ? `Não consegui criar o item no estoque: ${inserted.error.message}`
+          : `Pronto. Criei "${name}" no estoque com ${quantity} unidades.`,
+        toolActivity,
+      };
+    }
+    const item = found.data as any;
+    const previous = Number(item.current_quantity || 0);
+    const next = operation === "entrada" ? previous + quantity : quantity;
+    const updated = await supabase
+      .from("inventory_items" as any)
+      .update({ current_quantity: next })
+      .eq("id", item.id);
+    if (!updated.error) {
+      await supabase.from("inventory_movements" as any).insert({
+        inventory_item_id: item.id,
+        type: operation,
+        quantity: Math.abs(next - previous),
+        previous_quantity: previous,
+        new_quantity: next,
+        reason: "Pedido feito no chat da Ella",
+        reference: "Ella",
+        created_by: userId,
+      });
+    }
+    pushTool("update_inventory_quantity", { name, quantity, operation }, updated.error ? { error: updated.error.message } : { previous, next });
+    return {
+      response: updated.error
+        ? `Não consegui atualizar o estoque: ${updated.error.message}`
+        : `Pronto. Atualizei "${item.name}" de ${previous} para ${next}.`,
+      toolActivity,
+    };
+  }
+
+  return {
+    response:
+      "Estou funcionando na Vercel em modo básico. Para a Ella completa com IA, áudio e análise de anexos, configure LOVABLE_API_KEY na Vercel. Mesmo assim, já consigo executar comandos simples como atualizar preço, criar produto, listar OS e mexer no estoque.",
+    toolActivity,
+  };
+}
+
 export const ellaChat = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((v: unknown) => InputSchema.parse(v))
   .handler(async ({ data, context }) => {
     const key = process.env.LOVABLE_API_KEY;
-    if (!key) throw new Error("LOVABLE_API_KEY não configurada");
     const supabase = context.supabase;
     const userId = context.userId;
+
+    if (!key) {
+      const fallback = await ellaLocalFallback({
+        message: data.message,
+        supabase,
+        userId,
+      });
+      return {
+        ...fallback,
+        trace_id: "local-fallback",
+      };
+    }
 
     const model = createLovableGateway(key)("google/gemini-2.5-flash");
     const traceId = newTraceId();
