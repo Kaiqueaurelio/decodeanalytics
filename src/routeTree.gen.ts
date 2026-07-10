@@ -36,7 +36,7 @@ import { Route as AuthenticatedCashRouteImport } from './routes/_authenticated/c
 import { Route as AuthenticatedCalculatorRouteImport } from './routes/_authenticated/calculator'
 import { Route as AuthenticatedAiLogsRouteImport } from './routes/_authenticated/ai-logs'
 import { Route as ApiPublicAiHealthRouteImport } from './routes/api/public/ai-health'
-import { Route as AuthenticatedSandboxRunRouteImport } from './routes/_authenticated/sandbox-run.'
+import { Route as AuthenticatedSandboxRunIdRouteImport } from './routes/_authenticated/sandbox-run.$id'
 
 const ProdutosRoute = ProdutosRouteImport.update({
   id: '/produtos',
@@ -175,11 +175,12 @@ const ApiPublicAiHealthRoute = ApiPublicAiHealthRouteImport.update({
   path: '/api/public/ai-health',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthenticatedSandboxRunRoute = AuthenticatedSandboxRunRouteImport.update({
-  id: '/sandbox-run/',
-  path: '/sandbox-run/',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
+const AuthenticatedSandboxRunIdRoute =
+  AuthenticatedSandboxRunIdRouteImport.update({
+    id: '/sandbox-run/$id',
+    path: '/sandbox-run/$id',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -207,7 +208,7 @@ export interface FileRoutesByFullPath {
   '/briefing/$token': typeof BriefingTokenRoute
   '/produto/$slug': typeof ProdutoSlugRoute
   '/sitemap/xml': typeof SitemapXmlRoute
-  '/sandbox-run/': typeof AuthenticatedSandboxRunRoute
+  '/sandbox-run/$id': typeof AuthenticatedSandboxRunIdRoute
   '/api/public/ai-health': typeof ApiPublicAiHealthRoute
 }
 export interface FileRoutesByTo {
@@ -236,7 +237,7 @@ export interface FileRoutesByTo {
   '/briefing/$token': typeof BriefingTokenRoute
   '/produto/$slug': typeof ProdutoSlugRoute
   '/sitemap/xml': typeof SitemapXmlRoute
-  '/sandbox-run': typeof AuthenticatedSandboxRunRoute
+  '/sandbox-run/$id': typeof AuthenticatedSandboxRunIdRoute
   '/api/public/ai-health': typeof ApiPublicAiHealthRoute
 }
 export interface FileRoutesById {
@@ -267,7 +268,7 @@ export interface FileRoutesById {
   '/briefing/$token': typeof BriefingTokenRoute
   '/produto/$slug': typeof ProdutoSlugRoute
   '/sitemap/xml': typeof SitemapXmlRoute
-  '/_authenticated/sandbox-run/': typeof AuthenticatedSandboxRunRoute
+  '/_authenticated/sandbox-run/$id': typeof AuthenticatedSandboxRunIdRoute
   '/api/public/ai-health': typeof ApiPublicAiHealthRoute
 }
 export interface FileRouteTypes {
@@ -298,7 +299,7 @@ export interface FileRouteTypes {
     | '/briefing/$token'
     | '/produto/$slug'
     | '/sitemap/xml'
-    | '/sandbox-run/'
+    | '/sandbox-run/$id'
     | '/api/public/ai-health'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -327,7 +328,7 @@ export interface FileRouteTypes {
     | '/briefing/$token'
     | '/produto/$slug'
     | '/sitemap/xml'
-    | '/sandbox-run'
+    | '/sandbox-run/$id'
     | '/api/public/ai-health'
   id:
     | '__root__'
@@ -357,7 +358,7 @@ export interface FileRouteTypes {
     | '/briefing/$token'
     | '/produto/$slug'
     | '/sitemap/xml'
-    | '/_authenticated/sandbox-run/'
+    | '/_authenticated/sandbox-run/$id'
     | '/api/public/ai-health'
   fileRoutesById: FileRoutesById
 }
@@ -565,11 +566,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicAiHealthRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_authenticated/sandbox-run/': {
-      id: '/_authenticated/sandbox-run/'
-      path: '/sandbox-run'
-      fullPath: '/sandbox-run/'
-      preLoaderRoute: typeof AuthenticatedSandboxRunRouteImport
+    '/_authenticated/sandbox-run/$id': {
+      id: '/_authenticated/sandbox-run/$id'
+      path: '/sandbox-run/$id'
+      fullPath: '/sandbox-run/$id'
+      preLoaderRoute: typeof AuthenticatedSandboxRunIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
   }
@@ -593,7 +594,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedReceivablesRoute: typeof AuthenticatedReceivablesRoute
   AuthenticatedServicesRoute: typeof AuthenticatedServicesRoute
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
-  AuthenticatedSandboxRunRoute: typeof AuthenticatedSandboxRunRoute
+  AuthenticatedSandboxRunIdRoute: typeof AuthenticatedSandboxRunIdRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
@@ -614,7 +615,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedReceivablesRoute: AuthenticatedReceivablesRoute,
   AuthenticatedServicesRoute: AuthenticatedServicesRoute,
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
-  AuthenticatedSandboxRunRoute: AuthenticatedSandboxRunRoute,
+  AuthenticatedSandboxRunIdRoute: AuthenticatedSandboxRunIdRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
@@ -635,3 +636,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
