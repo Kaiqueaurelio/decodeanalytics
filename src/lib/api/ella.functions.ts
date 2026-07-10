@@ -9,6 +9,7 @@ import {
   resolveClientId,
   transcribeAttachment,
 } from "./ella.helpers.server";
+import { classifyAiError, logAiEvent, newTraceId } from "./ai-logs.server";
 
 const MessageSchema = z.object({
   role: z.enum(["user", "assistant"]),
@@ -37,6 +38,8 @@ export const ellaChat = createServerFn({ method: "POST" })
     const userId = context.userId;
 
     const model = createLovableGateway(key)("google/gemini-2.5-flash");
+    const traceId = newTraceId();
+    const startedAt = Date.now();
 
     const tools = {
       list_clients: tool({
@@ -957,14 +960,36 @@ export const ellaChat = createServerFn({ method: "POST" })
         }
       }
 
-      return { response: result.text || "Feito.", toolActivity };
+      logAiEvent({
+        provider: "lovable-ai-gateway",
+        model: "google/gemini-2.5-flash",
+        endpoint: "/ella",
+        trace_id: traceId,
+        status: "success",
+        duration_ms: Date.now() - startedAt,
+        user_id: userId,
+        extra: { tool_calls: toolActivity.length },
+      });
+      return { response: result.text || "Feito.", toolActivity, trace_id: traceId };
     } catch (err: any) {
-      console.error("ellaChat error:", err);
+      const cls = classifyAiError(err);
+      console.error("ellaChat error:", traceId, cls);
+      logAiEvent({
+        provider: "lovable-ai-gateway",
+        model: "google/gemini-2.5-flash",
+        endpoint: "/ella",
+        trace_id: traceId,
+        status: "error",
+        duration_ms: Date.now() - startedAt,
+        user_id: userId,
+        ...cls,
+      });
       return {
         response:
           "Tive um problema ao processar agora. Se o erro persistir, me diga o que estava tentando fazer que eu tento outro caminho.",
         toolActivity: [],
-        error: err?.message ?? String(err),
+        error: cls.error_message,
+        trace_id: traceId,
       };
     }
   });
