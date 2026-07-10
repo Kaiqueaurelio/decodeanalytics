@@ -32,6 +32,7 @@ import { Route as AuthenticatedClosuresRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedClientsRouteImport } from './routes/_authenticated/clients'
 import { Route as AuthenticatedCashRouteImport } from './routes/_authenticated/cash'
 import { Route as AuthenticatedCalculatorRouteImport } from './routes/_authenticated/calculator'
+import { Route as ApiPublicAiHealthRouteImport } from './routes/api/public/ai-health'
 
 const ProdutosRoute = ProdutosRouteImport.update({
   id: '/produtos',
@@ -148,6 +149,11 @@ const AuthenticatedCalculatorRoute = AuthenticatedCalculatorRouteImport.update({
   path: '/calculator',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const ApiPublicAiHealthRoute = ApiPublicAiHealthRouteImport.update({
+  id: '/api/public/ai-health',
+  path: '/api/public/ai-health',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -172,6 +178,7 @@ export interface FileRoutesByFullPath {
   '/briefing/$token': typeof BriefingTokenRoute
   '/produto/$slug': typeof ProdutoSlugRoute
   '/sitemap/xml': typeof SitemapXmlRoute
+  '/api/public/ai-health': typeof ApiPublicAiHealthRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -196,6 +203,7 @@ export interface FileRoutesByTo {
   '/briefing/$token': typeof BriefingTokenRoute
   '/produto/$slug': typeof ProdutoSlugRoute
   '/sitemap/xml': typeof SitemapXmlRoute
+  '/api/public/ai-health': typeof ApiPublicAiHealthRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -222,6 +230,7 @@ export interface FileRoutesById {
   '/briefing/$token': typeof BriefingTokenRoute
   '/produto/$slug': typeof ProdutoSlugRoute
   '/sitemap/xml': typeof SitemapXmlRoute
+  '/api/public/ai-health': typeof ApiPublicAiHealthRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -248,6 +257,7 @@ export interface FileRouteTypes {
     | '/briefing/$token'
     | '/produto/$slug'
     | '/sitemap/xml'
+    | '/api/public/ai-health'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -272,6 +282,7 @@ export interface FileRouteTypes {
     | '/briefing/$token'
     | '/produto/$slug'
     | '/sitemap/xml'
+    | '/api/public/ai-health'
   id:
     | '__root__'
     | '/'
@@ -297,6 +308,7 @@ export interface FileRouteTypes {
     | '/briefing/$token'
     | '/produto/$slug'
     | '/sitemap/xml'
+    | '/api/public/ai-health'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -309,6 +321,7 @@ export interface RootRouteChildren {
   BriefingTokenRoute: typeof BriefingTokenRoute
   ProdutoSlugRoute: typeof ProdutoSlugRoute
   SitemapXmlRoute: typeof SitemapXmlRoute
+  ApiPublicAiHealthRoute: typeof ApiPublicAiHealthRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -474,6 +487,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedCalculatorRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/api/public/ai-health': {
+      id: '/api/public/ai-health'
+      path: '/api/public/ai-health'
+      fullPath: '/api/public/ai-health'
+      preLoaderRoute: typeof ApiPublicAiHealthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -524,6 +544,7 @@ const rootRouteChildren: RootRouteChildren = {
   BriefingTokenRoute: BriefingTokenRoute,
   ProdutoSlugRoute: ProdutoSlugRoute,
   SitemapXmlRoute: SitemapXmlRoute,
+  ApiPublicAiHealthRoute: ApiPublicAiHealthRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
