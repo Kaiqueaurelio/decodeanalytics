@@ -2,7 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { createClient } from "@supabase/supabase-js";
 import { generateText, tool, stepCountIs } from "ai";
 import { z } from "zod";
-import { createLovableGateway } from "@/lib/ai-gateway.server";
+import { createLovableGateway, createGeminiProvider } from "@/lib/ai-gateway.server";
 import type { Database } from "@/integrations/supabase/types";
 import { getRequestIP, getRequestHeader } from "@tanstack/react-start/server";
 import { PUBLIC_SYSTEM_PROMPT, checkPublicRateLimit } from "./ella.helpers.server";
@@ -37,18 +37,21 @@ export const ellaPublicChat = createServerFn({ method: "POST" })
       };
     }
 
+    const geminiKey = process.env.GEMINI_API_KEY;
     const key = process.env.LOVABLE_API_KEY;
     const url = process.env.SUPABASE_URL;
     const anonKey = process.env.SUPABASE_PUBLISHABLE_KEY;
-    if (!key || !url || !anonKey) throw new Error("Configuração de servidor ausente.");
+    if ((!geminiKey && !key) || !url || !anonKey)
+      throw new Error("Configuração de servidor ausente.");
 
     // Cliente anônimo — RLS trata como visitante (sem sessão).
     const supabase = createClient<Database>(url, anonKey, {
       auth: { storage: undefined, persistSession: false, autoRefreshToken: false },
     });
 
-    const gateway = createLovableGateway(key);
-    const model = gateway("google/gemini-2.5-flash");
+    const model = geminiKey
+      ? createGeminiProvider(geminiKey)("gemini-2.5-flash")
+      : createLovableGateway(key!)("google/gemini-2.5-flash");
 
     const tools = {
       list_products: tool({
