@@ -41,17 +41,19 @@ export const ellaSandboxChat = createServerFn({ method: "POST" })
     const startedAt = Date.now();
     const temperature = 0.4;
 
+    type JsonValue = string | number | boolean | null | JsonValue[] | { [k: string]: JsonValue };
+    type JsonObject = { [k: string]: JsonValue };
     type Step = {
       name: string;
       status: "ok" | "error";
       at_ms: number;
-      duration_ms?: number;
-      detail?: Record<string, any>;
-      error?: string;
+      duration_ms: number | null;
+      detail: JsonObject | null;
+      error: string | null;
     };
     const steps: Step[] = [];
     const t0 = Date.now();
-    const step = <T,>(name: string, fn: () => Promise<T> | T, detail?: () => Record<string, any>) =>
+    const step = <T,>(name: string, fn: () => Promise<T> | T, detail?: () => JsonObject) =>
       Promise.resolve().then(async () => {
         const s = Date.now();
         try {
@@ -61,7 +63,8 @@ export const ellaSandboxChat = createServerFn({ method: "POST" })
             status: "ok",
             at_ms: s - t0,
             duration_ms: Date.now() - s,
-            detail: detail ? detail() : undefined,
+            detail: detail ? detail() : null,
+            error: null,
           });
           return out;
         } catch (e: any) {
@@ -70,13 +73,14 @@ export const ellaSandboxChat = createServerFn({ method: "POST" })
             status: "error",
             at_ms: s - t0,
             duration_ms: Date.now() - s,
+            detail: null,
             error: e?.message ?? String(e),
           });
           throw e;
         }
       });
 
-    const inputs: Record<string, any> = {
+    const inputs: JsonObject = {
       message: data.message,
       scope: data.scope,
       topK: data.topK ?? 6,
@@ -87,7 +91,7 @@ export const ellaSandboxChat = createServerFn({ method: "POST" })
     const key = process.env.LOVABLE_API_KEY;
     if (!key) {
       const err = new Error("LOVABLE_API_KEY não configurada");
-      steps.push({ name: "check_api_key", status: "error", at_ms: 0, error: err.message });
+      steps.push({ name: "check_api_key", status: "error", at_ms: 0, duration_ms: 0, detail: null, error: err.message });
       await persistErrorRun(supabase, userId, {
         inputs, steps, traceId, modelName, temperature,
         scope: data.scope, systemPrompt: "", basePromptName: "", knowledgeUsed: [], knowledgeTotal: 0,
@@ -139,8 +143,10 @@ export const ellaSandboxChat = createServerFn({ method: "POST" })
     steps.push({
       name: "rank_knowledge",
       status: "ok",
-      at_ms: Date.now() - t0 - startedAt + startedAt,
+      at_ms: Date.now() - t0,
+      duration_ms: 0,
       detail: { kb_total: kbAll.length, kb_used: used.length, top_k: topK },
+      error: null,
     });
 
     const kbBlock = used.length
