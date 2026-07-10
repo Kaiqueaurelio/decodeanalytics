@@ -121,7 +121,7 @@ export const ellaPublicChat = createServerFn({ method: "POST" })
           "Posso te ajudar a escolher um produto — me conta o que você precisa imprimir 😉",
       };
     } catch (err: any) {
-      console.error("ellaPublicChat error:", err);
+      console.error("ellaPublicChat error:", err?.message, err?.responseBody || err?.cause?.responseBody || err?.data || err);
       return {
         response:
           "Tive um probleminha aqui. Se quiser falar direto com a equipe, o WhatsApp está no topo do site.",
