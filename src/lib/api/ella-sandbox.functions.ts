@@ -33,23 +33,81 @@ export const ellaSandboxChat = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((v: unknown) => InputSchema.parse(v))
   .handler(async ({ data, context }) => {
-    const key = process.env.LOVABLE_API_KEY;
-    if (!key) throw new Error("LOVABLE_API_KEY não configurada");
     const supabase = context.supabase;
     const userId = context.userId;
 
     const modelName = "google/gemini-2.5-flash";
-    const model = createLovableGateway(key)(modelName);
     const traceId = newTraceId();
     const startedAt = Date.now();
+    const temperature = 0.4;
+
+    type Step = {
+      name: string;
+      status: "ok" | "error";
+      at_ms: number;
+      duration_ms?: number;
+      detail?: Record<string, any>;
+      error?: string;
+    };
+    const steps: Step[] = [];
+    const t0 = Date.now();
+    const step = <T,>(name: string, fn: () => Promise<T> | T, detail?: () => Record<string, any>) =>
+      Promise.resolve().then(async () => {
+        const s = Date.now();
+        try {
+          const out = await fn();
+          steps.push({
+            name,
+            status: "ok",
+            at_ms: s - t0,
+            duration_ms: Date.now() - s,
+            detail: detail ? detail() : undefined,
+          });
+          return out;
+        } catch (e: any) {
+          steps.push({
+            name,
+            status: "error",
+            at_ms: s - t0,
+            duration_ms: Date.now() - s,
+            error: e?.message ?? String(e),
+          });
+          throw e;
+        }
+      });
+
+    const inputs: Record<string, any> = {
+      message: data.message,
+      scope: data.scope,
+      topK: data.topK ?? 6,
+      user_id: userId,
+    };
+
+    // Fail fast if API key missing — persist evidence.
+    const key = process.env.LOVABLE_API_KEY;
+    if (!key) {
+      const err = new Error("LOVABLE_API_KEY não configurada");
+      steps.push({ name: "check_api_key", status: "error", at_ms: 0, error: err.message });
+      await persistErrorRun(supabase, userId, {
+        inputs, steps, traceId, modelName, temperature,
+        scope: data.scope, systemPrompt: "", basePromptName: "", knowledgeUsed: [], knowledgeTotal: 0,
+        duration: Date.now() - startedAt,
+        error_type: "config",
+        error_message: err.message,
+        stack_trace: err.stack ?? null,
+      });
+      throw err;
+    }
+    const model = createLovableGateway(key)(modelName);
 
     const scopes = data.scope === "admin" ? ["admin", "both"] : ["public", "both"];
-    const { data: kbRaw } = await supabase
+    const { data: kbRaw } = await step("load_knowledge", async () => supabase
       .from("ella_knowledge" as any)
       .select("id,title,content,scope,tags,updated_at")
       .in("scope", scopes)
       .order("updated_at", { ascending: false })
-      .limit(200);
+      .limit(200)
+    , () => ({ scopes }));
 
     const kbAll = ((kbRaw ?? []) as any[]).map((k) => ({
       id: k.id as string,
@@ -59,7 +117,7 @@ export const ellaSandboxChat = createServerFn({ method: "POST" })
       tags: (k.tags as string[]) ?? [],
     }));
 
-    const qTokens = tokenize(data.message);
+    const qTokens = await step("tokenize_query", () => tokenize(data.message), () => ({ tokens_count: tokenize(data.message).length }));
     const qSet = new Set(qTokens);
     const scored = kbAll.map((k) => {
       const hay = tokenize(`${k.title} ${k.content} ${(k.tags ?? []).join(" ")}`);
@@ -77,8 +135,13 @@ export const ellaSandboxChat = createServerFn({ method: "POST" })
 
     const topK = data.topK ?? 6;
     const relevant = scored.filter((s) => s.score > 0).slice(0, topK);
-    // Se nada casou, ainda envia os mais recentes para dar contexto mínimo.
     const used = relevant.length > 0 ? relevant : scored.slice(0, Math.min(3, scored.length));
+    steps.push({
+      name: "rank_knowledge",
+      status: "ok",
+      at_ms: Date.now() - t0 - startedAt + startedAt,
+      detail: { kb_total: kbAll.length, kb_used: used.length, top_k: topK },
+    });
 
     const kbBlock = used.length
       ? `\n\nCONHECIMENTO RELEVANTE (recuperado da base de treinamento — priorize sobre suposições):\n${used
@@ -87,18 +150,21 @@ export const ellaSandboxChat = createServerFn({ method: "POST" })
       : "";
 
     const basePrompt = data.scope === "admin" ? ADMIN_SYSTEM_PROMPT : PUBLIC_SYSTEM_PROMPT;
+    const basePromptName = data.scope === "admin" ? "ADMIN_SYSTEM_PROMPT" : "PUBLIC_SYSTEM_PROMPT";
     const today = new Date().toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo" });
     const systemPrompt = `${basePrompt}\n\nModo: SANDBOX de teste. Não execute tools reais — responda com base apenas no conhecimento fornecido e nas diretrizes.\nData/hora atual (America/Sao_Paulo): ${today}${kbBlock}`;
-
-    const temperature = 0.4;
+    const knowledgeUsed = used.map((k) => ({
+      id: k.id, title: k.title, content: k.content, scope: k.scope, tags: k.tags,
+      score: k.score, matched: k.matched,
+    }));
 
     try {
-      const result = await generateText({
+      const result = await step("generate_text", () => generateText({
         model,
         system: systemPrompt,
         messages: [{ role: "user", content: data.message }],
         temperature,
-      });
+      }), () => ({ model: modelName, temperature }));
 
       const duration = Date.now() - startedAt;
       logAiEvent({
@@ -112,16 +178,6 @@ export const ellaSandboxChat = createServerFn({ method: "POST" })
         extra: { kb_used: used.length, scope: data.scope },
       });
 
-      const knowledgeUsed = used.map((k) => ({
-        id: k.id,
-        title: k.title,
-        content: k.content,
-        scope: k.scope,
-        tags: k.tags,
-        score: k.score,
-        matched: k.matched,
-      }));
-
       const { data: run } = await supabase
         .from("ella_sandbox_runs" as any)
         .insert({
@@ -134,16 +190,20 @@ export const ellaSandboxChat = createServerFn({ method: "POST" })
           temperature,
           duration_ms: duration,
           trace_id: traceId,
-          base_prompt_name: data.scope === "admin" ? "ADMIN_SYSTEM_PROMPT" : "PUBLIC_SYSTEM_PROMPT",
+          base_prompt_name: basePromptName,
           system_prompt: systemPrompt,
           knowledge_used: knowledgeUsed,
           knowledge_total: kbAll.length,
+          status: "success",
+          inputs,
+          steps,
         } as any)
         .select("id")
         .single();
 
       return {
         run_id: (run as any)?.id ?? null,
+        status: "success" as const,
         answer: result.text || "(sem resposta)",
         trace_id: traceId,
         duration_ms: duration,
@@ -152,22 +212,105 @@ export const ellaSandboxChat = createServerFn({ method: "POST" })
         scope: data.scope,
         temperature,
         systemPrompt,
-        basePromptName: data.scope === "admin" ? "ADMIN_SYSTEM_PROMPT" : "PUBLIC_SYSTEM_PROMPT",
+        basePromptName,
         knowledgeTotal: kbAll.length,
         knowledgeUsed,
+        inputs,
+        steps,
+        error: null as null | { type: string; message: string; stack?: string | null },
       };
     } catch (err: any) {
       const cls = classifyAiError(err);
+      const duration = Date.now() - startedAt;
       logAiEvent({
         provider: "lovable-ai-gateway",
         model: modelName,
         endpoint: "/ella-sandbox",
         trace_id: traceId,
         status: "error",
-        duration_ms: Date.now() - startedAt,
+        duration_ms: duration,
         user_id: userId,
         ...cls,
       });
-      throw new Error(cls.error_message ?? "Falha ao consultar a Ella.");
+      const errMsg = cls.error_message ?? err?.message ?? "Falha ao consultar a Ella.";
+      const errType = (cls as any).error_type ?? "unknown";
+      const stack = err?.stack ?? null;
+      const { data: run } = await supabase
+        .from("ella_sandbox_runs" as any)
+        .insert({
+          created_by: userId,
+          question: data.message,
+          answer: null,
+          scope: data.scope,
+          model: modelName,
+          provider: "Lovable AI Gateway",
+          temperature,
+          duration_ms: duration,
+          trace_id: traceId,
+          base_prompt_name: basePromptName,
+          system_prompt: systemPrompt,
+          knowledge_used: knowledgeUsed,
+          knowledge_total: kbAll.length,
+          status: "error",
+          inputs,
+          steps,
+          error_type: errType,
+          error_message: errMsg,
+          stack_trace: stack,
+        } as any)
+        .select("id")
+        .single();
+
+      const e = new Error(errMsg) as Error & {
+        run_id?: string; error_type?: string; stack_trace?: string | null; steps?: unknown;
+      };
+      e.run_id = (run as any)?.id;
+      e.error_type = errType;
+      e.stack_trace = stack;
+      e.steps = steps;
+      throw e;
     }
   });
+
+async function persistErrorRun(
+  supabase: any,
+  userId: string,
+  ctx: {
+    inputs: Record<string, unknown>;
+    steps: unknown;
+    traceId: string;
+    modelName: string;
+    temperature: number;
+    scope: string;
+    systemPrompt: string;
+    basePromptName: string;
+    knowledgeUsed: unknown;
+    knowledgeTotal: number;
+    duration: number;
+    error_type: string;
+    error_message: string;
+    stack_trace: string | null;
+  },
+) {
+  await supabase.from("ella_sandbox_runs" as any).insert({
+    created_by: userId,
+    question: (ctx.inputs as any).message ?? "",
+    answer: null,
+    scope: ctx.scope,
+    model: ctx.modelName,
+    provider: "Lovable AI Gateway",
+    temperature: ctx.temperature,
+    duration_ms: ctx.duration,
+    trace_id: ctx.traceId,
+    base_prompt_name: ctx.basePromptName,
+    system_prompt: ctx.systemPrompt,
+    knowledge_used: ctx.knowledgeUsed,
+    knowledge_total: ctx.knowledgeTotal,
+    status: "error",
+    inputs: ctx.inputs,
+    steps: ctx.steps,
+    error_type: ctx.error_type,
+    error_message: ctx.error_message,
+    stack_trace: ctx.stack_trace,
+  } as any);
+}

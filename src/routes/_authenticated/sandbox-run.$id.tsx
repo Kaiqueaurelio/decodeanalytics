@@ -10,7 +10,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { ArrowLeft, BookOpen, Clock, Copy, Cpu, Sparkles } from "lucide-react";
+import { ArrowLeft, BookOpen, Clock, Copy, Cpu, Sparkles, AlertTriangle, ListChecks, CheckCircle2, XCircle } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/sandbox-run/$id")({
@@ -67,6 +67,10 @@ function SandboxRunDetail() {
   }
 
   const knowledgeUsed = (data.knowledge_used ?? []) as KnowledgeUsed[];
+  const steps = ((data.steps ?? []) as any[]) as Array<{
+    name: string; status: "ok" | "error"; at_ms: number; duration_ms?: number; detail?: any; error?: string;
+  }>;
+  const isError = data.status === "error";
 
   return (
     <div className="mx-auto max-w-4xl space-y-6 p-4 md:p-6">
@@ -93,15 +97,33 @@ function SandboxRunDetail() {
       </div>
 
       <Card className="p-4 md:p-6 space-y-2">
-        <div className="text-xs text-muted-foreground">ID do teste</div>
+        <div className="flex flex-wrap items-center gap-2">
+          <div className="text-xs text-muted-foreground">ID do teste</div>
+          <Badge variant={isError ? "destructive" : "secondary"}>{data.status ?? "success"}</Badge>
+        </div>
         <div className="font-mono text-sm break-all">{data.id}</div>
       </Card>
+
+      {isError && (
+        <Card className="space-y-3 border-destructive/40 bg-destructive/5 p-4 md:p-6">
+          <div className="flex items-center gap-2">
+            <AlertTriangle className="h-5 w-5 text-destructive" />
+            <h2 className="text-lg font-semibold text-destructive">Falha</h2>
+            {data.error_type && <Badge variant="destructive" className="ml-auto">{data.error_type}</Badge>}
+          </div>
+          {data.error_message && <p className="text-sm text-destructive">{data.error_message}</p>}
+          {data.stack_trace && (
+            <pre className="max-h-[360px] overflow-auto whitespace-pre-wrap rounded-lg border bg-muted/30 p-3 text-xs">{data.stack_trace}</pre>
+          )}
+        </Card>
+      )}
 
       <Card className="p-4 md:p-6 space-y-3">
         <h2 className="text-sm font-medium text-muted-foreground">Pergunta</h2>
         <p className="whitespace-pre-wrap text-sm">{data.question}</p>
       </Card>
 
+      {data.answer && (
       <Card className="p-4 md:p-6 space-y-3">
         <div className="flex items-center gap-2">
           <Sparkles className="h-5 w-5 text-primary" />
@@ -125,9 +147,42 @@ function SandboxRunDetail() {
           )}
         </div>
       </Card>
+      )}
 
       <Card className="p-4 md:p-6">
         <Accordion type="multiple" defaultValue={["kb"]}>
+          {steps.length > 0 && (
+            <AccordionItem value="steps">
+              <AccordionTrigger>
+                <span className="flex items-center gap-2"><ListChecks className="h-4 w-4" />Passos executados ({steps.length})</span>
+              </AccordionTrigger>
+              <AccordionContent>
+                <ol className="space-y-2 text-sm">
+                  {steps.map((s, i) => (
+                    <li key={i} className="rounded border p-2">
+                      <div className="flex items-center gap-2">
+                        {s.status === "ok" ? <CheckCircle2 className="h-4 w-4 text-emerald-500" /> : <XCircle className="h-4 w-4 text-destructive" />}
+                        <span className="font-mono text-xs">{s.name}</span>
+                        <span className="ml-auto text-[11px] text-muted-foreground">+{s.at_ms}ms{typeof s.duration_ms === "number" ? ` · ${s.duration_ms}ms` : ""}</span>
+                      </div>
+                      {s.error && <div className="mt-1 text-xs text-destructive">{s.error}</div>}
+                      {s.detail && (
+                        <pre className="mt-1 overflow-auto rounded bg-muted/50 p-2 text-[11px]">{JSON.stringify(s.detail, null, 2)}</pre>
+                      )}
+                    </li>
+                  ))}
+                </ol>
+              </AccordionContent>
+            </AccordionItem>
+          )}
+          {data.inputs && (
+            <AccordionItem value="inputs">
+              <AccordionTrigger>Inputs do teste</AccordionTrigger>
+              <AccordionContent>
+                <pre className="max-h-[280px] overflow-auto rounded-lg border bg-muted/30 p-3 text-xs">{JSON.stringify(data.inputs, null, 2)}</pre>
+              </AccordionContent>
+            </AccordionItem>
+          )}
           <AccordionItem value="kb">
             <AccordionTrigger>
               <span className="flex items-center gap-2">

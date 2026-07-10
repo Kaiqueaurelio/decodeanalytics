@@ -310,52 +310,70 @@ export type Database = {
       }
       ella_sandbox_runs: {
         Row: {
-          answer: string
+          answer: string | null
           base_prompt_name: string | null
           created_at: string
           created_by: string | null
           duration_ms: number | null
+          error_message: string | null
+          error_type: string | null
           id: string
+          inputs: Json
           knowledge_total: number
           knowledge_used: Json
           model: string
           provider: string
           question: string
           scope: string
+          stack_trace: string | null
+          status: string
+          steps: Json
           system_prompt: string | null
           temperature: number | null
           trace_id: string | null
         }
         Insert: {
-          answer: string
+          answer?: string | null
           base_prompt_name?: string | null
           created_at?: string
           created_by?: string | null
           duration_ms?: number | null
+          error_message?: string | null
+          error_type?: string | null
           id?: string
+          inputs?: Json
           knowledge_total?: number
           knowledge_used?: Json
           model: string
           provider: string
           question: string
           scope: string
+          stack_trace?: string | null
+          status?: string
+          steps?: Json
           system_prompt?: string | null
           temperature?: number | null
           trace_id?: string | null
         }
         Update: {
-          answer?: string
+          answer?: string | null
           base_prompt_name?: string | null
           created_at?: string
           created_by?: string | null
           duration_ms?: number | null
+          error_message?: string | null
+          error_type?: string | null
           id?: string
+          inputs?: Json
           knowledge_total?: number
           knowledge_used?: Json
           model?: string
           provider?: string
           question?: string
           scope?: string
+          stack_trace?: string | null
+          status?: string
+          steps?: Json
           system_prompt?: string | null
           temperature?: number | null
           trace_id?: string | null
