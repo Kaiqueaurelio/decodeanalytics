@@ -26,6 +26,7 @@ import { Route as AuthenticatedProductionRouteImport } from './routes/_authentic
 import { Route as AuthenticatedPdvRouteImport } from './routes/_authenticated/pdv'
 import { Route as AuthenticatedOrdersRouteImport } from './routes/_authenticated/orders'
 import { Route as AuthenticatedInventoryRouteImport } from './routes/_authenticated/inventory'
+import { Route as AuthenticatedEllaTrainingRouteImport } from './routes/_authenticated/ella-training'
 import { Route as AuthenticatedEllaRouteImport } from './routes/_authenticated/ella'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedClosuresRouteImport } from './routes/_authenticated/closures'
@@ -120,6 +121,12 @@ const AuthenticatedInventoryRoute = AuthenticatedInventoryRouteImport.update({
   path: '/inventory',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedEllaTrainingRoute =
+  AuthenticatedEllaTrainingRouteImport.update({
+    id: '/ella-training',
+    path: '/ella-training',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedEllaRoute = AuthenticatedEllaRouteImport.update({
   id: '/ella',
   path: '/ella',
@@ -174,6 +181,7 @@ export interface FileRoutesByFullPath {
   '/closures': typeof AuthenticatedClosuresRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/ella': typeof AuthenticatedEllaRoute
+  '/ella-training': typeof AuthenticatedEllaTrainingRoute
   '/inventory': typeof AuthenticatedInventoryRoute
   '/orders': typeof AuthenticatedOrdersRoute
   '/pdv': typeof AuthenticatedPdvRoute
@@ -200,6 +208,7 @@ export interface FileRoutesByTo {
   '/closures': typeof AuthenticatedClosuresRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/ella': typeof AuthenticatedEllaRoute
+  '/ella-training': typeof AuthenticatedEllaTrainingRoute
   '/inventory': typeof AuthenticatedInventoryRoute
   '/orders': typeof AuthenticatedOrdersRoute
   '/pdv': typeof AuthenticatedPdvRoute
@@ -228,6 +237,7 @@ export interface FileRoutesById {
   '/_authenticated/closures': typeof AuthenticatedClosuresRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/ella': typeof AuthenticatedEllaRoute
+  '/_authenticated/ella-training': typeof AuthenticatedEllaTrainingRoute
   '/_authenticated/inventory': typeof AuthenticatedInventoryRoute
   '/_authenticated/orders': typeof AuthenticatedOrdersRoute
   '/_authenticated/pdv': typeof AuthenticatedPdvRoute
@@ -256,6 +266,7 @@ export interface FileRouteTypes {
     | '/closures'
     | '/dashboard'
     | '/ella'
+    | '/ella-training'
     | '/inventory'
     | '/orders'
     | '/pdv'
@@ -282,6 +293,7 @@ export interface FileRouteTypes {
     | '/closures'
     | '/dashboard'
     | '/ella'
+    | '/ella-training'
     | '/inventory'
     | '/orders'
     | '/pdv'
@@ -309,6 +321,7 @@ export interface FileRouteTypes {
     | '/_authenticated/closures'
     | '/_authenticated/dashboard'
     | '/_authenticated/ella'
+    | '/_authenticated/ella-training'
     | '/_authenticated/inventory'
     | '/_authenticated/orders'
     | '/_authenticated/pdv'
@@ -457,6 +470,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedInventoryRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/ella-training': {
+      id: '/_authenticated/ella-training'
+      path: '/ella-training'
+      fullPath: '/ella-training'
+      preLoaderRoute: typeof AuthenticatedEllaTrainingRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/ella': {
       id: '/_authenticated/ella'
       path: '/ella'
@@ -524,6 +544,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedClosuresRoute: typeof AuthenticatedClosuresRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedEllaRoute: typeof AuthenticatedEllaRoute
+  AuthenticatedEllaTrainingRoute: typeof AuthenticatedEllaTrainingRoute
   AuthenticatedInventoryRoute: typeof AuthenticatedInventoryRoute
   AuthenticatedOrdersRoute: typeof AuthenticatedOrdersRoute
   AuthenticatedPdvRoute: typeof AuthenticatedPdvRoute
@@ -542,6 +563,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedClosuresRoute: AuthenticatedClosuresRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedEllaRoute: AuthenticatedEllaRoute,
+  AuthenticatedEllaTrainingRoute: AuthenticatedEllaTrainingRoute,
   AuthenticatedInventoryRoute: AuthenticatedInventoryRoute,
   AuthenticatedOrdersRoute: AuthenticatedOrdersRoute,
   AuthenticatedPdvRoute: AuthenticatedPdvRoute,
@@ -570,13 +592,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
