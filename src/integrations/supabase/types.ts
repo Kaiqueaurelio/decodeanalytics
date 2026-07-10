@@ -308,6 +308,60 @@ export type Database = {
         }
         Relationships: []
       }
+      ella_sandbox_runs: {
+        Row: {
+          answer: string
+          base_prompt_name: string | null
+          created_at: string
+          created_by: string | null
+          duration_ms: number | null
+          id: string
+          knowledge_total: number
+          knowledge_used: Json
+          model: string
+          provider: string
+          question: string
+          scope: string
+          system_prompt: string | null
+          temperature: number | null
+          trace_id: string | null
+        }
+        Insert: {
+          answer: string
+          base_prompt_name?: string | null
+          created_at?: string
+          created_by?: string | null
+          duration_ms?: number | null
+          id?: string
+          knowledge_total?: number
+          knowledge_used?: Json
+          model: string
+          provider: string
+          question: string
+          scope: string
+          system_prompt?: string | null
+          temperature?: number | null
+          trace_id?: string | null
+        }
+        Update: {
+          answer?: string
+          base_prompt_name?: string | null
+          created_at?: string
+          created_by?: string | null
+          duration_ms?: number | null
+          id?: string
+          knowledge_total?: number
+          knowledge_used?: Json
+          model?: string
+          provider?: string
+          question?: string
+          scope?: string
+          system_prompt?: string | null
+          temperature?: number | null
+          trace_id?: string | null
+        }
+        Relationships: []
+      }
       order_files: {
         Row: {
           client_id: string | null
