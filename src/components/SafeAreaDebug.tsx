@@ -21,6 +21,7 @@ export function SafeAreaDebug() {
   const [enabled, setEnabled] = useState(false);
   const [insets, setInsets] = useState({ top: 0, right: 0, bottom: 0, left: 0 });
   const [violations, setViolations] = useState<Violation[]>([]);
+  const [threshold, setThreshold] = useState<number>(2);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -51,6 +52,12 @@ export function SafeAreaDebug() {
     read();
     compute();
 
+    // Lê threshold salvo (px)
+    const savedThreshold = Number(localStorage.getItem("debug:safe-area-threshold"));
+    if (Number.isFinite(savedThreshold) && savedThreshold >= 0) {
+      setThreshold(savedThreshold);
+    }
+
     const toggle = (value?: boolean) => {
       const next = typeof value === "boolean" ? value : localStorage.getItem("debug:safe-area") !== "1";
       if (next) localStorage.setItem("debug:safe-area", "1");
@@ -61,6 +68,21 @@ export function SafeAreaDebug() {
       return next;
     };
     (window as unknown as { __toggleSafeArea?: (v?: boolean) => boolean }).__toggleSafeArea = toggle;
+
+    const setThresh = (px: number) => {
+      const n = Math.max(0, Math.round(Number(px) || 0));
+      localStorage.setItem("debug:safe-area-threshold", String(n));
+      setThreshold(n);
+      // eslint-disable-next-line no-console
+      console.info(`[SafeAreaDebug] threshold = ${n}px`);
+      return n;
+    };
+    (window as unknown as { __setSafeAreaThreshold?: (px: number) => number }).__setSafeAreaThreshold =
+      setThresh;
+
+    // Aceita ?safeAreaThreshold=NN na URL
+    const urlT = new URL(window.location.href).searchParams.get("safeAreaThreshold");
+    if (urlT !== null) setThresh(Number(urlT));
 
     window.addEventListener("resize", compute);
     window.addEventListener("orientationchange", compute);
@@ -101,10 +123,17 @@ export function SafeAreaDebug() {
         if (r.bottom < 0 || r.top > vh || r.right < 0 || r.left > vw) continue;
 
         const sides: string[] = [];
-        if (insets.top > 0 && r.top < insets.top) sides.push("top");
-        if (insets.bottom > 0 && r.bottom > vh - insets.bottom) sides.push("bottom");
-        if (insets.left > 0 && r.left < insets.left) sides.push("left");
-        if (insets.right > 0 && r.right > vw - insets.right) sides.push("right");
+        // Profundidade da invasão por lado (px), aplica threshold mínimo
+        const depthTop = insets.top - r.top;
+        const depthBottom = r.bottom - (vh - insets.bottom);
+        const depthLeft = insets.left - r.left;
+        const depthRight = r.right - (vw - insets.right);
+        if (insets.top > 0 && depthTop > threshold) sides.push(`top+${Math.round(depthTop)}`);
+        if (insets.bottom > 0 && depthBottom > threshold)
+          sides.push(`bottom+${Math.round(depthBottom)}`);
+        if (insets.left > 0 && depthLeft > threshold) sides.push(`left+${Math.round(depthLeft)}`);
+        if (insets.right > 0 && depthRight > threshold)
+          sides.push(`right+${Math.round(depthRight)}`);
         if (sides.length === 0) continue;
 
         found.push({
@@ -138,7 +167,7 @@ export function SafeAreaDebug() {
       window.removeEventListener("scroll", onScroll, { capture: true } as EventListenerOptions);
       window.removeEventListener("resize", scan);
     };
-  }, [enabled, insets]);
+  }, [enabled, insets, threshold]);
 
   if (!enabled) return null;
 
@@ -217,7 +246,9 @@ export function SafeAreaDebug() {
         <div className="mt-1 border-t border-white/20 pt-1 font-bold text-amber-300">
           {violations.length} sobrepos{violations.length === 1 ? "ição" : "ições"}
         </div>
+        <div className="text-[9px] text-white/70">threshold: {threshold}px</div>
         <div className="mt-1 text-[9px] text-white/60">__toggleSafeArea() p/ desligar</div>
+        <div className="text-[9px] text-white/60">__setSafeAreaThreshold(px)</div>
       </div>
 
       {/* Destaques em elementos fixed/sticky que invadem safe areas */}
