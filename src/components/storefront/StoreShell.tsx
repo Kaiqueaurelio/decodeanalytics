@@ -71,12 +71,12 @@ function CartCountBadge() {
 
 function TopPromoBar() {
   return (
-    <div className="bg-[var(--store-secondary)] text-[var(--store-primary-dark)]">
-      <div className="mx-auto flex min-h-9 max-w-[1280px] items-center justify-center gap-1 px-3 py-1.5 text-center text-[11px] font-semibold sm:min-h-10 sm:gap-2 sm:px-4 sm:py-2 sm:text-[13px] md:text-sm">
+    <div className="safe-area-top bg-[var(--store-secondary)] text-[var(--store-primary-dark)]">
+      <div className="mx-auto flex min-h-9 max-w-[1280px] items-center justify-center gap-1 px-3 py-1.5 text-center text-[11px] font-semibold leading-tight sm:min-h-10 sm:gap-2 sm:px-4 sm:py-2 sm:text-[13px] md:text-sm">
         <Tag className="h-4 w-4 shrink-0" aria-hidden="true" />
-        <span>
+        <span className="min-w-0 break-words">
           Ganhe <strong>10% OFF</strong> na sua primeira compra — cupom{" "}
-          <strong className="rounded-md bg-[var(--store-primary)] px-2 py-0.5 text-[var(--store-secondary)]">
+          <strong className="inline-block rounded-md bg-[var(--store-primary)] px-2 py-0.5 text-[var(--store-secondary)]">
             BEMVINDO10
           </strong>
         </span>
@@ -91,8 +91,8 @@ function StoreHeader() {
   const info = useCompanyInfo();
   const waLink = useWaLink();
   return (
-    <header className="safe-area-header sticky top-0 z-30 border-b border-[var(--store-border)] bg-[var(--store-surface)]/95 backdrop-blur">
-      <div className="mx-auto flex max-w-[1280px] items-center gap-2 px-3 py-2 sm:gap-3 sm:px-4 sm:py-3 md:gap-6 md:py-4">
+    <header className="store-sticky-header sticky z-30 border-b border-[var(--store-border)] bg-[var(--store-surface)]/95 backdrop-blur">
+      <div className="mx-auto grid max-w-[1280px] grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2 px-3 py-2 sm:gap-3 sm:px-4 sm:py-3 md:flex md:gap-6 md:py-4">
         <Link to="/" className="flex shrink-0 items-center gap-2 sm:gap-3">
           <img
             src="/brand/alcateia-symbol.png"
@@ -129,11 +129,11 @@ function StoreHeader() {
             value={q}
             onChange={(e) => setQ(e.target.value)}
             placeholder="O que você está procurando?"
-            className="h-10 w-full rounded-[var(--store-radius-lg)] border border-[var(--store-border)] bg-white pl-10 pr-24 text-xs sm:h-11 sm:pl-12 sm:pr-28 sm:text-sm md:h-12 md:text-[15px] outline-none transition-all placeholder:text-[var(--store-text-light)] focus:border-[var(--store-primary-light)] focus:ring-4 focus:ring-[var(--store-primary-light)]/15"
+            className="h-10 w-full min-w-0 rounded-[var(--store-radius-lg)] border border-[var(--store-border)] bg-white pl-10 pr-20 text-base sm:h-11 sm:pl-12 sm:pr-28 sm:text-base md:h-12 md:text-base outline-none transition-all placeholder:text-[var(--store-text-light)] focus:border-[var(--store-primary-light)] focus:ring-4 focus:ring-[var(--store-primary-light)]/15"
           />
           <button
             type="submit"
-            className="absolute right-1 top-1/2 -translate-y-1/2 rounded-[var(--store-radius-md)] bg-[var(--store-primary)] px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-white transition-colors hover:bg-[var(--store-primary-light)] sm:right-1.5 sm:px-3 sm:py-1.5 sm:text-xs md:px-4 md:py-2 md:text-sm"
+            className="absolute right-1 top-1/2 min-h-8 -translate-y-1/2 rounded-[var(--store-radius-md)] bg-[var(--store-primary)] px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-white transition-colors hover:bg-[var(--store-primary-light)] sm:right-1.5 sm:min-h-9 sm:px-3 sm:py-1.5 sm:text-xs md:px-4 md:py-2 md:text-sm"
           >
             Buscar
           </button>
@@ -483,8 +483,8 @@ function FloatingWhatsApp() {
       rel="noopener noreferrer"
       aria-label="Falar no WhatsApp"
       style={{
-        bottom: "max(1.25rem, env(safe-area-inset-bottom))",
-        right: "max(1.25rem, env(safe-area-inset-right))",
+        bottom: "calc(env(safe-area-inset-bottom) + 1.25rem)",
+        right: "calc(env(safe-area-inset-right) + 1.25rem)",
       }}
       className="fixed z-40 grid h-14 w-14 place-items-center rounded-full bg-[var(--store-success)] text-white shadow-lg transition-transform hover:scale-110"
     >
