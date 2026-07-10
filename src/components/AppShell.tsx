@@ -23,6 +23,7 @@ import {
   Sparkles,
   Users,
   Activity,
+  GraduationCap,
   X,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
@@ -142,6 +143,14 @@ const NAV: NavItem[] = [
     label: "Ella Ribeiro",
     description: "Assistente de IA para gestão",
     icon: Sparkles,
+    section: "Administração",
+    roles: ["administrador"],
+  },
+  {
+    to: "/ella-training",
+    label: "Treinar a Ella",
+    description: "Base de conhecimento e comportamento da assistente",
+    icon: GraduationCap,
     section: "Administração",
     roles: ["administrador"],
   },
