@@ -143,8 +143,10 @@ export const ellaSandboxChat = createServerFn({ method: "POST" })
     steps.push({
       name: "rank_knowledge",
       status: "ok",
-      at_ms: Date.now() - t0 - startedAt + startedAt,
+      at_ms: Date.now() - t0,
+      duration_ms: 0,
       detail: { kb_total: kbAll.length, kb_used: used.length, top_k: topK },
+      error: null,
     });
 
     const kbBlock = used.length
