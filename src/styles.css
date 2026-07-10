@@ -257,6 +257,16 @@
     padding-right: env(safe-area-inset-right);
   }
 
+  /* PWA standalone (adicionado à tela inicial): reserva as insets
+     superior e inferior para que nada fique sob o notch / dynamic island
+     no iOS ou sob a barra de gestos do Android. */
+  @media all and (display-mode: standalone), all and (display-mode: fullscreen) {
+    body {
+      padding-top: env(safe-area-inset-top);
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+  }
+
   h1,
   h2,
   h3 {
