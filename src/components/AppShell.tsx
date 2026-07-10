@@ -156,6 +156,14 @@ const NAV: NavItem[] = [
     roles: ["administrador"],
   },
   {
+    to: "/ella-sandbox",
+    label: "Sandbox da Ella",
+    description: "Testar respostas e ver treinamento aplicado",
+    icon: Beaker,
+    section: "Administração",
+    roles: ["administrador"],
+  },
+  {
     to: "/ai-logs",
     label: "Logs do Assistente",
     description: "Falhas e chamadas do gateway de IA",
