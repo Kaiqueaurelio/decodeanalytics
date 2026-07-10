@@ -3,6 +3,12 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { generateText, tool, stepCountIs } from "ai";
 import { z } from "zod";
 import { createLovableGateway } from "@/lib/ai-gateway.server";
+import {
+  ADMIN_SYSTEM_PROMPT,
+  STATUS_ENUM,
+  resolveClientId,
+  transcribeAttachment,
+} from "./ella.helpers.server";
 
 const MessageSchema = z.object({
   role: z.enum(["user", "assistant"]),
@@ -20,103 +26,6 @@ const InputSchema = z.object({
   conversationHistory: z.array(MessageSchema).optional(),
   attachments: z.array(AttachmentSchema).optional(),
 });
-
-const SYSTEM_PROMPT = `Você é Ella Ribeiro, assistente operacional da Alcateia's Produções Gráficas.
-
-Personalidade: profissional, calorosa, direta, com bom humor sutil. Fala em português do Brasil.
-Você é especialista no universo gráfico (impressão offset e digital, papéis, gramaturas, acabamentos, prazos, cores CMYK/Pantone, arquivos abertos vs fechados, sangria/margem de segurança, formatos, orçamentação).
-Você também é uma boa conversadora: se perguntarem "o que você sabe fazer?", "como está seu dia?", "me explica X", responda com naturalidade — sem tools, só um papo objetivo e útil, sempre puxando para o contexto de gráfica quando fizer sentido.
-
-Você tem AÇÕES REAIS no sistema (tools). Use-as sempre que o usuário pedir para criar, buscar, listar, atualizar ou remover algo. Não invente dados: chame a tool correspondente e use o resultado.
-
-Fluxos comuns:
-- Nova OS: se o cliente não existir, crie primeiro com create_client, depois create_order com os itens.
-- Cobrança: use create_receivable (opcional vincular a uma OS pelo número).
-- Andamento: update_order_status muda a etapa da produção.
-- Lembretes: se tiver título e horário claros, execute create_reminder direto e confirme no final. Só pergunte se o horário estiver ambíguo.
-- Panorama: use dashboard_summary para números gerais.
-- Treinamento/aprendizado: quando o usuário disser "aprenda que...", "lembre que...", "guarda esse conhecimento...", "treinamento:", "isso aqui você usa no atendimento ao cliente", etc, chame add_knowledge com título curto, o conteúdo completo, e o escopo correto (admin/public/both). Se o admin pedir "isso vale para os clientes também" use scope='both' ou 'public'. Se disser "isso é só interno" use 'admin'.
-- Consultar aprendizados: use list_knowledge para procurar antes de responder algo específico da empresa (preços, políticas, produtos, prazos, formas de pagamento). Se houver conhecimento salvo relevante, priorize-o sobre suposições.
-- Anexos (imagens/PDF/vídeo/áudio): quando o usuário mandar arquivo, analise o conteúdo e responda com base nele. Áudios já vêm transcritos automaticamente.
-- Ações destrutivas (excluir cliente, cancelar OS, excluir cobrança): confirme brevemente antes de executar, a não ser que o usuário já tenha deixado claro na frase.
-
-Regras:
-- Execute direto criações e atualizações comuns (OS, cobrança, lembrete, cliente, status). Só peça confirmação para cancelar/excluir.
-- Nunca responda "posso agendar?" — se der pra executar, execute; depois confirme com o resultado real da tool.
-- Formate respostas em markdown (listas, negrito, tabelas curtas).
-- Ao criar OS ou cobrança, mostre o número/identificador e valor total.
-- Datas relativas ("amanhã 10h", "sexta") — resolva você mesma para ISO 8601 no timezone America/Sao_Paulo.
-- Nunca peça senha, chave ou dados sensíveis.`;
-
-const STATUS_ENUM = [
-  "orcamento",
-  "aguardando_aprovacao",
-  "aguardando_arte",
-  "arte_em_criacao",
-  "aguardando_pagamento",
-  "aprovado",
-  "em_producao",
-  "pausado",
-  "pronto_para_retirada",
-  "entregue",
-  "cancelado",
-] as const;
-
-async function resolveClientId(
-  supabase: any,
-  clientId?: string | null,
-  clientName?: string | null,
-) {
-  if (clientId) return clientId;
-  if (!clientName) return null;
-  const { data } = await supabase
-    .from("clients")
-    .select("id,name")
-    .ilike("name", `%${clientName}%`)
-    .limit(1)
-    .maybeSingle();
-  return data?.id ?? null;
-}
-
-async function transcribeAttachment(
-  key: string,
-  att: { name: string; mimeType: string; dataBase64: string },
-): Promise<string> {
-  try {
-    const bin = atob(att.dataBase64);
-    const bytes = new Uint8Array(bin.length);
-    for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
-    const blob = new Blob([bytes], { type: att.mimeType });
-    const mt = att.mimeType.toLowerCase();
-    const ext = mt.includes("wav")
-      ? "wav"
-      : mt.includes("mpeg") || mt.includes("mp3")
-        ? "mp3"
-        : mt.includes("mp4") || mt.includes("m4a") || mt.includes("aac")
-          ? "m4a"
-          : mt.includes("ogg")
-            ? "ogg"
-            : "webm";
-    const form = new FormData();
-    form.append("model", "openai/gpt-4o-mini-transcribe");
-    form.append("file", blob, `audio.${ext}`);
-    const res = await fetch("https://ai.gateway.lovable.dev/v1/audio/transcriptions", {
-      method: "POST",
-      headers: { Authorization: `Bearer ${key}` },
-      body: form,
-    });
-    if (!res.ok) {
-      const txt = await res.text().catch(() => "");
-      console.error("STT failed", res.status, txt);
-      return "";
-    }
-    const json: any = await res.json();
-    return typeof json?.text === "string" ? json.text : "";
-  } catch (e) {
-    console.error("STT error", e);
-    return "";
-  }
-}
 
 export const ellaChat = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
@@ -689,7 +598,7 @@ export const ellaChat = createServerFn({ method: "POST" })
     try {
       const result = await generateText({
         model,
-        system: `${SYSTEM_PROMPT}\n\nData/hora atual (America/Sao_Paulo): ${today}${kbBlock}`,
+        system: `${ADMIN_SYSTEM_PROMPT}\n\nData/hora atual (America/Sao_Paulo): ${today}${kbBlock}`,
         messages: [...history, userMessage],
         tools,
         stopWhen: stepCountIs(50),
