@@ -24,6 +24,7 @@ import {
   Users,
   Activity,
   GraduationCap,
+  Beaker,
   X,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
