@@ -23,7 +23,7 @@ function shuffle<T>(arr: T[], seed: number) {
 }
 
 export function InfiniteProducts() {
-  const { data, isLoading } = useStoreProducts();
+  const { data, isLoading, isError, refetch, isFetching } = useStoreProducts();
   const all = useMemo(() => data ?? [], [data]);
   const [pages, setPages] = useState(1);
   const sentinel = useRef<HTMLDivElement | null>(null);
@@ -73,6 +73,26 @@ export function InfiniteProducts() {
               style={{ minHeight: 280 }}
             />
           ))}
+        </div>
+      </section>
+    );
+  }
+
+  if (isError) {
+    return (
+      <section className="mx-auto w-full max-w-[1280px] px-4 py-12">
+        <div className="flex flex-col items-center gap-3 rounded-[var(--store-radius-lg)] border border-destructive/30 bg-destructive/5 p-8 text-center">
+          <p className="text-sm font-semibold text-destructive">
+            Não foi possível carregar o catálogo.
+          </p>
+          <button
+            type="button"
+            onClick={() => void refetch()}
+            disabled={isFetching}
+            className="inline-flex min-h-11 items-center rounded-full bg-store-primary px-5 text-xs font-extrabold uppercase tracking-[0.18em] text-inverse disabled:opacity-60"
+          >
+            {isFetching ? "Tentando..." : "Tentar novamente"}
+          </button>
         </div>
       </section>
     );
