@@ -133,7 +133,7 @@ function StoreHeader() {
           />
           <button
             type="submit"
-            className="absolute right-1 top-1/2 min-h-8 -translate-y-1/2 rounded-[var(--store-radius-md)] bg-[var(--store-primary)] px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-white transition-colors hover:bg-[var(--store-primary-light)] sm:right-1.5 sm:min-h-9 sm:px-3 sm:py-1.5 sm:text-xs md:px-4 md:py-2 md:text-sm"
+            className="absolute right-1 top-1/2 inline-flex min-h-11 min-w-11 -translate-y-1/2 items-center justify-center rounded-[var(--store-radius-md)] bg-[var(--store-primary)] px-3 text-[10px] font-bold uppercase tracking-wide text-white transition-colors hover:bg-[var(--store-primary-light)] sm:right-1.5 sm:text-xs md:px-4 md:text-sm"
           >
             Buscar
           </button>
@@ -363,14 +363,14 @@ function StoreFooter() {
               target={info.instagramUrl ? "_blank" : undefined}
               rel={info.instagramUrl ? "noopener noreferrer" : undefined}
               aria-label="Instagram"
-              className="grid h-9 w-9 place-items-center rounded-lg bg-white/10 hover:bg-white/20"
+              className="grid h-11 w-11 place-items-center rounded-lg bg-white/10 transition-colors hover:bg-white/20"
             >
               <Instagram className="h-4 w-4" />
             </a>
             <a
               href="#"
               aria-label="Facebook"
-              className="grid h-9 w-9 place-items-center rounded-lg bg-white/10 hover:bg-white/20"
+              className="grid h-11 w-11 place-items-center rounded-lg bg-white/10 transition-colors hover:bg-white/20"
             >
               <Facebook className="h-4 w-4" />
             </a>
@@ -380,13 +380,13 @@ function StoreFooter() {
           <h3 className="text-sm font-bold uppercase tracking-wide text-[var(--store-secondary)]">
             Produtos
           </h3>
-          <ul className="mt-4 space-y-2 text-sm text-white/70">
+          <ul className="mt-2 text-sm text-white/70">
             {STORE_CATEGORIES.slice(1, 6).map((c) => (
               <li key={c.slug}>
                 <Link
                   to="/produtos"
                   search={{ cat: c.slug }}
-                  className="hover:text-white"
+                  className="inline-flex min-h-11 items-center transition-colors hover:text-white"
                 >
                   {c.label}
                 </Link>
@@ -399,13 +399,13 @@ function StoreFooter() {
             Atendimento
           </h3>
           <ul className="mt-4 space-y-3 text-sm text-white/70">
-            <li className="flex items-start gap-2">
-              <MessageCircle className="mt-0.5 h-4 w-4 shrink-0" />
+            <li className="flex items-center gap-2">
+              <MessageCircle className="h-4 w-4 shrink-0" />
               <a
                 href={waLink("Olá! Vim do site.")}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hover:text-white"
+                className="inline-flex min-h-11 items-center transition-colors hover:text-white"
               >
                 WhatsApp {info.whatsappDisplay}
               </a>
@@ -423,13 +423,13 @@ function StoreFooter() {
             <li className="flex items-start gap-2">
               <Mail className="mt-0.5 h-4 w-4 shrink-0" /> {info.email}
             </li>
-            <li className="flex items-start gap-2">
-              <MapPin className="mt-0.5 h-4 w-4 shrink-0" />
+            <li className="flex items-center gap-2">
+              <MapPin className="h-4 w-4 shrink-0" />
               <a
                 href={info.mapsUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hover:text-white"
+                className="inline-flex min-h-11 items-center transition-colors hover:text-white"
               >
                 {info.address}
               </a>
@@ -440,24 +440,24 @@ function StoreFooter() {
           <h3 className="text-sm font-bold uppercase tracking-wide text-[var(--store-secondary)]">
             Institucional
           </h3>
-          <ul className="mt-4 space-y-2 text-sm text-white/70">
+          <ul className="mt-2 text-sm text-white/70">
             <li>
-              <Link to="/produtos" className="hover:text-white">
+              <Link to="/produtos" className="inline-flex min-h-11 items-center transition-colors hover:text-white">
                 Catálogo completo
               </Link>
             </li>
             <li>
-              <Link to="/auth" className="hover:text-white">
+              <Link to="/auth" className="inline-flex min-h-11 items-center transition-colors hover:text-white">
                 Minha conta
               </Link>
             </li>
             <li>
-              <a href="#" className="hover:text-white">
+              <a href="#" className="inline-flex min-h-11 items-center transition-colors hover:text-white">
                 Política de privacidade
               </a>
             </li>
             <li>
-              <a href="#" className="hover:text-white">
+              <a href="#" className="inline-flex min-h-11 items-center transition-colors hover:text-white">
                 Trocas e devoluções
               </a>
             </li>
