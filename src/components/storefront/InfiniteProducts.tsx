@@ -95,7 +95,7 @@ export function InfiniteProducts() {
           </div>
           <Link
             to="/produtos"
-            className="inline-flex items-center gap-1 text-xs font-extrabold uppercase tracking-[0.18em] text-[var(--store-primary)] hover:text-[var(--store-accent)]"
+            className="inline-flex min-h-11 items-center gap-1 text-xs font-extrabold uppercase tracking-[0.18em] text-[var(--store-primary)] transition-colors hover:text-[var(--store-accent)]"
             onClick={() =>
               trackCta({
                 cta_id: "infinite_view_all",
