@@ -24,8 +24,10 @@ test("estado de erro: rede caindo mostra mensagem clara, sem tela branca", async
   // A página continua utilizável e o erro é comunicado (toast ou bloco de erro).
   await expect(page.locator("h1").first()).toBeVisible();
   // A grade de produtos fica abaixo da dobra e só monta ao entrar em viewport.
-  await page.mouse.wheel(0, 4000);
-  await page.waitForTimeout(1000);
+  for (let i = 0; i < 6; i++) {
+    await page.evaluate(() => window.scrollBy(0, window.innerHeight));
+    await page.waitForTimeout(400);
+  }
   await expect(
     page.getByText(/não foi possível|tentar novamente|conexão/i).first(),
   ).toBeVisible({ timeout: 20_000 });
@@ -37,7 +39,7 @@ test("estado vazio: catálogo sem itens não quebra a landing", async ({ page })
   );
   await page.goto("/");
   await expect(page.locator("h1").first()).toBeVisible();
-  await page.mouse.wheel(0, 4000);
+  await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
   await expect(page.locator("body")).not.toContainText("Application error");
 });
 
