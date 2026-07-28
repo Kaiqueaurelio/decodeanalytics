@@ -29,13 +29,11 @@ export const getArtProof = createServerFn({ method: "POST" })
       .from("arquivos")
       .createSignedUrl(proof.storage_path, 60 * 15);
 
-    if (!proof.viewed_at_marked) {
-      await supabaseAdmin
-        .from("art_proofs")
-        .update({ viewed_at: new Date().toISOString() })
-        .eq("id", proof.id)
-        .is("viewed_at", null);
-    }
+    await supabaseAdmin
+      .from("art_proofs")
+      .update({ viewed_at: new Date().toISOString() })
+      .eq("id", proof.id)
+      .is("viewed_at", null);
 
     return {
       found: true as const,
