@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { Star } from "lucide-react";
 import { brl } from "./tokens";
 import { SmartImage } from "./SmartImage";
+import { useShowPrices } from "@/hooks/useCompanyInfo";
 
 export type StoreProduct = {
   id: string;
@@ -29,6 +30,7 @@ const BADGE_TONE: Record<string, string> = {
 
 export function ProductCard({ product }: { product: StoreProduct }) {
   const slug = product.slug ?? product.id;
+  const showPrices = useShowPrices();
   const tone = product.badge ? BADGE_TONE[product.badge] ?? "bg-[var(--store-primary)] text-white" : null;
   const rating = product.rating ? Number(product.rating) : null;
 
@@ -75,12 +77,20 @@ export function ProductCard({ product }: { product: StoreProduct }) {
         )}
         <div className="mt-3 flex items-end justify-between gap-2">
           <div>
-            <p className="text-[10px] uppercase tracking-wide text-[var(--store-text-light)]">
-              A partir de
-            </p>
-            <p className="text-xl font-extrabold leading-tight text-[var(--store-primary)]">
-              {brl(product.base_price)}
-            </p>
+            {showPrices ? (
+              <>
+                <p className="text-[10px] uppercase tracking-wide text-[var(--store-text-light)]">
+                  A partir de
+                </p>
+                <p className="text-xl font-extrabold leading-tight text-[var(--store-primary)]">
+                  {brl(product.base_price)}
+                </p>
+              </>
+            ) : (
+              <p className="text-base font-extrabold leading-tight text-[var(--store-primary)]">
+                Sob consulta
+              </p>
+            )}
             {product.min_quantity ? (
               <p className="text-[11px] text-[var(--store-text-muted)]">
                 a partir de {product.min_quantity} {product.unit ?? "un"}
