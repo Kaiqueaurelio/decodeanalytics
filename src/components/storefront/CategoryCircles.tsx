@@ -1,15 +1,27 @@
 import { Link } from "@tanstack/react-router";
+import {
+  Contact,
+  FileText,
+  Tags,
+  Flag,
+  Shirt,
+  Coffee,
+  Gift,
+  Package,
+  Printer,
+  type LucideIcon,
+} from "lucide-react";
 
-const CATS = [
-  { slug: "Cartões", label: "Cartão de Visita", emoji: "📇" },
-  { slug: "Panfletos", label: "Folhetos & Panfletos", emoji: "📄" },
-  { slug: "Adesivos", label: "Adesivos & Etiquetas", emoji: "🏷️" },
-  { slug: "Banners", label: "Banners & Faixas", emoji: "🎌" },
-  { slug: "Camisetas", label: "Camisetas DTF", emoji: "👕" },
-  { slug: "Canecas", label: "Canecas", emoji: "☕" },
-  { slug: "Brindes", label: "Brindes", emoji: "🎁" },
-  { slug: "Embalagens", label: "Embalagens", emoji: "📦" },
-  { slug: "Plotagem", label: "Plotagem", emoji: "🖨️" },
+const CATS: { slug: string; label: string; Icon: LucideIcon }[] = [
+  { slug: "Cartões", label: "Cartão de Visita", Icon: Contact },
+  { slug: "Panfletos", label: "Folhetos & Panfletos", Icon: FileText },
+  { slug: "Adesivos", label: "Adesivos & Etiquetas", Icon: Tags },
+  { slug: "Banners", label: "Banners & Faixas", Icon: Flag },
+  { slug: "Camisetas", label: "Camisetas DTF", Icon: Shirt },
+  { slug: "Canecas", label: "Canecas", Icon: Coffee },
+  { slug: "Brindes", label: "Brindes", Icon: Gift },
+  { slug: "Embalagens", label: "Embalagens", Icon: Package },
+  { slug: "Plotagem", label: "Plotagem", Icon: Printer },
 ];
 
 export function CategoryCircles() {
@@ -22,15 +34,17 @@ export function CategoryCircles() {
               key={c.slug}
               to="/produtos"
               search={{ cat: c.slug }}
-              className="group flex w-20 shrink-0 flex-col items-center gap-2 sm:w-28 animate-fade-in"
+              className="group flex w-20 shrink-0 flex-col items-center gap-2 rounded-xl outline-none focus-visible:ring-2 focus-visible:ring-store-primary focus-visible:ring-offset-2 sm:w-28 animate-fade-in"
               style={{ animationDelay: `${60 + i * 40}ms`, animationFillMode: "both" }}
             >
-              <div className="relative grid h-20 w-20 place-items-center overflow-hidden rounded-full bg-gradient-to-br from-[#172554]/10 to-[#172554]/5 ring-2 ring-transparent transition-all group-hover:ring-[#172554] group-hover:shadow-lg sm:h-24 sm:w-24">
-                <span className="text-3xl sm:text-4xl transition-transform duration-300 group-hover:scale-110">
-                  {c.emoji}
-                </span>
+              <div className="relative grid h-20 w-20 place-items-center overflow-hidden rounded-full bg-linear-to-br from-store-primary/12 to-store-primary/4 text-store-primary ring-2 ring-transparent transition-all duration-300 group-hover:-translate-y-1 group-hover:ring-store-primary group-hover:shadow-[var(--store-shadow-md)] sm:h-24 sm:w-24">
+                <c.Icon
+                  className="h-8 w-8 transition-transform duration-300 group-hover:scale-110 sm:h-9 sm:w-9"
+                  strokeWidth={1.75}
+                  aria-hidden="true"
+                />
               </div>
-              <span className="text-center text-[11px] font-bold leading-tight text-[var(--store-text)] sm:text-xs">
+              <span className="text-center text-[11px] font-bold leading-tight text-[var(--store-text)] transition-colors group-hover:text-store-primary sm:text-xs">
                 {c.label}
               </span>
             </Link>
