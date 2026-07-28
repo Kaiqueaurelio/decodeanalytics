@@ -18,6 +18,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as SitemapXmlRouteImport } from './routes/sitemap.xml'
 import { Route as ProdutoSlugRouteImport } from './routes/produto.$slug'
 import { Route as BriefingTokenRouteImport } from './routes/briefing.$token'
+import { Route as ArteTokenRouteImport } from './routes/arte.$token'
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
 import { Route as AuthenticatedServicesRouteImport } from './routes/_authenticated/services'
 import { Route as AuthenticatedReceivablesRouteImport } from './routes/_authenticated/receivables'
@@ -80,6 +81,11 @@ const ProdutoSlugRoute = ProdutoSlugRouteImport.update({
 const BriefingTokenRoute = BriefingTokenRouteImport.update({
   id: '/briefing/$token',
   path: '/briefing/$token',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ArteTokenRoute = ArteTokenRouteImport.update({
+  id: '/arte/$token',
+  path: '/arte/$token',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedSettingsRoute = AuthenticatedSettingsRouteImport.update({
@@ -205,6 +211,7 @@ export interface FileRoutesByFullPath {
   '/receivables': typeof AuthenticatedReceivablesRoute
   '/services': typeof AuthenticatedServicesRoute
   '/settings': typeof AuthenticatedSettingsRoute
+  '/arte/$token': typeof ArteTokenRoute
   '/briefing/$token': typeof BriefingTokenRoute
   '/produto/$slug': typeof ProdutoSlugRoute
   '/sitemap/xml': typeof SitemapXmlRoute
@@ -234,6 +241,7 @@ export interface FileRoutesByTo {
   '/receivables': typeof AuthenticatedReceivablesRoute
   '/services': typeof AuthenticatedServicesRoute
   '/settings': typeof AuthenticatedSettingsRoute
+  '/arte/$token': typeof ArteTokenRoute
   '/briefing/$token': typeof BriefingTokenRoute
   '/produto/$slug': typeof ProdutoSlugRoute
   '/sitemap/xml': typeof SitemapXmlRoute
@@ -265,6 +273,7 @@ export interface FileRoutesById {
   '/_authenticated/receivables': typeof AuthenticatedReceivablesRoute
   '/_authenticated/services': typeof AuthenticatedServicesRoute
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
+  '/arte/$token': typeof ArteTokenRoute
   '/briefing/$token': typeof BriefingTokenRoute
   '/produto/$slug': typeof ProdutoSlugRoute
   '/sitemap/xml': typeof SitemapXmlRoute
@@ -296,6 +305,7 @@ export interface FileRouteTypes {
     | '/receivables'
     | '/services'
     | '/settings'
+    | '/arte/$token'
     | '/briefing/$token'
     | '/produto/$slug'
     | '/sitemap/xml'
@@ -325,6 +335,7 @@ export interface FileRouteTypes {
     | '/receivables'
     | '/services'
     | '/settings'
+    | '/arte/$token'
     | '/briefing/$token'
     | '/produto/$slug'
     | '/sitemap/xml'
@@ -355,6 +366,7 @@ export interface FileRouteTypes {
     | '/_authenticated/receivables'
     | '/_authenticated/services'
     | '/_authenticated/settings'
+    | '/arte/$token'
     | '/briefing/$token'
     | '/produto/$slug'
     | '/sitemap/xml'
@@ -369,6 +381,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   CarrinhoRoute: typeof CarrinhoRoute
   ProdutosRoute: typeof ProdutosRoute
+  ArteTokenRoute: typeof ArteTokenRoute
   BriefingTokenRoute: typeof BriefingTokenRoute
   ProdutoSlugRoute: typeof ProdutoSlugRoute
   SitemapXmlRoute: typeof SitemapXmlRoute
@@ -438,6 +451,13 @@ declare module '@tanstack/react-router' {
       path: '/briefing/$token'
       fullPath: '/briefing/$token'
       preLoaderRoute: typeof BriefingTokenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/arte/$token': {
+      id: '/arte/$token'
+      path: '/arte/$token'
+      fullPath: '/arte/$token'
+      preLoaderRoute: typeof ArteTokenRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/settings': {
@@ -628,6 +648,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   CarrinhoRoute: CarrinhoRoute,
   ProdutosRoute: ProdutosRoute,
+  ArteTokenRoute: ArteTokenRoute,
   BriefingTokenRoute: BriefingTokenRoute,
   ProdutoSlugRoute: ProdutoSlugRoute,
   SitemapXmlRoute: SitemapXmlRoute,
