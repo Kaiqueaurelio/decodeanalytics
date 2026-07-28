@@ -101,7 +101,7 @@ function ProdutosPage() {
                 key={c.slug}
                 to="/produtos"
                 search={{ cat: c.slug, q: text || undefined }}
-                className={`shrink-0 rounded-full border px-4 py-1.5 text-sm font-semibold transition-colors ${
+                className={`inline-flex min-h-11 shrink-0 items-center rounded-full border px-4 text-sm font-semibold transition-colors ${
                   active
                     ? "border-[var(--store-primary)] bg-[var(--store-primary)] text-white"
                     : "border-[var(--store-border)] bg-white text-[var(--store-text-muted)] hover:border-[var(--store-primary-light)]/40 hover:text-[var(--store-primary)]"
