@@ -15,7 +15,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { StoreShell } from "@/components/storefront/StoreShell";
 import { brl } from "@/components/storefront/tokens";
-import { useWaLink } from "@/hooks/useCompanyInfo";
+import { useShowPrices, useWaLink } from "@/hooks/useCompanyInfo";
 import { useCart } from "@/lib/cart-context";
 import {
   ProductCard,
@@ -205,6 +205,7 @@ function Gallery({ image, alt }: { image: string | null | undefined; alt: string
 
 function BuyBox({ product }: { product: StoreProduct }) {
   const waLink = useWaLink();
+  const showPrices = useShowPrices();
   const { addItem } = useCart();
   const min = product.min_quantity ?? 1;
   const [qty, setQty] = useState(min);
@@ -247,14 +248,15 @@ function BuyBox({ product }: { product: StoreProduct }) {
 
       <div className="rounded-[var(--store-radius-lg)] bg-[var(--store-surface-soft)] p-4">
         <p className="text-[10px] font-bold uppercase tracking-wide text-[var(--store-text-light)]">
-          Preço unitário
+          {showPrices ? "Preço unitário" : "Valor"}
         </p>
         <p className="text-3xl font-extrabold leading-tight text-[var(--store-primary)]">
-          {brl(product.base_price)}
+          {showPrices ? brl(product.base_price) : "Sob consulta"}
         </p>
         <p className="text-xs text-[var(--store-text-muted)]">
-          {product.unit ? `por ${product.unit}` : ""}
-          {product.min_quantity ? ` · mínimo ${product.min_quantity}` : ""}
+          {showPrices
+            ? `${product.unit ? `por ${product.unit}` : ""}${product.min_quantity ? ` · mínimo ${product.min_quantity}` : ""}`
+            : `Peça seu orçamento no WhatsApp${product.min_quantity ? ` · mínimo ${product.min_quantity}` : ""}`}
         </p>
       </div>
 
@@ -274,9 +276,11 @@ function BuyBox({ product }: { product: StoreProduct }) {
         </div>
         <div className="rounded-[var(--store-radius-md)] border border-dashed border-[var(--store-primary-light)]/40 bg-[var(--store-primary-light)]/5 p-3">
           <p className="text-[10px] font-bold uppercase tracking-wide text-[var(--store-text-muted)]">
-            Total estimado
+            {showPrices ? "Total estimado" : "Orçamento"}
           </p>
-          <p className="text-xl font-extrabold text-[var(--store-primary)]">{brl(total)}</p>
+          <p className="text-xl font-extrabold text-[var(--store-primary)]">
+            {showPrices ? brl(total) : "Sob consulta"}
+          </p>
         </div>
       </div>
 

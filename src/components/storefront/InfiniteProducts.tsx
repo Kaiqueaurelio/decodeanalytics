@@ -4,6 +4,7 @@ import { Loader2, Plus, Star } from "lucide-react";
 import { useStoreProducts } from "./useStoreProducts";
 import { brl } from "./tokens";
 import type { StoreProduct } from "./ProductCard";
+import { useShowPrices } from "@/hooks/useCompanyInfo";
 import { SmartImage } from "./SmartImage";
 import { trackCardClick, trackCta, trackInfinitePage } from "@/lib/analytics";
 
@@ -144,6 +145,7 @@ function FeedCard({
 }) {
   const slug = product.slug ?? product.id;
   const rating = product.rating ? Number(product.rating) : null;
+  const showPrices = useShowPrices();
   return (
     <Link
       to="/produto/$slug"
@@ -192,7 +194,11 @@ function FeedCard({
               </span>
             </div>
           )}
-          <p className="font-display text-2xl leading-none">{brl(product.base_price)}</p>
+          {showPrices ? (
+            <p className="font-display text-2xl leading-none">{brl(product.base_price)}</p>
+          ) : (
+            <p className="font-display text-base leading-none">Sob consulta</p>
+          )}
         </div>
         <span className="grid h-9 w-9 shrink-0 place-items-center rounded-[var(--store-radius-sm)] bg-[var(--store-ink)] text-white transition-colors group-hover:bg-[var(--store-gold)] group-hover:text-[var(--store-ink)]">
           <Plus className="h-4 w-4" />

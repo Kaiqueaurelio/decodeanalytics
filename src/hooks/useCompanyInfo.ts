@@ -13,6 +13,7 @@ export interface CompanyInfo {
   email: string;
   mapsUrl: string;
   hours: { day: string; time: string }[];
+  showPrices: boolean;
 }
 
 function digitsOnly(v?: string | null) {
@@ -43,7 +44,7 @@ export function useCompanyInfo(): CompanyInfo {
     queryFn: async () => {
       const { data } = await supabase
         .from("company_settings")
-        .select("name,logo_url,whatsapp,instagram,address")
+        .select("name,logo_url,whatsapp,instagram,address,show_prices")
         .limit(1)
         .maybeSingle();
       return data;
@@ -67,7 +68,13 @@ export function useCompanyInfo(): CompanyInfo {
       ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(data.address)}`
       : STORE_CONTACT.mapsUrl,
     hours: STORE_CONTACT.hours,
+    showPrices: data?.show_prices !== false,
   };
+}
+
+/** Preços visíveis na loja pública (configurável pelo admin em Configurações). */
+export function useShowPrices() {
+  return useCompanyInfo().showPrices;
 }
 
 export function useWaLink() {

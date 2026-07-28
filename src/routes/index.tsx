@@ -31,7 +31,7 @@ import {
 } from "@/components/storefront/ProductCard";
 import { SmartImage } from "@/components/storefront/SmartImage";
 import { STORE_CATEGORIES, brl } from "@/components/storefront/tokens";
-import { useCompanyInfo, useWaLink } from "@/hooks/useCompanyInfo";
+import { useCompanyInfo, useShowPrices, useWaLink } from "@/hooks/useCompanyInfo";
 import { useStoreProducts } from "@/components/storefront/useStoreProducts";
 import { InfiniteProducts } from "@/components/storefront/InfiniteProducts";
 import { CategoryCircles } from "@/components/storefront/CategoryCircles";
@@ -221,6 +221,7 @@ function BentoProductCard({
 }) {
   const slug = product.slug ?? product.id;
   const rating = product.rating ? Number(product.rating) : null;
+  const showPrices = useShowPrices();
   const categoryShort = (product.category ?? "PRINT").slice(0, 9).toUpperCase();
 
   return (
@@ -275,7 +276,11 @@ function BentoProductCard({
               </span>
             </div>
           )}
-          <p className="font-display text-2xl leading-none">{brl(product.base_price)}</p>
+          {showPrices ? (
+            <p className="font-display text-2xl leading-none">{brl(product.base_price)}</p>
+          ) : (
+            <p className="font-display text-base leading-none">Sob consulta</p>
+          )}
           {product.min_quantity ? (
             <p className="text-[10px] text-slate-500">
               a partir de {product.min_quantity} {product.unit ?? "un"}

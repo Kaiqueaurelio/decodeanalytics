@@ -42,6 +42,7 @@ function Page() {
         default_quote_text: form.default_quote_text,
         default_order_text: form.default_order_text,
         default_deadline_days: Number(form.default_deadline_days) || 3,
+        show_prices: form.show_prices !== false,
       })
       .eq("id", form.id);
     if (error) return toast.error(error.message);
@@ -127,6 +128,24 @@ function Page() {
               value={form.default_deadline_days ?? 3}
               onChange={(e) => setForm({ ...form, default_deadline_days: e.target.value })}
             />
+          </div>
+          <div className="md:col-span-2">
+            <Label>Preços na loja online</Label>
+            <label className="mt-1 flex cursor-pointer items-start gap-3 rounded-xl border p-4">
+              <input
+                type="checkbox"
+                className="mt-1 h-5 w-5 shrink-0 accent-primary"
+                checked={form.show_prices !== false}
+                onChange={(e) => setForm({ ...form, show_prices: e.target.checked })}
+              />
+              <span className="min-w-0 text-sm">
+                <span className="font-medium">Exibir preços na landing page</span>
+                <span className="mt-0.5 block text-muted-foreground">
+                  Desmarque para ocultar todos os valores no site público. Os clientes verão
+                  “Sob consulta” e serão direcionados ao WhatsApp para orçamento.
+                </span>
+              </span>
+            </label>
           </div>
           <div className="md:col-span-2">
             <Label>Logo da empresa</Label>
