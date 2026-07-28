@@ -744,3 +744,17 @@
 a[href*="lovable.dev"][target="_blank"] {
   display: none !important;
 }
+
+/* Proteção da arte enviada para aprovação do cliente */
+.art-shield,
+.art-shield img {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-user-drag: none;
+}
+@media print {
+  .art-shield {
+    visibility: hidden !important;
+  }
+}
