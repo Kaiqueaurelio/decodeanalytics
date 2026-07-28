@@ -42,6 +42,7 @@ import {
   Trash2,
   Search,
   Sparkles,
+  Upload,
 } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
@@ -226,6 +227,39 @@ function EllaTrainingPage() {
       extraTags: extras.join(", "),
     });
     setEditOpen(true);
+  }
+
+  /**
+   * Importa um arquivo de texto (.txt/.md/.csv) para o campo de conteúdo.
+   * Valida tipo, tamanho e conteúdo vazio — nada silencioso.
+   */
+  async function importFile(file: File | undefined | null) {
+    if (!file) return;
+    const okExt = /\.(txt|md|markdown|csv)$/i.test(file.name);
+    if (!okExt) {
+      toast.error("Formato não suportado. Envie .txt, .md ou .csv.");
+      return;
+    }
+    if (file.size > 300_000) {
+      toast.error("Arquivo muito grande (máx. 300 KB). Divida em partes.");
+      return;
+    }
+    try {
+      const text = (await file.text()).trim();
+      if (!text) {
+        toast.error("O arquivo está vazio.");
+        return;
+      }
+      setForm((f) => ({
+        ...f,
+        content: f.content.trim() ? `${f.content.trim()}\n\n${text}` : text,
+        title: f.title.trim() || file.name.replace(/\.[^.]+$/, "").slice(0, 140),
+      }));
+      toast.success(`Conteúdo de "${file.name}" importado.`);
+    } catch (err: any) {
+      console.error(err);
+      toast.error("Não consegui ler o arquivo. Tente novamente.");
+    }
   }
 
   return (
@@ -441,7 +475,22 @@ function EllaTrainingPage() {
               />
             </div>
             <div className="grid gap-2">
-              <Label>Conteúdo</Label>
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <Label>Conteúdo</Label>
+                <label className="inline-flex min-h-9 cursor-pointer items-center gap-2 rounded-lg border border-input px-3 text-xs font-semibold transition-colors hover:bg-muted">
+                  <Upload className="h-3.5 w-3.5" />
+                  Importar arquivo (.txt, .md, .csv)
+                  <input
+                    type="file"
+                    accept=".txt,.md,.markdown,.csv,text/plain,text/markdown,text/csv"
+                    className="sr-only"
+                    onChange={(e) => {
+                      void importFile(e.target.files?.[0]);
+                      e.target.value = "";
+                    }}
+                  />
+                </label>
+              </div>
               <Textarea
                 value={form.content}
                 onChange={(e) => setForm((f) => ({ ...f, content: e.target.value }))}
