@@ -5,6 +5,7 @@ import { useStoreProducts } from "./useStoreProducts";
 import { brl } from "./tokens";
 import type { StoreProduct } from "./ProductCard";
 import { useShowPrices } from "@/hooks/useCompanyInfo";
+import { QuoteBadge } from "./QuoteBadge";
 import { SmartImage } from "./SmartImage";
 import { trackCardClick, trackCta, trackInfinitePage } from "@/lib/analytics";
 
