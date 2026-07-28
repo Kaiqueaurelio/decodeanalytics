@@ -49,10 +49,11 @@ function CartButton() {
   return (
     <Link
       to="/carrinho"
-      className="relative flex items-center gap-1.5 rounded-lg bg-[var(--store-primary)] px-3 py-2 text-sm font-bold text-inverse hover:bg-[var(--store-primary-light)]"
+      aria-label="Carrinho"
+      className="relative flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-lg bg-[var(--store-primary)] px-3 py-2 text-sm font-bold text-inverse transition-colors hover:bg-[var(--store-primary-light)]"
     >
-      <ShoppingCart className="h-4 w-4" />
-      Carrinho
+      <ShoppingCart className="h-4 w-4 shrink-0" />
+      <span className="hidden lg:inline">Carrinho</span>
       <span className="ml-1 rounded-full bg-[var(--store-secondary)] px-1.5 text-2xs font-extrabold text-[var(--store-primary-dark)]">
         {count}
       </span>
@@ -139,29 +140,31 @@ function StoreHeader() {
           </button>
         </form>
 
-        <nav className="hidden items-center gap-1 md:flex">
+        <nav className="hidden shrink-0 items-center gap-0.5 md:flex lg:gap-1">
           <Link
             to="/assistente"
-            className="flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-bold text-highlight hover:bg-highlight/10 transition-colors"
+            className="flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-lg px-2.5 py-2 text-sm font-bold text-highlight transition-colors hover:bg-highlight/10 lg:px-3"
           >
-            <Sparkles className="h-4 w-4" />
-            Ella AI
+            <Sparkles className="h-4 w-4 shrink-0" />
+            <span className="hidden lg:inline">Ella AI</span>
           </Link>
           <a
             href={waLink("Olá! Vim do site da Alcateia's.")}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium text-[var(--store-text)] hover:bg-[var(--store-surface-soft)]"
+            aria-label="Atendimento pelo WhatsApp"
+            className="flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-lg px-2.5 py-2 text-sm font-medium text-[var(--store-text)] transition-colors hover:bg-[var(--store-surface-soft)] lg:px-3"
           >
-            <MessageCircle className="h-4 w-4 text-[var(--store-success)]" />
-            Atendimento
+            <MessageCircle className="h-4 w-4 shrink-0 text-[var(--store-success)]" />
+            <span className="hidden lg:inline">Atendimento</span>
           </a>
           <Link
             to="/auth"
-            className="flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium text-[var(--store-text)] hover:bg-[var(--store-surface-soft)]"
+            aria-label="Entrar na conta"
+            className="flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-lg px-2.5 py-2 text-sm font-medium text-[var(--store-text)] transition-colors hover:bg-[var(--store-surface-soft)] lg:px-3"
           >
-            <User className="h-4 w-4" />
-            Entrar
+            <User className="h-4 w-4 shrink-0" />
+            <span className="hidden lg:inline">Entrar</span>
           </Link>
           <CartButton />
         </nav>
