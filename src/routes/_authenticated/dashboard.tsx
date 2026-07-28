@@ -36,12 +36,12 @@ import { brl, fmtDate, PRODUCTION_STATUS_LABEL } from "@/lib/format";
 export const Route = createFileRoute("/_authenticated/dashboard")({ component: Dashboard });
 
 const STATUS_COLORS: Record<string, string> = {
-  aguardando: "#94a3b8",
-  em_producao: "#0f7052",
-  arte: "#315b9b",
-  impressao: "#d7a52d",
-  acabamento: "#e1783f",
-  pronto_para_retirada: "#22a06b",
+  aguardando: "var(--muted-foreground)",
+  em_producao: "var(--success)",
+  arte: "var(--info)",
+  impressao: "var(--warning)",
+  acabamento: "var(--brand-orange)",
+  pronto_para_retirada: "var(--chart-2)",
 };
 
 function Dashboard() {
@@ -141,7 +141,7 @@ function Dashboard() {
       status,
       name: PRODUCTION_STATUS_LABEL[status] || status,
       value,
-      color: STATUS_COLORS[status] || "#64748b",
+      color: STATUS_COLORS[status] || "var(--muted-foreground)",
     }));
   }, [data?.active]);
 
@@ -186,39 +186,39 @@ function Dashboard() {
       value: data?.active.length ?? 0,
       helper: `${averageProgress}% de progresso médio`,
       icon: Clock3,
-      gradient: "from-[#12264d] to-[#315b9b]",
+      gradient: "from-brand-blue to-info",
     },
     {
       label: "Produção em alerta",
       value: (data?.overdue.length ?? 0) + (data?.stale.length ?? 0),
       helper: "prazos ou atualizações pendentes",
       icon: AlertTriangle,
-      gradient: "from-[#8c3142] to-[#d25f62]",
+      gradient: "from-destructive/80 to-destructive",
     },
     {
       label: "Prontas para entrega",
       value: data?.ready.length ?? 0,
       helper: "serviços finalizados",
       icon: CheckCircle2,
-      gradient: "from-[#064934] to-[#159269]",
+      gradient: "from-success/80 to-success",
     },
     {
       label: "Faturamento no mês",
       value: brl(data?.monthRevenue ?? 0),
       helper: `${brl(data?.todayEntries ?? 0)} recebido hoje`,
       icon: TrendingUp,
-      gradient: "from-[#a16d08] to-[#e4b52e]",
+      gradient: "from-warning/80 to-warning",
     },
   ];
 
   return (
     <div className="space-y-5 pb-8">
-      <section className="relative overflow-hidden rounded-3xl bg-[#071d19] px-5 py-6 text-inverse shadow-xl md:px-7">
-        <div className="absolute -right-16 -top-24 h-72 w-72 rounded-full bg-[#d7a52d]/20 blur-3xl" />
-        <div className="absolute bottom-0 left-1/3 h-36 w-64 rounded-full bg-[#159269]/20 blur-3xl" />
+      <section className="relative overflow-hidden rounded-3xl bg-surface-dark px-5 py-6 text-inverse shadow-xl md:px-7">
+        <div className="absolute -right-16 -top-24 h-72 w-72 rounded-full bg-warning/20 blur-3xl" />
+        <div className="absolute bottom-0 left-1/3 h-36 w-64 rounded-full bg-success/20 blur-3xl" />
         <div className="relative flex flex-col justify-between gap-5 lg:flex-row lg:items-center">
           <div>
-            <div className="mb-2 flex items-center gap-2 text-xs font-medium text-[#f1d67c]">
+            <div className="mb-2 flex items-center gap-2 text-xs font-medium text-gold">
               <CalendarDays className="h-4 w-4" />
               {new Date().toLocaleDateString("pt-BR", {
                 weekday: "long",
@@ -241,7 +241,7 @@ function Dashboard() {
               <Link to="/production">Abrir produção</Link>
             </Button>
             <Button
-              className="bg-[#e4b52e] text-[#10241e] shadow-lg hover:bg-[#f1c94e]"
+              className="bg-gold text-gold-foreground shadow-lg hover:bg-gold/90"
               onClick={() => setNewOrderOpen(true)}
             >
               <Plus className="mr-2 h-4 w-4" /> Nova ordem de serviço
@@ -292,32 +292,32 @@ function Dashboard() {
               <AreaChart data={weeklyData} margin={{ left: -20, right: 10 }}>
                 <defs>
                   <linearGradient id="productionFill" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#159269" stopOpacity={0.35} />
-                    <stop offset="100%" stopColor="#159269" stopOpacity={0.02} />
+                    <stop offset="0%" stopColor="var(--success)" stopOpacity={0.35} />
+                    <stop offset="100%" stopColor="var(--success)" stopOpacity={0.02} />
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="4 4" vertical={false} stroke="#e2e8f0" />
+                <CartesianGrid strokeDasharray="4 4" vertical={false} stroke="var(--border)" />
                 <XAxis
                   dataKey="day"
                   axisLine={false}
                   tickLine={false}
-                  tick={{ fontSize: 11, fill: "#64748b" }}
+                  tick={{ fontSize: 11, fill: "var(--muted-foreground)" }}
                 />
                 <YAxis
                   allowDecimals={false}
                   axisLine={false}
                   tickLine={false}
-                  tick={{ fontSize: 11, fill: "#94a3b8" }}
+                  tick={{ fontSize: 11, fill: "var(--muted-foreground)" }}
                 />
                 <Tooltip
-                  contentStyle={{ borderRadius: 12, border: "1px solid #e2e8f0", fontSize: 12 }}
-                  labelStyle={{ color: "#0f172a", fontWeight: 600 }}
+                  contentStyle={{ borderRadius: 12, border: "1px solid var(--border)", background: "var(--popover)", color: "var(--popover-foreground)", fontSize: 12 }}
+                  labelStyle={{ color: "var(--popover-foreground)", fontWeight: 600 }}
                 />
                 <Area
                   type="monotone"
                   dataKey="movimentadas"
                   name="Movimentadas"
-                  stroke="#159269"
+                  stroke="var(--success)"
                   strokeWidth={3}
                   fill="url(#productionFill)"
                 />
@@ -325,7 +325,7 @@ function Dashboard() {
                   type="monotone"
                   dataKey="abertas"
                   name="Novas OS"
-                  stroke="#d7a52d"
+                  stroke="var(--warning)"
                   strokeWidth={2}
                   fill="transparent"
                 />
@@ -356,7 +356,7 @@ function Dashboard() {
                     ))}
                   </Pie>
                   <Tooltip
-                    contentStyle={{ borderRadius: 12, border: "1px solid #e2e8f0", fontSize: 12 }}
+                    contentStyle={{ borderRadius: 12, border: "1px solid var(--border)", background: "var(--popover)", color: "var(--popover-foreground)", fontSize: 12 }}
                   />
                 </PieChart>
               </ResponsiveContainer>
@@ -411,7 +411,7 @@ function Dashboard() {
                 >
                   <div className="flex items-center justify-between gap-3">
                     <div className="flex min-w-0 items-center gap-3">
-                      <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-[#0b4a3a] font-bold text-inverse">
+                      <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-success font-bold text-inverse">
                         {person.name.charAt(0).toUpperCase()}
                       </div>
                       <div className="min-w-0">
@@ -423,11 +423,11 @@ function Dashboard() {
                         </p>
                       </div>
                     </div>
-                    <strong className="text-sm text-[#0b4a3a]">{average}%</strong>
+                    <strong className="text-sm text-success">{average}%</strong>
                   </div>
                   <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-muted">
                     <div
-                      className="h-full rounded-full bg-linear-to-r from-[#0b4a3a] to-[#d7a52d]"
+                      className="h-full rounded-full bg-linear-to-r from-success to-warning"
                       style={{ width: `${average}%` }}
                     />
                   </div>
@@ -453,7 +453,7 @@ function Dashboard() {
             <p className="text-xs text-muted-foreground">Recebimentos e valores pendentes</p>
           </div>
           <div className="p-5">
-            <div className="mb-5 rounded-2xl bg-linear-to-br from-[#10264b] to-[#174b44] p-4 text-inverse">
+            <div className="mb-5 rounded-2xl bg-linear-to-br from-brand-blue to-success p-4 text-inverse">
               <div className="flex items-center justify-between text-xs text-inverse/65">
                 <span>Faturamento mensal</span>
                 <Wallet className="h-4 w-4" />
@@ -477,11 +477,11 @@ function Dashboard() {
                     dataKey="day"
                     axisLine={false}
                     tickLine={false}
-                    tick={{ fontSize: 9, fill: "#94a3b8" }}
+                    tick={{ fontSize: 9, fill: "var(--muted-foreground)" }}
                   />
                   <Bar
                     dataKey="movimentadas"
-                    fill="#0f7052"
+                    fill="var(--success)"
                     radius={[5, 5, 0, 0]}
                     maxBarSize={22}
                   />
@@ -570,7 +570,7 @@ function Dashboard() {
                     <p className="truncate text-sm font-semibold text-foreground">
                       {update.activity}
                     </p>
-                    <strong className="text-xs text-[#0b4a3a]">{update.progress}%</strong>
+                    <strong className="text-xs text-success">{update.progress}%</strong>
                   </div>
                   <p className="mt-0.5 text-xs text-muted-foreground">
                     OS #{update.orders?.number} · {update.author?.full_name || update.author?.email}
