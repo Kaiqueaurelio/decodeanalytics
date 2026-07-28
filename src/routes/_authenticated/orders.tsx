@@ -397,7 +397,7 @@ function OrdersPage() {
                   <td className="p-3 font-medium">
                     <div className="flex items-center gap-2">
                       {o.clients?.name}
-                      <OSStatusBadge status={o.production_status} className="text-[10px] px-2 py-0.5" />
+                      <OSStatusBadge status={o.production_status} className="text-2xs px-2 py-0.5" />
                       {o.urgent && (
                         <Badge className="bg-destructive text-destructive-foreground">
                           Urgente
@@ -421,7 +421,7 @@ function OrdersPage() {
                       <div className="h-1.5 flex-1 bg-muted rounded-full overflow-hidden">
                         <div className="h-full bg-gold" style={{ width: `${o.progress || 0}%` }} />
                       </div>
-                      <span className="text-[10px]">{o.progress || 0}%</span>
+                      <span className="text-2xs">{o.progress || 0}%</span>
                     </div>
                   </td>
                   <td className="p-3 hidden lg:table-cell">

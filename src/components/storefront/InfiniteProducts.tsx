@@ -84,7 +84,7 @@ export function InfiniteProducts() {
       <div className="mx-auto w-full max-w-[1280px] px-4">
         <header className="mb-6 flex flex-col items-start justify-between gap-2 sm:flex-row sm:items-end">
           <div>
-            <p className="text-[11px] font-extrabold uppercase tracking-[0.22em] text-[var(--store-accent)]">
+            <p className="text-2xs font-extrabold uppercase tracking-[0.22em] text-[var(--store-accent)]">
               Catálogo sem fim
             </p>
             <h2 className="font-display mt-1 text-4xl leading-none text-[var(--store-primary)] sm:text-5xl">
@@ -173,15 +173,15 @@ function FeedCard({
           className="transition-transform duration-500 group-hover:scale-[1.06]"
         />
         {product.badge && (
-          <span className="absolute left-2 top-2 rounded-sm bg-[var(--store-ink)] px-2 py-0.5 text-[9px] font-extrabold uppercase tracking-wider text-[var(--store-gold)]">
+          <span className="absolute left-2 top-2 rounded-sm bg-[var(--store-ink)] px-2 py-0.5 text-2xs font-extrabold uppercase tracking-wider text-[var(--store-gold)]">
             {product.badge}
           </span>
         )}
       </div>
-      <p className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-[var(--store-text-muted)]">
+      <p className="text-2xs font-extrabold uppercase tracking-[0.18em] text-[var(--store-text-muted)]">
         {product.category ?? "Personalizado"}
       </p>
-      <h4 className="mt-0.5 line-clamp-2 text-sm font-bold leading-snug sm:text-[15px]">
+      <h4 className="mt-0.5 line-clamp-2 text-sm font-bold leading-snug sm:text-sm">
         {product.name}
       </h4>
       <div className="mt-auto flex items-end justify-between gap-2 pt-3">
@@ -189,7 +189,7 @@ function FeedCard({
           {rating != null && (
             <div className="flex items-center gap-1 text-[var(--store-gold)]">
               <Star className="h-3 w-3 fill-current" />
-              <span className="text-[11px] font-bold text-[var(--store-ink)]">
+              <span className="text-2xs font-bold text-[var(--store-ink)]">
                 {rating.toFixed(1)}
               </span>
             </div>

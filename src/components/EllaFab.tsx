@@ -46,7 +46,7 @@ export function EllaFab() {
         />
       </span>
       <span className="hidden pr-1 text-left leading-tight sm:block">
-        <span className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-[0.18em] text-brand-yellow">
+        <span className="flex items-center gap-1 text-2xs font-bold uppercase tracking-[0.18em] text-brand-yellow">
           <Sparkles className="h-3 w-3" /> IA
         </span>
         <span className="block text-sm font-extrabold">Perguntar à Ella</span>

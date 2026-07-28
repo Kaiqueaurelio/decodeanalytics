@@ -171,7 +171,7 @@ export function SafeAreaDebug() {
 
   if (!enabled) return null;
 
-  const bar = "absolute flex items-center justify-center text-[10px] font-bold text-inverse";
+  const bar = "absolute flex items-center justify-center text-2xs font-bold text-inverse";
   const color = "rgba(236, 72, 153, 0.35)"; // pink-500 @ 35%
   const border = "2px dashed rgba(236, 72, 153, 0.9)";
 
@@ -232,7 +232,7 @@ export function SafeAreaDebug() {
       />
       {/* HUD com valores */}
       <div
-        className="absolute rounded-lg bg-surface-dark/80 px-3 py-2 font-mono text-[11px] leading-tight text-inverse shadow-lg"
+        className="absolute rounded-lg bg-surface-dark/80 px-3 py-2 font-mono text-2xs leading-tight text-inverse shadow-lg"
         style={{
           top: `calc(${insets.top}px + 8px)`,
           left: `calc(${insets.left}px + 8px)`,
@@ -246,9 +246,9 @@ export function SafeAreaDebug() {
         <div className="mt-1 border-t border-inverse/20 pt-1 font-bold text-warning">
           {violations.length} sobrepos{violations.length === 1 ? "ição" : "ições"}
         </div>
-        <div className="text-[9px] text-inverse/70">threshold: {threshold}px</div>
-        <div className="mt-1 text-[9px] text-inverse/60">__toggleSafeArea() p/ desligar</div>
-        <div className="text-[9px] text-inverse/60">__setSafeAreaThreshold(px)</div>
+        <div className="text-2xs text-inverse/70">threshold: {threshold}px</div>
+        <div className="mt-1 text-2xs text-inverse/60">__toggleSafeArea() p/ desligar</div>
+        <div className="text-2xs text-inverse/60">__setSafeAreaThreshold(px)</div>
       </div>
 
       {/* Destaques em elementos fixed/sticky que invadem safe areas */}
@@ -269,7 +269,7 @@ export function SafeAreaDebug() {
             }}
           />
           <div
-            className="absolute rounded bg-destructive px-2 py-1 font-mono text-[10px] font-bold text-inverse shadow"
+            className="absolute rounded bg-destructive px-2 py-1 font-mono text-2xs font-bold text-inverse shadow"
             style={{
               top: Math.max(insets.top + 2, v.rect.top - 22),
               left: Math.min(
@@ -280,7 +280,7 @@ export function SafeAreaDebug() {
             }}
           >
             ⚠ {v.label}
-            <span className="ml-1 rounded bg-inverse/25 px-1 text-[9px] uppercase">
+            <span className="ml-1 rounded bg-inverse/25 px-1 text-2xs uppercase">
               {v.sides.join(" · ")}
             </span>
           </div>

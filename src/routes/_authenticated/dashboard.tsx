@@ -267,7 +267,7 @@ function Dashboard() {
                   </span>
                 </div>
                 <p className="mt-3 text-2xl font-bold tracking-tight">{metric.value}</p>
-                <p className="mt-1 text-[11px] text-inverse/65">{metric.helper}</p>
+                <p className="mt-1 text-2xs text-inverse/65">{metric.helper}</p>
               </div>
             </Card>
           );
@@ -362,7 +362,7 @@ function Dashboard() {
               </ResponsiveContainer>
               <div className="pointer-events-none absolute inset-0 grid place-content-center text-center">
                 <strong className="text-2xl text-foreground">{data?.active.length ?? 0}</strong>
-                <span className="text-[10px] text-muted-foreground">OS ativas</span>
+                <span className="text-2xs text-muted-foreground">OS ativas</span>
               </div>
             </div>
             <div className="space-y-2">
@@ -418,7 +418,7 @@ function Dashboard() {
                         <p className="truncate text-sm font-semibold text-foreground">
                           {person.name}
                         </p>
-                        <p className="text-[11px] text-muted-foreground">
+                        <p className="text-2xs text-muted-foreground">
                           {person.count} tarefas em andamento
                         </p>
                       </div>
@@ -459,7 +459,7 @@ function Dashboard() {
                 <Wallet className="h-4 w-4" />
               </div>
               <p className="mt-2 text-2xl font-bold">{brl(data?.monthRevenue ?? 0)}</p>
-              <p className="mt-1 text-[11px] text-success">
+              <p className="mt-1 text-2xs text-success">
                 {brl(data?.todayEntries ?? 0)} entrou hoje
               </p>
             </div>
@@ -505,7 +505,7 @@ function Dashboard() {
           </div>
           <div className="overflow-x-auto">
             <table className="w-full min-w-[620px] text-left text-sm">
-              <thead className="bg-muted text-[11px] uppercase tracking-wide text-muted-foreground">
+              <thead className="bg-muted text-2xs uppercase tracking-wide text-muted-foreground">
                 <tr>
                   <th className="px-5 py-3 font-medium">Ordem / cliente</th>
                   <th className="px-4 py-3 font-medium">Responsável</th>
@@ -575,7 +575,7 @@ function Dashboard() {
                   <p className="mt-0.5 text-xs text-muted-foreground">
                     OS #{update.orders?.number} · {update.author?.full_name || update.author?.email}
                   </p>
-                  <p className="mt-1 text-[10px] text-muted-foreground">
+                  <p className="mt-1 text-2xs text-muted-foreground">
                     {new Date(update.created_at).toLocaleString("pt-BR")}
                   </p>
                 </div>

@@ -98,7 +98,7 @@ function ToolChip({ t }: { t: ToolActivity }) {
         />
       </button>
       {open && (
-        <pre className="max-h-52 overflow-auto border-t bg-muted/50 px-2 py-1.5 text-[11px] leading-snug">
+        <pre className="max-h-52 overflow-auto border-t bg-muted/50 px-2 py-1.5 text-2xs leading-snug">
 {JSON.stringify({ input: t.input, output: t.output }, null, 2)}
         </pre>
       )}

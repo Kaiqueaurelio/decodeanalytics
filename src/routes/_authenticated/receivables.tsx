@@ -291,11 +291,11 @@ function Page() {
                       </div>
                       <div className="flex items-end justify-between gap-2 pt-2 border-t border-border/60">
                         <div>
-                          <p className="text-[10px] uppercase text-muted-foreground tracking-wide">Vencimento</p>
+                          <p className="text-2xs uppercase text-muted-foreground tracking-wide">Vencimento</p>
                           <p className="text-sm font-semibold">{fmtDate(r.due_date)}</p>
                         </div>
                         <div className="text-right">
-                          <p className="text-[10px] uppercase text-muted-foreground tracking-wide">Valor</p>
+                          <p className="text-2xs uppercase text-muted-foreground tracking-wide">Valor</p>
                           <p className="text-lg font-black font-mono text-primary">{brl(r.amount)}</p>
                         </div>
                       </div>

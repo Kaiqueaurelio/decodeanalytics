@@ -782,7 +782,7 @@ function PDVPage() {
     <div className="min-h-[calc(100vh-9rem)] max-w-full overflow-x-hidden rounded-[2rem] bg-muted/40 p-2 text-foreground sm:p-3 md:p-3 lg:p-4 [zoom:0.9] xl:[zoom:0.85] 2xl:[zoom:0.85]">
       <div className="mb-3 flex flex-col gap-2 rounded-2xl border border-border bg-card p-3 shadow-sm lg:flex-row lg:items-center lg:justify-between">
         <div>
-          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-brand-blue">
+          <p className="text-2xs font-black uppercase tracking-[0.2em] text-brand-blue">
             PDV Mercado Alcateia
           </p>
           <h2 className="text-xl font-black tracking-tight">Frente de Caixa</h2>
@@ -832,7 +832,7 @@ function PDVPage() {
 
       <div className="mb-3 flex flex-col gap-3 rounded-2xl bg-brand-blue p-4 text-inverse shadow-lg shadow-blue-200 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-info">
+          <p className="text-2xs font-black uppercase tracking-[0.2em] text-info">
             Saldo somente de hoje
           </p>
           <p className="mt-1 text-2xl font-black">{brl(dayBalance)}</p>
@@ -851,21 +851,21 @@ function PDVPage() {
       <div className="mb-3 grid gap-3 md:grid-cols-[minmax(0,1fr)_320px] xl:grid-cols-[minmax(0,1fr)_360px]">
         <div className="grid h-full gap-2 grid-cols-2 grid-rows-2 content-stretch">
           <Card className="rounded-2xl border-border p-3">
-            <p className="text-[10px] font-black uppercase tracking-wide text-muted-foreground">Entradas</p>
+            <p className="text-2xs font-black uppercase tracking-wide text-muted-foreground">Entradas</p>
             <p className="mt-0.5 text-xl font-black text-success">{brl(totalToday)}</p>
           </Card>
           <Card className="rounded-2xl border-border p-3">
-            <p className="text-[10px] font-black uppercase tracking-wide text-muted-foreground">Saídas</p>
+            <p className="text-2xs font-black uppercase tracking-wide text-muted-foreground">Saídas</p>
             <p className="mt-0.5 text-xl font-black text-destructive">{brl(expenseTotal)}</p>
           </Card>
           <Card className="rounded-2xl border-border p-3">
-            <p className="text-[10px] font-black uppercase tracking-wide text-muted-foreground">Cartões</p>
+            <p className="text-2xs font-black uppercase tracking-wide text-muted-foreground">Cartões</p>
             <p className="mt-0.5 text-xl font-black text-brand-blue">
               {brl(paymentTotals.debit + paymentTotals.credit)}
             </p>
           </Card>
           <Card className="rounded-2xl border-border p-3">
-            <p className="text-[10px] font-black uppercase tracking-wide text-muted-foreground">PIX</p>
+            <p className="text-2xs font-black uppercase tracking-wide text-muted-foreground">PIX</p>
             <p className="mt-0.5 text-xl font-black text-brand-blue">{brl(paymentTotals.pix)}</p>
           </Card>
         </div>
@@ -903,12 +903,12 @@ function PDVPage() {
                   </div>
                   <div className="min-w-0">
                     <p className="truncate text-sm font-black">{item.name}</p>
-                    <p className="truncate text-[11px] text-muted-foreground">{item.detail}</p>
+                    <p className="truncate text-2xs text-muted-foreground">{item.detail}</p>
                   </div>
                   <div className="text-right">
                     <p className="text-sm font-black">{brl(item.price * item.quantity)}</p>
                     <button
-                      className="text-[10px] text-destructive"
+                      className="text-2xs text-destructive"
                       onClick={() => changeQty(item.id, -999)}
                     >
                       remover
@@ -929,7 +929,7 @@ function PDVPage() {
               <strong>{brl(subtotal)}</strong>
             </div>
             <div className="grid grid-cols-[1fr_100px] items-center gap-2">
-              <Label className="text-[11px] text-muted-foreground">Desconto</Label>
+              <Label className="text-2xs text-muted-foreground">Desconto</Label>
               <Input
                 value={discount}
                 type="number"
@@ -954,7 +954,7 @@ function PDVPage() {
               Finalizar venda
             </Button>
           </div>
-          <p className="mt-3 text-[10px] font-black uppercase tracking-wider text-muted-foreground">
+          <p className="mt-3 text-2xs font-black uppercase tracking-wider text-muted-foreground">
             Finalizar rápido com o método:
           </p>
           <div className="mt-1 grid grid-cols-3 gap-1.5">
@@ -973,7 +973,7 @@ function PDVPage() {
                     setExactPayment(option.id);
                     setShowCheckout(true);
                   }}
-                  className="rounded-lg border border-border bg-card p-1.5 text-center text-[10px] font-black text-foreground transition hover:border-brand-blue hover:text-brand-blue disabled:cursor-not-allowed disabled:opacity-40"
+                  className="rounded-lg border border-border bg-card p-1.5 text-center text-2xs font-black text-foreground transition hover:border-brand-blue hover:text-brand-blue disabled:cursor-not-allowed disabled:opacity-40"
                 >
                   <Icon className="mx-auto mb-0.5 h-3.5 w-3.5" />
                   {option.label}
@@ -1022,7 +1022,7 @@ function PDVPage() {
                       </p>
                     </div>
                     <span
-                      className={`shrink-0 rounded-full px-2 py-1 text-[10px] font-black ${
+                      className={`shrink-0 rounded-full px-2 py-1 text-2xs font-black ${
                         entry.type === "saida"
                           ? "bg-destructive/10 text-destructive"
                           : "bg-success/10 text-success"
@@ -1043,14 +1043,14 @@ function PDVPage() {
                     <button
                       type="button"
                       onClick={() => editEntry(entry)}
-                      className="inline-flex items-center gap-1 rounded-lg px-2 py-1 text-[11px] font-bold text-muted-foreground hover:bg-muted"
+                      className="inline-flex items-center gap-1 rounded-lg px-2 py-1 text-2xs font-bold text-muted-foreground hover:bg-muted"
                     >
                       <Pencil className="h-3 w-3" /> editar
                     </button>
                     <button
                       type="button"
                       onClick={() => deleteEntry(entry)}
-                      className="inline-flex items-center gap-1 rounded-lg px-2 py-1 text-[11px] font-bold text-destructive hover:bg-destructive/10"
+                      className="inline-flex items-center gap-1 rounded-lg px-2 py-1 text-2xs font-bold text-destructive hover:bg-destructive/10"
                     >
                       <Trash2 className="h-3 w-3" /> excluir
                     </button>
@@ -1080,7 +1080,7 @@ function PDVPage() {
             </div>
             <div className="grid grid-cols-3 gap-1.5 sm:grid-cols-4 sm:gap-2 md:grid-cols-4 xl:grid-cols-7">
               <Button
-                className="h-10 w-full flex-col rounded-xl bg-brand-blue px-1 text-[10px] font-black leading-tight hover:bg-brand-blue-light sm:h-11 sm:flex-row sm:rounded-xl sm:px-2 sm:text-xs"
+                className="h-10 w-full flex-col rounded-xl bg-brand-blue px-1 text-2xs font-black leading-tight hover:bg-brand-blue-light sm:h-11 sm:flex-row sm:rounded-xl sm:px-2 sm:text-xs"
                 onClick={() => setShowFastSale(true)}
               >
                 <Plus className="h-3.5 w-3.5 sm:mr-1.5 sm:h-4 sm:w-4" />
@@ -1089,7 +1089,7 @@ function PDVPage() {
               </Button>
               <Button
                 variant="outline"
-                className="h-10 w-full flex-col rounded-xl border-info/30 bg-info/10 px-1 text-[10px] font-black leading-tight text-brand-blue hover:bg-info/10 sm:h-11 sm:flex-row sm:rounded-xl sm:px-2 sm:text-xs"
+                className="h-10 w-full flex-col rounded-xl border-info/30 bg-info/10 px-1 text-2xs font-black leading-tight text-brand-blue hover:bg-info/10 sm:h-11 sm:flex-row sm:rounded-xl sm:px-2 sm:text-xs"
                 onClick={() => setShowSquareMeter(true)}
               >
                 <Calculator className="h-3.5 w-3.5 sm:mr-1.5 sm:h-4 sm:w-4" />
@@ -1098,7 +1098,7 @@ function PDVPage() {
               </Button>
               <Button
                 variant="outline"
-                className="h-10 w-full flex-col rounded-xl border-success/30 bg-success/10 px-1 text-[10px] font-black leading-tight text-success hover:bg-success/10 sm:h-11 sm:flex-row sm:rounded-xl sm:px-2 sm:text-xs"
+                className="h-10 w-full flex-col rounded-xl border-success/30 bg-success/10 px-1 text-2xs font-black leading-tight text-success hover:bg-success/10 sm:h-11 sm:flex-row sm:rounded-xl sm:px-2 sm:text-xs"
                 onClick={() => setShowCalculator(true)}
               >
                 <Calculator className="h-3.5 w-3.5 sm:mr-1.5 sm:h-4 sm:w-4" />
@@ -1107,7 +1107,7 @@ function PDVPage() {
               </Button>
               <Button
                 variant="outline"
-                className="h-10 w-full flex-col rounded-xl border-info/30 bg-info/10 px-1 text-[10px] font-black leading-tight text-brand-blue hover:bg-info/10 sm:h-11 sm:flex-row sm:rounded-xl sm:px-2 sm:text-xs"
+                className="h-10 w-full flex-col rounded-xl border-info/30 bg-info/10 px-1 text-2xs font-black leading-tight text-brand-blue hover:bg-info/10 sm:h-11 sm:flex-row sm:rounded-xl sm:px-2 sm:text-xs"
                 onClick={() => setShowOrderPicker(true)}
               >
                 <ClipboardList className="h-3.5 w-3.5 sm:mr-1.5 sm:h-4 sm:w-4" />
@@ -1116,13 +1116,13 @@ function PDVPage() {
               </Button>
               <Button
                 variant="outline"
-                className="h-10 w-full flex-col rounded-xl bg-card px-1 text-[10px] font-black leading-tight sm:h-11 sm:flex-row sm:rounded-xl sm:px-2 sm:text-xs"
+                className="h-10 w-full flex-col rounded-xl bg-card px-1 text-2xs font-black leading-tight sm:h-11 sm:flex-row sm:rounded-xl sm:px-2 sm:text-xs"
                 onClick={() => setShowNewClient(true)}
               >
                 <UserPlus className="h-3.5 w-3.5 sm:mr-1.5 sm:h-4 sm:w-4" />
                 <span>Cliente</span>
               </Button>
-              <Button asChild variant="outline" className="h-10 w-full flex-col rounded-xl bg-card px-1 text-[10px] font-black leading-tight sm:h-11 sm:flex-row sm:rounded-xl sm:px-2 sm:text-xs">
+              <Button asChild variant="outline" className="h-10 w-full flex-col rounded-xl bg-card px-1 text-2xs font-black leading-tight sm:h-11 sm:flex-row sm:rounded-xl sm:px-2 sm:text-xs">
                 <a href="/services">
                   <Settings2 className="h-3.5 w-3.5 sm:mr-1.5 sm:h-4 sm:w-4" />
                   <span className="sm:hidden">Prod.</span>
@@ -1198,7 +1198,7 @@ function PDVPage() {
                 <div className="space-y-2 p-3">
                   <div>
                     <h3 className="line-clamp-1 text-sm font-black">{product.name}</h3>
-                    <p className="line-clamp-1 text-[11px] text-muted-foreground">{product.detail}</p>
+                    <p className="line-clamp-1 text-2xs text-muted-foreground">{product.detail}</p>
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-base font-black text-brand-blue">{brl(product.price)}</span>
@@ -1797,7 +1797,7 @@ function PDVPage() {
                 Esperado em dinheiro:{" "}
                 <strong>{brl(paymentTotals.cash + Number(cashSession?.initialAmount || 0))}</strong>
                 {cashSession?.initialAmount ? (
-                  <span className="block text-[11px] text-muted-foreground">
+                  <span className="block text-2xs text-muted-foreground">
                     (inclui troco inicial de {brl(Number(cashSession.initialAmount))})
                   </span>
                 ) : null}
@@ -1842,7 +1842,7 @@ function PDVPage() {
                     <div key={entry.id} className="flex items-start justify-between gap-3 px-3 py-2 text-sm">
                       <div className="min-w-0">
                         <p className="truncate font-bold">{entry.description || entry.category || "Lançamento"}</p>
-                        <p className="truncate text-[11px] text-muted-foreground">
+                        <p className="truncate text-2xs text-muted-foreground">
                           {new Date(entry.created_at).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}
                           {entry.payment_method ? ` · ${entry.payment_method}` : ""}
                         </p>

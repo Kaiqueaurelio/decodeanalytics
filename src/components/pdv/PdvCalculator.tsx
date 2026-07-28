@@ -67,7 +67,7 @@ export function PdvCalculator({
 
         <div className="space-y-3">
           <div className="rounded-2xl border border-border bg-muted p-4 text-right">
-            <p className="text-[11px] font-black uppercase tracking-widest text-muted-foreground">
+            <p className="text-2xs font-black uppercase tracking-widest text-muted-foreground">
               Total acumulado
             </p>
             <p className="mt-1 text-3xl font-black text-brand-blue tabular-nums">{brl(total)}</p>

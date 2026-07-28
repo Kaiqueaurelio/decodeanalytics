@@ -159,11 +159,11 @@ function EllaSandboxPage() {
                         <div className="flex items-center gap-2">
                           {s.status === "ok" ? <CheckCircle2 className="h-4 w-4 text-success" /> : <XCircle className="h-4 w-4 text-destructive" />}
                           <span className="font-mono text-xs">{s.name}</span>
-                          <span className="ml-auto text-[11px] text-muted-foreground">+{s.at_ms}ms{typeof s.duration_ms === "number" ? ` · ${s.duration_ms}ms` : ""}</span>
+                          <span className="ml-auto text-2xs text-muted-foreground">+{s.at_ms}ms{typeof s.duration_ms === "number" ? ` · ${s.duration_ms}ms` : ""}</span>
                         </div>
                         {s.error && <div className="mt-1 text-xs text-destructive">{s.error}</div>}
                         {s.detail && (
-                          <pre className="mt-1 overflow-auto rounded bg-muted/50 p-2 text-[11px]">{JSON.stringify(s.detail, null, 2)}</pre>
+                          <pre className="mt-1 overflow-auto rounded bg-muted/50 p-2 text-2xs">{JSON.stringify(s.detail, null, 2)}</pre>
                         )}
                       </li>
                     ))}
@@ -254,10 +254,10 @@ function EllaSandboxPage() {
                         <div className="flex items-center gap-2">
                           {s.status === "ok" ? <CheckCircle2 className="h-4 w-4 text-success" /> : <XCircle className="h-4 w-4 text-destructive" />}
                           <span className="font-mono text-xs">{s.name}</span>
-                          <span className="ml-auto text-[11px] text-muted-foreground">+{s.at_ms}ms{typeof s.duration_ms === "number" ? ` · ${s.duration_ms}ms` : ""}</span>
+                          <span className="ml-auto text-2xs text-muted-foreground">+{s.at_ms}ms{typeof s.duration_ms === "number" ? ` · ${s.duration_ms}ms` : ""}</span>
                         </div>
                         {s.detail && (
-                          <pre className="mt-1 overflow-auto rounded bg-muted/50 p-2 text-[11px]">{JSON.stringify(s.detail, null, 2)}</pre>
+                          <pre className="mt-1 overflow-auto rounded bg-muted/50 p-2 text-2xs">{JSON.stringify(s.detail, null, 2)}</pre>
                         )}
                       </li>
                     ))}
@@ -299,7 +299,7 @@ function EllaSandboxPage() {
                           <Badge variant="secondary">{k.scope}</Badge>
                         </div>
                         {k.matched.length > 0 && (
-                          <div className="mt-1 flex flex-wrap gap-1 text-[11px] text-muted-foreground">
+                          <div className="mt-1 flex flex-wrap gap-1 text-2xs text-muted-foreground">
                             palavras-chave:
                             {k.matched.map((m) => (
                               <span
@@ -317,7 +317,7 @@ function EllaSandboxPage() {
                         {k.tags && k.tags.length > 0 && (
                           <div className="mt-2 flex flex-wrap gap-1">
                             {k.tags.map((t) => (
-                              <Badge key={t} variant="outline" className="text-[10px]">
+                              <Badge key={t} variant="outline" className="text-2xs">
                                 {t}
                               </Badge>
                             ))}

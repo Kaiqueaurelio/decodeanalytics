@@ -53,7 +53,7 @@ function CartButton() {
     >
       <ShoppingCart className="h-4 w-4" />
       Carrinho
-      <span className="ml-1 rounded-full bg-[var(--store-secondary)] px-1.5 text-[10px] font-extrabold text-[var(--store-primary-dark)]">
+      <span className="ml-1 rounded-full bg-[var(--store-secondary)] px-1.5 text-2xs font-extrabold text-[var(--store-primary-dark)]">
         {count}
       </span>
     </Link>
@@ -63,7 +63,7 @@ function CartButton() {
 function CartCountBadge() {
   const { count } = useCart();
   return (
-    <span className="ml-auto rounded-full bg-[var(--store-primary)] px-2 py-0.5 text-[10px] font-extrabold text-inverse">
+    <span className="ml-auto rounded-full bg-[var(--store-primary)] px-2 py-0.5 text-2xs font-extrabold text-inverse">
       {count}
     </span>
   );
@@ -72,7 +72,7 @@ function CartCountBadge() {
 function TopPromoBar() {
   return (
     <div className="safe-area-top bg-[var(--store-secondary)] text-[var(--store-primary-dark)]">
-      <div className="mx-auto flex min-h-9 max-w-[1280px] items-center justify-center gap-1 px-3 py-1.5 text-center text-[11px] font-semibold leading-tight sm:min-h-10 sm:gap-2 sm:px-4 sm:py-2 sm:text-[13px] md:text-sm">
+      <div className="mx-auto flex min-h-9 max-w-[1280px] items-center justify-center gap-1 px-3 py-1.5 text-center text-2xs font-semibold leading-tight sm:min-h-10 sm:gap-2 sm:px-4 sm:py-2 sm:text-xs md:text-sm">
         <Tag className="h-4 w-4 shrink-0" aria-hidden="true" />
         <span className="min-w-0 break-words">
           Ganhe <strong>10% OFF</strong> na sua primeira compra — cupom{" "}
@@ -106,7 +106,7 @@ function StoreHeader() {
             >
               ALCATEIA&apos;S
             </div>
-            <div className="text-[9px] sm:text-[10px] font-bold uppercase tracking-[0.15em] sm:tracking-[0.2em] text-[var(--store-accent)]">
+            <div className="text-2xs sm:text-2xs font-bold uppercase tracking-[0.15em] sm:tracking-[0.2em] text-[var(--store-accent)]">
               Gráfica online
             </div>
           </div>
@@ -133,7 +133,7 @@ function StoreHeader() {
           />
           <button
             type="submit"
-            className="absolute right-1 top-1/2 inline-flex min-h-11 min-w-11 -translate-y-1/2 items-center justify-center rounded-[var(--store-radius-md)] bg-[var(--store-primary)] px-3 text-[10px] font-bold uppercase tracking-wide text-inverse transition-colors hover:bg-[var(--store-primary-light)] sm:right-1.5 sm:text-xs md:px-4 md:text-sm"
+            className="absolute right-1 top-1/2 inline-flex min-h-11 min-w-11 -translate-y-1/2 items-center justify-center rounded-[var(--store-radius-md)] bg-[var(--store-primary)] px-3 text-2xs font-bold uppercase tracking-wide text-inverse transition-colors hover:bg-[var(--store-primary-light)] sm:right-1.5 sm:text-xs md:px-4 md:text-sm"
           >
             Buscar
           </button>
@@ -191,7 +191,7 @@ function StoreHeader() {
                   <div className="text-sm font-extrabold text-[var(--store-primary)]">
                     Alcateia's
                   </div>
-                  <div className="text-[9px] font-bold uppercase tracking-[0.15em] text-[var(--store-accent)]">
+                  <div className="text-2xs font-bold uppercase tracking-[0.15em] text-[var(--store-accent)]">
                     Gráfica
                   </div>
                 </div>
@@ -349,7 +349,7 @@ function StoreFooter() {
             />
             <div>
               <div className="text-lg font-extrabold">Alcateia's</div>
-              <div className="text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--store-secondary)]">
+              <div className="text-2xs font-bold uppercase tracking-[0.2em] text-[var(--store-secondary)]">
                 Gráfica online
               </div>
             </div>

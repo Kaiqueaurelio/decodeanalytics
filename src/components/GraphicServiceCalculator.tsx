@@ -439,7 +439,7 @@ export function GraphicServiceCalculator() {
                           <p className="text-lg font-bold text-brand-yellow">
                             {formatCurrency(item.finalValue)}
                           </p>
-                          <p className="text-[10px] text-muted-foreground">
+                          <p className="text-2xs text-muted-foreground">
                             {item.timestamp.toLocaleTimeString("pt-BR")}
                           </p>
                         </div>

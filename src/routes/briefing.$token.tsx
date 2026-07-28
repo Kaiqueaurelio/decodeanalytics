@@ -414,7 +414,7 @@ function ArtReview({
           value={comment}
           onChange={(e) => setComment(e.target.value)}
         />
-        <p className="text-[10px] text-muted-foreground">
+        <p className="text-2xs text-muted-foreground">
           Em imagens, clique no ponto que deseja marcar antes de comentar.
         </p>
         <div className="grid grid-cols-2 gap-2">

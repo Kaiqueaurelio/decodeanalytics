@@ -23,7 +23,7 @@ export function Hero() {
         />
         <div className="relative grid items-center gap-6 sm:gap-8 md:grid-cols-2">
           <div className="min-w-0">
-            <span className="inline-flex max-w-full items-center gap-2 rounded-full bg-inverse/15 px-3 py-1 text-[10px] font-extrabold uppercase text-inverse backdrop-blur sm:text-[11px]" style={{ letterSpacing: "0.08em" }}>
+            <span className="inline-flex max-w-full items-center gap-2 rounded-full bg-inverse/15 px-3 py-1 text-2xs font-extrabold uppercase text-inverse backdrop-blur sm:text-2xs" style={{ letterSpacing: "0.08em" }}>
               <Sparkles className="h-3 w-3" /> Alcateia · produções gráficas · 48h
             </span>
             <h1 className="font-display mt-5 text-[2rem] leading-[0.98] sm:text-5xl md:text-6xl lg:text-7xl">
@@ -42,7 +42,7 @@ export function Hero() {
               <Tag className="h-4 w-4 text-[var(--store-secondary)]" />
               <span className="min-w-0">
                 10% OFF na 1ª compra ·{" "}
-                <span className="rounded bg-[var(--store-secondary)] px-1.5 py-0.5 text-[12px] text-[var(--store-primary-dark)]">
+                <span className="rounded bg-[var(--store-secondary)] px-1.5 py-0.5 text-xs text-[var(--store-primary-dark)]">
                   BEMVINDO10
                 </span>
               </span>
@@ -97,7 +97,7 @@ export function Hero() {
           </span>
           <div className="min-w-0">
             <p className="text-xs sm:text-sm font-extrabold text-[var(--store-text)]">Orçamento rápido</p>
-            <p className="text-[10px] sm:text-xs text-[var(--store-text-muted)]">Calcule o preço em segundos</p>
+            <p className="text-2xs sm:text-xs text-[var(--store-text-muted)]">Calcule o preço em segundos</p>
           </div>
         </Link>
         <a
@@ -112,7 +112,7 @@ export function Hero() {
           </span>
           <div className="min-w-0">
             <p className="text-xs sm:text-sm font-extrabold text-[var(--store-text)]">Criamos sua arte</p>
-            <p className="text-[10px] sm:text-xs text-[var(--store-text-muted)]">Designers prontos pra ajudar</p>
+            <p className="text-2xs sm:text-xs text-[var(--store-text-muted)]">Designers prontos pra ajudar</p>
           </div>
         </a>
         <a
@@ -127,7 +127,7 @@ export function Hero() {
           </span>
           <div className="min-w-0">
             <p className="text-xs sm:text-sm font-extrabold text-[var(--store-text)]">Envie sua arte</p>
-            <p className="text-[10px] sm:text-xs text-[var(--store-text-muted)]">PDF, AI, PSD, PNG até 50MB</p>
+            <p className="text-2xs sm:text-xs text-[var(--store-text-muted)]">PDF, AI, PSD, PNG até 50MB</p>
           </div>
         </a>
       </div>

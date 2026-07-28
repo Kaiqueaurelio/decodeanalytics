@@ -48,7 +48,7 @@ export function SmartImage({
       <div className={`flex h-full w-full items-center justify-center ${fallbackClass} ${className ?? ""}`}>
         <div className="text-center">
           <div className="text-4xl mb-1">{fallbackEmoji}</div>
-          <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+          <p className="text-2xs font-bold uppercase tracking-wider text-muted-foreground">
             {alt || "Produto"}
           </p>
         </div>
