@@ -279,7 +279,7 @@ function BentoProductCard({
           {showPrices ? (
             <p className="font-display text-2xl leading-none">{brl(product.base_price)}</p>
           ) : (
-            <p className="font-display text-base leading-none">Sob consulta</p>
+            <QuoteBadge />
           )}
           {product.min_quantity ? (
             <p className="text-2xs text-muted-foreground">
