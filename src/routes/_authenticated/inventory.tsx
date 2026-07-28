@@ -624,11 +624,11 @@ function InventoryCard({
           <div className="flex flex-wrap items-center gap-2">
             <h3 className="truncate font-extrabold text-brand-blue">{item.name}</h3>
             {zero ? (
-              <span className="rounded-full bg-destructive/10 px-2 py-0.5 text-[11px] font-bold text-destructive">Zerado</span>
+              <span className="rounded-full bg-destructive/10 px-2 py-0.5 text-2xs font-bold text-destructive">Zerado</span>
             ) : low ? (
-              <span className="rounded-full bg-warning/10 px-2 py-0.5 text-[11px] font-bold text-warning">Baixo</span>
+              <span className="rounded-full bg-warning/10 px-2 py-0.5 text-2xs font-bold text-warning">Baixo</span>
             ) : (
-              <span className="rounded-full bg-success/10 px-2 py-0.5 text-[11px] font-bold text-success">OK</span>
+              <span className="rounded-full bg-success/10 px-2 py-0.5 text-2xs font-bold text-success">OK</span>
             )}
           </div>
           <p className="mt-1 text-xs text-muted-foreground">

@@ -92,7 +92,7 @@ export function AnalyticsDebugPanel() {
         <Bug className="h-3.5 w-3.5" />
         Analytics
         {entries.length > 0 && (
-          <Badge className="ml-1 h-5 min-w-5 rounded-full bg-warning px-1.5 text-[10px] font-bold text-foreground hover:bg-warning">
+          <Badge className="ml-1 h-5 min-w-5 rounded-full bg-warning px-1.5 text-2xs font-bold text-foreground hover:bg-warning">
             {entries.length}
           </Badge>
         )}
@@ -110,7 +110,7 @@ export function AnalyticsDebugPanel() {
         <span className="text-xs font-bold uppercase tracking-wider text-inverse">
           Analytics Debug
         </span>
-        <span className="text-[10px] font-medium text-muted-foreground">dev only</span>
+        <span className="text-2xs font-medium text-muted-foreground">dev only</span>
         <span className="ml-auto flex items-center gap-1">
           <Button
             variant="ghost"
@@ -137,7 +137,7 @@ export function AnalyticsDebugPanel() {
 
       <div className="flex flex-wrap items-center gap-1.5 border-b border-surface-dark-soft bg-surface-dark/60 px-3 py-2">
         {Object.entries(counts).length === 0 ? (
-          <span className="text-[11px] text-muted-foreground">
+          <span className="text-2xs text-muted-foreground">
             Aguardando eventos… interaja com a landing.
           </span>
         ) : (
@@ -145,12 +145,12 @@ export function AnalyticsDebugPanel() {
             <span
               key={ev}
               className={cn(
-                "inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-semibold",
+                "inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-2xs font-semibold",
                 EVENT_TONE[ev] ?? "border-surface-dark-soft bg-surface-dark text-surface-dark-foreground",
               )}
             >
               {ev}
-              <span className="rounded-full bg-surface-dark/25 px-1.5 text-[10px]">{n}</span>
+              <span className="rounded-full bg-surface-dark/25 px-1.5 text-2xs">{n}</span>
             </span>
           ))
         )}
@@ -168,7 +168,7 @@ export function AnalyticsDebugPanel() {
       <ScrollArea className="flex-1">
         <div ref={scrollRef} className="divide-y divide-border/70">
           {filtered.length === 0 ? (
-            <p className="px-3 py-6 text-center text-[11px] text-muted-foreground">
+            <p className="px-3 py-6 text-center text-2xs text-muted-foreground">
               Nenhum evento capturado ainda.
             </p>
           ) : (
@@ -179,10 +179,10 @@ export function AnalyticsDebugPanel() {
                   onClick={() => toggle(e.id)}
                   className="flex w-full items-center gap-2 text-left"
                 >
-                  <span className="font-mono text-[10px] text-muted-foreground">{e.time}</span>
+                  <span className="font-mono text-2xs text-muted-foreground">{e.time}</span>
                   <span
                     className={cn(
-                      "inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] font-bold",
+                      "inline-flex items-center rounded-full border px-2 py-0.5 text-2xs font-bold",
                       EVENT_TONE[e.event] ?? "border-surface-dark-soft bg-surface-dark text-surface-dark-foreground",
                     )}
                   >
@@ -200,18 +200,18 @@ export function AnalyticsDebugPanel() {
                 {e.expanded && (
                   <div className="mt-2 rounded-md border border-surface-dark-soft bg-surface-dark p-2">
                     <div className="mb-1 flex items-center justify-between">
-                      <span className="text-[10px] uppercase tracking-wider text-muted-foreground">
+                      <span className="text-2xs uppercase tracking-wider text-muted-foreground">
                         dataLayer push
                       </span>
                       <button
                         type="button"
                         onClick={() => copy(e.payload)}
-                        className="inline-flex items-center gap-1 rounded-md border border-surface-dark-soft bg-surface-dark px-1.5 py-0.5 text-[10px] font-semibold text-surface-dark-foreground hover:bg-surface-dark"
+                        className="inline-flex items-center gap-1 rounded-md border border-surface-dark-soft bg-surface-dark px-1.5 py-0.5 text-2xs font-semibold text-surface-dark-foreground hover:bg-surface-dark"
                       >
                         <Copy className="h-3 w-3" /> copiar
                       </button>
                     </div>
-                    <pre className="max-h-64 overflow-auto whitespace-pre-wrap break-words font-mono text-[10.5px] leading-relaxed text-surface-dark-foreground">
+                    <pre className="max-h-64 overflow-auto whitespace-pre-wrap break-words font-mono text-2xs leading-relaxed text-surface-dark-foreground">
                       {JSON.stringify(e.payload, null, 2)}
                     </pre>
                   </div>
@@ -222,7 +222,7 @@ export function AnalyticsDebugPanel() {
         </div>
       </ScrollArea>
 
-      <footer className="border-t border-surface-dark-soft bg-surface-dark/70 px-3 py-1.5 text-[10px] text-muted-foreground">
+      <footer className="border-t border-surface-dark-soft bg-surface-dark/70 px-3 py-1.5 text-2xs text-muted-foreground">
         {entries.length}/{MAX} eventos · window.dataLayer sincronizado
       </footer>
     </div>
@@ -252,5 +252,5 @@ function PreviewLine({ payload }: { payload: Record<string, unknown> }) {
     return bits.join(" · ");
   }, [payload]);
   if (!preview) return null;
-  return <p className="mt-1 truncate font-mono text-[10.5px] text-muted-foreground">{preview}</p>;
+  return <p className="mt-1 truncate font-mono text-2xs text-muted-foreground">{preview}</p>;
 }

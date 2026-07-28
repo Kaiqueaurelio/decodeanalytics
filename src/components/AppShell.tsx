@@ -279,7 +279,7 @@ export function AppShell({ children }: { children: ReactNode }) {
               collapsed && "md:hidden",
             )}
           >
-            <p className="text-[10px] font-bold uppercase tracking-wider text-brand-yellow">
+            <p className="text-2xs font-bold uppercase tracking-wider text-brand-yellow">
               Central de operações
             </p>
             <p className="mt-0.5 text-xs leading-relaxed text-inverse/65">
@@ -296,7 +296,7 @@ export function AppShell({ children }: { children: ReactNode }) {
               <div key={section} className="mb-4">
                 <p
                   className={cn(
-                    "mb-2 px-3 text-[10px] font-bold uppercase tracking-[0.18em] text-inverse/35",
+                    "mb-2 px-3 text-2xs font-bold uppercase tracking-[0.18em] text-inverse/35",
                     collapsed && "md:hidden",
                   )}
                 >
@@ -372,7 +372,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             </div>
             <div className={cn("min-w-0 flex-1", collapsed && "md:hidden")}>
               <div className="truncate text-xs font-semibold text-inverse">{user?.email}</div>
-              <div className="truncate text-[11px] text-inverse/50">
+              <div className="truncate text-2xs text-inverse/50">
                 {roles.map((role) => ROLE_LABEL[role]).join(", ") || "Sem papel"}
               </div>
             </div>
@@ -406,7 +406,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           collapsed ? "md:ml-16" : "md:ml-64",
         )}
       >
-        <div className="hidden h-8 items-center justify-between bg-brand-blue px-6 text-[11px] font-medium text-inverse/70 lg:flex">
+        <div className="hidden h-8 items-center justify-between bg-brand-blue px-6 text-2xs font-medium text-inverse/70 lg:flex">
           <span>Produção gráfica organizada do briefing à entrega</span>
           <span className="font-semibold text-brand-yellow">Alcateia's Produções Gráficas</span>
         </div>
@@ -432,7 +432,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             </button>
 
             <div className="min-w-0 flex-1 lg:flex-none lg:min-w-44">
-              <p className="hidden text-[10px] font-bold uppercase tracking-[0.18em] text-brand-orange sm:block">
+              <p className="hidden text-2xs font-bold uppercase tracking-[0.18em] text-brand-orange sm:block">
                 Central de gestão
               </p>
               <h1 className="truncate text-base font-extrabold text-brand-blue sm:text-xl">

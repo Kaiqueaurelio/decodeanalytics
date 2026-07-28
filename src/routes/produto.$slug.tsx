@@ -231,7 +231,7 @@ function BuyBox({ product }: { product: StoreProduct }) {
   return (
     <section className="space-y-5 rounded-[var(--store-radius-xl)] border border-[var(--store-border)] bg-card p-6 shadow-[var(--store-shadow-sm)]">
       <div>
-        <p className="text-[11px] font-extrabold uppercase tracking-[0.18em] text-[var(--store-accent)]">
+        <p className="text-2xs font-extrabold uppercase tracking-[0.18em] text-[var(--store-accent)]">
           {product.category ?? "Personalizado"}
         </p>
         <h1 className="mt-1 text-2xl font-extrabold leading-tight text-[var(--store-text)] sm:text-3xl">
@@ -247,7 +247,7 @@ function BuyBox({ product }: { product: StoreProduct }) {
       </div>
 
       <div className="rounded-[var(--store-radius-lg)] bg-[var(--store-surface-soft)] p-4">
-        <p className="text-[10px] font-bold uppercase tracking-wide text-[var(--store-text-light)]">
+        <p className="text-2xs font-bold uppercase tracking-wide text-[var(--store-text-light)]">
           {showPrices ? "Preço unitário" : "Valor"}
         </p>
         <p className="text-3xl font-extrabold leading-tight text-[var(--store-primary)]">
@@ -275,7 +275,7 @@ function BuyBox({ product }: { product: StoreProduct }) {
           />
         </div>
         <div className="rounded-[var(--store-radius-md)] border border-dashed border-[var(--store-primary-light)]/40 bg-[var(--store-primary-light)]/5 p-3">
-          <p className="text-[10px] font-bold uppercase tracking-wide text-[var(--store-text-muted)]">
+          <p className="text-2xs font-bold uppercase tracking-wide text-[var(--store-text-muted)]">
             {showPrices ? "Total estimado" : "Orçamento"}
           </p>
           <p className="text-xl font-extrabold text-[var(--store-primary)]">

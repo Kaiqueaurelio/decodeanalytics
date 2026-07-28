@@ -191,7 +191,7 @@ function CartPage() {
       >
         <div className="mx-auto flex max-w-[1280px] items-center gap-3 px-3 py-3 sm:px-4">
           <div className="min-w-0 flex-1">
-            <p className="text-[11px] font-semibold uppercase tracking-wide text-[var(--store-text-muted)]">
+            <p className="text-2xs font-semibold uppercase tracking-wide text-[var(--store-text-muted)]">
               Total ({count} {count === 1 ? "item" : "itens"})
             </p>
             <p className="truncate text-lg font-extrabold text-[var(--store-primary)]">

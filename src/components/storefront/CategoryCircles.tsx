@@ -44,7 +44,7 @@ export function CategoryCircles() {
                   aria-hidden="true"
                 />
               </div>
-              <span className="text-center text-[11px] font-bold leading-tight text-[var(--store-text)] transition-colors group-hover:text-store-primary sm:text-xs">
+              <span className="text-center text-2xs font-bold leading-tight text-[var(--store-text)] transition-colors group-hover:text-store-primary sm:text-xs">
                 {c.label}
               </span>
             </Link>

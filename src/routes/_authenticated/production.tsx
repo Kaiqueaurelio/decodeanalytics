@@ -229,7 +229,7 @@ function ProductionBoard() {
               : "bg-card hover:border-primary/40"
           }`}
         >
-          <span className="block text-[10px] uppercase tracking-wide opacity-70">Todos</span>
+          <span className="block text-2xs uppercase tracking-wide opacity-70">Todos</span>
           <strong className="text-lg">{data?.orders.length ?? 0}</strong>
         </button>
         {COLUMNS.map((status) => {
@@ -246,7 +246,7 @@ function ProductionBoard() {
                   : `${STATUS_TONE[status]} hover:brightness-95`
               }`}
             >
-              <span className="block truncate text-[10px] uppercase tracking-wide opacity-75">
+              <span className="block truncate text-2xs uppercase tracking-wide opacity-75">
                 {PRODUCTION_STATUS_LABEL[status]}
               </span>
               <strong className="text-lg">{count}</strong>
@@ -362,7 +362,7 @@ function ProductionBoard() {
                         </div>
                       ))}
                     </div>
-                    <p className="mt-2 text-[10px] text-muted-foreground">
+                    <p className="mt-2 text-2xs text-muted-foreground">
                       Etapa {Math.max(1, currentIndex + 1)} de 7 do fluxo principal
                     </p>
                   </div>
@@ -438,20 +438,20 @@ function ProductionBoard() {
                         </div>
                         <div className="flex flex-col items-end gap-1">
                           <Badge
-                            className={`${lifecycleFor(order.production_status).className} text-[9px]`}
+                            className={`${lifecycleFor(order.production_status).className} text-2xs`}
                             title={lifecycleFor(order.production_status).description}
                           >
                             {lifecycleFor(order.production_status).label}
                           </Badge>
                           {order.urgent && (
-                            <Badge className="bg-destructive text-destructive-foreground text-[9px]">
+                            <Badge className="bg-destructive text-destructive-foreground text-2xs">
                               URGENTE
                             </Badge>
                           )}
                         </div>
                       </div>
                       <div className="mt-3 rounded-lg bg-muted/60 p-2">
-                        <p className="text-[10px] uppercase tracking-wide text-muted-foreground">
+                        <p className="text-2xs uppercase tracking-wide text-muted-foreground">
                           Fazendo agora
                         </p>
                         <p className="text-xs font-medium mt-1 line-clamp-2">
@@ -459,7 +459,7 @@ function ProductionBoard() {
                         </p>
                       </div>
                       <div className="mt-3">
-                        <div className="flex justify-between text-[10px] mb-1">
+                        <div className="flex justify-between text-2xs mb-1">
                           <span>Progresso</span>
                           <strong>{order.progress || 0}%</strong>
                         </div>
@@ -470,7 +470,7 @@ function ProductionBoard() {
                           />
                         </div>
                       </div>
-                      <div className="flex items-center justify-between mt-3 text-[10px] text-muted-foreground">
+                      <div className="flex items-center justify-between mt-3 text-2xs text-muted-foreground">
                         <span className="flex items-center gap-1">
                           <UserRound className="w-3 h-3" />
                           {order.assignee?.full_name || order.assignee?.email || "Não atribuído"}
@@ -480,9 +480,9 @@ function ProductionBoard() {
                           {timeAgo(order.last_progress_at)}
                         </span>
                       </div>
-                      <div className="flex justify-between mt-2 pt-2 border-t text-[10px] text-muted-foreground">
+                      <div className="flex justify-between mt-2 pt-2 border-t text-2xs text-muted-foreground">
                         <span>Prazo: {fmtDate(order.deadline)}</span>
-                        <Badge variant="outline" className="text-[9px]">
+                        <Badge variant="outline" className="text-2xs">
                           {PAYMENT_STATUS_LABEL[order.payment_status]}
                         </Badge>
                       </div>
@@ -618,7 +618,7 @@ function DetailItem({
     <div
       className={`rounded-xl border p-3 ${warning ? "border-warning/30 bg-warning/10" : "bg-card"}`}
     >
-      <p className="flex items-center gap-1.5 text-[10px] uppercase tracking-wide text-muted-foreground">
+      <p className="flex items-center gap-1.5 text-2xs uppercase tracking-wide text-muted-foreground">
         <Icon className="h-3.5 w-3.5" /> {label}
       </p>
       <p

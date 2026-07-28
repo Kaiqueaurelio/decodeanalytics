@@ -353,7 +353,7 @@ export function BriefingCenter({ order, onChanged }: { order: any; onChanged: ()
               >
                 <div className="min-w-0">
                   <p className="truncate text-sm font-medium">{file.file_name}</p>
-                  <p className="text-[10px] text-muted-foreground">
+                  <p className="text-2xs text-muted-foreground">
                     {file.uploaded_by_client ? "Enviado pelo cliente" : "Adicionado pela equipe"}
                   </p>
                 </div>
@@ -469,7 +469,7 @@ function VersionCard({ version, onDownload }: { version: any; onDownload: () => 
 function Info({ label, value }: { label: string; value: any }) {
   return (
     <div>
-      <p className="text-[10px] uppercase tracking-wide text-muted-foreground">{label}</p>
+      <p className="text-2xs uppercase tracking-wide text-muted-foreground">{label}</p>
       <p className="font-medium capitalize">{value || "Não informado"}</p>
     </div>
   );
