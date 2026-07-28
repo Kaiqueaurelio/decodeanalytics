@@ -61,7 +61,7 @@ export function EllaAvatar({
         aria-label={alt}
         style={{ width: size, height: size }}
         className={cn(
-          "grid shrink-0 place-items-center rounded-full bg-gradient-to-br from-brand-blue to-brand-blue/70 text-white font-black",
+          "grid shrink-0 place-items-center rounded-full bg-linear-to-br from-brand-blue to-brand-blue/70 text-white font-black",
           ringClassName,
           className,
         )}

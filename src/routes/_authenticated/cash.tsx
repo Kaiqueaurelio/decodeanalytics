@@ -69,7 +69,7 @@ function CashPage() {
   return (
     <div className="space-y-4">
       {/* Saldo do Dia - Destaque Principal */}
-      <div className="bg-gradient-to-r from-brand-yellow to-brand-orange rounded-2xl p-6 text-brand-blue shadow-lg border border-brand-yellow/30">
+      <div className="bg-linear-to-r from-brand-yellow to-brand-orange rounded-2xl p-6 text-brand-blue shadow-lg border border-brand-yellow/30">
         <div className="flex items-center justify-between flex-wrap gap-4">
           <div>
             <div className="flex items-center gap-2 mb-2">
