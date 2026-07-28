@@ -2,7 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { generateText, tool, stepCountIs } from "ai";
 import { z } from "zod";
-import { createLovableGateway } from "@/lib/ai-gateway.server";
+import { resolveEllaModel, aiTimeoutSignal } from "@/lib/ai-gateway.server";
 import {
   ADMIN_SYSTEM_PROMPT,
   STATUS_ENUM,
@@ -263,7 +263,7 @@ async function ellaLocalFallback({
 
   return {
     response:
-      "Estou funcionando na Vercel em modo básico. Para a Ella completa com IA, áudio e análise de anexos, configure LOVABLE_API_KEY na Vercel. Mesmo assim, já consigo executar comandos simples como atualizar preço, criar produto, listar OS e mexer no estoque.",
+      "Estou em modo básico porque nenhuma chave de IA está configurada neste ambiente (GEMINI_API_KEY ou LOVABLE_API_KEY). Mesmo assim, já consigo executar comandos simples como atualizar preço, criar produto, listar OS e mexer no estoque.",
     toolActivity,
   };
 }
@@ -272,11 +272,11 @@ export const ellaChat = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((v: unknown) => InputSchema.parse(v))
   .handler(async ({ data, context }) => {
-    const key = process.env.LOVABLE_API_KEY;
+    const resolved = resolveEllaModel();
     const supabase = context.supabase;
     const userId = context.userId;
 
-    if (!key) {
+    if (!resolved) {
       const fallback = await ellaLocalFallback({
         message: data.message,
         supabase,
@@ -288,7 +288,7 @@ export const ellaChat = createServerFn({ method: "POST" })
       };
     }
 
-    const model = createLovableGateway(key)("google/gemini-2.5-flash");
+    const { model, modelName, provider } = resolved;
     const traceId = newTraceId();
     const startedAt = Date.now();
 
@@ -1237,7 +1237,9 @@ export const ellaChat = createServerFn({ method: "POST" })
     for (const att of attachments) {
       const mt = att.mimeType.toLowerCase();
       if (mt.startsWith("audio/")) {
-        const transcript = key ? await transcribeAttachment(key, att) : "";
+        // A transcrição continua no gateway da Lovable (Gemini não expõe /audio/transcriptions aqui).
+        const transcribeKey = process.env.LOVABLE_API_KEY;
+        const transcript = transcribeKey ? await transcribeAttachment(transcribeKey, att) : "";
         userText += transcript
           ? `\n\n[Áudio "${att.name}" — transcrição]: ${transcript}`
           : `\n\n[Áudio "${att.name}" enviado mas não foi possível transcrever.]`;
@@ -1267,6 +1269,7 @@ export const ellaChat = createServerFn({ method: "POST" })
         messages: [...history, userMessage],
         tools,
         stopWhen: stepCountIs(50),
+        abortSignal: aiTimeoutSignal(60_000),
       });
 
       const toolActivity: Array<{ name: string; input: any; output: any }> = [];
@@ -1278,8 +1281,8 @@ export const ellaChat = createServerFn({ method: "POST" })
       }
 
       logAiEvent({
-        provider: "lovable-ai-gateway",
-        model: "google/gemini-2.5-flash",
+        provider,
+        model: modelName,
         endpoint: "/ella",
         trace_id: traceId,
         status: "success",
@@ -1292,8 +1295,8 @@ export const ellaChat = createServerFn({ method: "POST" })
       const cls = classifyAiError(err);
       console.error("ellaChat error:", traceId, cls);
       logAiEvent({
-        provider: "lovable-ai-gateway",
-        model: "google/gemini-2.5-flash",
+        provider,
+        model: modelName,
         endpoint: "/ella",
         trace_id: traceId,
         status: "error",

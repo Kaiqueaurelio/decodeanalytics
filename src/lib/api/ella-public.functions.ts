@@ -2,7 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { createClient } from "@supabase/supabase-js";
 import { generateText, tool, stepCountIs } from "ai";
 import { z } from "zod";
-import { createLovableGateway } from "@/lib/ai-gateway.server";
+import { resolveEllaModel, aiTimeoutSignal } from "@/lib/ai-gateway.server";
 import type { Database } from "@/integrations/supabase/types";
 import { getRequestIP, getRequestHeader } from "@tanstack/react-start/server";
 import { PUBLIC_SYSTEM_PROMPT, checkPublicRateLimit } from "./ella.helpers.server";
@@ -38,10 +38,10 @@ export const ellaPublicChat = createServerFn({ method: "POST" })
       };
     }
 
-    const key = process.env.LOVABLE_API_KEY;
     const url = process.env.SUPABASE_URL;
     const anonKey = process.env.SUPABASE_PUBLISHABLE_KEY;
-    if (!key || !url || !anonKey)
+    const resolved = resolveEllaModel();
+    if (!resolved || !url || !anonKey)
       throw new Error("Configuração de servidor ausente.");
 
     // Cliente anônimo — RLS trata como visitante (sem sessão).
@@ -49,7 +49,7 @@ export const ellaPublicChat = createServerFn({ method: "POST" })
       auth: { storage: undefined, persistSession: false, autoRefreshToken: false },
     });
 
-    const model = createLovableGateway(key)("google/gemini-2.5-flash");
+    const { model, modelName, provider } = resolved;
     const traceId = newTraceId();
     const startedAt = Date.now();
 
@@ -114,10 +114,11 @@ export const ellaPublicChat = createServerFn({ method: "POST" })
         messages: [...history, { role: "user", content: data.message }],
         tools,
         stopWhen: stepCountIs(8),
+        abortSignal: aiTimeoutSignal(45_000),
       });
       logAiEvent({
-        provider: "lovable-ai-gateway",
-        model: "google/gemini-2.5-flash",
+        provider,
+        model: modelName,
         endpoint: "/assistente",
         trace_id: traceId,
         status: "success",
@@ -134,8 +135,8 @@ export const ellaPublicChat = createServerFn({ method: "POST" })
       const cls = classifyAiError(err);
       console.error("ellaPublicChat error:", traceId, cls);
       logAiEvent({
-        provider: "lovable-ai-gateway",
-        model: "google/gemini-2.5-flash",
+        provider,
+        model: modelName,
         endpoint: "/assistente",
         trace_id: traceId,
         status: "error",
