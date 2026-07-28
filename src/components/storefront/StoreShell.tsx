@@ -16,6 +16,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import { STORE_CATEGORIES } from "./tokens";
+import { EllaAvatar } from "@/components/EllaAvatar";
 import { useCompanyInfo, useWaLink } from "@/hooks/useCompanyInfo";
 import { useCart } from "@/lib/cart-context";
 import { useState } from "react";
