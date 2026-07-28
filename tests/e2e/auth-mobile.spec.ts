@@ -20,7 +20,7 @@ const viewports = [
 
 for (const vp of viewports) {
   test.describe(`/auth on ${vp.name}`, () => {
-    test.use({ viewport: vp.viewport });
+    test.use({ viewport: vp.viewport, hasTouch: true });
 
     test("inputs recebem foco, aceitam digitação e sem overflow horizontal", async ({ page }) => {
       // A telemetria é emitida via console.info("[auth-telemetry]", ...) — ler o

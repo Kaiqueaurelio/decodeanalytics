@@ -11,7 +11,9 @@
 import { test, expect } from "@playwright/test";
 
 const BASE = process.env.BASE_URL ?? "http://localhost:8080";
-const AVATAR_URL_RE = /ella-avatar.*\.jpe?g(\?.*)?$/i;
+// Em dev o Vite serve o módulo do asset em `...jpg?import`; bloquear essa URL
+// quebraria o import do componente. Só bloqueamos a requisição da imagem.
+const AVATAR_URL_RE = /ella-avatar.*\.jpe?g(\?(?!import).*)?$/i;
 
 // Aguarda o componente esgotar seus retries (3 tentativas * ~2s backoff * 1.5).
 // Base 2000ms → ~ 2000 + 3000 + 4500 ≈ 9500ms. Damos folga.
