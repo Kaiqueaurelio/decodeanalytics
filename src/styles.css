@@ -218,6 +218,13 @@
     scroll-padding-bottom: env(safe-area-inset-bottom);
   }
 
+  /* Rolagem suave (âncoras e scrollIntoView), respeitando quem prefere menos movimento. */
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
+  }
+
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
