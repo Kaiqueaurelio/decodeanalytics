@@ -2,7 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { generateText } from "ai";
 import { z } from "zod";
-import { createLovableGateway } from "@/lib/ai-gateway.server";
+import { resolveEllaModel } from "@/lib/ai-gateway.server";
 import { ADMIN_SYSTEM_PROMPT, PUBLIC_SYSTEM_PROMPT } from "./ella.helpers.server";
 import { classifyAiError, logAiEvent, newTraceId } from "./ai-logs.server";
 
@@ -36,7 +36,8 @@ export const ellaSandboxChat = createServerFn({ method: "POST" })
     const supabase = context.supabase;
     const userId = context.userId;
 
-    const modelName = "google/gemini-2.5-flash";
+    const resolved = resolveEllaModel();
+    const modelName = resolved?.modelName ?? "google/gemini-2.5-flash";
     const traceId = newTraceId();
     const startedAt = Date.now();
     const temperature = 0.4;
@@ -88,9 +89,8 @@ export const ellaSandboxChat = createServerFn({ method: "POST" })
     };
 
     // Fail fast if API key missing — persist evidence.
-    const key = process.env.LOVABLE_API_KEY;
-    if (!key) {
-      const err = new Error("LOVABLE_API_KEY não configurada");
+    if (!resolved) {
+      const err = new Error("Nenhuma chave de IA configurada (GEMINI_API_KEY ou LOVABLE_API_KEY)");
       steps.push({ name: "check_api_key", status: "error", at_ms: 0, duration_ms: 0, detail: null, error: err.message });
       await persistErrorRun(supabase, userId, {
         inputs, steps, traceId, modelName, temperature,
@@ -102,7 +102,7 @@ export const ellaSandboxChat = createServerFn({ method: "POST" })
       });
       throw err;
     }
-    const model = createLovableGateway(key)(modelName);
+    const model = resolved.model;
 
     const scopes = data.scope === "admin" ? ["admin", "both"] : ["public", "both"];
     const { data: kbRaw } = await step("load_knowledge", async () => supabase
