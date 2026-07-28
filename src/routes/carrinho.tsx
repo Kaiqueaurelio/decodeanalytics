@@ -28,7 +28,7 @@ function CartPage() {
   const message = useMemo(() => {
     const lines = items.map((item: { name: string; quantity: number; price: number }) =>
       showPrices
-        ? `• ${item.name} — ${item.quantity}x ${brl(item.price)} = ${money(item.price * item.quantity)}`
+        ? `• ${item.name} — ${item.quantity}x ${brl(item.price)} = ${brl(item.price * item.quantity)}`
         : `• ${item.name} — ${item.quantity}x`,
     );
     return showPrices
@@ -116,7 +116,7 @@ function CartPage() {
                   </button>
                 </div>
                 <p className="hidden min-w-[5rem] text-right text-sm font-bold text-[var(--store-primary)] sm:block">
-                  {brl(item.price * item.quantity)}
+                  {money(item.price * item.quantity)}
                 </p>
                 <button
                   type="button"
