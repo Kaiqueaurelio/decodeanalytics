@@ -25,6 +25,7 @@ import {
   Activity,
   GraduationCap,
   Beaker,
+  ShieldCheck,
   X,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
@@ -121,6 +122,14 @@ const NAV: NavItem[] = [
     description: "Catálogo e preços",
     icon: Package,
     section: "Administração",
+    roles: ["administrador", "atendente"],
+  },
+  {
+    to: "/artes",
+    label: "Aprovação de Artes",
+    description: "Enviar arte protegida e receber aprovação",
+    icon: ShieldCheck,
+    section: "Operação",
     roles: ["administrador", "atendente"],
   },
   {
