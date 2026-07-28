@@ -197,7 +197,7 @@ function FeedCard({
           {showPrices ? (
             <p className="font-display text-2xl leading-none">{brl(product.base_price)}</p>
           ) : (
-            <p className="font-display text-base leading-none">Sob consulta</p>
+            <QuoteBadge />
           )}
         </div>
         <span className="grid h-9 w-9 shrink-0 place-items-center rounded-[var(--store-radius-sm)] bg-[var(--store-ink)] text-inverse transition-colors group-hover:bg-[var(--store-gold)] group-hover:text-[var(--store-ink)]">
