@@ -721,7 +721,7 @@ function _ContactSection() {
               href={info.mapsUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-xs font-bold text-[var(--store-secondary)] hover:underline"
+              className="inline-flex min-h-11 items-center text-xs font-bold text-[var(--store-secondary)] hover:underline"
             >
               Abrir no Google Maps
             </a>
