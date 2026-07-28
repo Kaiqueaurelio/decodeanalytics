@@ -4,6 +4,7 @@ import { Loader2, Plus, Star } from "lucide-react";
 import { useStoreProducts } from "./useStoreProducts";
 import { brl } from "./tokens";
 import type { StoreProduct } from "./ProductCard";
+import { useShowPrices } from "@/hooks/useCompanyInfo";
 import { SmartImage } from "./SmartImage";
 import { trackCardClick, trackCta, trackInfinitePage } from "@/lib/analytics";
 
@@ -144,6 +145,7 @@ function FeedCard({
 }) {
   const slug = product.slug ?? product.id;
   const rating = product.rating ? Number(product.rating) : null;
+  const showPrices = useShowPrices();
   return (
     <Link
       to="/produto/$slug"
