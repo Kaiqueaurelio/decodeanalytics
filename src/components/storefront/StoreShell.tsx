@@ -49,12 +49,12 @@ function CartButton() {
   return (
     <Link
       to="/carrinho"
-      aria-label="Carrinho"
-      className="relative flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-lg bg-[var(--store-primary)] px-3 py-2 text-sm font-bold text-inverse transition-colors hover:bg-[var(--store-primary-light)]"
+      aria-label={`Carrinho, ${count} ${count === 1 ? "item" : "itens"}`}
+      className="relative inline-flex min-h-11 min-w-11 shrink-0 items-center justify-center gap-1.5 whitespace-nowrap rounded-lg bg-[var(--store-primary)] px-3 py-2 text-sm font-bold text-inverse transition-colors hover:bg-[var(--store-primary-light)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--store-primary)] focus-visible:ring-offset-2"
     >
-      <ShoppingCart className="h-4 w-4 shrink-0" />
+      <ShoppingCart className="h-4 w-4 shrink-0" aria-hidden="true" />
       <span className="hidden lg:inline">Carrinho</span>
-      <span className="ml-1 rounded-full bg-[var(--store-secondary)] px-1.5 text-2xs font-extrabold text-[var(--store-primary-dark)]">
+      <span aria-hidden="true" className="ml-1 rounded-full bg-[var(--store-secondary)] px-1.5 text-2xs font-extrabold text-[var(--store-primary-dark)]">
         {count}
       </span>
     </Link>
@@ -134,7 +134,8 @@ function StoreHeader() {
           />
           <button
             type="submit"
-            className="absolute right-1 top-1/2 inline-flex min-h-11 min-w-11 -translate-y-1/2 items-center justify-center rounded-[var(--store-radius-md)] bg-[var(--store-primary)] px-3 text-2xs font-bold uppercase tracking-wide text-inverse transition-colors hover:bg-[var(--store-primary-light)] sm:right-1.5 sm:text-xs md:px-4 md:text-sm"
+            aria-label="Buscar produtos"
+            className="absolute right-1 top-1/2 inline-flex min-h-11 min-w-11 -translate-y-1/2 items-center justify-center rounded-[var(--store-radius-md)] bg-[var(--store-primary)] px-3 text-2xs font-bold uppercase tracking-wide text-inverse transition-colors hover:bg-[var(--store-primary-light)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--store-primary)] focus-visible:ring-offset-2 sm:right-1.5 sm:text-xs md:px-4 md:text-sm"
           >
             Buscar
           </button>
@@ -143,9 +144,10 @@ function StoreHeader() {
         <nav className="hidden shrink-0 items-center gap-0.5 md:flex lg:gap-1">
           <Link
             to="/assistente"
-            className="flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-lg px-2.5 py-2 text-sm font-bold text-highlight transition-colors hover:bg-highlight/10 lg:px-3"
+            aria-label="Ella AI, assistente virtual"
+            className="inline-flex min-h-11 min-w-11 shrink-0 items-center justify-center gap-1.5 whitespace-nowrap rounded-lg px-2.5 py-2 text-sm font-bold text-highlight transition-colors hover:bg-highlight/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--store-primary)] focus-visible:ring-offset-2 lg:px-3"
           >
-            <Sparkles className="h-4 w-4 shrink-0" />
+            <Sparkles className="h-4 w-4 shrink-0" aria-hidden="true" />
             <span className="hidden lg:inline">Ella AI</span>
           </Link>
           <a
@@ -153,17 +155,17 @@ function StoreHeader() {
             target="_blank"
             rel="noopener noreferrer"
             aria-label="Atendimento pelo WhatsApp"
-            className="flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-lg px-2.5 py-2 text-sm font-medium text-[var(--store-text)] transition-colors hover:bg-[var(--store-surface-soft)] lg:px-3"
+            className="inline-flex min-h-11 min-w-11 shrink-0 items-center justify-center gap-1.5 whitespace-nowrap rounded-lg px-2.5 py-2 text-sm font-medium text-[var(--store-text)] transition-colors hover:bg-[var(--store-surface-soft)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--store-primary)] focus-visible:ring-offset-2 lg:px-3"
           >
-            <MessageCircle className="h-4 w-4 shrink-0 text-[var(--store-success)]" />
+            <MessageCircle className="h-4 w-4 shrink-0 text-[var(--store-success)]" aria-hidden="true" />
             <span className="hidden lg:inline">Atendimento</span>
           </a>
           <Link
             to="/auth"
             aria-label="Entrar na conta"
-            className="flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-lg px-2.5 py-2 text-sm font-medium text-[var(--store-text)] transition-colors hover:bg-[var(--store-surface-soft)] lg:px-3"
+            className="inline-flex min-h-11 min-w-11 shrink-0 items-center justify-center gap-1.5 whitespace-nowrap rounded-lg px-2.5 py-2 text-sm font-medium text-[var(--store-text)] transition-colors hover:bg-[var(--store-surface-soft)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--store-primary)] focus-visible:ring-offset-2 lg:px-3"
           >
-            <User className="h-4 w-4 shrink-0" />
+            <User className="h-4 w-4 shrink-0" aria-hidden="true" />
             <span className="hidden lg:inline">Entrar</span>
           </Link>
           <CartButton />
@@ -173,10 +175,11 @@ function StoreHeader() {
           <SheetTrigger asChild>
             <button
               type="button"
-              aria-label="Menu"
-              className="grid h-11 w-11 shrink-0 place-items-center rounded-lg border border-[var(--store-border)] bg-card md:hidden transition-colors hover:bg-[var(--store-surface-soft)]"
+              aria-label="Abrir menu de navegação"
+              aria-expanded={mobileMenuOpen}
+              className="grid h-11 w-11 shrink-0 place-items-center rounded-lg border border-[var(--store-border)] bg-card md:hidden transition-colors hover:bg-[var(--store-surface-soft)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--store-primary)] focus-visible:ring-offset-2"
             >
-              <Menu className="h-5 w-5 text-[var(--store-primary)]" />
+              <Menu className="h-5 w-5 text-[var(--store-primary)]" aria-hidden="true" />
             </button>
           </SheetTrigger>
           <SheetContent
