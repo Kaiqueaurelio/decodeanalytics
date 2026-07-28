@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useCart } from "@/lib/cart-context";
 import { brl } from "@/components/storefront/tokens";
-import { useWaLink } from "@/hooks/useCompanyInfo";
+import { useShowPrices, useWaLink } from "@/hooks/useCompanyInfo";
 import { StoreShell } from "@/components/storefront/StoreShell";
 import { ShoppingCart, Trash2, Minus, Plus, ArrowRight, MessageCircle } from "lucide-react";
 import { useMemo } from "react";
@@ -21,15 +21,20 @@ export const Route = createFileRoute("/carrinho")({
 
 function CartPage() {
   const waLink = useWaLink();
+  const showPrices = useShowPrices();
+  const money = (v: number) => (showPrices ? brl(v) : "Sob consulta");
   const { items, count, total, updateQuantity, removeItem, clear } = useCart();
 
   const message = useMemo(() => {
-    const lines = items.map(
-      (item: { name: string; quantity: number; price: number }) =>
-        `• ${item.name} — ${item.quantity}x ${brl(item.price)} = ${brl(item.price * item.quantity)}`,
+    const lines = items.map((item: { name: string; quantity: number; price: number }) =>
+      showPrices
+        ? `• ${item.name} — ${item.quantity}x ${brl(item.price)} = ${money(item.price * item.quantity)}`
+        : `• ${item.name} — ${item.quantity}x`,
     );
-    return `Olá! Estou finalizando um pedido no site:\n\n${lines.join("\n")}\n\n*Total: ${brl(total)}*\n\nPodemos prosseguir?`;
-  }, [items, total]);
+    return showPrices
+      ? `Olá! Estou finalizando um pedido no site:\n\n${lines.join("\n")}\n\n*Total: ${brl(total)}*\n\nPodemos prosseguir?`
+      : `Olá! Gostaria de um orçamento para:\n\n${lines.join("\n")}\n\nPodem me passar os valores?`;
+  }, [items, total, showPrices]);
 
   if (items.length === 0) {
     return (
@@ -86,7 +91,7 @@ function CartPage() {
                     {item.name}
                   </p>
                   <p className="text-xs text-[var(--store-text-muted)]">
-                    {item.category ?? "Personalizado"} · {brl(item.price)} un
+                    {item.category ?? "Personalizado"}{showPrices ? ` · ${brl(item.price)} un` : ""}
                   </p>
                 </div>
                 <div className="flex items-center gap-1.5 sm:gap-2">
@@ -141,7 +146,7 @@ function CartPage() {
               <div className="mt-4 space-y-2">
                 <div className="flex justify-between text-sm text-[var(--store-text-muted)]">
                   <span>Subtotal</span>
-                  <span>{brl(total)}</span>
+                  <span>{money(total)}</span>
                 </div>
                 <div className="flex justify-between text-sm text-[var(--store-text-muted)]">
                   <span>Entrega</span>
@@ -151,7 +156,7 @@ function CartPage() {
               <div className="mt-4 border-t border-[var(--store-border)] pt-4">
                 <div className="flex justify-between text-base font-extrabold text-[var(--store-text)]">
                   <span>Total estimado</span>
-                  <span>{brl(total)}</span>
+                  <span>{money(total)}</span>
                 </div>
               </div>
 
@@ -190,7 +195,7 @@ function CartPage() {
               Total ({count} {count === 1 ? "item" : "itens"})
             </p>
             <p className="truncate text-lg font-extrabold text-[var(--store-primary)]">
-              {brl(total)}
+              {money(total)}
             </p>
           </div>
           <a
