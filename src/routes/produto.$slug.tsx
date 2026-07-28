@@ -251,9 +251,13 @@ function BuyBox({ product }: { product: StoreProduct }) {
         <p className="text-2xs font-bold uppercase tracking-wide text-[var(--store-text-light)]">
           {showPrices ? "Preço unitário" : "Valor"}
         </p>
-        <p className="text-3xl font-extrabold leading-tight text-[var(--store-primary)]">
-          {showPrices ? brl(product.base_price) : "Sob consulta"}
-        </p>
+        {showPrices ? (
+          <p className="text-3xl font-extrabold leading-tight text-[var(--store-primary)]">
+            {brl(product.base_price)}
+          </p>
+        ) : (
+          <QuoteBadge className="mt-1 text-xs" />
+        )}
         <p className="text-xs text-[var(--store-text-muted)]">
           {showPrices
             ? `${product.unit ? `por ${product.unit}` : ""}${product.min_quantity ? ` · mínimo ${product.min_quantity}` : ""}`
@@ -279,9 +283,11 @@ function BuyBox({ product }: { product: StoreProduct }) {
           <p className="text-2xs font-bold uppercase tracking-wide text-[var(--store-text-muted)]">
             {showPrices ? "Total estimado" : "Orçamento"}
           </p>
-          <p className="text-xl font-extrabold text-[var(--store-primary)]">
-            {showPrices ? brl(total) : "Sob consulta"}
-          </p>
+          {showPrices ? (
+            <p className="text-xl font-extrabold text-[var(--store-primary)]">{brl(total)}</p>
+          ) : (
+            <QuoteBadge className="mt-1" />
+          )}
         </div>
       </div>
 
