@@ -2,7 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { generateText, tool, stepCountIs } from "ai";
 import { z } from "zod";
-import { createLovableGateway } from "@/lib/ai-gateway.server";
+import { resolveEllaModel, aiTimeoutSignal } from "@/lib/ai-gateway.server";
 import {
   ADMIN_SYSTEM_PROMPT,
   STATUS_ENUM,
@@ -272,11 +272,11 @@ export const ellaChat = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((v: unknown) => InputSchema.parse(v))
   .handler(async ({ data, context }) => {
-    const key = process.env.LOVABLE_API_KEY;
+    const resolved = resolveEllaModel();
     const supabase = context.supabase;
     const userId = context.userId;
 
-    if (!key) {
+    if (!resolved) {
       const fallback = await ellaLocalFallback({
         message: data.message,
         supabase,
@@ -288,7 +288,7 @@ export const ellaChat = createServerFn({ method: "POST" })
       };
     }
 
-    const model = createLovableGateway(key)("google/gemini-2.5-flash");
+    const { model, modelName, provider } = resolved;
     const traceId = newTraceId();
     const startedAt = Date.now();
 
@@ -1267,6 +1267,7 @@ export const ellaChat = createServerFn({ method: "POST" })
         messages: [...history, userMessage],
         tools,
         stopWhen: stepCountIs(50),
+        abortSignal: aiTimeoutSignal(60_000),
       });
 
       const toolActivity: Array<{ name: string; input: any; output: any }> = [];
@@ -1278,8 +1279,8 @@ export const ellaChat = createServerFn({ method: "POST" })
       }
 
       logAiEvent({
-        provider: "lovable-ai-gateway",
-        model: "google/gemini-2.5-flash",
+        provider,
+        model: modelName,
         endpoint: "/ella",
         trace_id: traceId,
         status: "success",
@@ -1292,8 +1293,8 @@ export const ellaChat = createServerFn({ method: "POST" })
       const cls = classifyAiError(err);
       console.error("ellaChat error:", traceId, cls);
       logAiEvent({
-        provider: "lovable-ai-gateway",
-        model: "google/gemini-2.5-flash",
+        provider,
+        model: modelName,
         endpoint: "/ella",
         trace_id: traceId,
         status: "error",

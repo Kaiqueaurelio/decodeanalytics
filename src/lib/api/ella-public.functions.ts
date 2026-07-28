@@ -2,7 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { createClient } from "@supabase/supabase-js";
 import { generateText, tool, stepCountIs } from "ai";
 import { z } from "zod";
-import { createLovableGateway } from "@/lib/ai-gateway.server";
+import { resolveEllaModel, aiTimeoutSignal } from "@/lib/ai-gateway.server";
 import type { Database } from "@/integrations/supabase/types";
 import { getRequestIP, getRequestHeader } from "@tanstack/react-start/server";
 import { PUBLIC_SYSTEM_PROMPT, checkPublicRateLimit } from "./ella.helpers.server";
