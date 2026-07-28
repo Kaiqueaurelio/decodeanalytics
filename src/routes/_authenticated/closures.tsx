@@ -114,7 +114,7 @@ function ClosuresPage() {
   return (
     <div className="space-y-4">
       <div>
-        <h1 className="text-2xl font-bold text-primary">Fechamentos de Caixa</h1>
+        <h1 className="text-xl font-bold tracking-tight text-primary sm:text-2xl md:text-3xl">Fechamentos de Caixa</h1>
         <p className="text-sm text-muted-foreground">
           Histórico sequencial dos fechamentos do PDV. Dias esquecidos são fechados automaticamente ao abrir esta tela.
         </p>

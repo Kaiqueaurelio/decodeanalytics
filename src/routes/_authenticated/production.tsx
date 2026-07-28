@@ -157,7 +157,7 @@ function ProductionBoard() {
     <div className="space-y-4">
       <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-primary">Central de produção</h1>
+          <h1 className="text-xl font-bold tracking-tight text-primary sm:text-2xl md:text-3xl">Central de produção</h1>
           <p className="text-sm text-muted-foreground">
             Acompanhe responsáveis, atividades e atualizações em tempo real.
           </p>

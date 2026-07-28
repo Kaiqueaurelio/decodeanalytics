@@ -76,16 +76,16 @@ function CashPage() {
               <Calendar className="w-5 h-5 opacity-75" />
               <p className="text-sm font-semibold opacity-90">SALDO DO DIA</p>
             </div>
-            <p className="text-4xl md:text-5xl font-black">{brl(todayTotals.in - todayTotals.out)}</p>
+            <p className="text-3xl font-black tabular-nums sm:text-4xl md:text-5xl">{brl(todayTotals.in - todayTotals.out)}</p>
           </div>
           <div className="text-right">
             <div className="mb-3">
               <p className="text-sm opacity-75 mb-1">Entradas</p>
-              <p className="text-2xl font-bold text-success">{brl(todayTotals.in)}</p>
+              <p className="text-lg font-bold tabular-nums text-success sm:text-2xl">{brl(todayTotals.in)}</p>
             </div>
             <div>
               <p className="text-sm opacity-75 mb-1">Saídas</p>
-              <p className="text-2xl font-bold text-destructive">{brl(todayTotals.out)}</p>
+              <p className="text-lg font-bold tabular-nums text-destructive sm:text-2xl">{brl(todayTotals.out)}</p>
             </div>
           </div>
         </div>
@@ -95,15 +95,15 @@ function CashPage() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
         <Card className="p-4">
           <div className="text-xs text-muted-foreground font-semibold mb-2">ENTRADAS (TOTAL)</div>
-          <div className="text-2xl font-bold text-success">{brl(totals.in)}</div>
+          <div className="text-lg font-bold tabular-nums text-success sm:text-2xl">{brl(totals.in)}</div>
         </Card>
         <Card className="p-4">
           <div className="text-xs text-muted-foreground font-semibold mb-2">SAÍDAS (TOTAL)</div>
-          <div className="text-2xl font-bold text-destructive">{brl(totals.out)}</div>
+          <div className="text-lg font-bold tabular-nums text-destructive sm:text-2xl">{brl(totals.out)}</div>
         </Card>
         <Card className="p-4 bg-primary text-primary-foreground">
           <div className="text-xs text-primary-foreground/80 font-semibold mb-2">SALDO GERAL</div>
-          <div className="text-2xl font-bold text-gold">{brl(totals.in - totals.out)}</div>
+          <div className="text-lg font-bold tabular-nums text-gold sm:text-2xl">{brl(totals.in - totals.out)}</div>
         </Card>
       </div>
 

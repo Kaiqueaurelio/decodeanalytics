@@ -226,7 +226,7 @@ function Dashboard() {
                 month: "long",
               })}
             </div>
-            <h1 className="text-2xl font-bold tracking-tight md:text-3xl">Painel de produção</h1>
+            <h1 className="text-xl font-bold tracking-tight sm:text-2xl md:text-3xl">Painel de produção</h1>
             <p className="mt-1 max-w-2xl text-sm text-inverse/65">
               Acompanhe a operação da Alcateia's, distribua trabalhos e identifique atrasos antes
               que afetem o cliente.

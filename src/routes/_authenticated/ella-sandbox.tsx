@@ -73,7 +73,7 @@ function EllaSandboxPage() {
           <Beaker className="h-6 w-6" />
         </div>
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Sandbox da Ella</h1>
+          <h1 className="text-xl font-semibold tracking-tight sm:text-2xl md:text-3xl">Sandbox da Ella</h1>
           <p className="text-sm text-muted-foreground">
             Teste a Ella com as diretrizes atuais e veja exatamente qual treinamento foi usado
             para responder.
