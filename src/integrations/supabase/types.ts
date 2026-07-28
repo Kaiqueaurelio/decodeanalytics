@@ -244,6 +244,7 @@ export type Database = {
           instagram: string | null
           logo_url: string | null
           name: string
+          show_prices: boolean
           updated_at: string
           whatsapp: string | null
         }
@@ -257,6 +258,7 @@ export type Database = {
           instagram?: string | null
           logo_url?: string | null
           name?: string
+          show_prices?: boolean
           updated_at?: string
           whatsapp?: string | null
         }
@@ -270,6 +272,7 @@ export type Database = {
           instagram?: string | null
           logo_url?: string | null
           name?: string
+          show_prices?: boolean
           updated_at?: string
           whatsapp?: string | null
         }

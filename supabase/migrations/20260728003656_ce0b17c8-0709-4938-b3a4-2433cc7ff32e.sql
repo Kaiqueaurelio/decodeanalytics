@@ -1,0 +1,1 @@
+ALTER TABLE public.company_settings ADD COLUMN IF NOT EXISTS show_prices boolean NOT NULL DEFAULT true;
