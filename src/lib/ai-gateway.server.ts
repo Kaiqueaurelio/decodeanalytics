@@ -31,8 +31,10 @@ export function createGeminiProvider(apiKey: string) {
  * Retorna null quando nenhuma chave está configurada.
  */
 export function resolveEllaModel() {
-  const geminiKey = process.env.GEMINI_API_KEY;
-  if (geminiKey) {
+  const geminiKey = process.env.GEMINI_API_KEY?.trim();
+  // Chaves do Google AI Studio começam com "AIza". Se o valor salvo não tiver
+  // esse formato, ignoramos em vez de derrubar a Ella com erro 400 de auth.
+  if (geminiKey && geminiKey.startsWith("AIza")) {
     const modelName = "gemini-2.5-flash";
     return {
       model: createGeminiProvider(geminiKey)(modelName),
