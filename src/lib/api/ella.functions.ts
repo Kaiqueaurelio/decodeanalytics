@@ -1237,7 +1237,9 @@ export const ellaChat = createServerFn({ method: "POST" })
     for (const att of attachments) {
       const mt = att.mimeType.toLowerCase();
       if (mt.startsWith("audio/")) {
-        const transcript = key ? await transcribeAttachment(key, att) : "";
+        // A transcrição continua no gateway da Lovable (Gemini não expõe /audio/transcriptions aqui).
+        const transcribeKey = process.env.LOVABLE_API_KEY;
+        const transcript = transcribeKey ? await transcribeAttachment(transcribeKey, att) : "";
         userText += transcript
           ? `\n\n[Áudio "${att.name}" — transcrição]: ${transcript}`
           : `\n\n[Áudio "${att.name}" enviado mas não foi possível transcrever.]`;
