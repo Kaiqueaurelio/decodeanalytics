@@ -32,9 +32,9 @@ export function createGeminiProvider(apiKey: string) {
  */
 export function resolveEllaModel() {
   const geminiKey = process.env.GEMINI_API_KEY?.trim();
-  // Chaves do Google AI Studio começam com "AIza". Se o valor salvo não tiver
-  // esse formato, ignoramos em vez de derrubar a Ella com erro 400 de auth.
-  if (geminiKey && geminiKey.startsWith("AIza")) {
+  // Ignora valores obviamente inválidos (vazio/placeholder) em vez de
+  // derrubar a Ella com erro 400 de auth; nesse caso cai no gateway Lovable.
+  if (geminiKey && geminiKey.length >= 20) {
     const modelName = "gemini-2.5-flash";
     return {
       model: createGeminiProvider(geminiKey)(modelName),
