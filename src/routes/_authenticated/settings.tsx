@@ -42,6 +42,7 @@ function Page() {
         default_quote_text: form.default_quote_text,
         default_order_text: form.default_order_text,
         default_deadline_days: Number(form.default_deadline_days) || 3,
+        show_prices: form.show_prices !== false,
       })
       .eq("id", form.id);
     if (error) return toast.error(error.message);
