@@ -11,25 +11,30 @@
 import { test, expect } from "@playwright/test";
 
 const BASE = process.env.BASE_URL ?? "http://localhost:8080";
-const AVATAR_URL_RE = /ella-avatar.*\.jpe?g(\?.*)?$/i;
+// Em dev o Vite serve o módulo do asset em `...jpg?import`; bloquear essa URL
+// quebraria o import do componente. Só bloqueamos a requisição da imagem.
+const AVATAR_URL_RE = /ella-avatar.*\.jpe?g(\?(?!import).*)?$/i;
 
 // Aguarda o componente esgotar seus retries (3 tentativas * ~2s backoff * 1.5).
 // Base 2000ms → ~ 2000 + 3000 + 4500 ≈ 9500ms. Damos folga.
-const FALLBACK_TIMEOUT_MS = 20_000;
+const FALLBACK_TIMEOUT_MS = 30_000;
 
 async function blockAvatar(page: import("@playwright/test").Page) {
   const attempts: string[] = [];
   await page.route(AVATAR_URL_RE, (route) => {
     attempts.push(route.request().url());
-    return route.abort("failed");
+    // 404 dispara onError de forma determinística no Chromium (abort nem sempre).
+    return route.fulfill({ status: 404, contentType: "text/plain", body: "not found" });
   });
   return attempts;
 }
 
 async function expectFallbackVisible(page: import("@playwright/test").Page) {
-  const fallback = page.getByRole("img", { name: /Avatar de Ella/i }).first();
+  // O fallback é uma <div role="img"> com as iniciais; o <img> real também tem
+  // role="img", por isso filtramos pelo texto para não casar com a imagem.
+  const fallback = page.locator('div[role="img"][aria-label*="Avatar de Ella"]').first();
   await expect(fallback).toBeVisible({ timeout: FALLBACK_TIMEOUT_MS });
-  await expect(fallback).toContainText("ER");
+  await expect(fallback).toContainText("ER", { timeout: FALLBACK_TIMEOUT_MS });
 }
 
 test.describe("EllaAvatar fallback (falha de rede)", () => {

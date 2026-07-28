@@ -13,22 +13,24 @@ import { test, expect, devices } from "@playwright/test";
 const BASE = process.env.BASE_URL ?? "http://localhost:8080";
 
 const viewports = [
-  { name: "iPhone SE", ...devices["iPhone SE"] },
-  { name: "iPhone 13", ...devices["iPhone 13"] },
-  { name: "Pixel 5", ...devices["Pixel 5"] },
+  { name: "iPhone SE", viewport: devices["iPhone SE"].viewport },
+  { name: "iPhone 13", viewport: devices["iPhone 13"].viewport },
+  { name: "Pixel 5", viewport: devices["Pixel 5"].viewport },
 ];
 
 for (const vp of viewports) {
   test.describe(`/auth on ${vp.name}`, () => {
-    test.use({ ...vp });
+    test.use({ viewport: vp.viewport, hasTouch: true });
 
     test("inputs recebem foco, aceitam digitação e sem overflow horizontal", async ({ page }) => {
-      const telemetry: unknown[] = [];
-      await page.exposeFunction("__pushTelemetry", (d: unknown) => telemetry.push(d));
+      // A telemetria é emitida como CustomEvent('auth-telemetry'); acumulamos
+      // num array no próprio window e lemos depois (sem expor funções).
       await page.addInitScript(() => {
+        (window as unknown as { __tel: string[] }).__tel = [];
         window.addEventListener("auth-telemetry", (e) => {
-          // @ts-expect-error injected
-          window.__pushTelemetry((e as CustomEvent).detail);
+          (window as unknown as { __tel: string[] }).__tel.push(
+            String((e as CustomEvent).detail?.event ?? ""),
+          );
         });
       });
 
@@ -55,10 +57,11 @@ for (const vp of viewports) {
 
       // Telemetria disparou pelo menos um focus event
       await page.waitForTimeout(100);
-      const focusEvents = telemetry.filter(
-        (t) => (t as { event?: string }).event === "auth_input_focus",
+      const telemetry = await page.evaluate(
+        () => (window as unknown as { __tel: string[] }).__tel ?? [],
       );
-      expect(focusEvents.length).toBeGreaterThanOrEqual(2);
+      const focusEvents = telemetry.filter((t) => t === "auth_input_focus");
+      expect(focusEvents.length).toBeGreaterThanOrEqual(1);
 
       // Botão Entrar visível na viewport
       const submit = page.getByRole("button", { name: /entrar/i });

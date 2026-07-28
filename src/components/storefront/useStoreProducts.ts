@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import type { StoreProduct } from "./ProductCard";
 import { resolveProductImage } from "./productImages";
+import { mapApiError, retryWithBackoff } from "@/lib/api-errors";
 
 const SELECT =
   "id,name,slug,category,short_description,base_price,image_url,rating,reviews_count,min_quantity,badge,specs,unit";
@@ -22,7 +23,7 @@ export function useStoreProducts(limit?: number) {
   const query = useQuery({
     queryKey: key,
     queryFn: async () => {
-      try {
+      return retryWithBackoff(async () => {
         let q = supabase
           .from("services")
           .select(SELECT)
@@ -30,16 +31,12 @@ export function useStoreProducts(limit?: number) {
           .order("reviews_count", { ascending: false });
         if (limit) q = q.limit(limit);
         const { data, error } = await q;
-        if (error) throw new Error(error.message);
+        if (error) throw error;
         return normalizeProducts((data ?? []) as StoreProduct[]);
-      } catch (err) {
-        throw err instanceof Error
-          ? err
-          : new Error("Falha ao carregar os produtos.");
-      }
+      });
     },
     staleTime: 15_000,
-    retry: 1,
+    retry: false,
     refetchOnWindowFocus: true,
   });
 
@@ -49,9 +46,7 @@ export function useStoreProducts(limit?: number) {
     if (query.isError && !notified.current) {
       notified.current = true;
       toast.error("Não foi possível carregar os produtos", {
-        description:
-          (query.error as Error)?.message ??
-          "Verifique sua conexão e tente novamente.",
+        description: mapApiError(query.error).message,
       });
     }
     if (!query.isError) notified.current = false;
