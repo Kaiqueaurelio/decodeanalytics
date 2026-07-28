@@ -28,12 +28,12 @@ export function EllaFab() {
       }}
       className={cn(
         "group fixed z-40 flex items-center gap-2 rounded-full",
-        "bg-brand-blue/95 pl-1.5 pr-3 sm:pr-4 py-1.5 text-white shadow-2xl ring-2 ring-brand-yellow/70",
+        "bg-brand-blue/95 pl-1.5 pr-3 sm:pr-4 py-1.5 text-inverse shadow-2xl ring-2 ring-brand-yellow/70",
         "backdrop-blur-md transition-all hover:-translate-y-0.5 hover:shadow-[0_20px_60px_-10px_rgba(23,37,84,0.55)]",
         "animate-fade-in",
       )}
     >
-      <span className="relative grid h-11 w-11 shrink-0 place-items-center overflow-hidden rounded-full bg-white ring-2 ring-brand-yellow">
+      <span className="relative grid h-11 w-11 shrink-0 place-items-center overflow-hidden rounded-full bg-card ring-2 ring-brand-yellow">
         <EllaAvatar
           size={44}
           alt="Avatar de Ella"

@@ -26,7 +26,7 @@ const CATS: { slug: string; label: string; Icon: LucideIcon }[] = [
 
 export function CategoryCircles() {
   return (
-    <section className="bg-white py-8 sm:py-10">
+    <section className="bg-card py-8 sm:py-10">
       <div className="mx-auto max-w-[1280px] overflow-hidden px-4">
         <div className="safe-area-scroll-x flex gap-4 overflow-x-auto pb-4 sm:gap-6 sm:justify-center [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {CATS.map((c, i) => (

@@ -18,9 +18,9 @@ const MAX = 100;
 const STORAGE_KEY = "lp_debug_panel_open";
 
 const EVENT_TONE: Record<string, string> = {
-  landing_card_click: "bg-blue-500/15 text-blue-600 border-blue-500/30",
-  landing_cta_click: "bg-emerald-500/15 text-emerald-600 border-emerald-500/30",
-  landing_infinite_page_view: "bg-amber-500/15 text-amber-700 border-amber-500/30",
+  landing_card_click: "bg-info/15 text-info border-info/30",
+  landing_cta_click: "bg-success/15 text-success border-success/30",
+  landing_infinite_page_view: "bg-warning/15 text-warning border-warning/30",
 };
 
 export function AnalyticsDebugPanel() {
@@ -86,13 +86,13 @@ export function AnalyticsDebugPanel() {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="fixed bottom-4 left-4 z-[9999] inline-flex items-center gap-2 rounded-full border border-slate-800 bg-slate-900 px-3 py-2 text-xs font-semibold text-white shadow-xl hover:bg-slate-800"
+        className="fixed bottom-4 left-4 z-[9999] inline-flex items-center gap-2 rounded-full border border-surface-dark-soft bg-surface-dark px-3 py-2 text-xs font-semibold text-inverse shadow-xl hover:bg-surface-dark"
         aria-label="Abrir painel de analytics"
       >
         <Bug className="h-3.5 w-3.5" />
         Analytics
         {entries.length > 0 && (
-          <Badge className="ml-1 h-5 min-w-5 rounded-full bg-amber-400 px-1.5 text-[10px] font-bold text-slate-900 hover:bg-amber-400">
+          <Badge className="ml-1 h-5 min-w-5 rounded-full bg-warning px-1.5 text-[10px] font-bold text-foreground hover:bg-warning">
             {entries.length}
           </Badge>
         )}
@@ -102,20 +102,20 @@ export function AnalyticsDebugPanel() {
 
   return (
     <div
-      className="fixed bottom-4 left-4 z-[9999] flex w-[380px] max-w-[calc(100vw-2rem)] flex-col overflow-hidden rounded-xl border border-slate-800 bg-slate-950/95 text-slate-100 shadow-2xl backdrop-blur-md"
+      className="fixed bottom-4 left-4 z-[9999] flex w-[380px] max-w-[calc(100vw-2rem)] flex-col overflow-hidden rounded-xl border border-surface-dark-soft bg-surface-dark/95 text-surface-dark-foreground shadow-2xl backdrop-blur-md"
       style={{ maxHeight: "min(70vh, 640px)" }}
     >
-      <header className="flex items-center gap-2 border-b border-slate-800 bg-slate-900/80 px-3 py-2">
-        <Bug className="h-3.5 w-3.5 text-amber-400" />
-        <span className="text-xs font-bold uppercase tracking-wider text-white">
+      <header className="flex items-center gap-2 border-b border-surface-dark-soft bg-surface-dark/80 px-3 py-2">
+        <Bug className="h-3.5 w-3.5 text-warning" />
+        <span className="text-xs font-bold uppercase tracking-wider text-inverse">
           Analytics Debug
         </span>
-        <span className="text-[10px] font-medium text-slate-400">dev only</span>
+        <span className="text-[10px] font-medium text-muted-foreground">dev only</span>
         <span className="ml-auto flex items-center gap-1">
           <Button
             variant="ghost"
             size="icon"
-            className="h-7 w-7 text-slate-300 hover:bg-slate-800 hover:text-white"
+            className="h-7 w-7 text-muted-foreground hover:bg-surface-dark hover:text-inverse"
             onClick={clear}
             aria-label="Limpar eventos"
             title="Limpar eventos"
@@ -125,7 +125,7 @@ export function AnalyticsDebugPanel() {
           <Button
             variant="ghost"
             size="icon"
-            className="h-7 w-7 text-slate-300 hover:bg-slate-800 hover:text-white"
+            className="h-7 w-7 text-muted-foreground hover:bg-surface-dark hover:text-inverse"
             onClick={() => setOpen(false)}
             aria-label="Fechar painel"
             title="Fechar"
@@ -135,9 +135,9 @@ export function AnalyticsDebugPanel() {
         </span>
       </header>
 
-      <div className="flex flex-wrap items-center gap-1.5 border-b border-slate-800 bg-slate-900/60 px-3 py-2">
+      <div className="flex flex-wrap items-center gap-1.5 border-b border-surface-dark-soft bg-surface-dark/60 px-3 py-2">
         {Object.entries(counts).length === 0 ? (
-          <span className="text-[11px] text-slate-500">
+          <span className="text-[11px] text-muted-foreground">
             Aguardando eventos… interaja com a landing.
           </span>
         ) : (
@@ -146,29 +146,29 @@ export function AnalyticsDebugPanel() {
               key={ev}
               className={cn(
                 "inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-semibold",
-                EVENT_TONE[ev] ?? "border-slate-700 bg-slate-800 text-slate-200",
+                EVENT_TONE[ev] ?? "border-surface-dark-soft bg-surface-dark text-surface-dark-foreground",
               )}
             >
               {ev}
-              <span className="rounded-full bg-black/25 px-1.5 text-[10px]">{n}</span>
+              <span className="rounded-full bg-surface-dark/25 px-1.5 text-[10px]">{n}</span>
             </span>
           ))
         )}
       </div>
 
-      <div className="border-b border-slate-800 bg-slate-900/40 px-3 py-2">
+      <div className="border-b border-surface-dark-soft bg-surface-dark/40 px-3 py-2">
         <input
           value={filter}
           onChange={(e) => setFilter(e.target.value)}
           placeholder="Filtrar por evento, chave ou valor…"
-          className="h-8 w-full rounded-md border border-slate-800 bg-slate-950 px-2 text-xs text-slate-100 placeholder:text-slate-500 focus:border-amber-400 focus:outline-none"
+          className="h-8 w-full rounded-md border border-surface-dark-soft bg-surface-dark px-2 text-xs text-surface-dark-foreground placeholder:text-muted-foreground focus:border-warning/30 focus:outline-none"
         />
       </div>
 
       <ScrollArea className="flex-1">
-        <div ref={scrollRef} className="divide-y divide-slate-800/70">
+        <div ref={scrollRef} className="divide-y divide-border/70">
           {filtered.length === 0 ? (
-            <p className="px-3 py-6 text-center text-[11px] text-slate-500">
+            <p className="px-3 py-6 text-center text-[11px] text-muted-foreground">
               Nenhum evento capturado ainda.
             </p>
           ) : (
@@ -179,16 +179,16 @@ export function AnalyticsDebugPanel() {
                   onClick={() => toggle(e.id)}
                   className="flex w-full items-center gap-2 text-left"
                 >
-                  <span className="font-mono text-[10px] text-slate-500">{e.time}</span>
+                  <span className="font-mono text-[10px] text-muted-foreground">{e.time}</span>
                   <span
                     className={cn(
                       "inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] font-bold",
-                      EVENT_TONE[e.event] ?? "border-slate-700 bg-slate-800 text-slate-200",
+                      EVENT_TONE[e.event] ?? "border-surface-dark-soft bg-surface-dark text-surface-dark-foreground",
                     )}
                   >
                     {e.event}
                   </span>
-                  <span className="ml-auto text-slate-400">
+                  <span className="ml-auto text-muted-foreground">
                     {e.expanded ? (
                       <ChevronUp className="h-3.5 w-3.5" />
                     ) : (
@@ -198,20 +198,20 @@ export function AnalyticsDebugPanel() {
                 </button>
                 <PreviewLine payload={e.payload} />
                 {e.expanded && (
-                  <div className="mt-2 rounded-md border border-slate-800 bg-slate-950 p-2">
+                  <div className="mt-2 rounded-md border border-surface-dark-soft bg-surface-dark p-2">
                     <div className="mb-1 flex items-center justify-between">
-                      <span className="text-[10px] uppercase tracking-wider text-slate-500">
+                      <span className="text-[10px] uppercase tracking-wider text-muted-foreground">
                         dataLayer push
                       </span>
                       <button
                         type="button"
                         onClick={() => copy(e.payload)}
-                        className="inline-flex items-center gap-1 rounded-md border border-slate-700 bg-slate-900 px-1.5 py-0.5 text-[10px] font-semibold text-slate-200 hover:bg-slate-800"
+                        className="inline-flex items-center gap-1 rounded-md border border-surface-dark-soft bg-surface-dark px-1.5 py-0.5 text-[10px] font-semibold text-surface-dark-foreground hover:bg-surface-dark"
                       >
                         <Copy className="h-3 w-3" /> copiar
                       </button>
                     </div>
-                    <pre className="max-h-64 overflow-auto whitespace-pre-wrap break-words font-mono text-[10.5px] leading-relaxed text-slate-200">
+                    <pre className="max-h-64 overflow-auto whitespace-pre-wrap break-words font-mono text-[10.5px] leading-relaxed text-surface-dark-foreground">
                       {JSON.stringify(e.payload, null, 2)}
                     </pre>
                   </div>
@@ -222,7 +222,7 @@ export function AnalyticsDebugPanel() {
         </div>
       </ScrollArea>
 
-      <footer className="border-t border-slate-800 bg-slate-900/70 px-3 py-1.5 text-[10px] text-slate-500">
+      <footer className="border-t border-surface-dark-soft bg-surface-dark/70 px-3 py-1.5 text-[10px] text-muted-foreground">
         {entries.length}/{MAX} eventos · window.dataLayer sincronizado
       </footer>
     </div>
@@ -252,5 +252,5 @@ function PreviewLine({ payload }: { payload: Record<string, unknown> }) {
     return bits.join(" · ");
   }, [payload]);
   if (!preview) return null;
-  return <p className="mt-1 truncate font-mono text-[10.5px] text-slate-400">{preview}</p>;
+  return <p className="mt-1 truncate font-mono text-[10.5px] text-muted-foreground">{preview}</p>;
 }

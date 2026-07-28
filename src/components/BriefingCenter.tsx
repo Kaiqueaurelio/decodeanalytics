@@ -267,7 +267,7 @@ export function BriefingCenter({ order, onChanged }: { order: any; onChanged: ()
         <Card className="p-4">
           <div className="mb-3 flex items-center justify-between">
             <h3 className="font-semibold text-primary">Briefing do cliente</h3>
-            <Badge className="bg-emerald-100 text-emerald-800 hover:bg-emerald-100">Recebido</Badge>
+            <Badge className="bg-success/10 text-success hover:bg-success/10">Recebido</Badge>
           </div>
           <div className="grid gap-3 text-sm sm:grid-cols-2">
             <Info label="Cliente" value={briefing.client_name} />
@@ -451,7 +451,7 @@ function VersionCard({ version, onDownload }: { version: any; onDownload: () => 
       </div>
       {version.notes && <p className="mt-2 text-sm">{version.notes}</p>}
       {version.client_comment && (
-        <div className="mt-3 rounded-lg bg-amber-50 p-3 text-sm text-amber-900">
+        <div className="mt-3 rounded-lg bg-warning/10 p-3 text-sm text-warning">
           <strong>Cliente:</strong> {version.client_comment}
         </div>
       )}

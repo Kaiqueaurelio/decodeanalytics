@@ -109,7 +109,7 @@ function ProductPage() {
           </p>
           <Link
             to="/produtos"
-            className="mt-6 inline-flex h-11 items-center justify-center rounded-[var(--store-radius-md)] bg-[var(--store-primary)] px-5 text-sm font-bold text-white"
+            className="mt-6 inline-flex h-11 items-center justify-center rounded-[var(--store-radius-md)] bg-[var(--store-primary)] px-5 text-sm font-bold text-inverse"
           >
             Ver catálogo
           </Link>
@@ -143,7 +143,7 @@ function ProductPage() {
         </div>
 
         <div className="mt-12 grid gap-8 lg:grid-cols-[1.2fr_.8fr]">
-          <div className="rounded-[var(--store-radius-lg)] border border-[var(--store-border)] bg-white p-6">
+          <div className="rounded-[var(--store-radius-lg)] border border-[var(--store-border)] bg-card p-6">
             <h2 className="text-lg font-extrabold text-[var(--store-primary)]">
               Sobre este produto
             </h2>
@@ -229,7 +229,7 @@ function BuyBox({ product }: { product: StoreProduct }) {
   }
 
   return (
-    <section className="space-y-5 rounded-[var(--store-radius-xl)] border border-[var(--store-border)] bg-white p-6 shadow-[var(--store-shadow-sm)]">
+    <section className="space-y-5 rounded-[var(--store-radius-xl)] border border-[var(--store-border)] bg-card p-6 shadow-[var(--store-shadow-sm)]">
       <div>
         <p className="text-[11px] font-extrabold uppercase tracking-[0.18em] text-[var(--store-accent)]">
           {product.category ?? "Personalizado"}
@@ -271,7 +271,7 @@ function BuyBox({ product }: { product: StoreProduct }) {
             min={min}
             value={qty}
             onChange={(e) => setQty(Math.max(min, Number(e.target.value) || min))}
-            className="mt-1 h-11 w-full rounded-[var(--store-radius-md)] border border-[var(--store-border)] bg-white px-3 text-sm outline-none focus:border-[var(--store-primary-light)] focus:ring-4 focus:ring-[var(--store-primary-light)]/15"
+            className="mt-1 h-11 w-full rounded-[var(--store-radius-md)] border border-[var(--store-border)] bg-card px-3 text-sm outline-none focus:border-[var(--store-primary-light)] focus:ring-4 focus:ring-[var(--store-primary-light)]/15"
           />
         </div>
         <div className="rounded-[var(--store-radius-md)] border border-dashed border-[var(--store-primary-light)]/40 bg-[var(--store-primary-light)]/5 p-3">
@@ -294,7 +294,7 @@ function BuyBox({ product }: { product: StoreProduct }) {
           value={obs}
           onChange={(e) => setObs(e.target.value)}
           placeholder="Ex.: cores predominantes, formato desejado, prazo..."
-          className="mt-1 w-full rounded-[var(--store-radius-md)] border border-[var(--store-border)] bg-white px-3 py-2 text-sm outline-none focus:border-[var(--store-primary-light)] focus:ring-4 focus:ring-[var(--store-primary-light)]/15"
+          className="mt-1 w-full rounded-[var(--store-radius-md)] border border-[var(--store-border)] bg-card px-3 py-2 text-sm outline-none focus:border-[var(--store-primary-light)] focus:ring-4 focus:ring-[var(--store-primary-light)]/15"
         />
       </div>
 
@@ -303,21 +303,21 @@ function BuyBox({ product }: { product: StoreProduct }) {
           href={waLink(message)}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex h-12 items-center justify-center gap-2 rounded-[var(--store-radius-md)] bg-[var(--store-success)] text-sm font-extrabold uppercase tracking-wide text-white shadow-[var(--store-shadow-md)] transition-transform hover:-translate-y-0.5"
+          className="inline-flex h-12 items-center justify-center gap-2 rounded-[var(--store-radius-md)] bg-[var(--store-success)] text-sm font-extrabold uppercase tracking-wide text-inverse shadow-[var(--store-shadow-md)] transition-transform hover:-translate-y-0.5"
         >
           <MessageCircle className="h-5 w-5" /> Comprar pelo WhatsApp
         </a>
         <button
           type="button"
           onClick={handleAddToCart}
-          className="inline-flex h-11 items-center justify-center gap-2 rounded-[var(--store-radius-md)] border border-[var(--store-border)] bg-white text-sm font-bold text-[var(--store-primary)] hover:bg-[var(--store-surface-soft)] transition-colors"
+          className="inline-flex h-11 items-center justify-center gap-2 rounded-[var(--store-radius-md)] border border-[var(--store-border)] bg-card text-sm font-bold text-[var(--store-primary)] hover:bg-[var(--store-surface-soft)] transition-colors"
         >
           <ShoppingCart className="h-4 w-4" /> Adicionar ao carrinho
         </button>
         <button
           type="button"
           disabled
-          className="inline-flex h-11 cursor-not-allowed items-center justify-center gap-2 rounded-[var(--store-radius-md)] border border-dashed border-[var(--store-border-strong)] bg-white text-sm font-bold text-[var(--store-text-muted)]"
+          className="inline-flex h-11 cursor-not-allowed items-center justify-center gap-2 rounded-[var(--store-radius-md)] border border-dashed border-[var(--store-border-strong)] bg-card text-sm font-bold text-[var(--store-text-muted)]"
         >
           <Upload className="h-4 w-4" /> Enviar arte (em breve)
         </button>
@@ -328,7 +328,7 @@ function BuyBox({ product }: { product: StoreProduct }) {
 
 function InfoRow({ icon: Icon, title, text }: { icon: any; title: string; text: string }) {
   return (
-    <div className="flex items-start gap-3 rounded-[var(--store-radius-lg)] border border-[var(--store-border)] bg-white p-4">
+    <div className="flex items-start gap-3 rounded-[var(--store-radius-lg)] border border-[var(--store-border)] bg-card p-4">
       <span className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-[var(--store-primary)]/5 text-[var(--store-primary)]">
         <Icon className="h-5 w-5" />
       </span>

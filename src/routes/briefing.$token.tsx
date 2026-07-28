@@ -237,7 +237,7 @@ function PublicBriefing() {
             </div>
             <div>
               <Label>Referências, logos, fotos e arquivos</Label>
-              <div className="mt-1 mb-2 rounded-lg border border-amber-200 bg-amber-50 p-3 text-xs text-amber-900">
+              <div className="mt-1 mb-2 rounded-lg border border-warning/30 bg-warning/10 p-3 text-xs text-warning">
                 <p className="font-semibold">💡 Dicas para melhor qualidade na impressão:</p>
                 <ul className="mt-1 list-disc space-y-0.5 pl-4">
                   <li>Prefira <strong>PDF editável</strong> com fontes incorporadas (PDF/X-1a).</li>
@@ -283,7 +283,7 @@ function PublicBriefing() {
         <div className="space-y-5">
           <Card className="p-5">
             <div className="flex items-center gap-3">
-              <ShieldCheck className="h-8 w-8 text-emerald-600" />
+              <ShieldCheck className="h-8 w-8 text-success" />
               <div>
                 <h2 className="font-semibold">Seus arquivos estão protegidos</h2>
                 <p className="text-xs text-muted-foreground">
@@ -359,7 +359,7 @@ function ArtReview({
       {url && isPreviewable(version.mime_type, version.file_name) && !imgError ? (
         <div
           ref={imageRef}
-          className="relative cursor-crosshair bg-slate-100"
+          className="relative cursor-crosshair bg-muted"
           onClick={(event) => {
             const rect = event.currentTarget.getBoundingClientRect();
             setMarker({
@@ -377,7 +377,7 @@ function ArtReview({
           />
           {marker && (
             <span
-              className="absolute grid h-7 w-7 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full bg-destructive text-xs font-bold text-white shadow"
+              className="absolute grid h-7 w-7 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full bg-destructive text-xs font-bold text-inverse shadow"
               style={{ left: `${marker.x}%`, top: `${marker.y}%` }}
             >
               1
@@ -434,7 +434,7 @@ function ArtReview({
 
 function PublicShell({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-screen bg-linear-to-br from-[#eef4f1] via-white to-[#f7efcf] p-4 md:p-8">
+    <div className="min-h-screen bg-linear-to-br from-muted via-background to-accent/15 p-4 md:p-8">
       <div className="mx-auto max-w-6xl">
         <div className="mb-6 flex justify-center">
           <img

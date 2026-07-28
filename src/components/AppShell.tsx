@@ -214,7 +214,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           open ? "translate-x-0" : "-translate-x-full",
         )}
       >
-        <div className="app-grid-pattern border-b border-white/10 px-3 py-3">
+        <div className="app-grid-pattern border-b border-inverse/10 px-3 py-3">
           <button
             type="button"
             onClick={() =>
@@ -224,7 +224,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                 return next;
               })
             }
-            className="mb-2 hidden w-full items-center justify-center gap-2 rounded-lg bg-white/10 px-2 py-1.5 text-xs font-bold text-white/80 hover:bg-white/15 hover:text-white md:flex"
+            className="mb-2 hidden w-full items-center justify-center gap-2 rounded-lg bg-inverse/10 px-2 py-1.5 text-xs font-bold text-inverse/80 hover:bg-inverse/15 hover:text-inverse md:flex"
             aria-label={collapsed ? "Expandir menu" : "Recolher menu"}
           >
             {collapsed ? (
@@ -242,7 +242,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           <div className="flex items-center justify-between gap-3">
             <div
               className={cn(
-                "flex min-w-0 flex-1 items-center justify-center rounded-xl bg-white p-2 shadow-lg ring-2 ring-brand-yellow/70",
+                "flex min-w-0 flex-1 items-center justify-center rounded-xl bg-card p-2 shadow-lg ring-2 ring-brand-yellow/70",
                 collapsed ? "h-24 md:hidden" : "h-24",
               )}
             >
@@ -254,7 +254,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             </div>
             <div
               className={cn(
-                "hidden h-10 w-10 shrink-0 place-items-center rounded-xl bg-white p-1 shadow-lg ring-2 ring-brand-yellow/70",
+                "hidden h-10 w-10 shrink-0 place-items-center rounded-xl bg-card p-1 shadow-lg ring-2 ring-brand-yellow/70",
                 collapsed && "md:grid",
               )}
             >
@@ -267,7 +267,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             <button
               type="button"
               onClick={() => setOpen(false)}
-              className="rounded-lg p-2 text-white/70 hover:bg-white/10 hover:text-white md:hidden"
+              className="rounded-lg p-2 text-inverse/70 hover:bg-inverse/10 hover:text-inverse md:hidden"
               aria-label="Fechar menu"
             >
               <X className="h-4 w-4" />
@@ -275,14 +275,14 @@ export function AppShell({ children }: { children: ReactNode }) {
           </div>
           <div
             className={cn(
-              "mt-3 rounded-xl border border-white/10 bg-white/5 px-3 py-2",
+              "mt-3 rounded-xl border border-inverse/10 bg-inverse/5 px-3 py-2",
               collapsed && "md:hidden",
             )}
           >
             <p className="text-[10px] font-bold uppercase tracking-wider text-brand-yellow">
               Central de operações
             </p>
-            <p className="mt-0.5 text-xs leading-relaxed text-white/65">
+            <p className="mt-0.5 text-xs leading-relaxed text-inverse/65">
               Do briefing à entrega, tudo em um só lugar.
             </p>
           </div>
@@ -296,7 +296,7 @@ export function AppShell({ children }: { children: ReactNode }) {
               <div key={section} className="mb-4">
                 <p
                   className={cn(
-                    "mb-2 px-3 text-[10px] font-bold uppercase tracking-[0.18em] text-white/35",
+                    "mb-2 px-3 text-[10px] font-bold uppercase tracking-[0.18em] text-inverse/35",
                     collapsed && "md:hidden",
                   )}
                 >
@@ -316,13 +316,13 @@ export function AppShell({ children }: { children: ReactNode }) {
                           "group flex min-w-0 items-center gap-2.5 rounded-xl px-2.5 py-2 text-sm transition-all",
                           active
                             ? "bg-brand-yellow font-bold text-brand-blue shadow-lg shadow-black/10"
-                            : "text-white/72 hover:bg-white/8 hover:text-white",
+                            : "text-inverse/72 hover:bg-inverse/8 hover:text-inverse",
                         )}
                       >
                         <span
                           className={cn(
                             "grid h-7 w-7 shrink-0 place-items-center rounded-lg transition-colors",
-                            active ? "bg-brand-blue/10" : "bg-white/7 group-hover:bg-white/12",
+                            active ? "bg-brand-blue/10" : "bg-inverse/7 group-hover:bg-inverse/12",
                           )}
                         >
                           <Icon className="h-3.5 w-3.5" />
@@ -344,7 +344,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           })}
         </nav>
 
-        <div className="border-t border-white/10 bg-black/10 p-2.5">
+        <div className="border-t border-inverse/10 bg-surface-dark/10 p-2.5">
           <button
             type="button"
             onClick={() =>
@@ -354,7 +354,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                 return next;
               })
             }
-            className="mb-2 hidden w-full items-center justify-center gap-2 rounded-lg bg-white/8 px-2 py-1.5 text-xs font-bold text-white/75 hover:bg-white/12 hover:text-white md:flex"
+            className="mb-2 hidden w-full items-center justify-center gap-2 rounded-lg bg-inverse/8 px-2 py-1.5 text-xs font-bold text-inverse/75 hover:bg-inverse/12 hover:text-inverse md:flex"
             aria-label={collapsed ? "Expandir menu" : "Recolher menu"}
           >
             {collapsed ? (
@@ -371,8 +371,8 @@ export function AppShell({ children }: { children: ReactNode }) {
               {userInitial}
             </div>
             <div className={cn("min-w-0 flex-1", collapsed && "md:hidden")}>
-              <div className="truncate text-xs font-semibold text-white">{user?.email}</div>
-              <div className="truncate text-[11px] text-white/50">
+              <div className="truncate text-xs font-semibold text-inverse">{user?.email}</div>
+              <div className="truncate text-[11px] text-inverse/50">
                 {roles.map((role) => ROLE_LABEL[role]).join(", ") || "Sem papel"}
               </div>
             </div>
@@ -383,7 +383,7 @@ export function AppShell({ children }: { children: ReactNode }) {
               await signOut();
               navigate({ to: "/auth" });
             }}
-            className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 text-sm font-medium text-white/65 transition-colors hover:bg-white/8 hover:text-white"
+            className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 text-sm font-medium text-inverse/65 transition-colors hover:bg-inverse/8 hover:text-inverse"
           >
             <LogOut className="h-3.5 w-3.5" />{" "}
             <span className={cn(collapsed && "md:hidden")}>Sair da conta</span>
@@ -406,17 +406,17 @@ export function AppShell({ children }: { children: ReactNode }) {
           collapsed ? "md:ml-16" : "md:ml-64",
         )}
       >
-        <div className="hidden h-8 items-center justify-between bg-brand-blue px-6 text-[11px] font-medium text-white/70 lg:flex">
+        <div className="hidden h-8 items-center justify-between bg-brand-blue px-6 text-[11px] font-medium text-inverse/70 lg:flex">
           <span>Produção gráfica organizada do briefing à entrega</span>
           <span className="font-semibold text-brand-yellow">Alcateia's Produções Gráficas</span>
         </div>
 
-        <header className="safe-area-header sticky top-0 z-20 border-b border-border/80 bg-white/92 px-2 backdrop-blur-xl md:px-4 lg:top-0">
+        <header className="safe-area-header sticky top-0 z-20 border-b border-border/80 bg-inverse/92 px-2 backdrop-blur-xl md:px-4 lg:top-0">
           <div className="flex h-16 md:h-[72px] items-center gap-2 md:gap-3">
             {isAdmin && (
               <Link
                 to="/ella"
-                className="hidden h-11 shrink-0 items-center gap-2 rounded-xl border border-blue-200 bg-blue-50 px-3 text-sm font-extrabold text-brand-blue hover:bg-blue-100 xl:inline-flex"
+                className="hidden h-11 shrink-0 items-center gap-2 rounded-xl border border-info/30 bg-info/10 px-3 text-sm font-extrabold text-brand-blue hover:bg-info/10 xl:inline-flex"
               >
                 <Sparkles className="h-4 w-4" /> Perguntar à Ella
               </Link>
@@ -424,7 +424,7 @@ export function AppShell({ children }: { children: ReactNode }) {
 
             <button
               type="button"
-              className="shrink-0 rounded-xl border border-border bg-white p-2 text-brand-blue shadow-sm md:hidden"
+              className="shrink-0 rounded-xl border border-border bg-card p-2 text-brand-blue shadow-sm md:hidden"
               onClick={() => setOpen(true)}
               aria-label="Abrir menu"
             >
@@ -448,11 +448,11 @@ export function AppShell({ children }: { children: ReactNode }) {
                 onFocus={() => setSearchFocused(true)}
                 onBlur={() => window.setTimeout(() => setSearchFocused(false), 150)}
                 placeholder="Buscar clientes, pedidos ou áreas..."
-                className="h-11 w-full rounded-xl border border-border bg-muted/45 pl-10 pr-4 text-sm outline-none transition-all placeholder:text-muted-foreground focus:border-brand-yellow focus:bg-white focus:ring-4 focus:ring-brand-yellow/15"
+                className="h-11 w-full rounded-xl border border-border bg-muted/45 pl-10 pr-4 text-sm outline-none transition-all placeholder:text-muted-foreground focus:border-brand-yellow focus:bg-card focus:ring-4 focus:ring-brand-yellow/15"
                 aria-label="Buscar no sistema"
               />
               {searchFocused && search.trim() && (
-                <div className="absolute left-0 right-0 top-[calc(100%+8px)] overflow-hidden rounded-2xl border border-border bg-white p-2 shadow-[var(--shadow-lg)]">
+                <div className="absolute left-0 right-0 top-[calc(100%+8px)] overflow-hidden rounded-2xl border border-border bg-card p-2 shadow-[var(--shadow-lg)]">
                   {results.length ? (
                     results.map((item) => {
                       const Icon = item.icon;

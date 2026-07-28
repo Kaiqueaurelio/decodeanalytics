@@ -157,7 +157,7 @@ function EllaSandboxPage() {
                     {failure.steps.map((s, i) => (
                       <li key={i} className="rounded border p-2">
                         <div className="flex items-center gap-2">
-                          {s.status === "ok" ? <CheckCircle2 className="h-4 w-4 text-emerald-500" /> : <XCircle className="h-4 w-4 text-destructive" />}
+                          {s.status === "ok" ? <CheckCircle2 className="h-4 w-4 text-success" /> : <XCircle className="h-4 w-4 text-destructive" />}
                           <span className="font-mono text-xs">{s.name}</span>
                           <span className="ml-auto text-[11px] text-muted-foreground">+{s.at_ms}ms{typeof s.duration_ms === "number" ? ` · ${s.duration_ms}ms` : ""}</span>
                         </div>
@@ -252,7 +252,7 @@ function EllaSandboxPage() {
                     {result.steps.map((s: any, i: number) => (
                       <li key={i} className="rounded border p-2">
                         <div className="flex items-center gap-2">
-                          {s.status === "ok" ? <CheckCircle2 className="h-4 w-4 text-emerald-500" /> : <XCircle className="h-4 w-4 text-destructive" />}
+                          {s.status === "ok" ? <CheckCircle2 className="h-4 w-4 text-success" /> : <XCircle className="h-4 w-4 text-destructive" />}
                           <span className="font-mono text-xs">{s.name}</span>
                           <span className="ml-auto text-[11px] text-muted-foreground">+{s.at_ms}ms{typeof s.duration_ms === "number" ? ` · ${s.duration_ms}ms` : ""}</span>
                         </div>

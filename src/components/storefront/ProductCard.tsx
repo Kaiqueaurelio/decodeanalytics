@@ -22,20 +22,20 @@ export type StoreProduct = {
 
 const BADGE_TONE: Record<string, string> = {
   "Mais vendido": "bg-[var(--store-secondary)] text-[var(--store-primary-dark)]",
-  Promoção: "bg-[var(--store-accent)] text-white",
-  Lançamento: "bg-[var(--store-primary-light)] text-white",
-  "Arte grátis": "bg-[var(--store-success)] text-white",
-  "Produção rápida": "bg-[var(--store-warning)] text-white",
+  Promoção: "bg-[var(--store-accent)] text-inverse",
+  Lançamento: "bg-[var(--store-primary-light)] text-inverse",
+  "Arte grátis": "bg-[var(--store-success)] text-inverse",
+  "Produção rápida": "bg-[var(--store-warning)] text-inverse",
 };
 
 export function ProductCard({ product }: { product: StoreProduct }) {
   const slug = product.slug ?? product.id;
   const showPrices = useShowPrices();
-  const tone = product.badge ? BADGE_TONE[product.badge] ?? "bg-[var(--store-primary)] text-white" : null;
+  const tone = product.badge ? BADGE_TONE[product.badge] ?? "bg-[var(--store-primary)] text-inverse" : null;
   const rating = product.rating ? Number(product.rating) : null;
 
   return (
-    <article className="group flex flex-col overflow-hidden rounded-[var(--store-radius-lg)] border border-[var(--store-border)] bg-white shadow-[var(--store-shadow-sm)] transition-all duration-200 hover:-translate-y-1 hover:border-[var(--store-primary-light)]/40 hover:shadow-[var(--store-shadow-md)]">
+    <article className="group flex flex-col overflow-hidden rounded-[var(--store-radius-lg)] border border-[var(--store-border)] bg-card shadow-[var(--store-shadow-sm)] transition-all duration-200 hover:-translate-y-1 hover:border-[var(--store-primary-light)]/40 hover:shadow-[var(--store-shadow-md)]">
       <Link
         to="/produto/$slug"
         params={{ slug }}
@@ -101,7 +101,7 @@ export function ProductCard({ product }: { product: StoreProduct }) {
         <Link
           to="/produto/$slug"
           params={{ slug }}
-          className="mt-4 inline-flex h-10 items-center justify-center rounded-[var(--store-radius-md)] bg-[var(--store-primary)] text-sm font-bold text-white transition-colors hover:bg-[var(--store-primary-light)]"
+          className="mt-4 inline-flex h-10 items-center justify-center rounded-[var(--store-radius-md)] bg-[var(--store-primary)] text-sm font-bold text-inverse transition-colors hover:bg-[var(--store-primary-light)]"
         >
           Ver produto
         </Link>
@@ -112,7 +112,7 @@ export function ProductCard({ product }: { product: StoreProduct }) {
 
 export function ProductCardSkeleton() {
   return (
-    <div className="overflow-hidden rounded-[var(--store-radius-lg)] border border-[var(--store-border)] bg-white">
+    <div className="overflow-hidden rounded-[var(--store-radius-lg)] border border-[var(--store-border)] bg-card">
       <div className="aspect-[4/3] animate-pulse bg-[var(--store-surface-soft)]" />
       <div className="space-y-2 p-4">
         <div className="h-3 w-16 animate-pulse rounded bg-[var(--store-surface-soft)]" />

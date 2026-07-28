@@ -17,13 +17,13 @@ export function lifecycleFor(status?: string | null): OSLifecycle {
   if (status === "entregue")
     return {
       label: "CONCLUÍDA",
-      className: "bg-green-500 text-white border-green-500 hover:bg-green-500",
+      className: "bg-success text-inverse border-success/30 hover:bg-success",
       description: "OS concluída e entregue ao cliente",
     };
   if (status === "cancelado" || status === "pausado")
     return {
       label: "ARQUIVADA",
-      className: "bg-gray-500 text-white border-gray-500 hover:bg-gray-500",
+      className: "bg-surface-dark text-inverse border-surface-dark-soft hover:bg-surface-dark",
       description:
         status === "cancelado"
           ? "OS cancelada"
@@ -31,7 +31,7 @@ export function lifecycleFor(status?: string | null): OSLifecycle {
     };
   return {
     label: "EM PRODUÇÃO",
-    className: "bg-blue-500 text-white border-blue-500 hover:bg-blue-500",
+    className: "bg-info text-inverse border-info/30 hover:bg-info",
     description: "OS em andamento na produção",
   };
 }
