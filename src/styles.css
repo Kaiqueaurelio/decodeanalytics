@@ -299,6 +299,23 @@
     }
   }
 
+  /* Mobile: evita que o teclado virtual cubra o campo em foco.
+     Só CSS — o navegador já rola o campo para a viewport ao focar;
+     a margem garante folga acima/abaixo. */
+  @media (max-width: 767px) {
+    html {
+      scroll-padding-bottom: calc(env(safe-area-inset-bottom) + 6rem);
+      scroll-padding-top: 5rem;
+    }
+
+    input:not([type="checkbox"]):not([type="radio"]),
+    textarea,
+    select,
+    [contenteditable="true"] {
+      scroll-margin-block: 6rem;
+    }
+  }
+
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
