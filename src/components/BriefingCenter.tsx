@@ -219,7 +219,7 @@ export function BriefingCenter({ order, onChanged }: { order: any; onChanged: ()
 
   return (
     <div className="space-y-5">
-      <Card className="border-gold/40 bg-gradient-to-br from-primary/5 to-gold/10 p-4">
+      <Card className="border-gold/40 bg-linear-to-br from-primary/5 to-gold/10 p-4">
         <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
           <div>
             <h3 className="flex items-center gap-2 font-semibold text-primary">

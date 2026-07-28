@@ -9,7 +9,7 @@ export function Hero() {
     <section className="mx-auto w-full max-w-[1280px] px-3 pt-3 sm:px-4 sm:pt-4 md:pt-6">
       {/* Big bright blue hero banner — Futuraim-style */}
       <div
-        className="relative min-w-0 overflow-hidden rounded-[var(--store-radius-xl)] bg-gradient-to-br from-[#1e3a8a] via-[#172554] to-[#0b1a3f] p-4 text-white shadow-[var(--store-shadow-lg)] sm:p-6 md:p-10 lg:p-12 animate-fade-in"
+        className="relative min-w-0 overflow-hidden rounded-[var(--store-radius-xl)] bg-linear-to-br from-store-primary-light/70 via-store-primary to-store-primary-dark p-4 text-white shadow-[var(--store-shadow-lg)] sm:p-6 md:p-10 lg:p-12 animate-fade-in"
         style={{ animationDelay: "60ms", animationFillMode: "both" }}
       >
         {/* Decorative percent marks */}
@@ -51,7 +51,7 @@ export function Hero() {
             <div className="mt-7 flex flex-col gap-3 min-[420px]:flex-row min-[420px]:flex-wrap">
               <Link
                 to="/produtos"
-                className="inline-flex min-h-12 items-center justify-center gap-2 rounded-[var(--store-radius-md)] bg-white px-5 py-3 text-sm font-extrabold uppercase tracking-wide text-[#172554] shadow-md transition-transform hover:scale-[1.03] sm:px-8"
+                className="inline-flex min-h-12 items-center justify-center gap-2 rounded-[var(--store-radius-md)] bg-white px-5 py-3 text-sm font-extrabold uppercase tracking-wide text-store-primary shadow-md transition-transform hover:scale-[1.03] sm:px-8"
               >
                 Ver produtos <ArrowRight className="h-4 w-4" />
               </Link>
@@ -59,7 +59,7 @@ export function Hero() {
                 href={waLink("Olá! Quero enviar minha arte para um orçamento.")}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex min-h-12 items-center justify-center gap-2 rounded-[var(--store-radius-md)] border-2 border-white/70 bg-transparent px-5 py-3 text-sm font-extrabold uppercase tracking-wide text-white transition-colors hover:bg-white hover:text-[#172554] sm:px-8"
+                className="inline-flex min-h-12 items-center justify-center gap-2 rounded-[var(--store-radius-md)] border-2 border-white/70 bg-transparent px-5 py-3 text-sm font-extrabold uppercase tracking-wide text-white transition-colors hover:bg-white hover:text-store-primary sm:px-8"
               >
                 <Upload className="h-4 w-4" /> Enviar minha arte
               </a>
@@ -69,13 +69,15 @@ export function Hero() {
           {/* Right column: product hero photo */}
           <div className="relative hidden md:block">
             <div className="absolute -right-8 -top-8 h-72 w-72 rounded-full bg-white/10 blur-2xl" />
-            <div className="relative aspect-square overflow-hidden rounded-[var(--store-radius-xl)] bg-white p-2 shadow-2xl rotate-[-2deg] transition-transform hover:rotate-0 border border-white/20 animate-float">
-              <img
-                src={CATEGORY_IMAGES["Cartões"]}
-                alt="Cartões de Visita Premium"
-                className="h-full w-full rounded-[var(--store-radius-lg)] object-cover"
-              />
-              <span className="absolute -top-3 -left-3 inline-flex items-center gap-1 rounded-full bg-[var(--store-secondary)] px-3 py-1 text-xs font-extrabold uppercase text-[var(--store-primary-dark)] shadow-md">
+            <div className="relative animate-float">
+              <div className="relative aspect-square overflow-hidden rounded-[var(--store-radius-xl)] border border-white/20 bg-white p-2 shadow-2xl rotate-[-2deg] transition-transform duration-500 hover:rotate-0">
+                <img
+                  src={CATEGORY_IMAGES["Cartões"]}
+                  alt="Cartões de Visita Premium"
+                  className="h-full w-full rounded-[var(--store-radius-lg)] object-cover"
+                />
+              </div>
+              <span className="pointer-events-none absolute -top-3 left-2 z-10 inline-flex items-center gap-1 rounded-full bg-store-secondary px-3 py-1 text-xs font-extrabold uppercase text-store-primary-dark shadow-md">
                 <Sparkles className="h-3 w-3" /> Acabamento premium
               </span>
             </div>
@@ -90,7 +92,7 @@ export function Hero() {
           className="group flex items-center gap-2 rounded-[var(--store-radius-lg)] border border-[var(--store-border)] bg-white p-3 sm:gap-3 sm:p-4 shadow-[var(--store-shadow-sm)] transition-all hover:-translate-y-1 hover:shadow-[var(--store-shadow-md)] animate-fade-in"
           style={{ animationDelay: "120ms", animationFillMode: "both" }}
         >
-          <span className="grid h-10 w-10 shrink-0 place-items-center rounded-lg sm:h-11 sm:w-11 sm:rounded-xl bg-[#172554]/10 text-[#172554]">
+          <span className="grid h-10 w-10 shrink-0 place-items-center rounded-lg sm:h-11 sm:w-11 sm:rounded-xl bg-store-primary/10 text-store-primary">
             <Calculator className="h-4 w-4 sm:h-5 sm:w-5" />
           </span>
           <div className="min-w-0">

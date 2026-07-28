@@ -341,7 +341,7 @@ function ProductionBoard() {
                     </p>
                     <div className="mt-3 h-2.5 overflow-hidden rounded-full bg-slate-200">
                       <div
-                        className="h-full rounded-full bg-gradient-to-r from-primary to-gold transition-all"
+                        className="h-full rounded-full bg-linear-to-r from-primary to-gold transition-all"
                         style={{ width: `${order.progress || 0}%` }}
                       />
                     </div>

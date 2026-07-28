@@ -434,7 +434,7 @@ function ArtReview({
 
 function PublicShell({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#eef4f1] via-white to-[#f7efcf] p-4 md:p-8">
+    <div className="min-h-screen bg-linear-to-br from-[#eef4f1] via-white to-[#f7efcf] p-4 md:p-8">
       <div className="mx-auto max-w-6xl">
         <div className="mb-6 flex justify-center">
           <img

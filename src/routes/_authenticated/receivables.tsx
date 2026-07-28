@@ -178,7 +178,7 @@ function Page() {
     <div className="space-y-4">
       {/* Header com totais destacados */}
       <div className="grid gap-3 md:grid-cols-3">
-        <Card className="p-5 bg-gradient-to-br from-red-500 to-red-600 text-white border-0">
+        <Card className="p-5 bg-linear-to-br from-red-500 to-red-600 text-white border-0">
           <div className="flex items-center gap-2 mb-1">
             <AlertTriangle className="w-4 h-4" />
             <span className="text-xs font-bold uppercase tracking-wide opacity-90">Vencidas</span>
@@ -186,7 +186,7 @@ function Page() {
           <p className="text-3xl font-black">{brl(buckets.overdue.total)}</p>
           <p className="text-xs mt-1 opacity-90">{buckets.overdue.rows.length} cobrança(s)</p>
         </Card>
-        <Card className="p-5 bg-gradient-to-br from-primary to-primary/80 text-primary-foreground border-0">
+        <Card className="p-5 bg-linear-to-br from-primary to-primary/80 text-primary-foreground border-0">
           <div className="flex items-center gap-2 mb-1">
             <Wallet className="w-4 h-4" />
             <span className="text-xs font-bold uppercase tracking-wide opacity-90">A receber (total)</span>
@@ -196,7 +196,7 @@ function Page() {
             {buckets.overdue.rows.length + buckets.today.rows.length + buckets.week.rows.length + buckets.month.rows.length + buckets.future.rows.length} pendente(s)
           </p>
         </Card>
-        <Card className="p-5 bg-gradient-to-br from-emerald-500 to-emerald-600 text-white border-0">
+        <Card className="p-5 bg-linear-to-br from-emerald-500 to-emerald-600 text-white border-0">
           <div className="flex items-center gap-2 mb-1">
             <CheckCircle2 className="w-4 h-4" />
             <span className="text-xs font-bold uppercase tracking-wide opacity-90">Já recebidas</span>

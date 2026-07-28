@@ -192,7 +192,7 @@ export function GraphicServiceCalculator() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-4">
+    <div className="min-h-screen bg-linear-to-br from-slate-50 to-slate-100 p-4">
       <div className="max-w-7xl mx-auto">
         <div className="grid lg:grid-cols-3 gap-6">
           {/* Calculadora Principal */}
@@ -292,7 +292,7 @@ export function GraphicServiceCalculator() {
                 <div className="flex gap-3 pt-4">
                   <Button
                     onClick={calculate}
-                    className="flex-1 h-12 bg-gradient-to-r from-brand-yellow to-brand-orange hover:opacity-90 text-brand-blue font-bold text-lg rounded-xl"
+                    className="flex-1 h-12 bg-linear-to-r from-brand-yellow to-brand-orange hover:opacity-90 text-brand-blue font-bold text-lg rounded-xl"
                   >
                     Calcular
                   </Button>
@@ -310,7 +310,7 @@ export function GraphicServiceCalculator() {
               {/* Resultado */}
               {result && (
                 <div className="mt-8 pt-8 border-t-2 border-brand-yellow">
-                  <div className="bg-gradient-to-br from-brand-blue/5 to-brand-yellow/5 rounded-xl p-6 border border-brand-yellow/20">
+                  <div className="bg-linear-to-br from-brand-blue/5 to-brand-yellow/5 rounded-xl p-6 border border-brand-yellow/20">
                     <div className="grid grid-cols-2 gap-4 mb-6">
                       <div className="bg-white rounded-lg p-4 border border-border">
                         <p className="text-xs text-muted-foreground font-semibold mb-1">
@@ -347,7 +347,7 @@ export function GraphicServiceCalculator() {
                     </div>
 
                     {/* Valor Final em Destaque */}
-                    <div className="bg-gradient-to-r from-brand-yellow to-brand-orange rounded-xl p-8 text-center mb-4">
+                    <div className="bg-linear-to-r from-brand-yellow to-brand-orange rounded-xl p-8 text-center mb-4">
                       <p className="text-white/80 text-sm font-semibold mb-2">
                         VALOR FINAL
                       </p>

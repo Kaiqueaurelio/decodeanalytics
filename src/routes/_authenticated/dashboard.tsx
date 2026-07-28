@@ -256,7 +256,7 @@ function Dashboard() {
           return (
             <Card
               key={metric.label}
-              className={`overflow-hidden border-0 bg-gradient-to-br ${metric.gradient} p-0 text-white shadow-lg`}
+              className={`overflow-hidden border-0 bg-linear-to-br ${metric.gradient} p-0 text-white shadow-lg`}
             >
               <div className="relative p-5">
                 <div className="absolute -right-6 -top-7 h-24 w-24 rounded-full border-[18px] border-white/10" />
@@ -427,7 +427,7 @@ function Dashboard() {
                   </div>
                   <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-slate-200">
                     <div
-                      className="h-full rounded-full bg-gradient-to-r from-[#0b4a3a] to-[#d7a52d]"
+                      className="h-full rounded-full bg-linear-to-r from-[#0b4a3a] to-[#d7a52d]"
                       style={{ width: `${average}%` }}
                     />
                   </div>
@@ -453,7 +453,7 @@ function Dashboard() {
             <p className="text-xs text-muted-foreground">Recebimentos e valores pendentes</p>
           </div>
           <div className="p-5">
-            <div className="mb-5 rounded-2xl bg-gradient-to-br from-[#10264b] to-[#174b44] p-4 text-white">
+            <div className="mb-5 rounded-2xl bg-linear-to-br from-[#10264b] to-[#174b44] p-4 text-white">
               <div className="flex items-center justify-between text-xs text-white/65">
                 <span>Faturamento mensal</span>
                 <Wallet className="h-4 w-4" />
