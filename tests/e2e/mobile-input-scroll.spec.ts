@@ -1,6 +1,6 @@
-import { test, expect, devices } from "@playwright/test";
+import { test, expect } from "@playwright/test";
 
-test.use({ ...devices["iPhone 12"] });
+test.use({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
 
 test("input em foco fica visível na viewport (com safe-area) e some o foco ao sair", async ({ page }) => {
   await page.goto("/auth");
