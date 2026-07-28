@@ -32,6 +32,7 @@ import {
 import { SmartImage } from "@/components/storefront/SmartImage";
 import { STORE_CATEGORIES, brl } from "@/components/storefront/tokens";
 import { useCompanyInfo, useShowPrices, useWaLink } from "@/hooks/useCompanyInfo";
+import { QuoteBadge } from "@/components/storefront/QuoteBadge";
 import { useStoreProducts } from "@/components/storefront/useStoreProducts";
 import { InfiniteProducts } from "@/components/storefront/InfiniteProducts";
 import { CategoryCircles } from "@/components/storefront/CategoryCircles";
@@ -279,7 +280,7 @@ function BentoProductCard({
           {showPrices ? (
             <p className="font-display text-2xl leading-none">{brl(product.base_price)}</p>
           ) : (
-            <p className="font-display text-base leading-none">Sob consulta</p>
+            <QuoteBadge />
           )}
           {product.min_quantity ? (
             <p className="text-2xs text-muted-foreground">

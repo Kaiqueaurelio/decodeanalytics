@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useCart } from "@/lib/cart-context";
 import { brl } from "@/components/storefront/tokens";
 import { useShowPrices, useWaLink } from "@/hooks/useCompanyInfo";
+import { QuoteBadge } from "@/components/storefront/QuoteBadge";
 import { StoreShell } from "@/components/storefront/StoreShell";
 import { ShoppingCart, Trash2, Minus, Plus, ArrowRight, MessageCircle } from "lucide-react";
 import { useMemo } from "react";
@@ -22,7 +23,8 @@ export const Route = createFileRoute("/carrinho")({
 function CartPage() {
   const waLink = useWaLink();
   const showPrices = useShowPrices();
-  const money = (v: number) => (showPrices ? brl(v) : "Sob consulta");
+  const money = (v: number) =>
+    showPrices ? <>{brl(v)}</> : <QuoteBadge className="whitespace-nowrap" />;
   const { items, count, total, updateQuantity, removeItem, clear } = useCart();
 
   const message = useMemo(() => {

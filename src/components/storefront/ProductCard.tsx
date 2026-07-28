@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { Star } from "lucide-react";
 import { brl } from "./tokens";
 import { SmartImage } from "./SmartImage";
+import { QuoteBadge } from "./QuoteBadge";
 import { useShowPrices } from "@/hooks/useCompanyInfo";
 
 export type StoreProduct = {
@@ -87,9 +88,7 @@ export function ProductCard({ product }: { product: StoreProduct }) {
                 </p>
               </>
             ) : (
-              <p className="text-base font-extrabold leading-tight text-[var(--store-primary)]">
-                Sob consulta
-              </p>
+              <QuoteBadge />
             )}
             {product.min_quantity ? (
               <p className="text-2xs text-[var(--store-text-muted)]">
