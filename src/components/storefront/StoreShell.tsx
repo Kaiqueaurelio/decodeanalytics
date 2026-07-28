@@ -13,9 +13,9 @@ import {
   Instagram,
   Facebook,
   X,
-  Sparkles,
 } from "lucide-react";
 import { STORE_CATEGORIES } from "./tokens";
+import { EllaAvatar } from "@/components/EllaAvatar";
 import { useCompanyInfo, useWaLink } from "@/hooks/useCompanyInfo";
 import { useCart } from "@/lib/cart-context";
 import { useState } from "react";
@@ -147,7 +147,11 @@ function StoreHeader() {
             aria-label="Ella AI, assistente virtual"
             className="inline-flex min-h-11 min-w-11 shrink-0 items-center justify-center gap-1.5 whitespace-nowrap rounded-lg px-2.5 py-2 text-sm font-bold text-highlight transition-colors hover:bg-highlight/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--store-primary)] focus-visible:ring-offset-2 lg:px-3"
           >
-            <Sparkles className="h-4 w-4 shrink-0" aria-hidden="true" />
+            <EllaAvatar
+              size={26}
+              alt=""
+              ringClassName="ring-2 ring-[var(--store-secondary)] shrink-0"
+            />
             <span className="hidden lg:inline">Ella AI</span>
           </Link>
           <a
@@ -239,7 +243,11 @@ function StoreHeader() {
                     onClick={() => setMobileMenuOpen(false)}
                     className="flex items-center gap-3 px-3 py-3 rounded-lg text-sm font-bold text-highlight hover:bg-highlight/10 transition-colors"
                   >
-                    <Sparkles className="h-4 w-4" />
+                    <EllaAvatar
+                      size={28}
+                      alt=""
+                      ringClassName="ring-2 ring-[var(--store-secondary)] shrink-0"
+                    />
                     Perguntar à Ella
                   </Link>
                   <Link

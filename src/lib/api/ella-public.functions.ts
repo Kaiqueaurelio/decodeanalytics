@@ -86,6 +86,22 @@ export const ellaPublicChat = createServerFn({ method: "POST" })
           return { categories: cats };
         },
       }),
+      get_company_info: tool({
+        description:
+          "Dados oficiais da gráfica: nome, endereço, WhatsApp, Instagram, prazo padrão e se os preços estão visíveis no site. Use para responder sobre contato, localização e prazos.",
+        inputSchema: z.object({}),
+        execute: async () => {
+          const { data, error } = await supabase
+            .from("company_settings")
+            .select(
+              "name,address,whatsapp,instagram,default_deadline_days,show_prices,default_quote_text",
+            )
+            .limit(1)
+            .maybeSingle();
+          if (error || !data) return { error: "Não consegui carregar os dados da empresa." };
+          return { company: data };
+        },
+      }),
     };
 
     // Base de conhecimento pública ensinada pelo admin.
@@ -94,7 +110,7 @@ export const ellaPublicChat = createServerFn({ method: "POST" })
       .select("title,content")
       .in("scope", ["public", "both"])
       .order("updated_at", { ascending: false })
-      .limit(40);
+      .limit(120);
     const kbBlock =
       kb && kb.length
         ? `\n\nBase de conhecimento da gráfica (fonte da verdade):\n${(kb as any[])
