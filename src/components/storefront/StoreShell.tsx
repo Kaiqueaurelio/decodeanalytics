@@ -13,7 +13,6 @@ import {
   Instagram,
   Facebook,
   X,
-  Sparkles,
 } from "lucide-react";
 import { STORE_CATEGORIES } from "./tokens";
 import { EllaAvatar } from "@/components/EllaAvatar";
