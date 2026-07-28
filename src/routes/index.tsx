@@ -94,7 +94,7 @@ function LightBand({ children }: { children: React.ReactNode }) {
 }
 
 function FeaturedBento() {
-  const { data, isLoading } = useStoreProducts(24);
+  const { data, isLoading, isError, refetch, isFetching } = useStoreProducts(24);
   const items = data ?? [];
   const waLink = useWaLink();
   const featured = items.slice(0, 10);
@@ -148,6 +148,36 @@ function FeaturedBento() {
               />
             ))}
 
+        {isError && (
+          <div className="col-span-2 flex flex-col items-center justify-center gap-3 rounded-[var(--store-radius-lg)] border border-destructive/30 bg-destructive/5 p-6 text-center lg:col-span-2">
+            <p className="text-sm font-semibold text-destructive">
+              Não foi possível carregar os produtos.
+            </p>
+            <p className="text-xs text-[var(--store-text-muted)]">
+              Verifique sua conexão e tente de novo.
+            </p>
+            <button
+              type="button"
+              onClick={() => void refetch()}
+              disabled={isFetching}
+              className="inline-flex min-h-11 items-center rounded-full bg-store-primary px-5 text-xs font-extrabold uppercase tracking-[0.18em] text-inverse transition-opacity disabled:opacity-60"
+            >
+              {isFetching ? "Tentando..." : "Tentar novamente"}
+            </button>
+          </div>
+        )}
+
+        {!isLoading && !isError && featured.length === 0 && (
+          <div className="col-span-2 flex flex-col items-center justify-center gap-2 rounded-[var(--store-radius-lg)] border border-dashed border-[var(--store-primary-dark)]/20 p-6 text-center lg:col-span-2">
+            <p className="text-sm font-semibold text-[var(--store-primary-dark)]">
+              Nenhum produto publicado ainda.
+            </p>
+            <p className="text-xs text-[var(--store-text-muted)]">
+              Fale com a gente no WhatsApp que montamos seu orçamento na hora.
+            </p>
+          </div>
+        )}
+
         {/* Creative bento card — "Criamos sua arte" */}
         <a
           href={waLink("Olá! Quero contratar a criação de uma arte.")}
@@ -197,7 +227,7 @@ function FeaturedBento() {
         </Link>
 
         {/* Mais 4 produtos */}
-        {!isLoading &&
+        {!isLoading && !isError &&
           featured.slice(2, 6).map((p, idx) => (
             <BentoProductCard
               key={p.id}
