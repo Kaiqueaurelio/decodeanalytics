@@ -114,7 +114,7 @@ function FeaturedBento() {
         </div>
         <Link
           to="/produtos"
-          className="inline-flex items-center gap-1 text-xs font-extrabold uppercase tracking-[0.18em] text-[#172554] hover:text-[var(--store-primary-dark)]"
+          className="inline-flex min-h-11 items-center gap-1 text-xs font-extrabold uppercase tracking-[0.18em] text-store-primary transition-colors hover:text-[var(--store-primary-dark)]"
           onClick={() =>
             trackCta({
               cta_id: "bento_view_all",
