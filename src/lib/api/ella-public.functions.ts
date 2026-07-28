@@ -114,10 +114,11 @@ export const ellaPublicChat = createServerFn({ method: "POST" })
         messages: [...history, { role: "user", content: data.message }],
         tools,
         stopWhen: stepCountIs(8),
+        abortSignal: aiTimeoutSignal(45_000),
       });
       logAiEvent({
-        provider: "lovable-ai-gateway",
-        model: "google/gemini-2.5-flash",
+        provider,
+        model: modelName,
         endpoint: "/assistente",
         trace_id: traceId,
         status: "success",
@@ -134,8 +135,8 @@ export const ellaPublicChat = createServerFn({ method: "POST" })
       const cls = classifyAiError(err);
       console.error("ellaPublicChat error:", traceId, cls);
       logAiEvent({
-        provider: "lovable-ai-gateway",
-        model: "google/gemini-2.5-flash",
+        provider,
+        model: modelName,
         endpoint: "/assistente",
         trace_id: traceId,
         status: "error",
