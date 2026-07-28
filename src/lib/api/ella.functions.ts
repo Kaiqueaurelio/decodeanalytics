@@ -637,7 +637,12 @@ export const ellaChat = createServerFn({ method: "POST" })
             .limit(1)
             .maybeSingle();
           if (!found) return { error: `Não encontrei a arte "${title}".` };
-          const patch: Record<string, unknown> = {};
+          const patch: {
+            note?: string;
+            status?: "pendente";
+            client_feedback?: string | null;
+            responded_at?: string | null;
+          } = {};
           if (note !== undefined) patch.note = note;
           if (reset) {
             patch.status = "pendente";
