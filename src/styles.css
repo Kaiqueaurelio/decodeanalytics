@@ -221,6 +221,34 @@
   --sidebar-ring: oklch(0.551 0.027 264.364);
 }
 
+.dark {
+  --success: oklch(0.68 0.15 153);
+  --success-foreground: oklch(0.16 0.03 155);
+  --warning: oklch(0.8 0.15 78);
+  --warning-foreground: oklch(0.2 0.04 70);
+  --info: oklch(0.68 0.14 250);
+  --info-foreground: oklch(0.16 0.03 255);
+  --highlight: oklch(0.68 0.16 295);
+  --inverse: oklch(0.985 0.003 248);
+  --surface-dark: oklch(0.2 0.042 266);
+  --surface-dark-soft: oklch(0.279 0.041 260);
+  --surface-dark-foreground: oklch(0.984 0.003 248);
+  --gold: oklch(0.8 0.14 84);
+  --gold-foreground: oklch(0.2 0.04 258);
+  --brand-blue: oklch(0.35 0.1 258);
+  --brand-blue-light: oklch(0.6 0.16 257);
+
+  /* Storefront tokens em modo escuro */
+  --store-bg: oklch(0.16 0.03 258);
+  --store-surface: oklch(0.21 0.04 260);
+  --store-surface-soft: oklch(0.26 0.04 260);
+  --store-text: oklch(0.97 0.005 250);
+  --store-text-muted: oklch(0.74 0.03 256);
+  --store-text-light: oklch(0.62 0.03 256);
+  --store-border: oklch(1 0 0 / 12%);
+  --store-border-strong: oklch(1 0 0 / 20%);
+}
+
 @layer base {
   * {
     border-color: var(--color-border);
