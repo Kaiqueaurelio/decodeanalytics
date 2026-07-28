@@ -779,7 +779,7 @@ function PDVPage() {
   }
 
   return (
-    <div className="min-h-[calc(100vh-9rem)] max-w-full overflow-x-hidden rounded-[2rem] bg-[#f8fafc] p-2 text-foreground sm:p-3 md:p-3 lg:p-4 [zoom:0.9] xl:[zoom:0.85] 2xl:[zoom:0.85]">
+    <div className="min-h-[calc(100vh-9rem)] max-w-full overflow-x-hidden rounded-[2rem] bg-muted/40 p-2 text-foreground sm:p-3 md:p-3 lg:p-4 [zoom:0.9] xl:[zoom:0.85] 2xl:[zoom:0.85]">
       <div className="mb-3 flex flex-col gap-2 rounded-2xl border border-border bg-card p-3 shadow-sm lg:flex-row lg:items-center lg:justify-between">
         <div>
           <p className="text-[10px] font-black uppercase tracking-[0.2em] text-brand-blue">

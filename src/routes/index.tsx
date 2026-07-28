@@ -102,7 +102,7 @@ function FeaturedBento() {
     <section className="mx-auto mt-3 w-full max-w-[1280px] px-4 sm:mt-4">
       <header className="mb-5 flex flex-col items-start justify-between gap-2 sm:flex-row sm:items-end">
         <div className="min-w-0">
-          <p className="text-[11px] font-extrabold uppercase tracking-[0.22em] text-[#172554]">
+          <p className="text-[11px] font-extrabold uppercase tracking-[0.22em] text-brand-blue">
             Os favoritos dos IMbatíveis
           </p>
           <h2 className="font-display mt-1 text-4xl leading-none text-[var(--store-primary-dark)] sm:text-5xl">
@@ -176,7 +176,7 @@ function FeaturedBento() {
         {/* Card "mais produtos" */}
         <Link
           to="/produtos"
-          className="store-bento-card group flex flex-col items-center justify-center bg-[#172554] p-5 text-center text-inverse animate-fade-in"
+          className="store-bento-card group flex flex-col items-center justify-center bg-brand-blue p-5 text-center text-inverse animate-fade-in"
           style={{ animationDelay: "360ms", animationFillMode: "both" }}
           onClick={() =>
             trackCta({

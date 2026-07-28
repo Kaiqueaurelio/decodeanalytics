@@ -83,7 +83,7 @@ function AuthPage() {
   return (
     <div
       className="auth-screen min-h-screen-dvh flex items-center justify-center overflow-x-hidden p-3 safe-pt safe-pb sm:p-4"
-      style={{ background: "linear-gradient(135deg, #031c18, #074531 58%, #d9a83f)" }}
+      style={{ background: "linear-gradient(135deg, var(--surface-dark), var(--brand-blue) 58%, var(--gold))" }}
     >
       <div className="auth-card w-full max-w-md rounded-2xl border border-border bg-card p-5 shadow-2xl sm:p-8">
         <div className="text-center mb-4 sm:mb-6">
