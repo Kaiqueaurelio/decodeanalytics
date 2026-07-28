@@ -288,14 +288,14 @@ function StoreHeader() {
                   target={info.instagramUrl ? "_blank" : undefined}
                   rel={info.instagramUrl ? "noopener noreferrer" : undefined}
                   aria-label="Instagram"
-                  className="grid h-9 w-9 place-items-center rounded-lg bg-white hover:bg-[var(--store-primary)] hover:text-white transition-colors"
+                  className="grid h-11 w-11 place-items-center rounded-lg bg-white hover:bg-[var(--store-primary)] hover:text-white transition-colors"
                 >
                   <Instagram className="h-4 w-4" />
                 </a>
                 <a
                   href="#"
                   aria-label="Facebook"
-                  className="grid h-9 w-9 place-items-center rounded-lg bg-white hover:bg-[var(--store-primary)] hover:text-white transition-colors"
+                  className="grid h-11 w-11 place-items-center rounded-lg bg-white hover:bg-[var(--store-primary)] hover:text-white transition-colors"
                 >
                   <Facebook className="h-4 w-4" />
                 </a>
