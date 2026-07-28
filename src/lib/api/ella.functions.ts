@@ -588,6 +588,72 @@ export const ellaChat = createServerFn({ method: "POST" })
           return { success: true };
         },
       }),
+      list_art_proofs: tool({
+        description:
+          "Lista as artes enviadas para aprovação do cliente, com status (pendente/aprovado/reprovado), cliente e link público.",
+        inputSchema: z.object({
+          status: z.enum(["pendente", "aprovado", "reprovado"]).optional(),
+          clientName: z.string().optional(),
+        }),
+        execute: async ({ status, clientName }) => {
+          let q = supabase
+            .from("art_proofs")
+            .select("id,token,title,status,client_feedback,viewed_at,created_at,clients(name)")
+            .order("created_at", { ascending: false })
+            .limit(20);
+          if (status) q = q.eq("status", status);
+          const { data, error } = await q;
+          if (error) return { error: error.message };
+          let rows = data ?? [];
+          if (clientName) {
+            const needle = normalizeText(clientName);
+            rows = rows.filter((r: any) => normalizeText(r.clients?.name).includes(needle));
+          }
+          return {
+            proofs: rows.map((r: any) => ({
+              title: r.title,
+              client: r.clients?.name ?? null,
+              status: r.status,
+              feedback: r.client_feedback,
+              viewed: Boolean(r.viewed_at),
+              link: `/arte/${r.token}`,
+            })),
+          };
+        },
+      }),
+      update_art_proof: tool({
+        description:
+          "Atualiza uma arte de aprovação pelo título: pode reabrir para nova resposta (reset=true) ou trocar a observação enviada ao cliente.",
+        inputSchema: z.object({
+          title: z.string(),
+          reset: z.boolean().optional(),
+          note: z.string().optional(),
+        }),
+        execute: async ({ title, reset, note }) => {
+          const { data: found } = await supabase
+            .from("art_proofs")
+            .select("id,title")
+            .ilike("title", `%${title}%`)
+            .limit(1)
+            .maybeSingle();
+          if (!found) return { error: `Não encontrei a arte "${title}".` };
+          const patch: {
+            note?: string;
+            status?: "pendente";
+            client_feedback?: string | null;
+            responded_at?: string | null;
+          } = {};
+          if (note !== undefined) patch.note = note;
+          if (reset) {
+            patch.status = "pendente";
+            patch.client_feedback = null;
+            patch.responded_at = null;
+          }
+          const { error } = await supabase.from("art_proofs").update(patch).eq("id", found.id);
+          if (error) return { error: error.message };
+          return { success: true, title: found.title };
+        },
+      }),
       dashboard_summary: tool({
         description: "Panorama rápido: OS ativas, cobranças pendentes, faturamento do mês.",
         inputSchema: z.object({}),
