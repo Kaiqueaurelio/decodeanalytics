@@ -96,9 +96,9 @@ function AuthPage() {
           <p className="text-sm text-muted-foreground">Sistema de gestão da produção gráfica</p>
         </div>
         <Tabs defaultValue="login">
-          <TabsList className="grid grid-cols-2 w-full mb-4 h-11">
-            <TabsTrigger value="login" className="h-9">Entrar</TabsTrigger>
-            <TabsTrigger value="signup" className="h-9">Criar conta</TabsTrigger>
+          <TabsList className="grid grid-cols-2 w-full mb-4 h-12">
+            <TabsTrigger value="login" className="h-10 text-base">Entrar</TabsTrigger>
+            <TabsTrigger value="signup" className="h-10 text-base">Criar conta</TabsTrigger>
           </TabsList>
           <TabsContent value="login">
             <form onSubmit={handleLogin} className="space-y-3">
@@ -142,13 +142,13 @@ function AuthPage() {
                     onPointerDown={loginPwdTrack.onPointerDown}
                     onFocus={loginPwdTrack.onFocus}
                     required
-                    className="pr-11"
+                    className="pr-12"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPwd((v) => !v)}
                     aria-label={showPwd ? "Ocultar senha" : "Mostrar senha"}
-                    className="absolute right-1 top-1/2 -translate-y-1/2 grid h-9 w-9 place-items-center rounded-md text-muted-foreground hover:text-foreground"
+                    className="absolute right-1 top-1/2 -translate-y-1/2 grid h-11 w-11 place-items-center rounded-md text-muted-foreground transition-colors hover:text-foreground"
                   >
                     {showPwd ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </button>
@@ -160,7 +160,7 @@ function AuthPage() {
               <button
                 type="button"
                 onClick={handleReset}
-                className="text-sm text-muted-foreground hover:text-primary block w-full text-center mt-2 py-2"
+                className="text-sm text-muted-foreground hover:text-primary block w-full min-h-11 text-center mt-2 py-2 transition-colors"
               >
                 Esqueci minha senha
               </button>
@@ -230,13 +230,13 @@ function AuthPage() {
                     onFocus={signupPwdTrack.onFocus}
                     required
                     minLength={6}
-                    className="pr-11"
+                    className="pr-12"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPwd((v) => !v)}
                     aria-label={showPwd ? "Ocultar senha" : "Mostrar senha"}
-                    className="absolute right-1 top-1/2 -translate-y-1/2 grid h-9 w-9 place-items-center rounded-md text-muted-foreground hover:text-foreground"
+                    className="absolute right-1 top-1/2 -translate-y-1/2 grid h-11 w-11 place-items-center rounded-md text-muted-foreground transition-colors hover:text-foreground"
                   >
                     {showPwd ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </button>
