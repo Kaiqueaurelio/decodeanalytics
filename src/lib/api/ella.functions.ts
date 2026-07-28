@@ -263,7 +263,7 @@ async function ellaLocalFallback({
 
   return {
     response:
-      "Estou funcionando na Vercel em modo básico. Para a Ella completa com IA, áudio e análise de anexos, configure LOVABLE_API_KEY na Vercel. Mesmo assim, já consigo executar comandos simples como atualizar preço, criar produto, listar OS e mexer no estoque.",
+      "Estou em modo básico porque nenhuma chave de IA está configurada neste ambiente (GEMINI_API_KEY ou LOVABLE_API_KEY). Mesmo assim, já consigo executar comandos simples como atualizar preço, criar produto, listar OS e mexer no estoque.",
     toolActivity,
   };
 }
