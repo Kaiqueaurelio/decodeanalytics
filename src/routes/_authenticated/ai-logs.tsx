@@ -100,7 +100,7 @@ function AiLogsPage() {
     <div className="mx-auto max-w-7xl px-4 py-6 space-y-6">
       <header className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-black tracking-tight flex items-center gap-2">
+          <h1 className="flex items-center gap-2 text-xl font-black tracking-tight sm:text-2xl md:text-3xl">
             <Activity className="h-6 w-6 text-primary" />
             Logs do Assistente
           </h1>

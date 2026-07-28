@@ -76,7 +76,7 @@ function CashPage() {
               <Calendar className="w-5 h-5 opacity-75" />
               <p className="text-sm font-semibold opacity-90">SALDO DO DIA</p>
             </div>
-            <p className="text-4xl md:text-5xl font-black">{brl(todayTotals.in - todayTotals.out)}</p>
+            <p className="text-3xl font-black tabular-nums sm:text-4xl md:text-5xl">{brl(todayTotals.in - todayTotals.out)}</p>
           </div>
           <div className="text-right">
             <div className="mb-3">

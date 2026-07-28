@@ -183,7 +183,7 @@ function Page() {
             <AlertTriangle className="w-4 h-4" />
             <span className="text-xs font-bold uppercase tracking-wide opacity-90">Vencidas</span>
           </div>
-          <p className="text-3xl font-black">{brl(buckets.overdue.total)}</p>
+          <p className="text-2xl font-black tabular-nums sm:text-3xl">{brl(buckets.overdue.total)}</p>
           <p className="text-xs mt-1 opacity-90">{buckets.overdue.rows.length} cobrança(s)</p>
         </Card>
         <Card className="p-5 bg-linear-to-br from-primary to-primary/80 text-primary-foreground border-0">
@@ -191,7 +191,7 @@ function Page() {
             <Wallet className="w-4 h-4" />
             <span className="text-xs font-bold uppercase tracking-wide opacity-90">A receber (total)</span>
           </div>
-          <p className="text-3xl font-black">{brl(totalPending)}</p>
+          <p className="text-2xl font-black tabular-nums sm:text-3xl">{brl(totalPending)}</p>
           <p className="text-xs mt-1 opacity-90">
             {buckets.overdue.rows.length + buckets.today.rows.length + buckets.week.rows.length + buckets.month.rows.length + buckets.future.rows.length} pendente(s)
           </p>
@@ -201,7 +201,7 @@ function Page() {
             <CheckCircle2 className="w-4 h-4" />
             <span className="text-xs font-bold uppercase tracking-wide opacity-90">Já recebidas</span>
           </div>
-          <p className="text-3xl font-black">{brl(buckets.paid.total)}</p>
+          <p className="text-2xl font-black tabular-nums sm:text-3xl">{brl(buckets.paid.total)}</p>
           <p className="text-xs mt-1 opacity-90">{buckets.paid.rows.length} cobrança(s)</p>
         </Card>
       </div>
