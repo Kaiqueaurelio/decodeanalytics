@@ -24,3 +24,35 @@ export function createGeminiProvider(apiKey: string) {
     },
   });
 }
+
+/**
+ * Resolve o provider da Ella de forma idêntica em qualquer host (Lovable/Vercel).
+ * Prioriza a chave própria do Gemini; cai para o gateway da Lovable se não houver.
+ * Retorna null quando nenhuma chave está configurada.
+ */
+export function resolveEllaModel() {
+  const geminiKey = process.env.GEMINI_API_KEY;
+  if (geminiKey) {
+    const modelName = "gemini-2.5-flash";
+    return {
+      model: createGeminiProvider(geminiKey)(modelName),
+      modelName,
+      provider: "google-gemini" as const,
+    };
+  }
+  const lovableKey = process.env.LOVABLE_API_KEY;
+  if (lovableKey) {
+    const modelName = "google/gemini-2.5-flash";
+    return {
+      model: createLovableGateway(lovableKey)(modelName),
+      modelName,
+      provider: "lovable-ai-gateway" as const,
+    };
+  }
+  return null;
+}
+
+/** Aborta a chamada do modelo depois de N ms para a Ella nunca "pensar" pra sempre. */
+export function aiTimeoutSignal(ms = 60_000) {
+  return AbortSignal.timeout(ms);
+}
