@@ -23,7 +23,8 @@ async function blockAvatar(page: import("@playwright/test").Page) {
   const attempts: string[] = [];
   await page.route(AVATAR_URL_RE, (route) => {
     attempts.push(route.request().url());
-    return route.abort("failed");
+    // 404 dispara onError de forma determinística no Chromium (abort nem sempre).
+    return route.fulfill({ status: 404, contentType: "text/plain", body: "not found" });
   });
   return attempts;
 }
