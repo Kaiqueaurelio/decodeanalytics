@@ -49,7 +49,7 @@ function CartButton() {
   return (
     <Link
       to="/carrinho"
-      className="relative flex items-center gap-1.5 rounded-lg bg-[var(--store-primary)] px-3 py-2 text-sm font-bold text-white hover:bg-[var(--store-primary-light)]"
+      className="relative flex items-center gap-1.5 rounded-lg bg-[var(--store-primary)] px-3 py-2 text-sm font-bold text-inverse hover:bg-[var(--store-primary-light)]"
     >
       <ShoppingCart className="h-4 w-4" />
       Carrinho
@@ -63,7 +63,7 @@ function CartButton() {
 function CartCountBadge() {
   const { count } = useCart();
   return (
-    <span className="ml-auto rounded-full bg-[var(--store-primary)] px-2 py-0.5 text-[10px] font-extrabold text-white">
+    <span className="ml-auto rounded-full bg-[var(--store-primary)] px-2 py-0.5 text-[10px] font-extrabold text-inverse">
       {count}
     </span>
   );
@@ -129,11 +129,11 @@ function StoreHeader() {
             value={q}
             onChange={(e) => setQ(e.target.value)}
             placeholder="O que você está procurando?"
-            className="h-10 w-full min-w-0 rounded-[var(--store-radius-lg)] border border-[var(--store-border)] bg-white pl-10 pr-20 text-base sm:h-11 sm:pl-12 sm:pr-28 sm:text-base md:h-12 md:text-base outline-none transition-all placeholder:text-[var(--store-text-light)] focus:border-[var(--store-primary-light)] focus:ring-4 focus:ring-[var(--store-primary-light)]/15"
+            className="h-10 w-full min-w-0 rounded-[var(--store-radius-lg)] border border-[var(--store-border)] bg-card pl-10 pr-20 text-base sm:h-11 sm:pl-12 sm:pr-28 sm:text-base md:h-12 md:text-base outline-none transition-all placeholder:text-[var(--store-text-light)] focus:border-[var(--store-primary-light)] focus:ring-4 focus:ring-[var(--store-primary-light)]/15"
           />
           <button
             type="submit"
-            className="absolute right-1 top-1/2 inline-flex min-h-11 min-w-11 -translate-y-1/2 items-center justify-center rounded-[var(--store-radius-md)] bg-[var(--store-primary)] px-3 text-[10px] font-bold uppercase tracking-wide text-white transition-colors hover:bg-[var(--store-primary-light)] sm:right-1.5 sm:text-xs md:px-4 md:text-sm"
+            className="absolute right-1 top-1/2 inline-flex min-h-11 min-w-11 -translate-y-1/2 items-center justify-center rounded-[var(--store-radius-md)] bg-[var(--store-primary)] px-3 text-[10px] font-bold uppercase tracking-wide text-inverse transition-colors hover:bg-[var(--store-primary-light)] sm:right-1.5 sm:text-xs md:px-4 md:text-sm"
           >
             Buscar
           </button>
@@ -142,7 +142,7 @@ function StoreHeader() {
         <nav className="hidden items-center gap-1 md:flex">
           <Link
             to="/assistente"
-            className="flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-bold text-purple-600 hover:bg-purple-50 transition-colors"
+            className="flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-bold text-highlight hover:bg-highlight/10 transition-colors"
           >
             <Sparkles className="h-4 w-4" />
             Ella AI
@@ -171,14 +171,14 @@ function StoreHeader() {
             <button
               type="button"
               aria-label="Menu"
-              className="grid h-11 w-11 shrink-0 place-items-center rounded-lg border border-[var(--store-border)] bg-white md:hidden transition-colors hover:bg-[var(--store-surface-soft)]"
+              className="grid h-11 w-11 shrink-0 place-items-center rounded-lg border border-[var(--store-border)] bg-card md:hidden transition-colors hover:bg-[var(--store-surface-soft)]"
             >
               <Menu className="h-5 w-5 text-[var(--store-primary)]" />
             </button>
           </SheetTrigger>
           <SheetContent
             side="left"
-            className="w-full sm:w-80 bg-white p-0 flex flex-col [&>button.absolute]:hidden"
+            className="w-full sm:w-80 bg-card p-0 flex flex-col [&>button.absolute]:hidden"
           >
             <div className="flex items-center justify-between border-b border-[var(--store-border)] px-6 py-5">
               <div className="flex items-center gap-3">
@@ -231,7 +231,7 @@ function StoreHeader() {
                   <Link
                     to="/assistente"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center gap-3 px-3 py-3 rounded-lg text-sm font-bold text-purple-600 hover:bg-purple-50 transition-colors"
+                    className="flex items-center gap-3 px-3 py-3 rounded-lg text-sm font-bold text-highlight hover:bg-highlight/10 transition-colors"
                   >
                     <Sparkles className="h-4 w-4" />
                     Perguntar à Ella
@@ -288,14 +288,14 @@ function StoreHeader() {
                   target={info.instagramUrl ? "_blank" : undefined}
                   rel={info.instagramUrl ? "noopener noreferrer" : undefined}
                   aria-label="Instagram"
-                  className="grid h-11 w-11 place-items-center rounded-lg bg-white hover:bg-[var(--store-primary)] hover:text-white transition-colors"
+                  className="grid h-11 w-11 place-items-center rounded-lg bg-card hover:bg-[var(--store-primary)] hover:text-inverse transition-colors"
                 >
                   <Instagram className="h-4 w-4" />
                 </a>
                 <a
                   href="#"
                   aria-label="Facebook"
-                  className="grid h-11 w-11 place-items-center rounded-lg bg-white hover:bg-[var(--store-primary)] hover:text-white transition-colors"
+                  className="grid h-11 w-11 place-items-center rounded-lg bg-card hover:bg-[var(--store-primary)] hover:text-inverse transition-colors"
                 >
                   <Facebook className="h-4 w-4" />
                 </a>
@@ -323,7 +323,7 @@ function CategoryNav() {
             className="shrink-0 rounded-full px-4 py-2 text-sm font-semibold text-[var(--store-text-muted)] transition-colors hover:bg-[var(--store-surface-soft)] hover:text-[var(--store-primary)]"
             activeProps={{
               className:
-                "shrink-0 rounded-full bg-[var(--store-primary)] px-4 py-2 text-sm font-semibold text-white",
+                "shrink-0 rounded-full bg-[var(--store-primary)] px-4 py-2 text-sm font-semibold text-inverse",
             }}
           >
             {c.label}
@@ -338,7 +338,7 @@ function StoreFooter() {
   const info = useCompanyInfo();
   const waLink = useWaLink();
   return (
-    <footer className="mt-16 bg-[var(--store-primary-dark)] text-white">
+    <footer className="mt-16 bg-[var(--store-primary-dark)] text-inverse">
       <div className="mx-auto grid max-w-[1280px] gap-10 px-4 py-12 md:grid-cols-4">
         <div>
           <div className="flex items-center gap-3">
@@ -354,7 +354,7 @@ function StoreFooter() {
               </div>
             </div>
           </div>
-          <p className="mt-4 text-sm leading-relaxed text-white/70">
+          <p className="mt-4 text-sm leading-relaxed text-inverse/70">
             Produtos personalizados com acabamento profissional para a sua marca aparecer mais.
           </p>
           <div className="mt-4 flex gap-2">
@@ -363,14 +363,14 @@ function StoreFooter() {
               target={info.instagramUrl ? "_blank" : undefined}
               rel={info.instagramUrl ? "noopener noreferrer" : undefined}
               aria-label="Instagram"
-              className="grid h-11 w-11 place-items-center rounded-lg bg-white/10 transition-colors hover:bg-white/20"
+              className="grid h-11 w-11 place-items-center rounded-lg bg-inverse/10 transition-colors hover:bg-inverse/20"
             >
               <Instagram className="h-4 w-4" />
             </a>
             <a
               href="#"
               aria-label="Facebook"
-              className="grid h-11 w-11 place-items-center rounded-lg bg-white/10 transition-colors hover:bg-white/20"
+              className="grid h-11 w-11 place-items-center rounded-lg bg-inverse/10 transition-colors hover:bg-inverse/20"
             >
               <Facebook className="h-4 w-4" />
             </a>
@@ -380,13 +380,13 @@ function StoreFooter() {
           <h3 className="text-sm font-bold uppercase tracking-wide text-[var(--store-secondary)]">
             Produtos
           </h3>
-          <ul className="mt-2 text-sm text-white/70">
+          <ul className="mt-2 text-sm text-inverse/70">
             {STORE_CATEGORIES.slice(1, 6).map((c) => (
               <li key={c.slug}>
                 <Link
                   to="/produtos"
                   search={{ cat: c.slug }}
-                  className="inline-flex min-h-11 items-center transition-colors hover:text-white"
+                  className="inline-flex min-h-11 items-center transition-colors hover:text-inverse"
                 >
                   {c.label}
                 </Link>
@@ -398,14 +398,14 @@ function StoreFooter() {
           <h3 className="text-sm font-bold uppercase tracking-wide text-[var(--store-secondary)]">
             Atendimento
           </h3>
-          <ul className="mt-4 space-y-3 text-sm text-white/70">
+          <ul className="mt-4 space-y-3 text-sm text-inverse/70">
             <li className="flex items-center gap-2">
               <MessageCircle className="h-4 w-4 shrink-0" />
               <a
                 href={waLink("Olá! Vim do site.")}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex min-h-11 items-center transition-colors hover:text-white"
+                className="inline-flex min-h-11 items-center transition-colors hover:text-inverse"
               >
                 WhatsApp {info.whatsappDisplay}
               </a>
@@ -415,7 +415,7 @@ function StoreFooter() {
               <div>
                 {info.hours.map((h) => (
                   <div key={h.day}>
-                    <strong className="text-white/90">{h.day}:</strong> {h.time}
+                    <strong className="text-inverse/90">{h.day}:</strong> {h.time}
                   </div>
                 ))}
               </div>
@@ -429,7 +429,7 @@ function StoreFooter() {
                 href={info.mapsUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex min-h-11 items-center transition-colors hover:text-white"
+                className="inline-flex min-h-11 items-center transition-colors hover:text-inverse"
               >
                 {info.address}
               </a>
@@ -440,32 +440,32 @@ function StoreFooter() {
           <h3 className="text-sm font-bold uppercase tracking-wide text-[var(--store-secondary)]">
             Institucional
           </h3>
-          <ul className="mt-2 text-sm text-white/70">
+          <ul className="mt-2 text-sm text-inverse/70">
             <li>
-              <Link to="/produtos" className="inline-flex min-h-11 items-center transition-colors hover:text-white">
+              <Link to="/produtos" className="inline-flex min-h-11 items-center transition-colors hover:text-inverse">
                 Catálogo completo
               </Link>
             </li>
             <li>
-              <Link to="/auth" className="inline-flex min-h-11 items-center transition-colors hover:text-white">
+              <Link to="/auth" className="inline-flex min-h-11 items-center transition-colors hover:text-inverse">
                 Minha conta
               </Link>
             </li>
             <li>
-              <a href="#" className="inline-flex min-h-11 items-center transition-colors hover:text-white">
+              <a href="#" className="inline-flex min-h-11 items-center transition-colors hover:text-inverse">
                 Política de privacidade
               </a>
             </li>
             <li>
-              <a href="#" className="inline-flex min-h-11 items-center transition-colors hover:text-white">
+              <a href="#" className="inline-flex min-h-11 items-center transition-colors hover:text-inverse">
                 Trocas e devoluções
               </a>
             </li>
           </ul>
         </div>
       </div>
-      <div className="border-t border-white/10">
-        <div className="mx-auto flex max-w-[1280px] flex-col items-center justify-between gap-2 px-4 py-4 text-xs text-white/50 md:flex-row">
+      <div className="border-t border-inverse/10">
+        <div className="mx-auto flex max-w-[1280px] flex-col items-center justify-between gap-2 px-4 py-4 text-xs text-inverse/50 md:flex-row">
           <p>© {new Date().getFullYear()} Alcateia's Produções Gráficas. Todos os direitos reservados.</p>
           <p>Feito com cuidado para sua marca brilhar.</p>
         </div>
@@ -486,7 +486,7 @@ function FloatingWhatsApp() {
         bottom: "calc(env(safe-area-inset-bottom) + 1.25rem)",
         right: "calc(env(safe-area-inset-right) + 1.25rem)",
       }}
-      className="fixed z-40 grid h-14 w-14 place-items-center rounded-full bg-[var(--store-success)] text-white shadow-lg transition-transform hover:scale-110"
+      className="fixed z-40 grid h-14 w-14 place-items-center rounded-full bg-[var(--store-success)] text-inverse shadow-lg transition-transform hover:scale-110"
     >
       <MessageCircle className="h-7 w-7" />
     </a>

@@ -122,7 +122,7 @@ function ClosuresPage() {
 
       {!sorted.length && (
         <Card className="p-12 text-center text-muted-foreground">
-          <Wallet className="mx-auto w-10 h-10 text-slate-300 mb-2" />
+          <Wallet className="mx-auto w-10 h-10 text-muted-foreground mb-2" />
           Nenhum fechamento salvo ainda. Abra e feche o caixa no PDV para gerar o primeiro.
         </Card>
       )}
@@ -144,16 +144,16 @@ function ClosuresPage() {
                 </div>
                 <div className="flex flex-col items-end gap-1">
                   {isAuto && (
-                    <Badge variant="outline" className="border-sky-200 bg-sky-50 text-sky-700">
+                    <Badge variant="outline" className="border-info/30 bg-info/10 text-info">
                       <Sparkles className="w-3 h-3 mr-1" />Automático
                     </Badge>
                   )}
                   {isEmpty ? (
-                    <Badge variant="outline" className="border-slate-200 bg-slate-50 text-slate-600">
+                    <Badge variant="outline" className="border-border bg-muted text-muted-foreground">
                       <MinusCircle className="w-3 h-3 mr-1" />Sem movimento
                     </Badge>
                   ) : (
-                    <Badge variant="outline" className={ok ? "border-emerald-200 bg-emerald-50 text-emerald-700" : "border-amber-200 bg-amber-50 text-amber-800"}>
+                    <Badge variant="outline" className={ok ? "border-success/30 bg-success/10 text-success" : "border-warning/30 bg-warning/10 text-warning"}>
                       {ok ? (
                         <><CheckCircle2 className="w-3 h-3 mr-1" />Bate</>
                       ) : (
@@ -165,12 +165,12 @@ function ClosuresPage() {
               </div>
 
               <div className="grid grid-cols-2 gap-2 text-xs">
-                <div className="rounded-lg bg-emerald-50 p-2">
-                  <div className="flex items-center gap-1 text-emerald-700"><ArrowDownCircle className="w-3 h-3" />Entradas</div>
+                <div className="rounded-lg bg-success/10 p-2">
+                  <div className="flex items-center gap-1 text-success"><ArrowDownCircle className="w-3 h-3" />Entradas</div>
                   <p className="font-bold font-mono">{brl(c.total_in)}</p>
                 </div>
-                <div className="rounded-lg bg-red-50 p-2">
-                  <div className="flex items-center gap-1 text-red-700"><ArrowUpCircle className="w-3 h-3" />Saídas</div>
+                <div className="rounded-lg bg-destructive/10 p-2">
+                  <div className="flex items-center gap-1 text-destructive"><ArrowUpCircle className="w-3 h-3" />Saídas</div>
                   <p className="font-bold font-mono">{brl(c.total_out)}</p>
                 </div>
               </div>
@@ -188,12 +188,12 @@ function ClosuresPage() {
                 <Row label="Contado" value={c.counted_cash} muted />
                 <div className="flex justify-between font-bold pt-1">
                   <span>Diferença</span>
-                  <span className={ok ? "text-emerald-700" : "text-amber-700"}>{brl(c.difference)}</span>
+                  <span className={ok ? "text-success" : "text-warning"}>{brl(c.difference)}</span>
                 </div>
               </div>
 
               {c.notes && (
-                <p className="text-xs text-muted-foreground italic border-l-2 border-slate-200 pl-2">{c.notes}</p>
+                <p className="text-xs text-muted-foreground italic border-l-2 border-border pl-2">{c.notes}</p>
               )}
 
               <Button size="sm" variant="outline" className="w-full" onClick={() => printOne(c)}>

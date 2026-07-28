@@ -134,7 +134,7 @@ function FeaturedBento() {
           ? Array.from({ length: 6 }).map((_, i) => (
               <div
                 key={i}
-                className="animate-pulse rounded-[var(--store-radius-lg)] bg-white/5 p-4"
+                className="animate-pulse rounded-[var(--store-radius-lg)] bg-inverse/5 p-4"
                 style={{ minHeight: 260 }}
               />
             ))
@@ -168,7 +168,7 @@ function FeaturedBento() {
           <p className="mt-2 text-xs font-medium">
             Designers prontos para criar do zero.
           </p>
-          <span className="mt-4 inline-flex items-center justify-center bg-[var(--store-ink)] px-4 py-2 text-[10px] font-extrabold uppercase tracking-[0.2em] text-white transition-transform group-hover:scale-105">
+          <span className="mt-4 inline-flex items-center justify-center bg-[var(--store-ink)] px-4 py-2 text-[10px] font-extrabold uppercase tracking-[0.2em] text-inverse transition-transform group-hover:scale-105">
             Saiba mais
           </span>
         </a>
@@ -176,7 +176,7 @@ function FeaturedBento() {
         {/* Card "mais produtos" */}
         <Link
           to="/produtos"
-          className="store-bento-card group flex flex-col items-center justify-center bg-[#172554] p-5 text-center text-white animate-fade-in"
+          className="store-bento-card group flex flex-col items-center justify-center bg-[#172554] p-5 text-center text-inverse animate-fade-in"
           style={{ animationDelay: "360ms", animationFillMode: "both" }}
           onClick={() =>
             trackCta({
@@ -188,11 +188,11 @@ function FeaturedBento() {
             })
           }
         >
-          <div className="grid h-12 w-12 place-items-center rounded-full border-2 border-white text-white transition-transform group-hover:rotate-90">
+          <div className="grid h-12 w-12 place-items-center rounded-full border-2 border-inverse text-inverse transition-transform group-hover:rotate-90">
             <Plus className="h-5 w-5" />
           </div>
           <p className="font-display mt-3 text-2xl leading-none">MAIS PRODUTOS</p>
-          <p className="mt-1 text-xs text-white/80">Catálogo completo</p>
+          <p className="mt-1 text-xs text-inverse/80">Catálogo completo</p>
         </Link>
 
         {/* Mais 4 produtos */}
@@ -228,7 +228,7 @@ function BentoProductCard({
     <Link
       to="/produto/$slug"
       params={{ slug }}
-      className="store-bento-card group flex flex-col overflow-hidden bg-white p-3 text-[var(--store-ink)] animate-fade-in"
+      className="store-bento-card group flex flex-col overflow-hidden bg-card p-3 text-[var(--store-ink)] animate-fade-in"
       style={{ animationDelay: `${animationDelay}ms`, animationFillMode: "both" }}
       onClick={() =>
         trackCardClick({
@@ -242,7 +242,7 @@ function BentoProductCard({
         })
       }
     >
-      <div className="relative mb-3 flex aspect-square items-center justify-center overflow-hidden rounded-[var(--store-radius-md)] bg-slate-100">
+      <div className="relative mb-3 flex aspect-square items-center justify-center overflow-hidden rounded-[var(--store-radius-md)] bg-muted">
         <SmartImage 
           src={product.image_url} 
           alt={product.name}
@@ -271,7 +271,7 @@ function BentoProductCard({
               <span className="text-[11px] font-bold text-[var(--store-ink)]">
                 {rating.toFixed(1)}
               </span>
-              <span className="text-[10px] text-slate-400">
+              <span className="text-[10px] text-muted-foreground">
                 ({product.reviews_count ?? 0})
               </span>
             </div>
@@ -282,12 +282,12 @@ function BentoProductCard({
             <p className="font-display text-base leading-none">Sob consulta</p>
           )}
           {product.min_quantity ? (
-            <p className="text-[10px] text-slate-500">
+            <p className="text-[10px] text-muted-foreground">
               a partir de {product.min_quantity} {product.unit ?? "un"}
             </p>
           ) : null}
         </div>
-        <span className="grid h-9 w-9 shrink-0 place-items-center rounded-[var(--store-radius-sm)] bg-[var(--store-ink)] text-white transition-colors group-hover:bg-[var(--store-gold)] group-hover:text-[var(--store-ink)]">
+        <span className="grid h-9 w-9 shrink-0 place-items-center rounded-[var(--store-radius-sm)] bg-[var(--store-ink)] text-inverse transition-colors group-hover:bg-[var(--store-gold)] group-hover:text-[var(--store-ink)]">
           <Plus className="h-4 w-4" />
         </span>
       </div>
@@ -310,9 +310,9 @@ function CategoriesSection() {
               key={c.slug}
               to="/produtos"
               search={{ cat: c.slug }}
-              className="group flex flex-col justify-between rounded-[var(--store-radius-lg)] border border-[var(--store-border)] bg-white p-5 shadow-[var(--store-shadow-sm)] transition-all hover:-translate-y-1 hover:border-[var(--store-primary-light)]/40 hover:shadow-[var(--store-shadow-md)]"
+              className="group flex flex-col justify-between rounded-[var(--store-radius-lg)] border border-[var(--store-border)] bg-card p-5 shadow-[var(--store-shadow-sm)] transition-all hover:-translate-y-1 hover:border-[var(--store-primary-light)]/40 hover:shadow-[var(--store-shadow-md)]"
             >
-              <div className="grid h-12 w-12 place-items-center rounded-xl bg-[var(--store-primary)] text-white transition-colors group-hover:bg-[var(--store-accent)]">
+              <div className="grid h-12 w-12 place-items-center rounded-xl bg-[var(--store-primary)] text-inverse transition-colors group-hover:bg-[var(--store-accent)]">
                 <Sparkles className="h-5 w-5" />
               </div>
               <div className="mt-5">
@@ -350,10 +350,10 @@ function HowItWorks() {
             key={s.title}
             variant="up"
             delay={idx * 90}
-            className="lift-on-hover rounded-[var(--store-radius-lg)] border border-[var(--store-border)] bg-white p-5 shadow-[var(--store-shadow-sm)]"
+            className="lift-on-hover rounded-[var(--store-radius-lg)] border border-[var(--store-border)] bg-card p-5 shadow-[var(--store-shadow-sm)]"
           >
             <div className="flex items-center gap-3">
-              <span className="grid h-10 w-10 place-items-center rounded-full bg-[var(--store-primary)] text-sm font-extrabold text-white">
+              <span className="grid h-10 w-10 place-items-center rounded-full bg-[var(--store-primary)] text-sm font-extrabold text-inverse">
                 {idx + 1}
               </span>
               <s.icon className="h-5 w-5 text-[var(--store-accent)]" />
@@ -371,7 +371,7 @@ function HowItWorks() {
           href={waLink("Olá! Preciso de ajuda para escolher um produto.")}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex h-11 items-center justify-center gap-2 rounded-[var(--store-radius-md)] bg-[var(--store-success)] px-5 text-sm font-bold text-white shadow-[var(--store-shadow-md)] hover:brightness-110"
+          className="inline-flex h-11 items-center justify-center gap-2 rounded-[var(--store-radius-md)] bg-[var(--store-success)] px-5 text-sm font-bold text-inverse shadow-[var(--store-shadow-md)] hover:brightness-110"
           onClick={() =>
             trackCta({
               cta_id: "how_it_works_whatsapp",
@@ -434,10 +434,10 @@ function ArtTipsSection() {
             <Reveal
               key={t.title}
               variant="up"
-              className="lift-on-hover rounded-[var(--store-radius-lg)] border border-[var(--store-border)] bg-white p-5 shadow-[var(--store-shadow-sm)]"
+              className="lift-on-hover rounded-[var(--store-radius-lg)] border border-[var(--store-border)] bg-card p-5 shadow-[var(--store-shadow-sm)]"
             >
               <div className="flex items-center gap-3">
-                <span className="grid h-10 w-10 place-items-center rounded-xl bg-[var(--store-primary)] text-white">
+                <span className="grid h-10 w-10 place-items-center rounded-xl bg-[var(--store-primary)] text-inverse">
                   <t.icon className="h-5 w-5" />
                 </span>
                 <p className="text-base font-extrabold text-[var(--store-text)]">{t.title}</p>
@@ -495,7 +495,7 @@ function TechSecuritySection() {
           <Reveal
             key={it.title}
             variant="up"
-            className="lift-on-hover rounded-[var(--store-radius-lg)] border border-[var(--store-border)] bg-white p-5 shadow-[var(--store-shadow-sm)]"
+            className="lift-on-hover rounded-[var(--store-radius-lg)] border border-[var(--store-border)] bg-card p-5 shadow-[var(--store-shadow-sm)]"
           >
             <span className="grid h-10 w-10 place-items-center rounded-xl bg-[var(--store-success)]/10 text-[var(--store-success)]">
               <it.icon className="h-5 w-5" />
@@ -510,7 +510,7 @@ function TechSecuritySection() {
           (t) => (
             <span
               key={t}
-              className="rounded-full border border-[var(--store-border)] bg-white px-3 py-1"
+              className="rounded-full border border-[var(--store-border)] bg-card px-3 py-1"
             >
               {t}
             </span>
@@ -533,7 +533,7 @@ function StatsStrip() {
     { icon: PackageCheck, value: "+200k", label: "Pedidos entregues" },
   ];
   return (
-    <section className="border-y border-[var(--store-border)] bg-white">
+    <section className="border-y border-[var(--store-border)] bg-card">
       <div className="mx-auto grid max-w-[1280px] grid-cols-2 gap-3 px-4 py-8 sm:gap-4 sm:py-10 md:grid-cols-4">
         {stats.map((s) => (
           <div key={s.label} className="flex flex-col items-center gap-2 text-center sm:flex-row sm:gap-3 sm:text-left">
@@ -584,7 +584,7 @@ function TestimonialsSection() {
             <p className="text-[11px] font-extrabold uppercase tracking-[0.22em] text-[var(--store-gold)]">
               Quem já imprimiu com a gente
             </p>
-            <h2 className="font-display mt-1 text-4xl leading-none text-white sm:text-5xl">
+            <h2 className="font-display mt-1 text-4xl leading-none text-inverse sm:text-5xl">
               MARCAS QUE CONFIAM NA ALCATEIA'S
             </h2>
           </div>
@@ -592,14 +592,14 @@ function TestimonialsSection() {
             {Array.from({ length: 5 }).map((_, i) => (
               <Star key={i} className="h-5 w-5 fill-current" />
             ))}
-            <span className="ml-2 text-sm font-bold text-white">4.9 / 5 · 1.247 avaliações</span>
+            <span className="ml-2 text-sm font-bold text-inverse">4.9 / 5 · 1.247 avaliações</span>
           </div>
         </div>
         <div className="grid gap-4 md:grid-cols-3">
           {items.map((t, idx) => (
             <article
               key={t.name}
-              className="store-bento-card relative flex flex-col bg-white p-6 text-[var(--store-ink)] animate-fade-in"
+              className="store-bento-card relative flex flex-col bg-card p-6 text-[var(--store-ink)] animate-fade-in"
               style={{ animationDelay: `${120 + idx * 100}ms`, animationFillMode: "both" }}
             >
               <Quote className="h-7 w-7 text-[var(--store-gold)]" />
@@ -629,7 +629,7 @@ function _ContactSection() {
   const info = useCompanyInfo();
   const waLink = useWaLink();
   return (
-    <section className="bg-[var(--store-primary-dark)] py-12 text-white sm:py-16">
+    <section className="bg-[var(--store-primary-dark)] py-12 text-inverse sm:py-16">
       <div className="mx-auto grid max-w-[1280px] gap-8 px-4 lg:grid-cols-2 lg:items-start">
         <div>
           <p className="text-xs font-bold uppercase tracking-[0.2em] text-[var(--store-secondary)]">
@@ -638,7 +638,7 @@ function _ContactSection() {
           <h2 className="mt-2 text-3xl font-extrabold sm:text-4xl">
             Estamos por perto para tirar sua ideia do papel
           </h2>
-          <p className="mt-3 text-white/70">
+          <p className="mt-3 text-inverse/70">
             Fale com a equipe Alcateia's no WhatsApp, na loja ou por e-mail. Resposta rápida nos
             horários de atendimento.
           </p>
@@ -646,7 +646,7 @@ function _ContactSection() {
             href={waLink("Olá! Quero fazer um orçamento.")}
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-6 inline-flex h-12 items-center justify-center gap-2 rounded-[var(--store-radius-md)] bg-[var(--store-success)] px-6 text-sm font-extrabold uppercase tracking-wide text-white shadow-[var(--store-shadow-md)] hover:brightness-110"
+            className="mt-6 inline-flex h-12 items-center justify-center gap-2 rounded-[var(--store-radius-md)] bg-[var(--store-success)] px-6 text-sm font-extrabold uppercase tracking-wide text-inverse shadow-[var(--store-shadow-md)] hover:brightness-110"
             onClick={() =>
               trackCta({
                 cta_id: "contact_whatsapp",
@@ -660,19 +660,19 @@ function _ContactSection() {
           </a>
         </div>
         <div className="grid gap-3 sm:gap-4 sm:grid-cols-2">
-          <div className="rounded-[var(--store-radius-lg)] bg-white/5 p-4 sm:p-5">
+          <div className="rounded-[var(--store-radius-lg)] bg-inverse/5 p-4 sm:p-5">
             <p className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-[var(--store-secondary)]">
               Telefone / WhatsApp
             </p>
             <p className="mt-2 text-base sm:text-lg font-extrabold">{info.whatsappDisplay}</p>
           </div>
-          <div className="rounded-[var(--store-radius-lg)] bg-white/5 p-4 sm:p-5">
+          <div className="rounded-[var(--store-radius-lg)] bg-inverse/5 p-4 sm:p-5">
             <p className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-[var(--store-secondary)]">
               E-mail
             </p>
             <p className="mt-2 break-all text-sm sm:text-base font-semibold">{info.email}</p>
           </div>
-          <div className="rounded-[var(--store-radius-lg)] bg-white/5 p-4 sm:p-5 sm:col-span-2">
+          <div className="rounded-[var(--store-radius-lg)] bg-inverse/5 p-4 sm:p-5 sm:col-span-2">
             <p className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-[var(--store-secondary)]">
               Endereço
             </p>
@@ -691,14 +691,14 @@ function _ContactSection() {
               )}
             </a>
           </div>
-          <div className="rounded-[var(--store-radius-lg)] bg-white/5 p-5 sm:col-span-2">
+          <div className="rounded-[var(--store-radius-lg)] bg-inverse/5 p-5 sm:col-span-2">
             <p className="text-xs font-bold uppercase tracking-wider text-[var(--store-secondary)]">
               Horário de atendimento
             </p>
             <ul className="mt-2 space-y-1 text-sm">
               {info.hours.map((h) => (
                 <li key={h.day} className="flex justify-between gap-3">
-                  <span className="text-white/80">{h.day}</span>
+                  <span className="text-inverse/80">{h.day}</span>
                   <span className="font-semibold">{h.time}</span>
                 </li>
               ))}
@@ -709,7 +709,7 @@ function _ContactSection() {
 
       {/* Mapa */}
       <div className="mx-auto mt-10 max-w-[1280px] px-4">
-        <div className="overflow-hidden rounded-[var(--store-radius-lg)] border border-white/10 bg-white/5">
+        <div className="overflow-hidden rounded-[var(--store-radius-lg)] border border-inverse/10 bg-inverse/5">
           <iframe
             title="Localização Alcateia's"
             src="https://maps.google.com/maps?q=Estrada+do+Cabreúva,703,Vila+Santa+Lúcia,Carapicuíba,SP&t=&z=15&ie=UTF8&iwloc=&output=embed"
@@ -718,8 +718,8 @@ function _ContactSection() {
             loading="lazy"
             referrerPolicy="no-referrer-when-downgrade"
           />
-          <div className="flex items-center justify-between border-t border-white/10 px-4 py-3 sm:px-5">
-            <p className="text-xs font-semibold text-white/80">
+          <div className="flex items-center justify-between border-t border-inverse/10 px-4 py-3 sm:px-5">
+            <p className="text-xs font-semibold text-inverse/80">
               {info.address}
             </p>
             <a

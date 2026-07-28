@@ -192,12 +192,12 @@ export function GraphicServiceCalculator() {
   };
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-slate-50 to-slate-100 p-4">
+    <div className="min-h-screen bg-linear-to-br from-muted to-muted p-4">
       <div className="max-w-7xl mx-auto">
         <div className="grid lg:grid-cols-3 gap-6">
           {/* Calculadora Principal */}
           <div className="lg:col-span-2">
-            <div className="bg-white rounded-2xl shadow-xl p-6 border border-border">
+            <div className="bg-card rounded-2xl shadow-xl p-6 border border-border">
               <div className="mb-6">
                 <h1 className="text-3xl font-bold text-brand-blue mb-2">
                   Calculadora de Serviços Gráficos
@@ -312,7 +312,7 @@ export function GraphicServiceCalculator() {
                 <div className="mt-8 pt-8 border-t-2 border-brand-yellow">
                   <div className="bg-linear-to-br from-brand-blue/5 to-brand-yellow/5 rounded-xl p-6 border border-brand-yellow/20">
                     <div className="grid grid-cols-2 gap-4 mb-6">
-                      <div className="bg-white rounded-lg p-4 border border-border">
+                      <div className="bg-card rounded-lg p-4 border border-border">
                         <p className="text-xs text-muted-foreground font-semibold mb-1">
                           Área Unitária
                         </p>
@@ -320,7 +320,7 @@ export function GraphicServiceCalculator() {
                           {formatNumber(result.unitArea)} m²
                         </p>
                       </div>
-                      <div className="bg-white rounded-lg p-4 border border-border">
+                      <div className="bg-card rounded-lg p-4 border border-border">
                         <p className="text-xs text-muted-foreground font-semibold mb-1">
                           Área Total
                         </p>
@@ -328,7 +328,7 @@ export function GraphicServiceCalculator() {
                           {formatNumber(result.totalArea)} m²
                         </p>
                       </div>
-                      <div className="bg-white rounded-lg p-4 border border-border">
+                      <div className="bg-card rounded-lg p-4 border border-border">
                         <p className="text-xs text-muted-foreground font-semibold mb-1">
                           Valor do m²
                         </p>
@@ -336,7 +336,7 @@ export function GraphicServiceCalculator() {
                           {formatCurrency(parseFloat(pricePerM2))}
                         </p>
                       </div>
-                      <div className="bg-white rounded-lg p-4 border border-border">
+                      <div className="bg-card rounded-lg p-4 border border-border">
                         <p className="text-xs text-muted-foreground font-semibold mb-1">
                           Quantidade
                         </p>
@@ -348,7 +348,7 @@ export function GraphicServiceCalculator() {
 
                     {/* Valor Final em Destaque */}
                     <div className="bg-linear-to-r from-brand-yellow to-brand-orange rounded-xl p-8 text-center mb-4">
-                      <p className="text-white/80 text-sm font-semibold mb-2">
+                      <p className="text-inverse/80 text-sm font-semibold mb-2">
                         VALOR FINAL
                       </p>
                       <p className="text-5xl font-black text-brand-blue">
@@ -388,7 +388,7 @@ export function GraphicServiceCalculator() {
 
           {/* Histórico */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-2xl shadow-xl p-6 border border-border sticky top-6">
+            <div className="bg-card rounded-2xl shadow-xl p-6 border border-border sticky top-6">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-xl font-bold text-brand-blue">Histórico</h2>
                 {history.length > 0 && (
@@ -483,9 +483,9 @@ export function GraphicServiceCalculator() {
         </div>
 
         {/* Dicas de Uso */}
-        <div className="mt-6 bg-blue-50 border border-blue-200 rounded-xl p-4">
-          <p className="text-sm text-blue-900 font-semibold mb-2">💡 Dicas:</p>
-          <ul className="text-xs text-blue-800 space-y-1">
+        <div className="mt-6 bg-info/10 border border-info/30 rounded-xl p-4">
+          <p className="text-sm text-info font-semibold mb-2">💡 Dicas:</p>
+          <ul className="text-xs text-info space-y-1">
             <li>
               • As medidas devem ser informadas em centímetros (cm)
             </li>

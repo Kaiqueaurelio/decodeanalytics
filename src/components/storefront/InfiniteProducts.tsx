@@ -150,7 +150,7 @@ function FeedCard({
     <Link
       to="/produto/$slug"
       params={{ slug }}
-      className="store-bento-card group flex flex-col overflow-hidden bg-white p-3 text-[var(--store-ink)] animate-fade-in"
+      className="store-bento-card group flex flex-col overflow-hidden bg-card p-3 text-[var(--store-ink)] animate-fade-in"
       style={{ animationDelay: `${(index % PAGE) * 50}ms`, animationFillMode: "both" }}
       onClick={() =>
         trackCardClick({
@@ -165,7 +165,7 @@ function FeedCard({
         })
       }
     >
-      <div className="relative mb-3 aspect-square overflow-hidden rounded-[var(--store-radius-md)] bg-slate-100">
+      <div className="relative mb-3 aspect-square overflow-hidden rounded-[var(--store-radius-md)] bg-muted">
         <SmartImage 
           src={product.image_url} 
           alt={product.name}
@@ -200,7 +200,7 @@ function FeedCard({
             <p className="font-display text-base leading-none">Sob consulta</p>
           )}
         </div>
-        <span className="grid h-9 w-9 shrink-0 place-items-center rounded-[var(--store-radius-sm)] bg-[var(--store-ink)] text-white transition-colors group-hover:bg-[var(--store-gold)] group-hover:text-[var(--store-ink)]">
+        <span className="grid h-9 w-9 shrink-0 place-items-center rounded-[var(--store-radius-sm)] bg-[var(--store-ink)] text-inverse transition-colors group-hover:bg-[var(--store-gold)] group-hover:text-[var(--store-ink)]">
           <Plus className="h-4 w-4" />
         </span>
       </div>

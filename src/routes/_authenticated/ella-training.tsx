@@ -71,25 +71,25 @@ const CATEGORY_META: Record<
     label: "Comportamento",
     description: "Como a Ella deve agir, tom de voz, personalidade, limites",
     icon: Bot,
-    tone: "bg-purple-100 text-purple-800",
+    tone: "bg-highlight/10 text-highlight",
   },
   atendimento: {
     label: "Atendimento ao cliente",
     description: "Fluxos, respostas padrão, prazos, políticas de atendimento",
     icon: HeadphonesIcon,
-    tone: "bg-blue-100 text-blue-800",
+    tone: "bg-info/10 text-info",
   },
   ensino: {
     label: "Materiais de ensino",
     description: "Produtos, técnicas, papéis, acabamentos, conhecimento gráfico",
     icon: GraduationCap,
-    tone: "bg-emerald-100 text-emerald-800",
+    tone: "bg-success/10 text-success",
   },
   geral: {
     label: "Geral",
     description: "Outros aprendizados salvos pela Ella",
     icon: BookOpen,
-    tone: "bg-slate-100 text-slate-800",
+    tone: "bg-muted text-foreground",
   },
 };
 
@@ -391,7 +391,7 @@ function EllaTrainingPage() {
                         onClick={() => setDeleteId(row.id)}
                         aria-label="Remover"
                       >
-                        <Trash2 className="h-4 w-4 text-red-600" />
+                        <Trash2 className="h-4 w-4 text-destructive" />
                       </Button>
                     </div>
                   </div>
@@ -500,7 +500,7 @@ function EllaTrainingPage() {
             <AlertDialogCancel>Cancelar</AlertDialogCancel>
             <AlertDialogAction
               onClick={() => deleteId && remove.mutate(deleteId)}
-              className="bg-red-600 hover:bg-red-700 text-white"
+              className="bg-destructive hover:bg-destructive text-inverse"
             >
               Remover
             </AlertDialogAction>
