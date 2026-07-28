@@ -23,11 +23,15 @@ for (const vp of viewports) {
     test.use({ viewport: vp.viewport, hasTouch: true });
 
     test("inputs recebem foco, aceitam digitação e sem overflow horizontal", async ({ page }) => {
-      // A telemetria é emitida via console.info("[auth-telemetry]", ...) — ler o
-      // console é mais confiável que expor função + CustomEvent no init script.
-      const telemetry: string[] = [];
-      page.on("console", (msg) => {
-        if (msg.text().includes("[auth-telemetry]")) telemetry.push(msg.text());
+      // A telemetria é emitida como CustomEvent('auth-telemetry'); acumulamos
+      // num array no próprio window e lemos depois (sem expor funções).
+      await page.addInitScript(() => {
+        (window as unknown as { __tel: string[] }).__tel = [];
+        window.addEventListener("auth-telemetry", (e) => {
+          (window as unknown as { __tel: string[] }).__tel.push(
+            String((e as CustomEvent).detail?.event ?? ""),
+          );
+        });
       });
 
       await page.goto(`${BASE}/auth`);
@@ -53,7 +57,10 @@ for (const vp of viewports) {
 
       // Telemetria disparou pelo menos um focus event
       await page.waitForTimeout(100);
-      const focusEvents = telemetry.filter((t) => t.includes("auth_input_focus"));
+      const telemetry = await page.evaluate(
+        () => (window as unknown as { __tel: string[] }).__tel ?? [],
+      );
+      const focusEvents = telemetry.filter((t) => t === "auth_input_focus");
       expect(focusEvents.length).toBeGreaterThanOrEqual(1);
 
       // Botão Entrar visível na viewport
