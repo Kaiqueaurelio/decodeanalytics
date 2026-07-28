@@ -299,6 +299,17 @@
     }
   }
 
+  /* Quem prefere menos movimento: rolagem instantânea (sem "deslize" ao focar). */
+  @media (prefers-reduced-motion: reduce) {
+    html,
+    [role="dialog"],
+    [data-radix-scroll-area-viewport],
+    .overflow-y-auto,
+    .overflow-auto {
+      scroll-behavior: auto;
+    }
+  }
+
   /* Mobile: evita que o teclado virtual cubra o campo em foco.
      Só CSS — o navegador já rola o campo para a viewport ao focar;
      a margem garante folga acima/abaixo. */
@@ -314,6 +325,25 @@
     [contenteditable="true"] {
       scroll-margin-block: 6rem;
     }
+
+    /* Modais/drawers: o container rolável precisa da mesma folga,
+       senão o teclado virtual cobre o campo em foco dentro do dialog. */
+    [role="dialog"],
+    [data-vaul-drawer],
+    [data-radix-scroll-area-viewport] {
+      scroll-padding-bottom: calc(env(safe-area-inset-bottom) + 6rem);
+      scroll-padding-top: 2rem;
+      -webkit-overflow-scrolling: touch;
+    }
+  }
+
+  /* Foco sempre visível e previsível ao sair/entrar em campos (mobile e desktop). */
+  input:focus-visible,
+  textarea:focus-visible,
+  select:focus-visible,
+  [contenteditable="true"]:focus-visible {
+    outline: 2px solid var(--color-ring);
+    outline-offset: 2px;
   }
 
   body {
