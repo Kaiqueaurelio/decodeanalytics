@@ -16,6 +16,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { StoreShell } from "@/components/storefront/StoreShell";
 import { brl } from "@/components/storefront/tokens";
 import { useShowPrices, useWaLink } from "@/hooks/useCompanyInfo";
+import { QuoteBadge } from "@/components/storefront/QuoteBadge";
 import { useCart } from "@/lib/cart-context";
 import {
   ProductCard,
