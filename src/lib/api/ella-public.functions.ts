@@ -38,10 +38,10 @@ export const ellaPublicChat = createServerFn({ method: "POST" })
       };
     }
 
-    const key = process.env.LOVABLE_API_KEY;
     const url = process.env.SUPABASE_URL;
     const anonKey = process.env.SUPABASE_PUBLISHABLE_KEY;
-    if (!key || !url || !anonKey)
+    const resolved = resolveEllaModel();
+    if (!resolved || !url || !anonKey)
       throw new Error("Configuração de servidor ausente.");
 
     // Cliente anônimo — RLS trata como visitante (sem sessão).
@@ -49,7 +49,7 @@ export const ellaPublicChat = createServerFn({ method: "POST" })
       auth: { storage: undefined, persistSession: false, autoRefreshToken: false },
     });
 
-    const model = createLovableGateway(key)("google/gemini-2.5-flash");
+    const { model, modelName, provider } = resolved;
     const traceId = newTraceId();
     const startedAt = Date.now();
 
