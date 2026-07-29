@@ -11,22 +11,21 @@ import { trackCardClick, trackCta, trackInfinitePage } from "@/lib/analytics";
 
 const PAGE = 8;
 
-function shuffle<T>(arr: T[], seed: number) {
-  const a = arr.slice();
-  let s = seed;
-  for (let i = a.length - 1; i > 0; i--) {
-    s = (s * 9301 + 49297) % 233280;
-    const j = Math.floor((s / 233280) * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]];
-  }
-  return a;
-}
-
 export function InfiniteProducts() {
   const { data, isLoading, isError, refetch, isFetching } = useStoreProducts();
-  const all = useMemo(() => data ?? [], [data]);
+  // Catálogo sem repetição: cada produto aparece uma única vez.
+  const all = useMemo(() => {
+    const seen = new Set<string>();
+    return (data ?? []).filter((p) => {
+      const key = p.slug ?? p.id;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+  }, [data]);
   const [pages, setPages] = useState(1);
   const sentinel = useRef<HTMLDivElement | null>(null);
+  const hasMore = pages * PAGE < all.length;
 
   // Reset quando o catálogo carrega
   useEffect(() => setPages(1), [all.length]);
@@ -34,11 +33,11 @@ export function InfiniteProducts() {
   // Analytics: emite um evento por página carregada pelo scroll infinito.
   useEffect(() => {
     if (!all.length) return;
-    trackInfinitePage(pages, Math.min(pages * PAGE, all.length * pages));
+    trackInfinitePage(pages, Math.min(pages * PAGE, all.length));
   }, [pages, all.length]);
 
   useEffect(() => {
-    if (!sentinel.current) return;
+    if (!sentinel.current || !hasMore) return;
     const io = new IntersectionObserver(
       (entries) => {
         if (entries[0]?.isIntersecting) {
@@ -49,18 +48,12 @@ export function InfiniteProducts() {
     );
     io.observe(sentinel.current);
     return () => io.disconnect();
-  }, [all.length]);
+  }, [all.length, hasMore]);
 
-  // Gera páginas "infinitas" ciclando o catálogo embaralhado
-  const visible = useMemo<StoreProduct[]>(() => {
-    if (!all.length) return [];
-    const out: StoreProduct[] = [];
-    for (let i = 0; i < pages; i++) {
-      const reshuffled = i === 0 ? all : shuffle(all, i * 7919 + 1);
-      out.push(...reshuffled.slice(0, PAGE));
-    }
-    return out;
-  }, [all, pages]);
+  const visible = useMemo<StoreProduct[]>(
+    () => all.slice(0, pages * PAGE),
+    [all, pages],
+  );
 
   if (isLoading) {
     return (
@@ -135,7 +128,7 @@ export function InfiniteProducts() {
         <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-4">
           {visible.map((p, idx) => (
             <FeedCard
-              key={`${p.id}-${idx}`}
+              key={p.id}
               product={p}
               index={idx}
               page={Math.floor(idx / PAGE) + 1}
@@ -143,13 +136,19 @@ export function InfiniteProducts() {
           ))}
         </div>
 
-        <div
-          ref={sentinel}
-          className="mt-10 flex items-center justify-center gap-2 text-sm text-[var(--store-text-muted)]"
-        >
-          <Loader2 className="h-4 w-4 animate-spin text-[var(--store-primary)]" />
-          Carregando mais produtos…
-        </div>
+        {hasMore ? (
+          <div
+            ref={sentinel}
+            className="mt-10 flex items-center justify-center gap-2 text-sm text-[var(--store-text-muted)]"
+          >
+            <Loader2 className="h-4 w-4 animate-spin text-[var(--store-primary)]" />
+            Carregando mais produtos…
+          </div>
+        ) : (
+          <p className="mt-10 text-center text-sm text-[var(--store-text-muted)]">
+            Você viu todo o nosso catálogo.
+          </p>
+        )}
       </div>
     </section>
   );
