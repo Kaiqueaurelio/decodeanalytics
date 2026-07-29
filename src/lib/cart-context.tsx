@@ -29,7 +29,24 @@ function loadCart(): CartItem[] {
   if (typeof window === "undefined") return [];
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? JSON.parse(raw) : [];
+    const parsed: unknown = raw ? JSON.parse(raw) : [];
+
+    // Local storage can outlive changes to the cart schema. Never let an old
+    // or manually altered value break the root application tree.
+    if (!Array.isArray(parsed)) return [];
+
+    return parsed.filter(
+      (item): item is CartItem =>
+        typeof item === "object" &&
+        item !== null &&
+        typeof (item as CartItem).id === "string" &&
+        typeof (item as CartItem).name === "string" &&
+        typeof (item as CartItem).price === "number" &&
+        Number.isFinite((item as CartItem).price) &&
+        typeof (item as CartItem).quantity === "number" &&
+        Number.isFinite((item as CartItem).quantity) &&
+        (item as CartItem).quantity > 0,
+    );
   } catch {
     return [];
   }
@@ -41,11 +58,21 @@ function saveCart(items: CartItem[]) {
 }
 
 export function CartProvider({ children }: { children: ReactNode }) {
-  const [items, setItems] = useState<CartItem[]>(loadCart);
+  // Keep the initial client render identical to SSR. Reading localStorage in
+  // useState causes a hydration mismatch whenever a returning customer has a
+  // saved cart, which can trigger the global route error boundary.
+  const [items, setItems] = useState<CartItem[]>([]);
+  const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
+    setItems(loadCart());
+    setHydrated(true);
+  }, []);
+
+  useEffect(() => {
+    if (!hydrated) return;
     saveCart(items);
-  }, [items]);
+  }, [hydrated, items]);
 
   const count = items.reduce((sum, item) => sum + item.quantity, 0);
   const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
