@@ -114,7 +114,7 @@ function AssistantePage() {
                 className={cn(
                   "max-w-[90%] sm:max-w-[80%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed",
                   m.role === "user"
-                    ? "bg-[var(--store-primary)] text-inverse rounded-br-sm whitespace-pre-wrap break-words"
+                    ? "bg-[var(--store-primary)] text-white rounded-br-sm whitespace-pre-wrap break-words"
                     : "bg-[var(--store-surface-soft)] text-[var(--store-text)] rounded-bl-sm",
                 )}
               >
@@ -145,7 +145,7 @@ function AssistantePage() {
               <button
                 key={s}
                 onClick={() => send(s)}
-                className="rounded-xl border border-[var(--store-border)] bg-card p-3 text-left text-sm hover:bg-[var(--store-surface-soft)] transition-colors flex items-start gap-2"
+                className="rounded-xl border border-[var(--store-border)] bg-white p-3 text-left text-sm hover:bg-[var(--store-surface-soft)] transition-colors flex items-start gap-2"
               >
                 <Sparkles className="h-4 w-4 text-[var(--store-primary)] shrink-0 mt-0.5" />
                 <span className="min-w-0">{s}</span>
@@ -180,7 +180,7 @@ function AssistantePage() {
             type="submit"
             size="icon"
             disabled={loading || !input.trim()}
-            className="h-11 w-11 shrink-0 bg-[var(--store-primary)] hover:bg-[var(--store-primary-light)] text-inverse"
+            className="h-11 w-11 shrink-0 bg-[var(--store-primary)] hover:bg-[var(--store-primary-light)] text-white"
             aria-label="Enviar"
           >
             {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}

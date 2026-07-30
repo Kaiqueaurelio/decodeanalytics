@@ -190,7 +190,7 @@ function Page() {
               <img
                 src={form.logo_url}
                 alt="Logo atual"
-                className="mt-3 h-32 max-w-full rounded-xl border bg-card object-contain p-3"
+                className="mt-3 h-32 max-w-full rounded-xl border bg-white object-contain p-3"
               />
             )}
           </div>

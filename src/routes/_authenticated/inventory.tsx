@@ -583,10 +583,10 @@ function SummaryCard({
   tone?: "blue" | "amber" | "red" | "green";
 }) {
   const tones = {
-    blue: "bg-info/10 text-brand-blue",
-    amber: "bg-warning/10 text-warning",
-    red: "bg-destructive/10 text-destructive",
-    green: "bg-success/10 text-success",
+    blue: "bg-blue-50 text-brand-blue",
+    amber: "bg-amber-50 text-amber-700",
+    red: "bg-red-50 text-red-700",
+    green: "bg-emerald-50 text-emerald-700",
   };
   return (
     <Card className="flex min-w-0 items-center justify-between gap-3 p-4">
@@ -618,17 +618,17 @@ function InventoryCard({
   const zero = current <= 0;
   const fill = min > 0 ? Math.min(100, Math.round((current / Math.max(min, 1)) * 100)) : 100;
   return (
-    <div className="rounded-2xl border border-border bg-card p-4 shadow-sm">
+    <div className="rounded-2xl border border-border bg-white p-4 shadow-sm">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
             <h3 className="truncate font-extrabold text-brand-blue">{item.name}</h3>
             {zero ? (
-              <span className="rounded-full bg-destructive/10 px-2 py-0.5 text-2xs font-bold text-destructive">Zerado</span>
+              <span className="rounded-full bg-red-50 px-2 py-0.5 text-[11px] font-bold text-red-700">Zerado</span>
             ) : low ? (
-              <span className="rounded-full bg-warning/10 px-2 py-0.5 text-2xs font-bold text-warning">Baixo</span>
+              <span className="rounded-full bg-amber-50 px-2 py-0.5 text-[11px] font-bold text-amber-700">Baixo</span>
             ) : (
-              <span className="rounded-full bg-success/10 px-2 py-0.5 text-2xs font-bold text-success">OK</span>
+              <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-[11px] font-bold text-emerald-700">OK</span>
             )}
           </div>
           <p className="mt-1 text-xs text-muted-foreground">
@@ -657,7 +657,7 @@ function InventoryCard({
       </div>
       <div className="mt-3 h-2 overflow-hidden rounded-full bg-muted">
         <div
-          className={cn("h-full rounded-full", low ? "bg-warning" : "bg-success")}
+          className={cn("h-full rounded-full", low ? "bg-amber-500" : "bg-emerald-500")}
           style={{ width: `${fill}%` }}
         />
       </div>
@@ -679,10 +679,10 @@ function InventoryCard({
 function MovementBadge({ type }: { type: InventoryMovement["type"] }) {
   const className =
     type === "entrada"
-      ? "bg-success/10 text-success"
+      ? "bg-emerald-50 text-emerald-700"
       : type === "saida"
-        ? "bg-destructive/10 text-destructive"
-        : "bg-info/10 text-brand-blue";
+        ? "bg-red-50 text-red-700"
+        : "bg-blue-50 text-brand-blue";
   return (
     <span className={cn("rounded-full px-2 py-1 text-xs font-bold", className)}>
       {type === "entrada" ? "Entrada" : type === "saida" ? "Saida" : "Ajuste"}

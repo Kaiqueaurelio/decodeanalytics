@@ -2,7 +2,6 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useCart } from "@/lib/cart-context";
 import { brl } from "@/components/storefront/tokens";
 import { useShowPrices, useWaLink } from "@/hooks/useCompanyInfo";
-import { QuoteBadge } from "@/components/storefront/QuoteBadge";
 import { StoreShell } from "@/components/storefront/StoreShell";
 import { ShoppingCart, Trash2, Minus, Plus, ArrowRight, MessageCircle } from "lucide-react";
 import { useMemo } from "react";
@@ -23,8 +22,7 @@ export const Route = createFileRoute("/carrinho")({
 function CartPage() {
   const waLink = useWaLink();
   const showPrices = useShowPrices();
-  const money = (v: number) =>
-    showPrices ? <>{brl(v)}</> : <QuoteBadge className="whitespace-nowrap" />;
+  const money = (v: number) => (showPrices ? brl(v) : "Sob consulta");
   const { items, count, total, updateQuantity, removeItem, clear } = useCart();
 
   const message = useMemo(() => {
@@ -51,7 +49,7 @@ function CartPage() {
           </p>
           <Link
             to="/produtos"
-            className="mt-6 inline-flex h-11 items-center justify-center gap-2 rounded-[var(--store-radius-md)] bg-[var(--store-primary)] px-5 text-sm font-bold text-inverse hover:bg-[var(--store-primary-light)]"
+            className="mt-6 inline-flex h-11 items-center justify-center gap-2 rounded-[var(--store-radius-md)] bg-[var(--store-primary)] px-5 text-sm font-bold text-white hover:bg-[var(--store-primary-light)]"
           >
             Ver catálogo <ArrowRight className="h-4 w-4" />
           </Link>
@@ -75,7 +73,7 @@ function CartPage() {
             {items.map((item: { id: string; name: string; category: string | null; price: number; quantity: number; image_url?: string | null }) => (
               <div
                 key={item.id}
-                className="flex items-center gap-4 rounded-[var(--store-radius-lg)] border border-[var(--store-border)] bg-card p-4 shadow-[var(--store-shadow-sm)]"
+                className="flex items-center gap-4 rounded-[var(--store-radius-lg)] border border-[var(--store-border)] bg-white p-4 shadow-[var(--store-shadow-sm)]"
               >
                 <div className="grid h-16 w-16 shrink-0 place-items-center rounded-[var(--store-radius-md)] bg-[var(--store-surface-soft)] text-2xl">
                   {item.image_url ? (
@@ -100,7 +98,7 @@ function CartPage() {
                   <button
                     type="button"
                     onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                    className="grid h-10 w-10 sm:h-9 sm:w-9 place-items-center rounded-lg border border-[var(--store-border)] bg-card text-[var(--store-text)] hover:bg-[var(--store-surface-soft)] active:scale-95"
+                    className="grid h-10 w-10 sm:h-9 sm:w-9 place-items-center rounded-lg border border-[var(--store-border)] bg-white text-[var(--store-text)] hover:bg-[var(--store-surface-soft)] active:scale-95"
                     aria-label="Diminuir quantidade"
                   >
                     <Minus className="h-4 w-4" />
@@ -111,7 +109,7 @@ function CartPage() {
                   <button
                     type="button"
                     onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                    className="grid h-10 w-10 sm:h-9 sm:w-9 place-items-center rounded-lg border border-[var(--store-border)] bg-card text-[var(--store-text)] hover:bg-[var(--store-surface-soft)] active:scale-95"
+                    className="grid h-10 w-10 sm:h-9 sm:w-9 place-items-center rounded-lg border border-[var(--store-border)] bg-white text-[var(--store-text)] hover:bg-[var(--store-surface-soft)] active:scale-95"
                     aria-label="Aumentar quantidade"
                   >
                     <Plus className="h-4 w-4" />
@@ -123,7 +121,7 @@ function CartPage() {
                 <button
                   type="button"
                   onClick={() => removeItem(item.id)}
-                  className="grid h-10 w-10 sm:h-9 sm:w-9 place-items-center rounded-lg text-[var(--store-text-light)] hover:bg-destructive/10 hover:text-destructive"
+                  className="grid h-10 w-10 sm:h-9 sm:w-9 place-items-center rounded-lg text-[var(--store-text-light)] hover:bg-red-50 hover:text-red-600"
                   aria-label="Remover item"
                 >
                   <Trash2 className="h-4 w-4 sm:h-4 sm:w-4" />
@@ -143,7 +141,7 @@ function CartPage() {
           </div>
 
           <aside className="space-y-4 hidden lg:block">
-            <div className="rounded-[var(--store-radius-xl)] border border-[var(--store-border)] bg-card p-6 shadow-[var(--store-shadow-sm)]">
+            <div className="rounded-[var(--store-radius-xl)] border border-[var(--store-border)] bg-white p-6 shadow-[var(--store-shadow-sm)]">
               <h2 className="text-lg font-extrabold text-[var(--store-primary)]">Resumo</h2>
               <div className="mt-4 space-y-2">
                 <div className="flex justify-between text-sm text-[var(--store-text-muted)]">
@@ -166,7 +164,7 @@ function CartPage() {
                 href={waLink(message)}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="mt-6 inline-flex h-12 w-full items-center justify-center gap-2 rounded-[var(--store-radius-md)] bg-[var(--store-success)] text-sm font-extrabold uppercase tracking-wide text-inverse shadow-[var(--store-shadow-md)] transition-transform hover:-translate-y-0.5"
+                className="mt-6 inline-flex h-12 w-full items-center justify-center gap-2 rounded-[var(--store-radius-md)] bg-[var(--store-success)] text-sm font-extrabold uppercase tracking-wide text-white shadow-[var(--store-shadow-md)] transition-transform hover:-translate-y-0.5"
               >
                 <MessageCircle className="h-5 w-5" /> Finalizar pelo WhatsApp
               </a>
@@ -178,7 +176,7 @@ function CartPage() {
 
             <Link
               to="/produtos"
-              className="flex h-11 items-center justify-center gap-2 rounded-[var(--store-radius-md)] border border-[var(--store-border)] bg-card text-sm font-bold text-[var(--store-primary)] hover:bg-[var(--store-surface-soft)]"
+              className="flex h-11 items-center justify-center gap-2 rounded-[var(--store-radius-md)] border border-[var(--store-border)] bg-white text-sm font-bold text-[var(--store-primary)] hover:bg-[var(--store-surface-soft)]"
             >
               Continuar comprando
             </Link>
@@ -188,12 +186,12 @@ function CartPage() {
 
       {/* Barra fixa de checkout no mobile/tablet */}
       <div
-        className="fixed inset-x-0 bottom-0 z-40 border-t border-[var(--store-border)] bg-inverse/95 backdrop-blur lg:hidden"
+        className="fixed inset-x-0 bottom-0 z-40 border-t border-[var(--store-border)] bg-white/95 backdrop-blur lg:hidden"
         style={{ paddingBottom: "calc(env(safe-area-inset-bottom) + 0.5rem)" }}
       >
         <div className="mx-auto flex max-w-[1280px] items-center gap-3 px-3 py-3 sm:px-4">
           <div className="min-w-0 flex-1">
-            <p className="text-2xs font-semibold uppercase tracking-wide text-[var(--store-text-muted)]">
+            <p className="text-[11px] font-semibold uppercase tracking-wide text-[var(--store-text-muted)]">
               Total ({count} {count === 1 ? "item" : "itens"})
             </p>
             <p className="truncate text-lg font-extrabold text-[var(--store-primary)]">
@@ -204,7 +202,7 @@ function CartPage() {
             href={waLink(message)}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex h-12 shrink-0 items-center justify-center gap-2 rounded-[var(--store-radius-md)] bg-[var(--store-success)] px-5 text-sm font-extrabold uppercase tracking-wide text-inverse shadow-[var(--store-shadow-md)] active:scale-[0.98]"
+            className="inline-flex h-12 shrink-0 items-center justify-center gap-2 rounded-[var(--store-radius-md)] bg-[var(--store-success)] px-5 text-sm font-extrabold uppercase tracking-wide text-white shadow-[var(--store-shadow-md)] active:scale-[0.98]"
           >
             <MessageCircle className="h-5 w-5" /> Finalizar
           </a>

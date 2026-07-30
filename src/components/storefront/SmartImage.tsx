@@ -11,7 +11,7 @@ export function SmartImage({
   alt, 
   className, 
   fallbackEmoji = "📦", 
-  fallbackClass = "bg-muted",
+  fallbackClass = "bg-slate-100",
   onLoad,
   onError,
   ...props 
@@ -48,7 +48,7 @@ export function SmartImage({
       <div className={`flex h-full w-full items-center justify-center ${fallbackClass} ${className ?? ""}`}>
         <div className="text-center">
           <div className="text-4xl mb-1">{fallbackEmoji}</div>
-          <p className="text-2xs font-bold uppercase tracking-wider text-muted-foreground">
+          <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
             {alt || "Produto"}
           </p>
         </div>
@@ -59,7 +59,7 @@ export function SmartImage({
   return (
     <div className={`relative h-full w-full overflow-hidden ${className ?? ""}`}>
       {loading && (
-        <div className="absolute inset-0 animate-pulse bg-muted" />
+        <div className="absolute inset-0 animate-pulse bg-slate-200" />
       )}
       <img
         ref={imgRef}

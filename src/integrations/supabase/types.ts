@@ -65,75 +65,6 @@ export type Database = {
         }
         Relationships: []
       }
-      art_proofs: {
-        Row: {
-          client_feedback: string | null
-          client_id: string | null
-          created_at: string
-          created_by: string | null
-          id: string
-          mime_type: string | null
-          note: string | null
-          order_id: string | null
-          responded_at: string | null
-          status: Database["public"]["Enums"]["art_proof_status"]
-          storage_path: string
-          title: string
-          token: string
-          updated_at: string
-          viewed_at: string | null
-        }
-        Insert: {
-          client_feedback?: string | null
-          client_id?: string | null
-          created_at?: string
-          created_by?: string | null
-          id?: string
-          mime_type?: string | null
-          note?: string | null
-          order_id?: string | null
-          responded_at?: string | null
-          status?: Database["public"]["Enums"]["art_proof_status"]
-          storage_path: string
-          title: string
-          token?: string
-          updated_at?: string
-          viewed_at?: string | null
-        }
-        Update: {
-          client_feedback?: string | null
-          client_id?: string | null
-          created_at?: string
-          created_by?: string | null
-          id?: string
-          mime_type?: string | null
-          note?: string | null
-          order_id?: string | null
-          responded_at?: string | null
-          status?: Database["public"]["Enums"]["art_proof_status"]
-          storage_path?: string
-          title?: string
-          token?: string
-          updated_at?: string
-          viewed_at?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "art_proofs_client_id_fkey"
-            columns: ["client_id"]
-            isOneToOne: false
-            referencedRelation: "clients"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "art_proofs_order_id_fkey"
-            columns: ["order_id"]
-            isOneToOne: false
-            referencedRelation: "orders"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       cash_closures: {
         Row: {
           by_method: Json
@@ -1067,7 +998,6 @@ export type Database = {
     }
     Enums: {
       app_role: "administrador" | "atendente" | "producao" | "financeiro"
-      art_proof_status: "pendente" | "aprovado" | "reprovado"
       cash_type: "entrada" | "saida"
       ella_scope: "admin" | "public" | "both"
       payment_status:
@@ -1218,7 +1148,6 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["administrador", "atendente", "producao", "financeiro"],
-      art_proof_status: ["pendente", "aprovado", "reprovado"],
       cash_type: ["entrada", "saida"],
       ella_scope: ["admin", "public", "both"],
       payment_status: [

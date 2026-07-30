@@ -66,8 +66,8 @@ export function PdvCalculator({
         </DialogHeader>
 
         <div className="space-y-3">
-          <div className="rounded-2xl border border-border bg-muted p-4 text-right">
-            <p className="text-2xs font-black uppercase tracking-widest text-muted-foreground">
+          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-right">
+            <p className="text-[11px] font-black uppercase tracking-widest text-slate-500">
               Total acumulado
             </p>
             <p className="mt-1 text-3xl font-black text-brand-blue tabular-nums">{brl(total)}</p>
@@ -94,7 +94,7 @@ export function PdvCalculator({
               <Button
                 type="button"
                 onClick={() => add(1)}
-                className="h-11 rounded-xl bg-success px-3 font-black text-inverse hover:bg-success"
+                className="h-11 rounded-xl bg-emerald-600 px-3 font-black text-white hover:bg-emerald-700"
               >
                 <Plus className="h-4 w-4" />
               </Button>
@@ -102,7 +102,7 @@ export function PdvCalculator({
                 type="button"
                 onClick={() => add(-1)}
                 variant="outline"
-                className="h-11 rounded-xl border-destructive/30 px-3 font-black text-destructive hover:bg-destructive/10"
+                className="h-11 rounded-xl border-red-200 px-3 font-black text-red-600 hover:bg-red-50"
               >
                 <X className="h-4 w-4" />
               </Button>
@@ -118,7 +118,7 @@ export function PdvCalculator({
                       { id: crypto.randomUUID(), label: `R$ ${v}`, value: v },
                     ])
                   }
-                  className="h-9 rounded-xl border border-border bg-card text-sm font-black text-foreground hover:border-brand-blue hover:text-brand-blue"
+                  className="h-9 rounded-xl border border-slate-200 bg-white text-sm font-black text-slate-700 hover:border-brand-blue hover:text-brand-blue"
                 >
                   +{v}
                 </button>
@@ -126,21 +126,21 @@ export function PdvCalculator({
             </div>
           </div>
 
-          <div className="app-scrollbar max-h-56 overflow-y-auto rounded-2xl border border-border">
+          <div className="app-scrollbar max-h-56 overflow-y-auto rounded-2xl border border-slate-100">
             {entries.length === 0 ? (
-              <div className="grid place-items-center p-8 text-center text-sm text-muted-foreground">
-                <Equal className="mb-2 h-6 w-6 text-muted-foreground" />
+              <div className="grid place-items-center p-8 text-center text-sm text-slate-400">
+                <Equal className="mb-2 h-6 w-6 text-slate-300" />
                 Adicione valores para somar.
               </div>
             ) : (
-              <ul className="divide-y divide-border">
+              <ul className="divide-y divide-slate-100">
                 {entries.map((e) => (
                   <li key={e.id} className="flex items-center justify-between gap-2 px-3 py-2">
-                    <span className="truncate text-sm font-bold text-foreground">{e.label}</span>
+                    <span className="truncate text-sm font-bold text-slate-700">{e.label}</span>
                     <div className="flex items-center gap-2">
                       <span
                         className={`tabular-nums text-sm font-black ${
-                          e.value < 0 ? "text-destructive" : "text-foreground"
+                          e.value < 0 ? "text-red-600" : "text-slate-900"
                         }`}
                       >
                         {e.value < 0 ? "-" : "+"}
@@ -149,7 +149,7 @@ export function PdvCalculator({
                       <button
                         type="button"
                         onClick={() => remove(e.id)}
-                        className="text-muted-foreground hover:text-destructive"
+                        className="text-slate-400 hover:text-red-600"
                         aria-label="Remover"
                       >
                         <Trash2 className="h-4 w-4" />

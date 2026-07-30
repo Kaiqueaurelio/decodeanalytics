@@ -9,8 +9,7 @@
     "build:dev": "vite build --mode development",
     "preview": "vite preview",
     "lint": "eslint .",
-    "format": "prettier --write .",
-    "test:e2e": "playwright test"
+    "format": "prettier --write ."
   },
   "dependencies": {
     "@ai-sdk/openai-compatible": "^3.0.5",
@@ -78,7 +77,6 @@
   "devDependencies": {
     "@eslint/js": "^9.32.0",
     "@lovable.dev/vite-tanstack-config": "2.7.7",
-    "@playwright/test": "1.53.2",
     "@types/node": "^22.16.5",
     "@types/react": "^19.2.0",
     "@types/react-dom": "^19.2.0",

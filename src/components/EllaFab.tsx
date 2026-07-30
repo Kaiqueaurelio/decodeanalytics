@@ -28,12 +28,12 @@ export function EllaFab() {
       }}
       className={cn(
         "group fixed z-40 flex items-center gap-2 rounded-full",
-        "bg-brand-blue/95 pl-1.5 pr-3 sm:pr-4 py-1.5 text-inverse shadow-2xl ring-2 ring-brand-yellow/70",
+        "bg-brand-blue/95 pl-1.5 pr-3 sm:pr-4 py-1.5 text-white shadow-2xl ring-2 ring-brand-yellow/70",
         "backdrop-blur-md transition-all hover:-translate-y-0.5 hover:shadow-[0_20px_60px_-10px_rgba(23,37,84,0.55)]",
         "animate-fade-in",
       )}
     >
-      <span className="relative grid h-11 w-11 shrink-0 place-items-center overflow-hidden rounded-full bg-card ring-2 ring-brand-yellow">
+      <span className="relative grid h-11 w-11 shrink-0 place-items-center overflow-hidden rounded-full bg-white ring-2 ring-brand-yellow">
         <EllaAvatar
           size={44}
           alt="Avatar de Ella"
@@ -46,7 +46,7 @@ export function EllaFab() {
         />
       </span>
       <span className="hidden pr-1 text-left leading-tight sm:block">
-        <span className="flex items-center gap-1 text-2xs font-bold uppercase tracking-[0.18em] text-brand-yellow">
+        <span className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-[0.18em] text-brand-yellow">
           <Sparkles className="h-3 w-3" /> IA
         </span>
         <span className="block text-sm font-extrabold">Perguntar à Ella</span>

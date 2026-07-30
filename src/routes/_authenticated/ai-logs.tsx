@@ -100,7 +100,7 @@ function AiLogsPage() {
     <div className="mx-auto max-w-7xl px-4 py-6 space-y-6">
       <header className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="flex items-center gap-2 text-xl font-black tracking-tight sm:text-2xl md:text-3xl">
+          <h1 className="text-2xl font-black tracking-tight flex items-center gap-2">
             <Activity className="h-6 w-6 text-primary" />
             Logs do Assistente
           </h1>
@@ -127,9 +127,9 @@ function AiLogsPage() {
       {health && (
         <Card className="p-4 flex items-center gap-3">
           {health.ok ? (
-            <CheckCircle2 className="h-5 w-5 text-success" />
+            <CheckCircle2 className="h-5 w-5 text-emerald-600" />
           ) : (
-            <AlertTriangle className="h-5 w-5 text-destructive" />
+            <AlertTriangle className="h-5 w-5 text-red-600" />
           )}
           <div className="text-sm">
             <strong>/api/public/ai-health</strong>{" "}
@@ -205,7 +205,7 @@ function AiLogsPage() {
                   </td>
                   <td className="py-2 pr-3">
                     {r.status === "success" ? (
-                      <Badge variant="secondary" className="bg-success/10 text-success border-0">
+                      <Badge variant="secondary" className="bg-emerald-100 text-emerald-800 border-0">
                         sucesso
                       </Badge>
                     ) : (
@@ -259,8 +259,8 @@ function StatCard({
       <div
         className={cn(
           "text-2xl font-black mt-1",
-          tone === "ok" && "text-success",
-          tone === "err" && "text-destructive",
+          tone === "ok" && "text-emerald-600",
+          tone === "err" && "text-red-600",
         )}
       >
         {value}

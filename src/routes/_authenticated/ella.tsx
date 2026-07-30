@@ -84,7 +84,7 @@ function ToolChip({ t }: { t: ToolActivity }) {
     <div
       className={cn(
         "rounded-lg border text-xs",
-        isErr ? "border-destructive/30 bg-destructive/10" : "border-border bg-background/60",
+        isErr ? "border-red-300 bg-red-50" : "border-border bg-background/60",
       )}
     >
       <button
@@ -98,7 +98,7 @@ function ToolChip({ t }: { t: ToolActivity }) {
         />
       </button>
       {open && (
-        <pre className="max-h-52 overflow-auto border-t bg-muted/50 px-2 py-1.5 text-2xs leading-snug">
+        <pre className="max-h-52 overflow-auto border-t bg-muted/50 px-2 py-1.5 text-[11px] leading-snug">
 {JSON.stringify({ input: t.input, output: t.output }, null, 2)}
         </pre>
       )}
@@ -314,7 +314,7 @@ function EllaPage() {
               className={cn(
                 "max-w-[90%] sm:max-w-[80%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed",
                 m.role === "user"
-                  ? "bg-brand-blue text-inverse rounded-br-sm whitespace-pre-wrap break-words"
+                  ? "bg-brand-blue text-white rounded-br-sm whitespace-pre-wrap break-words"
                   : "bg-muted text-foreground rounded-bl-sm",
               )}
             >
@@ -341,12 +341,12 @@ function EllaPage() {
                             key={i}
                             src={a.previewUrl}
                             alt={a.name}
-                            className="h-16 w-16 rounded-md object-cover ring-1 ring-inverse/40"
+                            className="h-16 w-16 rounded-md object-cover ring-1 ring-white/40"
                           />
                         ) : (
                           <span
                             key={i}
-                            className="inline-flex items-center gap-1 rounded-md bg-inverse/15 px-2 py-1 text-xs"
+                            className="inline-flex items-center gap-1 rounded-md bg-white/15 px-2 py-1 text-xs"
                           >
                             {iconFor(a.mimeType)}
                             <span className="max-w-[10rem] truncate">{a.name}</span>

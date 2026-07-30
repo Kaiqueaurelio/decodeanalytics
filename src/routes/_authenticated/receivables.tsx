@@ -26,37 +26,37 @@ type Bucket = "overdue" | "today" | "week" | "month" | "future" | "paid";
 const BUCKET_META: Record<Bucket, { label: string; tone: string; icon: any; help: string }> = {
   overdue: {
     label: "Vencidas",
-    tone: "border-destructive/30 bg-destructive/10 text-destructive",
+    tone: "border-red-200 bg-red-50 text-red-700",
     icon: AlertTriangle,
     help: "Cobrar com urgência",
   },
   today: {
     label: "Vencem hoje",
-    tone: "border-warning/30 bg-warning/10 text-warning",
+    tone: "border-amber-200 bg-amber-50 text-amber-800",
     icon: Clock,
     help: "Acompanhe o dia",
   },
   week: {
     label: "Próximos 7 dias",
-    tone: "border-info/30 bg-info/10 text-info",
+    tone: "border-blue-200 bg-blue-50 text-blue-700",
     icon: CalendarClock,
     help: "Semana atual",
   },
   month: {
     label: "Este mês",
-    tone: "border-highlight/30 bg-highlight/10 text-highlight",
+    tone: "border-violet-200 bg-violet-50 text-violet-700",
     icon: Calendar,
     help: "Vencimentos do mês",
   },
   future: {
     label: "Futuros",
-    tone: "border-border bg-muted text-foreground",
+    tone: "border-slate-200 bg-slate-50 text-slate-700",
     icon: Calendar,
     help: "Mais para frente",
   },
   paid: {
     label: "Recebidos",
-    tone: "border-success/30 bg-success/10 text-success",
+    tone: "border-emerald-200 bg-emerald-50 text-emerald-700",
     icon: CheckCircle2,
     help: "Já pagos",
   },
@@ -178,12 +178,12 @@ function Page() {
     <div className="space-y-4">
       {/* Header com totais destacados */}
       <div className="grid gap-3 md:grid-cols-3">
-        <Card className="p-5 bg-linear-to-br from-destructive to-destructive text-inverse border-0">
+        <Card className="p-5 bg-linear-to-br from-red-500 to-red-600 text-white border-0">
           <div className="flex items-center gap-2 mb-1">
             <AlertTriangle className="w-4 h-4" />
             <span className="text-xs font-bold uppercase tracking-wide opacity-90">Vencidas</span>
           </div>
-          <p className="text-2xl font-black tabular-nums sm:text-3xl">{brl(buckets.overdue.total)}</p>
+          <p className="text-3xl font-black">{brl(buckets.overdue.total)}</p>
           <p className="text-xs mt-1 opacity-90">{buckets.overdue.rows.length} cobrança(s)</p>
         </Card>
         <Card className="p-5 bg-linear-to-br from-primary to-primary/80 text-primary-foreground border-0">
@@ -191,17 +191,17 @@ function Page() {
             <Wallet className="w-4 h-4" />
             <span className="text-xs font-bold uppercase tracking-wide opacity-90">A receber (total)</span>
           </div>
-          <p className="text-2xl font-black tabular-nums sm:text-3xl">{brl(totalPending)}</p>
+          <p className="text-3xl font-black">{brl(totalPending)}</p>
           <p className="text-xs mt-1 opacity-90">
             {buckets.overdue.rows.length + buckets.today.rows.length + buckets.week.rows.length + buckets.month.rows.length + buckets.future.rows.length} pendente(s)
           </p>
         </Card>
-        <Card className="p-5 bg-linear-to-br from-success to-success text-inverse border-0">
+        <Card className="p-5 bg-linear-to-br from-emerald-500 to-emerald-600 text-white border-0">
           <div className="flex items-center gap-2 mb-1">
             <CheckCircle2 className="w-4 h-4" />
             <span className="text-xs font-bold uppercase tracking-wide opacity-90">Já recebidas</span>
           </div>
-          <p className="text-2xl font-black tabular-nums sm:text-3xl">{brl(buckets.paid.total)}</p>
+          <p className="text-3xl font-black">{brl(buckets.paid.total)}</p>
           <p className="text-xs mt-1 opacity-90">{buckets.paid.rows.length} cobrança(s)</p>
         </Card>
       </div>
@@ -291,11 +291,11 @@ function Page() {
                       </div>
                       <div className="flex items-end justify-between gap-2 pt-2 border-t border-border/60">
                         <div>
-                          <p className="text-2xs uppercase text-muted-foreground tracking-wide">Vencimento</p>
+                          <p className="text-[10px] uppercase text-muted-foreground tracking-wide">Vencimento</p>
                           <p className="text-sm font-semibold">{fmtDate(r.due_date)}</p>
                         </div>
                         <div className="text-right">
-                          <p className="text-2xs uppercase text-muted-foreground tracking-wide">Valor</p>
+                          <p className="text-[10px] uppercase text-muted-foreground tracking-wide">Valor</p>
                           <p className="text-lg font-black font-mono text-primary">{brl(r.amount)}</p>
                         </div>
                       </div>
@@ -318,7 +318,7 @@ function Page() {
         })}
         {!visibleRows.length && (
           <Card className="p-12 text-center text-muted-foreground">
-            <Wallet className="mx-auto w-10 h-10 text-muted-foreground mb-2" />
+            <Wallet className="mx-auto w-10 h-10 text-slate-300 mb-2" />
             Nenhuma cobrança no filtro atual.
           </Card>
         )}

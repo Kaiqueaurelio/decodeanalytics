@@ -42,7 +42,6 @@ import {
   Trash2,
   Search,
   Sparkles,
-  Upload,
 } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
@@ -72,25 +71,25 @@ const CATEGORY_META: Record<
     label: "Comportamento",
     description: "Como a Ella deve agir, tom de voz, personalidade, limites",
     icon: Bot,
-    tone: "bg-highlight/10 text-highlight",
+    tone: "bg-purple-100 text-purple-800",
   },
   atendimento: {
     label: "Atendimento ao cliente",
     description: "Fluxos, respostas padrão, prazos, políticas de atendimento",
     icon: HeadphonesIcon,
-    tone: "bg-info/10 text-info",
+    tone: "bg-blue-100 text-blue-800",
   },
   ensino: {
     label: "Materiais de ensino",
     description: "Produtos, técnicas, papéis, acabamentos, conhecimento gráfico",
     icon: GraduationCap,
-    tone: "bg-success/10 text-success",
+    tone: "bg-emerald-100 text-emerald-800",
   },
   geral: {
     label: "Geral",
     description: "Outros aprendizados salvos pela Ella",
     icon: BookOpen,
-    tone: "bg-muted text-foreground",
+    tone: "bg-slate-100 text-slate-800",
   },
 };
 
@@ -227,39 +226,6 @@ function EllaTrainingPage() {
       extraTags: extras.join(", "),
     });
     setEditOpen(true);
-  }
-
-  /**
-   * Importa um arquivo de texto (.txt/.md/.csv) para o campo de conteúdo.
-   * Valida tipo, tamanho e conteúdo vazio — nada silencioso.
-   */
-  async function importFile(file: File | undefined | null) {
-    if (!file) return;
-    const okExt = /\.(txt|md|markdown|csv)$/i.test(file.name);
-    if (!okExt) {
-      toast.error("Formato não suportado. Envie .txt, .md ou .csv.");
-      return;
-    }
-    if (file.size > 300_000) {
-      toast.error("Arquivo muito grande (máx. 300 KB). Divida em partes.");
-      return;
-    }
-    try {
-      const text = (await file.text()).trim();
-      if (!text) {
-        toast.error("O arquivo está vazio.");
-        return;
-      }
-      setForm((f) => ({
-        ...f,
-        content: f.content.trim() ? `${f.content.trim()}\n\n${text}` : text,
-        title: f.title.trim() || file.name.replace(/\.[^.]+$/, "").slice(0, 140),
-      }));
-      toast.success(`Conteúdo de "${file.name}" importado.`);
-    } catch (err: any) {
-      console.error(err);
-      toast.error("Não consegui ler o arquivo. Tente novamente.");
-    }
   }
 
   return (
@@ -425,7 +391,7 @@ function EllaTrainingPage() {
                         onClick={() => setDeleteId(row.id)}
                         aria-label="Remover"
                       >
-                        <Trash2 className="h-4 w-4 text-destructive" />
+                        <Trash2 className="h-4 w-4 text-red-600" />
                       </Button>
                     </div>
                   </div>
@@ -475,22 +441,7 @@ function EllaTrainingPage() {
               />
             </div>
             <div className="grid gap-2">
-              <div className="flex flex-wrap items-center justify-between gap-2">
-                <Label>Conteúdo</Label>
-                <label className="inline-flex min-h-9 cursor-pointer items-center gap-2 rounded-lg border border-input px-3 text-xs font-semibold transition-colors hover:bg-muted">
-                  <Upload className="h-3.5 w-3.5" />
-                  Importar arquivo (.txt, .md, .csv)
-                  <input
-                    type="file"
-                    accept=".txt,.md,.markdown,.csv,text/plain,text/markdown,text/csv"
-                    className="sr-only"
-                    onChange={(e) => {
-                      void importFile(e.target.files?.[0]);
-                      e.target.value = "";
-                    }}
-                  />
-                </label>
-              </div>
+              <Label>Conteúdo</Label>
               <Textarea
                 value={form.content}
                 onChange={(e) => setForm((f) => ({ ...f, content: e.target.value }))}
@@ -549,7 +500,7 @@ function EllaTrainingPage() {
             <AlertDialogCancel>Cancelar</AlertDialogCancel>
             <AlertDialogAction
               onClick={() => deleteId && remove.mutate(deleteId)}
-              className="bg-destructive hover:bg-destructive text-inverse"
+              className="bg-red-600 hover:bg-red-700 text-white"
             >
               Remover
             </AlertDialogAction>

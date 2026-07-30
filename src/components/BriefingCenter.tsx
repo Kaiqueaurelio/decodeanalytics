@@ -267,7 +267,7 @@ export function BriefingCenter({ order, onChanged }: { order: any; onChanged: ()
         <Card className="p-4">
           <div className="mb-3 flex items-center justify-between">
             <h3 className="font-semibold text-primary">Briefing do cliente</h3>
-            <Badge className="bg-success/10 text-success hover:bg-success/10">Recebido</Badge>
+            <Badge className="bg-emerald-100 text-emerald-800 hover:bg-emerald-100">Recebido</Badge>
           </div>
           <div className="grid gap-3 text-sm sm:grid-cols-2">
             <Info label="Cliente" value={briefing.client_name} />
@@ -353,7 +353,7 @@ export function BriefingCenter({ order, onChanged }: { order: any; onChanged: ()
               >
                 <div className="min-w-0">
                   <p className="truncate text-sm font-medium">{file.file_name}</p>
-                  <p className="text-2xs text-muted-foreground">
+                  <p className="text-[10px] text-muted-foreground">
                     {file.uploaded_by_client ? "Enviado pelo cliente" : "Adicionado pela equipe"}
                   </p>
                 </div>
@@ -451,7 +451,7 @@ function VersionCard({ version, onDownload }: { version: any; onDownload: () => 
       </div>
       {version.notes && <p className="mt-2 text-sm">{version.notes}</p>}
       {version.client_comment && (
-        <div className="mt-3 rounded-lg bg-warning/10 p-3 text-sm text-warning">
+        <div className="mt-3 rounded-lg bg-amber-50 p-3 text-sm text-amber-900">
           <strong>Cliente:</strong> {version.client_comment}
         </div>
       )}
@@ -469,7 +469,7 @@ function VersionCard({ version, onDownload }: { version: any; onDownload: () => 
 function Info({ label, value }: { label: string; value: any }) {
   return (
     <div>
-      <p className="text-2xs uppercase tracking-wide text-muted-foreground">{label}</p>
+      <p className="text-[10px] uppercase tracking-wide text-muted-foreground">{label}</p>
       <p className="font-medium capitalize">{value || "Não informado"}</p>
     </div>
   );

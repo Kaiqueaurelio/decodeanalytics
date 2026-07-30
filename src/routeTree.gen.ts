@@ -18,7 +18,6 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as SitemapXmlRouteImport } from './routes/sitemap.xml'
 import { Route as ProdutoSlugRouteImport } from './routes/produto.$slug'
 import { Route as BriefingTokenRouteImport } from './routes/briefing.$token'
-import { Route as ArteTokenRouteImport } from './routes/arte.$token'
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
 import { Route as AuthenticatedServicesRouteImport } from './routes/_authenticated/services'
 import { Route as AuthenticatedReceivablesRouteImport } from './routes/_authenticated/receivables'
@@ -35,7 +34,6 @@ import { Route as AuthenticatedClosuresRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedClientsRouteImport } from './routes/_authenticated/clients'
 import { Route as AuthenticatedCashRouteImport } from './routes/_authenticated/cash'
 import { Route as AuthenticatedCalculatorRouteImport } from './routes/_authenticated/calculator'
-import { Route as AuthenticatedArtesRouteImport } from './routes/_authenticated/artes'
 import { Route as AuthenticatedAiLogsRouteImport } from './routes/_authenticated/ai-logs'
 import { Route as ApiPublicAiHealthRouteImport } from './routes/api/public/ai-health'
 import { Route as AuthenticatedSandboxRunIdRouteImport } from './routes/_authenticated/sandbox-run.$id'
@@ -82,11 +80,6 @@ const ProdutoSlugRoute = ProdutoSlugRouteImport.update({
 const BriefingTokenRoute = BriefingTokenRouteImport.update({
   id: '/briefing/$token',
   path: '/briefing/$token',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ArteTokenRoute = ArteTokenRouteImport.update({
-  id: '/arte/$token',
-  path: '/arte/$token',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedSettingsRoute = AuthenticatedSettingsRouteImport.update({
@@ -172,11 +165,6 @@ const AuthenticatedCalculatorRoute = AuthenticatedCalculatorRouteImport.update({
   path: '/calculator',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedArtesRoute = AuthenticatedArtesRouteImport.update({
-  id: '/artes',
-  path: '/artes',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
 const AuthenticatedAiLogsRoute = AuthenticatedAiLogsRouteImport.update({
   id: '/ai-logs',
   path: '/ai-logs',
@@ -201,7 +189,6 @@ export interface FileRoutesByFullPath {
   '/carrinho': typeof CarrinhoRoute
   '/produtos': typeof ProdutosRoute
   '/ai-logs': typeof AuthenticatedAiLogsRoute
-  '/artes': typeof AuthenticatedArtesRoute
   '/calculator': typeof AuthenticatedCalculatorRoute
   '/cash': typeof AuthenticatedCashRoute
   '/clients': typeof AuthenticatedClientsRoute
@@ -218,7 +205,6 @@ export interface FileRoutesByFullPath {
   '/receivables': typeof AuthenticatedReceivablesRoute
   '/services': typeof AuthenticatedServicesRoute
   '/settings': typeof AuthenticatedSettingsRoute
-  '/arte/$token': typeof ArteTokenRoute
   '/briefing/$token': typeof BriefingTokenRoute
   '/produto/$slug': typeof ProdutoSlugRoute
   '/sitemap/xml': typeof SitemapXmlRoute
@@ -232,7 +218,6 @@ export interface FileRoutesByTo {
   '/carrinho': typeof CarrinhoRoute
   '/produtos': typeof ProdutosRoute
   '/ai-logs': typeof AuthenticatedAiLogsRoute
-  '/artes': typeof AuthenticatedArtesRoute
   '/calculator': typeof AuthenticatedCalculatorRoute
   '/cash': typeof AuthenticatedCashRoute
   '/clients': typeof AuthenticatedClientsRoute
@@ -249,7 +234,6 @@ export interface FileRoutesByTo {
   '/receivables': typeof AuthenticatedReceivablesRoute
   '/services': typeof AuthenticatedServicesRoute
   '/settings': typeof AuthenticatedSettingsRoute
-  '/arte/$token': typeof ArteTokenRoute
   '/briefing/$token': typeof BriefingTokenRoute
   '/produto/$slug': typeof ProdutoSlugRoute
   '/sitemap/xml': typeof SitemapXmlRoute
@@ -265,7 +249,6 @@ export interface FileRoutesById {
   '/carrinho': typeof CarrinhoRoute
   '/produtos': typeof ProdutosRoute
   '/_authenticated/ai-logs': typeof AuthenticatedAiLogsRoute
-  '/_authenticated/artes': typeof AuthenticatedArtesRoute
   '/_authenticated/calculator': typeof AuthenticatedCalculatorRoute
   '/_authenticated/cash': typeof AuthenticatedCashRoute
   '/_authenticated/clients': typeof AuthenticatedClientsRoute
@@ -282,7 +265,6 @@ export interface FileRoutesById {
   '/_authenticated/receivables': typeof AuthenticatedReceivablesRoute
   '/_authenticated/services': typeof AuthenticatedServicesRoute
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
-  '/arte/$token': typeof ArteTokenRoute
   '/briefing/$token': typeof BriefingTokenRoute
   '/produto/$slug': typeof ProdutoSlugRoute
   '/sitemap/xml': typeof SitemapXmlRoute
@@ -298,7 +280,6 @@ export interface FileRouteTypes {
     | '/carrinho'
     | '/produtos'
     | '/ai-logs'
-    | '/artes'
     | '/calculator'
     | '/cash'
     | '/clients'
@@ -315,7 +296,6 @@ export interface FileRouteTypes {
     | '/receivables'
     | '/services'
     | '/settings'
-    | '/arte/$token'
     | '/briefing/$token'
     | '/produto/$slug'
     | '/sitemap/xml'
@@ -329,7 +309,6 @@ export interface FileRouteTypes {
     | '/carrinho'
     | '/produtos'
     | '/ai-logs'
-    | '/artes'
     | '/calculator'
     | '/cash'
     | '/clients'
@@ -346,7 +325,6 @@ export interface FileRouteTypes {
     | '/receivables'
     | '/services'
     | '/settings'
-    | '/arte/$token'
     | '/briefing/$token'
     | '/produto/$slug'
     | '/sitemap/xml'
@@ -361,7 +339,6 @@ export interface FileRouteTypes {
     | '/carrinho'
     | '/produtos'
     | '/_authenticated/ai-logs'
-    | '/_authenticated/artes'
     | '/_authenticated/calculator'
     | '/_authenticated/cash'
     | '/_authenticated/clients'
@@ -378,7 +355,6 @@ export interface FileRouteTypes {
     | '/_authenticated/receivables'
     | '/_authenticated/services'
     | '/_authenticated/settings'
-    | '/arte/$token'
     | '/briefing/$token'
     | '/produto/$slug'
     | '/sitemap/xml'
@@ -393,7 +369,6 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   CarrinhoRoute: typeof CarrinhoRoute
   ProdutosRoute: typeof ProdutosRoute
-  ArteTokenRoute: typeof ArteTokenRoute
   BriefingTokenRoute: typeof BriefingTokenRoute
   ProdutoSlugRoute: typeof ProdutoSlugRoute
   SitemapXmlRoute: typeof SitemapXmlRoute
@@ -463,13 +438,6 @@ declare module '@tanstack/react-router' {
       path: '/briefing/$token'
       fullPath: '/briefing/$token'
       preLoaderRoute: typeof BriefingTokenRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/arte/$token': {
-      id: '/arte/$token'
-      path: '/arte/$token'
-      fullPath: '/arte/$token'
-      preLoaderRoute: typeof ArteTokenRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/settings': {
@@ -584,13 +552,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedCalculatorRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/artes': {
-      id: '/_authenticated/artes'
-      path: '/artes'
-      fullPath: '/artes'
-      preLoaderRoute: typeof AuthenticatedArtesRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
     '/_authenticated/ai-logs': {
       id: '/_authenticated/ai-logs'
       path: '/ai-logs'
@@ -617,7 +578,6 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAiLogsRoute: typeof AuthenticatedAiLogsRoute
-  AuthenticatedArtesRoute: typeof AuthenticatedArtesRoute
   AuthenticatedCalculatorRoute: typeof AuthenticatedCalculatorRoute
   AuthenticatedCashRoute: typeof AuthenticatedCashRoute
   AuthenticatedClientsRoute: typeof AuthenticatedClientsRoute
@@ -639,7 +599,6 @@ interface AuthenticatedRouteRouteChildren {
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAiLogsRoute: AuthenticatedAiLogsRoute,
-  AuthenticatedArtesRoute: AuthenticatedArtesRoute,
   AuthenticatedCalculatorRoute: AuthenticatedCalculatorRoute,
   AuthenticatedCashRoute: AuthenticatedCashRoute,
   AuthenticatedClientsRoute: AuthenticatedClientsRoute,
@@ -669,7 +628,6 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   CarrinhoRoute: CarrinhoRoute,
   ProdutosRoute: ProdutosRoute,
-  ArteTokenRoute: ArteTokenRoute,
   BriefingTokenRoute: BriefingTokenRoute,
   ProdutoSlugRoute: ProdutoSlugRoute,
   SitemapXmlRoute: SitemapXmlRoute,

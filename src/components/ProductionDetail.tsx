@@ -257,7 +257,7 @@ export function ProductionDetail({
                     )}
                   </div>
                   {u.status && (
-                    <Badge variant="outline" className="text-2xs mt-1">
+                    <Badge variant="outline" className="text-[10px] mt-1">
                       → {PRODUCTION_STATUS_LABEL[u.status]}
                     </Badge>
                   )}

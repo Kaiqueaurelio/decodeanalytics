@@ -52,14 +52,14 @@ const COLUMNS = [
 type ProdStatus = (typeof COLUMNS)[number];
 
 const STATUS_TONE: Record<string, string> = {
-  aguardando_arte: "border-border bg-muted text-foreground",
-  arte_em_criacao: "border-info/30 bg-info/10 text-info",
-  aguardando_aprovacao: "border-warning/30 bg-warning/10 text-warning",
-  aprovado: "border-success/30 bg-success/10 text-success",
-  em_producao: "border-highlight/30 bg-highlight/10 text-highlight",
-  pausado: "border-destructive/30 bg-destructive/10 text-destructive",
-  pronto_para_retirada: "border-success/30 bg-success/10 text-success",
-  entregue: "border-success/30 bg-success/10 text-success",
+  aguardando_arte: "border-slate-200 bg-slate-50 text-slate-700",
+  arte_em_criacao: "border-blue-200 bg-blue-50 text-blue-700",
+  aguardando_aprovacao: "border-amber-200 bg-amber-50 text-amber-800",
+  aprovado: "border-emerald-200 bg-emerald-50 text-emerald-700",
+  em_producao: "border-violet-200 bg-violet-50 text-violet-700",
+  pausado: "border-rose-200 bg-rose-50 text-rose-700",
+  pronto_para_retirada: "border-teal-200 bg-teal-50 text-teal-700",
+  entregue: "border-green-200 bg-green-50 text-green-700",
 };
 
 function timeAgo(value?: string | null) {
@@ -157,7 +157,7 @@ function ProductionBoard() {
     <div className="space-y-4">
       <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-3">
         <div>
-          <h1 className="text-xl font-bold tracking-tight text-primary sm:text-2xl md:text-3xl">Central de produção</h1>
+          <h1 className="text-2xl font-bold text-primary">Central de produção</h1>
           <p className="text-sm text-muted-foreground">
             Acompanhe responsáveis, atividades e atualizações em tempo real.
           </p>
@@ -229,7 +229,7 @@ function ProductionBoard() {
               : "bg-card hover:border-primary/40"
           }`}
         >
-          <span className="block text-2xs uppercase tracking-wide opacity-70">Todos</span>
+          <span className="block text-[10px] uppercase tracking-wide opacity-70">Todos</span>
           <strong className="text-lg">{data?.orders.length ?? 0}</strong>
         </button>
         {COLUMNS.map((status) => {
@@ -246,7 +246,7 @@ function ProductionBoard() {
                   : `${STATUS_TONE[status]} hover:brightness-95`
               }`}
             >
-              <span className="block truncate text-2xs uppercase tracking-wide opacity-75">
+              <span className="block truncate text-[10px] uppercase tracking-wide opacity-75">
                 {PRODUCTION_STATUS_LABEL[status]}
               </span>
               <strong className="text-lg">{count}</strong>
@@ -266,7 +266,7 @@ function ProductionBoard() {
             return (
               <Card
                 key={order.id}
-                className="overflow-hidden border-border shadow-sm transition-all hover:border-gold hover:shadow-md"
+                className="overflow-hidden border-slate-200 shadow-sm transition-all hover:border-gold hover:shadow-md"
               >
                 <div className="grid lg:grid-cols-[1.15fr_.85fr_auto]">
                   <button className="p-4 text-left md:p-5" onClick={() => setSelected(order)}>
@@ -287,17 +287,17 @@ function ProductionBoard() {
                           </Badge>
                           {order.urgent && <Badge variant="destructive">Urgente</Badge>}
                         </div>
-                        <h3 className="mt-2 truncate text-lg font-bold text-foreground">
+                        <h3 className="mt-2 truncate text-lg font-bold text-slate-900">
                           {order.title || "Serviço sem título"}
                         </h3>
                         <p className="mt-0.5 text-sm text-muted-foreground">
                           Cliente:{" "}
-                          <strong className="font-medium text-foreground">
+                          <strong className="font-medium text-slate-700">
                             {order.clients?.name}
                           </strong>
                         </p>
                       </div>
-                      <ChevronRight className="h-5 w-5 shrink-0 text-muted-foreground" />
+                      <ChevronRight className="h-5 w-5 shrink-0 text-slate-300" />
                     </div>
 
                     <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
@@ -329,17 +329,17 @@ function ProductionBoard() {
                     </div>
                   </button>
 
-                  <div className="border-t bg-muted/60 p-4 md:p-5 lg:border-l lg:border-t-0">
+                  <div className="border-t bg-slate-50/60 p-4 md:p-5 lg:border-l lg:border-t-0">
                     <div className="flex items-center justify-between gap-2">
-                      <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                      <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
                         <Activity className="h-4 w-4" /> Fazendo agora
                       </p>
                       <strong className="text-sm text-primary">{order.progress || 0}%</strong>
                     </div>
-                    <p className="mt-2 min-h-10 text-sm font-medium text-foreground">
+                    <p className="mt-2 min-h-10 text-sm font-medium text-slate-800">
                       {order.current_activity || "A equipe ainda não informou a atividade atual."}
                     </p>
-                    <div className="mt-3 h-2.5 overflow-hidden rounded-full bg-muted">
+                    <div className="mt-3 h-2.5 overflow-hidden rounded-full bg-slate-200">
                       <div
                         className="h-full rounded-full bg-linear-to-r from-primary to-gold transition-all"
                         style={{ width: `${order.progress || 0}%` }}
@@ -351,18 +351,18 @@ function ProductionBoard() {
                           <span
                             title={PRODUCTION_STATUS_LABEL[status]}
                             className={`h-2.5 w-2.5 shrink-0 rounded-full ${
-                              index <= currentIndex ? "bg-primary" : "bg-muted"
+                              index <= currentIndex ? "bg-primary" : "bg-slate-200"
                             }`}
                           />
                           {index < 6 && (
                             <span
-                              className={`h-0.5 flex-1 ${index < currentIndex ? "bg-primary" : "bg-muted"}`}
+                              className={`h-0.5 flex-1 ${index < currentIndex ? "bg-primary" : "bg-slate-200"}`}
                             />
                           )}
                         </div>
                       ))}
                     </div>
-                    <p className="mt-2 text-2xs text-muted-foreground">
+                    <p className="mt-2 text-[10px] text-muted-foreground">
                       Etapa {Math.max(1, currentIndex + 1)} de 7 do fluxo principal
                     </p>
                   </div>
@@ -389,8 +389,8 @@ function ProductionBoard() {
           })}
           {!filtered.length && (
             <Card className="p-12 text-center">
-              <CheckCircle2 className="mx-auto h-10 w-10 text-muted-foreground" />
-              <p className="mt-3 font-medium text-foreground">Nenhum pedido neste filtro</p>
+              <CheckCircle2 className="mx-auto h-10 w-10 text-slate-300" />
+              <p className="mt-3 font-medium text-slate-700">Nenhum pedido neste filtro</p>
               <p className="text-sm text-muted-foreground">
                 Altere o status, responsável ou busca.
               </p>
@@ -413,7 +413,7 @@ function ProductionBoard() {
               >
                 <div className="bg-primary text-primary-foreground rounded-t-xl px-3 py-2.5 text-sm font-semibold flex justify-between">
                   <span>{PRODUCTION_STATUS_LABEL[column]}</span>
-                  <span className="bg-inverse/10 text-gold rounded-full min-w-6 h-6 grid place-items-center">
+                  <span className="bg-white/10 text-gold rounded-full min-w-6 h-6 grid place-items-center">
                     {rows.length}
                   </span>
                 </div>
@@ -438,20 +438,20 @@ function ProductionBoard() {
                         </div>
                         <div className="flex flex-col items-end gap-1">
                           <Badge
-                            className={`${lifecycleFor(order.production_status).className} text-2xs`}
+                            className={`${lifecycleFor(order.production_status).className} text-[9px]`}
                             title={lifecycleFor(order.production_status).description}
                           >
                             {lifecycleFor(order.production_status).label}
                           </Badge>
                           {order.urgent && (
-                            <Badge className="bg-destructive text-destructive-foreground text-2xs">
+                            <Badge className="bg-destructive text-destructive-foreground text-[9px]">
                               URGENTE
                             </Badge>
                           )}
                         </div>
                       </div>
                       <div className="mt-3 rounded-lg bg-muted/60 p-2">
-                        <p className="text-2xs uppercase tracking-wide text-muted-foreground">
+                        <p className="text-[10px] uppercase tracking-wide text-muted-foreground">
                           Fazendo agora
                         </p>
                         <p className="text-xs font-medium mt-1 line-clamp-2">
@@ -459,7 +459,7 @@ function ProductionBoard() {
                         </p>
                       </div>
                       <div className="mt-3">
-                        <div className="flex justify-between text-2xs mb-1">
+                        <div className="flex justify-between text-[10px] mb-1">
                           <span>Progresso</span>
                           <strong>{order.progress || 0}%</strong>
                         </div>
@@ -470,7 +470,7 @@ function ProductionBoard() {
                           />
                         </div>
                       </div>
-                      <div className="flex items-center justify-between mt-3 text-2xs text-muted-foreground">
+                      <div className="flex items-center justify-between mt-3 text-[10px] text-muted-foreground">
                         <span className="flex items-center gap-1">
                           <UserRound className="w-3 h-3" />
                           {order.assignee?.full_name || order.assignee?.email || "Não atribuído"}
@@ -480,9 +480,9 @@ function ProductionBoard() {
                           {timeAgo(order.last_progress_at)}
                         </span>
                       </div>
-                      <div className="flex justify-between mt-2 pt-2 border-t text-2xs text-muted-foreground">
+                      <div className="flex justify-between mt-2 pt-2 border-t text-[10px] text-muted-foreground">
                         <span>Prazo: {fmtDate(order.deadline)}</span>
-                        <Badge variant="outline" className="text-2xs">
+                        <Badge variant="outline" className="text-[9px]">
                           {PAYMENT_STATUS_LABEL[order.payment_status]}
                         </Badge>
                       </div>
@@ -616,13 +616,13 @@ function DetailItem({
 }) {
   return (
     <div
-      className={`rounded-xl border p-3 ${warning ? "border-warning/30 bg-warning/10" : "bg-card"}`}
+      className={`rounded-xl border p-3 ${warning ? "border-amber-200 bg-amber-50" : "bg-white"}`}
     >
-      <p className="flex items-center gap-1.5 text-2xs uppercase tracking-wide text-muted-foreground">
+      <p className="flex items-center gap-1.5 text-[10px] uppercase tracking-wide text-muted-foreground">
         <Icon className="h-3.5 w-3.5" /> {label}
       </p>
       <p
-        className={`mt-1 truncate text-xs font-semibold ${warning ? "text-warning" : "text-foreground"}`}
+        className={`mt-1 truncate text-xs font-semibold ${warning ? "text-amber-800" : "text-slate-700"}`}
       >
         {value}
       </p>

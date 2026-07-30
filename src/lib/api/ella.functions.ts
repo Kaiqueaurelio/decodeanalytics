@@ -2,7 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { generateText, tool, stepCountIs } from "ai";
 import { z } from "zod";
-import { resolveEllaModel, aiTimeoutSignal } from "@/lib/ai-gateway.server";
+import { createLovableGateway } from "@/lib/ai-gateway.server";
 import {
   ADMIN_SYSTEM_PROMPT,
   STATUS_ENUM,
@@ -263,7 +263,7 @@ async function ellaLocalFallback({
 
   return {
     response:
-      "Estou em modo básico porque nenhuma chave de IA está configurada neste ambiente (GEMINI_API_KEY ou LOVABLE_API_KEY). Mesmo assim, já consigo executar comandos simples como atualizar preço, criar produto, listar OS e mexer no estoque.",
+      "Estou funcionando na Vercel em modo básico. Para a Ella completa com IA, áudio e análise de anexos, configure LOVABLE_API_KEY na Vercel. Mesmo assim, já consigo executar comandos simples como atualizar preço, criar produto, listar OS e mexer no estoque.",
     toolActivity,
   };
 }
@@ -272,11 +272,11 @@ export const ellaChat = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((v: unknown) => InputSchema.parse(v))
   .handler(async ({ data, context }) => {
-    const resolved = resolveEllaModel();
+    const key = process.env.LOVABLE_API_KEY;
     const supabase = context.supabase;
     const userId = context.userId;
 
-    if (!resolved) {
+    if (!key) {
       const fallback = await ellaLocalFallback({
         message: data.message,
         supabase,
@@ -288,7 +288,7 @@ export const ellaChat = createServerFn({ method: "POST" })
       };
     }
 
-    const { model, modelName, provider } = resolved;
+    const model = createLovableGateway(key)("google/gemini-2.5-flash");
     const traceId = newTraceId();
     const startedAt = Date.now();
 
@@ -586,72 +586,6 @@ export const ellaChat = createServerFn({ method: "POST" })
           const { error } = await supabase.from("reminders").update({ done: true }).eq("id", id);
           if (error) return { error: error.message };
           return { success: true };
-        },
-      }),
-      list_art_proofs: tool({
-        description:
-          "Lista as artes enviadas para aprovação do cliente, com status (pendente/aprovado/reprovado), cliente e link público.",
-        inputSchema: z.object({
-          status: z.enum(["pendente", "aprovado", "reprovado"]).optional(),
-          clientName: z.string().optional(),
-        }),
-        execute: async ({ status, clientName }) => {
-          let q = supabase
-            .from("art_proofs")
-            .select("id,token,title,status,client_feedback,viewed_at,created_at,clients(name)")
-            .order("created_at", { ascending: false })
-            .limit(20);
-          if (status) q = q.eq("status", status);
-          const { data, error } = await q;
-          if (error) return { error: error.message };
-          let rows = data ?? [];
-          if (clientName) {
-            const needle = normalizeText(clientName);
-            rows = rows.filter((r: any) => normalizeText(r.clients?.name).includes(needle));
-          }
-          return {
-            proofs: rows.map((r: any) => ({
-              title: r.title,
-              client: r.clients?.name ?? null,
-              status: r.status,
-              feedback: r.client_feedback,
-              viewed: Boolean(r.viewed_at),
-              link: `/arte/${r.token}`,
-            })),
-          };
-        },
-      }),
-      update_art_proof: tool({
-        description:
-          "Atualiza uma arte de aprovação pelo título: pode reabrir para nova resposta (reset=true) ou trocar a observação enviada ao cliente.",
-        inputSchema: z.object({
-          title: z.string(),
-          reset: z.boolean().optional(),
-          note: z.string().optional(),
-        }),
-        execute: async ({ title, reset, note }) => {
-          const { data: found } = await supabase
-            .from("art_proofs")
-            .select("id,title")
-            .ilike("title", `%${title}%`)
-            .limit(1)
-            .maybeSingle();
-          if (!found) return { error: `Não encontrei a arte "${title}".` };
-          const patch: {
-            note?: string;
-            status?: "pendente";
-            client_feedback?: string | null;
-            responded_at?: string | null;
-          } = {};
-          if (note !== undefined) patch.note = note;
-          if (reset) {
-            patch.status = "pendente";
-            patch.client_feedback = null;
-            patch.responded_at = null;
-          }
-          const { error } = await supabase.from("art_proofs").update(patch).eq("id", found.id);
-          if (error) return { error: error.message };
-          return { success: true, title: found.title };
         },
       }),
       dashboard_summary: tool({
@@ -1237,9 +1171,7 @@ export const ellaChat = createServerFn({ method: "POST" })
     for (const att of attachments) {
       const mt = att.mimeType.toLowerCase();
       if (mt.startsWith("audio/")) {
-        // A transcrição continua no gateway da Lovable (Gemini não expõe /audio/transcriptions aqui).
-        const transcribeKey = process.env.LOVABLE_API_KEY;
-        const transcript = transcribeKey ? await transcribeAttachment(transcribeKey, att) : "";
+        const transcript = key ? await transcribeAttachment(key, att) : "";
         userText += transcript
           ? `\n\n[Áudio "${att.name}" — transcrição]: ${transcript}`
           : `\n\n[Áudio "${att.name}" enviado mas não foi possível transcrever.]`;
@@ -1269,7 +1201,6 @@ export const ellaChat = createServerFn({ method: "POST" })
         messages: [...history, userMessage],
         tools,
         stopWhen: stepCountIs(50),
-        abortSignal: aiTimeoutSignal(60_000),
       });
 
       const toolActivity: Array<{ name: string; input: any; output: any }> = [];
@@ -1281,8 +1212,8 @@ export const ellaChat = createServerFn({ method: "POST" })
       }
 
       logAiEvent({
-        provider,
-        model: modelName,
+        provider: "lovable-ai-gateway",
+        model: "google/gemini-2.5-flash",
         endpoint: "/ella",
         trace_id: traceId,
         status: "success",
@@ -1295,8 +1226,8 @@ export const ellaChat = createServerFn({ method: "POST" })
       const cls = classifyAiError(err);
       console.error("ellaChat error:", traceId, cls);
       logAiEvent({
-        provider,
-        model: modelName,
+        provider: "lovable-ai-gateway",
+        model: "google/gemini-2.5-flash",
         endpoint: "/ella",
         trace_id: traceId,
         status: "error",

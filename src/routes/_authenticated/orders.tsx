@@ -321,11 +321,11 @@ function OrdersPage() {
         <span className="text-xs font-medium text-muted-foreground">Prazo:</span>
         {([
           { key: "all", label: "Todos", icon: null, tone: "bg-muted text-foreground border-transparent", activeTone: "bg-primary text-primary-foreground" },
-          { key: "atrasado", label: `Atrasadas${deadlineCounts.atrasado ? ` (${deadlineCounts.atrasado})` : ""}`, icon: <AlertTriangle className="w-3.5 h-3.5" />, tone: "bg-destructive/10 text-destructive border-destructive/30", activeTone: "bg-destructive text-inverse border-destructive/30" },
-          { key: "no_prazo", label: `No prazo${deadlineCounts.no_prazo ? ` (${deadlineCounts.no_prazo})` : ""}`, icon: <Clock className="w-3.5 h-3.5" />, tone: "bg-success/10 text-success border-success/30", activeTone: "bg-success text-inverse border-success/30" },
-          { key: "hoje", label: "Para hoje", icon: <CalendarClock className="w-3.5 h-3.5" />, tone: "bg-warning/10 text-warning border-warning/30", activeTone: "bg-warning text-inverse border-warning/30" },
-          { key: "proximos7", label: "Próximos 7 dias", icon: <CalendarClock className="w-3.5 h-3.5" />, tone: "bg-info/10 text-info border-info/30", activeTone: "bg-info text-inverse border-info/30" },
-          { key: "sem_prazo", label: `Sem prazo${deadlineCounts.sem_prazo ? ` (${deadlineCounts.sem_prazo})` : ""}`, icon: <CalendarX className="w-3.5 h-3.5" />, tone: "bg-muted text-muted-foreground border-border", activeTone: "bg-surface-dark-soft text-inverse border-surface-dark-soft" },
+          { key: "atrasado", label: `Atrasadas${deadlineCounts.atrasado ? ` (${deadlineCounts.atrasado})` : ""}`, icon: <AlertTriangle className="w-3.5 h-3.5" />, tone: "bg-red-50 text-red-700 border-red-200", activeTone: "bg-red-600 text-white border-red-600" },
+          { key: "no_prazo", label: `No prazo${deadlineCounts.no_prazo ? ` (${deadlineCounts.no_prazo})` : ""}`, icon: <Clock className="w-3.5 h-3.5" />, tone: "bg-emerald-50 text-emerald-700 border-emerald-200", activeTone: "bg-emerald-600 text-white border-emerald-600" },
+          { key: "hoje", label: "Para hoje", icon: <CalendarClock className="w-3.5 h-3.5" />, tone: "bg-amber-50 text-amber-700 border-amber-200", activeTone: "bg-amber-600 text-white border-amber-600" },
+          { key: "proximos7", label: "Próximos 7 dias", icon: <CalendarClock className="w-3.5 h-3.5" />, tone: "bg-blue-50 text-blue-700 border-blue-200", activeTone: "bg-blue-600 text-white border-blue-600" },
+          { key: "sem_prazo", label: `Sem prazo${deadlineCounts.sem_prazo ? ` (${deadlineCounts.sem_prazo})` : ""}`, icon: <CalendarX className="w-3.5 h-3.5" />, tone: "bg-slate-50 text-slate-600 border-slate-200", activeTone: "bg-slate-700 text-white border-slate-700" },
         ] as const).map((opt) => {
           const active = deadlineFilter === opt.key;
           return (
@@ -397,7 +397,7 @@ function OrdersPage() {
                   <td className="p-3 font-medium">
                     <div className="flex items-center gap-2">
                       {o.clients?.name}
-                      <OSStatusBadge status={o.production_status} className="text-2xs px-2 py-0.5" />
+                      <OSStatusBadge status={o.production_status} className="text-[10px] px-2 py-0.5" />
                       {o.urgent && (
                         <Badge className="bg-destructive text-destructive-foreground">
                           Urgente
@@ -421,7 +421,7 @@ function OrdersPage() {
                       <div className="h-1.5 flex-1 bg-muted rounded-full overflow-hidden">
                         <div className="h-full bg-gold" style={{ width: `${o.progress || 0}%` }} />
                       </div>
-                      <span className="text-2xs">{o.progress || 0}%</span>
+                      <span className="text-[10px]">{o.progress || 0}%</span>
                     </div>
                   </td>
                   <td className="p-3 hidden lg:table-cell">
@@ -440,7 +440,7 @@ function OrdersPage() {
                             quickStatus(o.id, o.number, "em_producao", "movida para produção")
                           }
                         >
-                          <Play className="w-4 h-4 text-info" />
+                          <Play className="w-4 h-4 text-blue-600" />
                         </Button>
                       )}
                     {o.production_status !== "entregue" &&
@@ -454,7 +454,7 @@ function OrdersPage() {
                             quickStatus(o.id, o.number, "entregue", "marcada como concluída");
                           }}
                         >
-                          <CheckCircle2 className="w-4 h-4 text-success" />
+                          <CheckCircle2 className="w-4 h-4 text-emerald-600" />
                         </Button>
                       )}
                     <Button

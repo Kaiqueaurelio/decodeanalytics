@@ -93,12 +93,12 @@ export function NotificationsBell() {
       <PopoverTrigger asChild>
         <button
           type="button"
-          className="relative hidden rounded-xl border border-border bg-card p-2.5 text-brand-blue shadow-sm transition-colors hover:bg-muted sm:block"
+          className="relative hidden rounded-xl border border-border bg-white p-2.5 text-brand-blue shadow-sm transition-colors hover:bg-muted sm:block"
           aria-label="Notificações"
         >
           <Bell className="h-5 w-5" />
           {count > 0 && (
-            <span className="absolute -right-1 -top-1 grid h-4 min-w-[16px] place-items-center rounded-full bg-brand-orange px-1 text-2xs font-black text-inverse ring-2 ring-inverse">
+            <span className="absolute -right-1 -top-1 grid h-4 min-w-[16px] place-items-center rounded-full bg-brand-orange px-1 text-[10px] font-black text-white ring-2 ring-white">
               {count > 9 ? "9+" : count}
             </span>
           )}
@@ -128,7 +128,7 @@ export function NotificationsBell() {
                       className={
                         "mt-1 h-2 w-2 shrink-0 rounded-full " +
                         (n.tone === "danger"
-                          ? "bg-destructive"
+                          ? "bg-red-500"
                           : n.tone === "warning"
                             ? "bg-brand-orange"
                             : "bg-brand-blue")

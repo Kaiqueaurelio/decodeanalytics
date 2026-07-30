@@ -76,16 +76,16 @@ function CashPage() {
               <Calendar className="w-5 h-5 opacity-75" />
               <p className="text-sm font-semibold opacity-90">SALDO DO DIA</p>
             </div>
-            <p className="text-3xl font-black tabular-nums sm:text-4xl md:text-5xl">{brl(todayTotals.in - todayTotals.out)}</p>
+            <p className="text-4xl md:text-5xl font-black">{brl(todayTotals.in - todayTotals.out)}</p>
           </div>
           <div className="text-right">
             <div className="mb-3">
               <p className="text-sm opacity-75 mb-1">Entradas</p>
-              <p className="text-lg font-bold tabular-nums text-success sm:text-2xl">{brl(todayTotals.in)}</p>
+              <p className="text-2xl font-bold text-emerald-600">{brl(todayTotals.in)}</p>
             </div>
             <div>
               <p className="text-sm opacity-75 mb-1">Saídas</p>
-              <p className="text-lg font-bold tabular-nums text-destructive sm:text-2xl">{brl(todayTotals.out)}</p>
+              <p className="text-2xl font-bold text-destructive">{brl(todayTotals.out)}</p>
             </div>
           </div>
         </div>
@@ -95,15 +95,15 @@ function CashPage() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
         <Card className="p-4">
           <div className="text-xs text-muted-foreground font-semibold mb-2">ENTRADAS (TOTAL)</div>
-          <div className="text-lg font-bold tabular-nums text-success sm:text-2xl">{brl(totals.in)}</div>
+          <div className="text-2xl font-bold text-emerald-600">{brl(totals.in)}</div>
         </Card>
         <Card className="p-4">
           <div className="text-xs text-muted-foreground font-semibold mb-2">SAÍDAS (TOTAL)</div>
-          <div className="text-lg font-bold tabular-nums text-destructive sm:text-2xl">{brl(totals.out)}</div>
+          <div className="text-2xl font-bold text-destructive">{brl(totals.out)}</div>
         </Card>
         <Card className="p-4 bg-primary text-primary-foreground">
           <div className="text-xs text-primary-foreground/80 font-semibold mb-2">SALDO GERAL</div>
-          <div className="text-lg font-bold tabular-nums text-gold sm:text-2xl">{brl(totals.in - totals.out)}</div>
+          <div className="text-2xl font-bold text-gold">{brl(totals.in - totals.out)}</div>
         </Card>
       </div>
 
@@ -166,11 +166,11 @@ function CashPage() {
             <tbody>
               {(data ?? []).map((e) => (
                 <tr key={e.id} className="border-t hover:bg-muted/30">
-                  <td className="p-3">{e.type === "entrada" ? <ArrowDownCircle className="w-4 h-4 text-success" /> : <ArrowUpCircle className="w-4 h-4 text-destructive" />}</td>
+                  <td className="p-3">{e.type === "entrada" ? <ArrowDownCircle className="w-4 h-4 text-emerald-600" /> : <ArrowUpCircle className="w-4 h-4 text-destructive" />}</td>
                   <td className="p-3 whitespace-nowrap">{fmtDate(e.entry_date)}</td>
                   <td className="p-3">{e.description}<div className="text-xs text-muted-foreground">{e.clients?.name}</div></td>
                   <td className="p-3 hidden md:table-cell"><Badge variant="outline">{e.category || "—"}</Badge></td>
-                  <td className={`p-3 text-right font-mono ${e.type === "entrada" ? "text-success" : "text-destructive"}`}>{e.type === "entrada" ? "+" : "-"} {brl(e.amount)}</td>
+                  <td className={`p-3 text-right font-mono ${e.type === "entrada" ? "text-emerald-600" : "text-destructive"}`}>{e.type === "entrada" ? "+" : "-"} {brl(e.amount)}</td>
                   <td className="p-3"><Button size="icon" variant="ghost" aria-label="Excluir lançamento" onClick={() => remove(e.id)}><Trash2 className="w-4 h-4 text-destructive" /></Button></td>
                 </tr>
               ))}

@@ -2,7 +2,6 @@ import { Link } from "@tanstack/react-router";
 import { Star } from "lucide-react";
 import { brl } from "./tokens";
 import { SmartImage } from "./SmartImage";
-import { QuoteBadge } from "./QuoteBadge";
 import { useShowPrices } from "@/hooks/useCompanyInfo";
 
 export type StoreProduct = {
@@ -23,20 +22,20 @@ export type StoreProduct = {
 
 const BADGE_TONE: Record<string, string> = {
   "Mais vendido": "bg-[var(--store-secondary)] text-[var(--store-primary-dark)]",
-  Promoção: "bg-[var(--store-accent)] text-inverse",
-  Lançamento: "bg-[var(--store-primary-light)] text-inverse",
-  "Arte grátis": "bg-[var(--store-success)] text-inverse",
-  "Produção rápida": "bg-[var(--store-warning)] text-inverse",
+  Promoção: "bg-[var(--store-accent)] text-white",
+  Lançamento: "bg-[var(--store-primary-light)] text-white",
+  "Arte grátis": "bg-[var(--store-success)] text-white",
+  "Produção rápida": "bg-[var(--store-warning)] text-white",
 };
 
 export function ProductCard({ product }: { product: StoreProduct }) {
   const slug = product.slug ?? product.id;
   const showPrices = useShowPrices();
-  const tone = product.badge ? BADGE_TONE[product.badge] ?? "bg-[var(--store-primary)] text-inverse" : null;
+  const tone = product.badge ? BADGE_TONE[product.badge] ?? "bg-[var(--store-primary)] text-white" : null;
   const rating = product.rating ? Number(product.rating) : null;
 
   return (
-    <article className="group flex flex-col overflow-hidden rounded-[var(--store-radius-lg)] border border-[var(--store-border)] bg-card shadow-[var(--store-shadow-sm)] transition-all duration-200 hover:-translate-y-1 hover:border-[var(--store-primary-light)]/40 hover:shadow-[var(--store-shadow-md)]">
+    <article className="group flex flex-col overflow-hidden rounded-[var(--store-radius-lg)] border border-[var(--store-border)] bg-white shadow-[var(--store-shadow-sm)] transition-all duration-200 hover:-translate-y-1 hover:border-[var(--store-primary-light)]/40 hover:shadow-[var(--store-shadow-md)]">
       <Link
         to="/produto/$slug"
         params={{ slug }}
@@ -49,17 +48,17 @@ export function ProductCard({ product }: { product: StoreProduct }) {
         />
         {product.badge && tone && (
           <span
-            className={`absolute left-3 top-3 rounded-full px-2.5 py-1 text-2xs font-extrabold uppercase tracking-wide ${tone}`}
+            className={`absolute left-3 top-3 rounded-full px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-wide ${tone}`}
           >
             {product.badge}
           </span>
         )}
       </Link>
       <div className="flex flex-1 flex-col p-4">
-        <p className="text-2xs font-bold uppercase tracking-wide text-[var(--store-accent)]">
+        <p className="text-[11px] font-bold uppercase tracking-wide text-[var(--store-accent)]">
           {product.category ?? "Personalizado"}
         </p>
-        <h3 className="mt-1 line-clamp-2 text-sm font-bold leading-snug text-[var(--store-text)]">
+        <h3 className="mt-1 line-clamp-2 text-[15px] font-bold leading-snug text-[var(--store-text)]">
           <Link to="/produto/$slug" params={{ slug }} className="hover:text-[var(--store-primary)]">
             {product.name}
           </Link>
@@ -80,7 +79,7 @@ export function ProductCard({ product }: { product: StoreProduct }) {
           <div>
             {showPrices ? (
               <>
-                <p className="text-2xs uppercase tracking-wide text-[var(--store-text-light)]">
+                <p className="text-[10px] uppercase tracking-wide text-[var(--store-text-light)]">
                   A partir de
                 </p>
                 <p className="text-xl font-extrabold leading-tight text-[var(--store-primary)]">
@@ -88,10 +87,12 @@ export function ProductCard({ product }: { product: StoreProduct }) {
                 </p>
               </>
             ) : (
-              <QuoteBadge />
+              <p className="text-base font-extrabold leading-tight text-[var(--store-primary)]">
+                Sob consulta
+              </p>
             )}
             {product.min_quantity ? (
-              <p className="text-2xs text-[var(--store-text-muted)]">
+              <p className="text-[11px] text-[var(--store-text-muted)]">
                 a partir de {product.min_quantity} {product.unit ?? "un"}
               </p>
             ) : null}
@@ -100,7 +101,7 @@ export function ProductCard({ product }: { product: StoreProduct }) {
         <Link
           to="/produto/$slug"
           params={{ slug }}
-          className="mt-4 inline-flex h-10 items-center justify-center rounded-[var(--store-radius-md)] bg-[var(--store-primary)] text-sm font-bold text-inverse transition-colors hover:bg-[var(--store-primary-light)]"
+          className="mt-4 inline-flex h-10 items-center justify-center rounded-[var(--store-radius-md)] bg-[var(--store-primary)] text-sm font-bold text-white transition-colors hover:bg-[var(--store-primary-light)]"
         >
           Ver produto
         </Link>
@@ -111,7 +112,7 @@ export function ProductCard({ product }: { product: StoreProduct }) {
 
 export function ProductCardSkeleton() {
   return (
-    <div className="overflow-hidden rounded-[var(--store-radius-lg)] border border-[var(--store-border)] bg-card">
+    <div className="overflow-hidden rounded-[var(--store-radius-lg)] border border-[var(--store-border)] bg-white">
       <div className="aspect-[4/3] animate-pulse bg-[var(--store-surface-soft)]" />
       <div className="space-y-2 p-4">
         <div className="h-3 w-16 animate-pulse rounded bg-[var(--store-surface-soft)]" />
@@ -146,11 +147,11 @@ export function SectionHeader({
     <header className="mb-6 flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-end">
       <div className="min-w-0">
         {kicker && (
-          <p className="text-2xs font-extrabold uppercase tracking-[0.18em] text-[var(--store-accent)]">
+          <p className="text-[11px] font-extrabold uppercase tracking-[0.18em] text-[var(--store-accent)]">
             {kicker}
           </p>
         )}
-        <h2 className="mt-1 text-2xl font-extrabold tracking-tight text-[var(--store-primary)] sm:text-3xl">
+        <h2 className="mt-1 text-2xl font-extrabold tracking-tight text-[var(--store-primary)] sm:text-[28px]">
           {title}
         </h2>
         {description && (
