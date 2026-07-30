@@ -747,6 +747,11 @@
   .animate-shimmer-bg { animation: none !important; }
 }
 
+/* Spinner de carregamento: reduz para um pulso lento em vez de girar. */
+@media (prefers-reduced-motion: reduce) {
+  .animate-spin { animation-duration: 2s !important; }
+}
+
 /* ============ Cursor follower (desktop only) ============ */
 @media (pointer: fine) {
   .cursor-follower-dot,
