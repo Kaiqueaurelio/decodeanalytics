@@ -141,7 +141,7 @@ const NAV: NavItem[] = [
   },
   {
     to: "/ella",
-    label: "Ella Ribeiro",
+    label: "Assistente IA",
     description: "Assistente de IA para gestão",
     icon: Sparkles,
     section: "Administração",
@@ -149,7 +149,7 @@ const NAV: NavItem[] = [
   },
   {
     to: "/ella-training",
-    label: "Treinar a Ella",
+    label: "Treinar a IA",
     description: "Base de conhecimento e comportamento da assistente",
     icon: GraduationCap,
     section: "Administração",
@@ -157,7 +157,7 @@ const NAV: NavItem[] = [
   },
   {
     to: "/ella-sandbox",
-    label: "Sandbox da Ella",
+    label: "Sandbox da IA",
     description: "Testar respostas e ver treinamento aplicado",
     icon: Beaker,
     section: "Administração",
@@ -418,7 +418,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                 to="/ella"
                 className="hidden h-11 shrink-0 items-center gap-2 rounded-xl border border-blue-200 bg-blue-50 px-3 text-sm font-extrabold text-brand-blue hover:bg-blue-100 xl:inline-flex"
               >
-                <Sparkles className="h-4 w-4" /> Perguntar à Ella
+                <Sparkles className="h-4 w-4" /> Assistente IA
               </Link>
             )}
 

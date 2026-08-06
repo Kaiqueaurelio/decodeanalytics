@@ -4,6 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import {
   Send,
   Loader2,
+  Bot,
   Sparkles,
   Wrench,
   ChevronDown,
@@ -23,7 +24,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { ellaChat } from "@/lib/api/ella.functions";
-import { EllaAvatar } from "@/components/EllaAvatar";
+
 
 export const Route = createFileRoute("/_authenticated/ella")({
   component: EllaPage,
@@ -113,7 +114,7 @@ function EllaPage() {
       id: "welcome",
       role: "assistant",
       content:
-        "Olá! Sou a **Ella Ribeiro** 👋 — sua assistente operacional completa. Executo tudo: OS, cobranças, clientes, usuários e papéis, lembretes e mais. Você pode falar por **áudio** 🎤 ou anexar **arquivos** 📎 (imagem, PDF, vídeo, áudio) que eu analiso pra você.",
+        "Olá! 👋 Sou seu **assistente operacional** completo. Executo tudo: OS, cobranças, clientes, usuários e papéis, lembretes e mais. Você pode falar por **áudio** 🎤 ou anexar **arquivos** 📎 (imagem, PDF, vídeo, áudio) que eu analiso pra você.",
     },
   ]);
   const [input, setInput] = useState("");
@@ -280,7 +281,7 @@ function EllaPage() {
       ]);
     } catch (err) {
       console.error(err);
-      toast.error("Não consegui falar com a Ella agora.");
+      toast.error("Não consegui falar com o assistente agora.");
     } finally {
       setLoading(false);
       setTimeout(() => inputRef.current?.focus(), 0);
@@ -295,9 +296,9 @@ function EllaPage() {
   return (
     <div className="flex flex-col h-[calc(100dvh-4rem)] sm:h-[calc(100dvh-5rem)] max-w-3xl mx-auto w-full px-3 sm:px-6 py-3 sm:py-6">
       <header className="grid grid-cols-[auto_minmax(0,1fr)] items-center gap-3 pb-3 sm:pb-4 border-b">
-        <EllaAvatar size={44} alt="Avatar de Ella Ribeiro" />
+        <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-primary text-primary-foreground"><Bot className="h-6 w-6" /></span>
         <div className="min-w-0">
-          <h1 className="truncate text-lg sm:text-xl font-black tracking-tight">Ella Ribeiro</h1>
+          <h1 className="truncate text-lg sm:text-xl font-black tracking-tight">Assistente IA</h1>
           <p className="truncate text-xs sm:text-sm text-muted-foreground">
             Assistente operacional — cria OS, cobranças, lembretes e faz consultas
           </p>
@@ -365,7 +366,7 @@ function EllaPage() {
           <div className="flex justify-start">
             <div className="bg-muted rounded-2xl rounded-bl-sm px-4 py-2.5 flex items-center gap-2 text-sm text-muted-foreground">
               <Loader2 className="h-4 w-4 animate-spin" />
-              Ella está trabalhando…
+              Trabalhando…
             </div>
           </div>
         )}
@@ -465,7 +466,7 @@ function EllaPage() {
             placeholder={
               recording
                 ? "Gravando… toque no quadrado para parar."
-                : "Fale, escreva ou anexe arquivos para a Ella…"
+                : "Fale, escreva ou anexe arquivos…"
             }
             rows={1}
             disabled={loading}

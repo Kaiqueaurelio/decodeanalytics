@@ -69,7 +69,7 @@ const CATEGORY_META: Record<
 > = {
   comportamento: {
     label: "Comportamento",
-    description: "Como a Ella deve agir, tom de voz, personalidade, limites",
+    description: "Como o assistente deve agir, tom de voz, personalidade, limites",
     icon: Bot,
     tone: "bg-purple-100 text-purple-800",
   },
@@ -87,7 +87,7 @@ const CATEGORY_META: Record<
   },
   geral: {
     label: "Geral",
-    description: "Outros aprendizados salvos pela Ella",
+    description: "Outros aprendizados salvos pelo assistente",
     icon: BookOpen,
     tone: "bg-slate-100 text-slate-800",
   },
@@ -234,10 +234,10 @@ function EllaTrainingPage() {
         <div>
           <h1 className="text-2xl font-black tracking-tight flex items-center gap-2">
             <Sparkles className="h-6 w-6 text-primary" />
-            Treinamento da Ella
+            Treinamento da IA
           </h1>
           <p className="text-sm text-muted-foreground max-w-2xl">
-            Ensine a Ella. Tudo que você registrar aqui vira base de conhecimento que ela
+            Ensine o assistente. Tudo que você registrar aqui vira base de conhecimento que ele
             consulta em todo atendimento — no chat interno e na loja pública.
           </p>
         </div>
@@ -327,7 +327,7 @@ function EllaTrainingPage() {
         ) : filtered.length === 0 ? (
           <div className="py-10 text-center text-muted-foreground">
             <BookOpen className="h-8 w-8 mx-auto mb-2 opacity-50" />
-            Nenhum treinamento aqui ainda. Comece cadastrando como a Ella deve se
+            Nenhum treinamento aqui ainda. Comece cadastrando como o assistente deve se
             comportar ou uma dica de atendimento.
           </div>
         ) : (
@@ -436,7 +436,7 @@ function EllaTrainingPage() {
               <Input
                 value={form.title}
                 onChange={(e) => setForm((f) => ({ ...f, title: e.target.value }))}
-                placeholder="Ex.: Tom de voz da Ella / Política de troca / Papel Couché"
+                placeholder="Ex.: Tom de voz do assistente / Política de troca / Papel Couché"
                 maxLength={140}
               />
             </div>
@@ -445,13 +445,13 @@ function EllaTrainingPage() {
               <Textarea
                 value={form.content}
                 onChange={(e) => setForm((f) => ({ ...f, content: e.target.value }))}
-                placeholder="Escreva com clareza — a Ella lê tudo isso ao atender. Ex.: 'Sempre cumprimente pelo nome quando souber. Nunca prometa prazos abaixo de 3 dias úteis.'"
+                placeholder="Escreva com clareza — o assistente lê tudo isso ao atender. Ex.: 'Sempre cumprimente pelo nome quando souber. Nunca prometa prazos abaixo de 3 dias úteis.'"
                 rows={10}
               />
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="grid gap-2">
-                <Label>Escopo (onde a Ella pode usar)</Label>
+                <Label>Escopo (onde o assistente pode usar)</Label>
                 <Select
                   value={form.scope}
                   onValueChange={(v: Scope) => setForm((f) => ({ ...f, scope: v }))}
@@ -492,7 +492,7 @@ function EllaTrainingPage() {
           <AlertDialogHeader>
             <AlertDialogTitle>Remover treinamento?</AlertDialogTitle>
             <AlertDialogDescription>
-              A Ella deixa de considerar este conhecimento imediatamente. Essa ação não pode
+              O assistente deixa de considerar este conhecimento imediatamente. Essa ação não pode
               ser desfeita.
             </AlertDialogDescription>
           </AlertDialogHeader>

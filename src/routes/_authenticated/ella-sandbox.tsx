@@ -49,11 +49,11 @@ function EllaSandboxPage() {
     mutationFn: async () => call({ data: { message: message.trim(), scope } }),
     onSuccess: (data) => { setResult(data); setFailure(null); },
     onError: (err: any) => {
-      toast.error(err?.message ?? "Falha ao consultar a Ella");
+      toast.error(err?.message ?? "Falha ao consultar o assistente");
       setResult(null);
       setFailure({
         run_id: err?.run_id,
-        message: err?.message ?? "Falha ao consultar a Ella",
+        message: err?.message ?? "Falha ao consultar o assistente",
         error_type: err?.error_type,
         stack_trace: err?.stack_trace ?? err?.stack ?? null,
         steps: err?.steps,
@@ -73,9 +73,9 @@ function EllaSandboxPage() {
           <Beaker className="h-6 w-6" />
         </div>
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Sandbox da Ella</h1>
+          <h1 className="text-2xl font-semibold tracking-tight">Sandbox da IA</h1>
           <p className="text-sm text-muted-foreground">
-            Teste a Ella com as diretrizes atuais e veja exatamente qual treinamento foi usado
+            Teste o assistente com as diretrizes atuais e veja exatamente qual treinamento foi usado
             para responder.
           </p>
         </div>
@@ -88,7 +88,7 @@ function EllaSandboxPage() {
             <Textarea
               value={message}
               onChange={(e) => setMessage(e.target.value)}
-              placeholder="Digite sua pergunta aqui para testar a Ella..."
+              placeholder="Digite sua pergunta aqui para testar o assistente..."
               rows={4}
               onKeyDown={(e) => {
                 if ((e.metaKey || e.ctrlKey) && e.key === "Enter") submit();
@@ -222,7 +222,7 @@ function EllaSandboxPage() {
           )}
           <div className="flex items-center gap-2">
             <Sparkles className="h-5 w-5 text-primary" />
-            <h2 className="text-lg font-semibold">Resposta da Ella</h2>
+            <h2 className="text-lg font-semibold">Resposta do assistente</h2>
             <span className="ml-auto flex items-center gap-1 text-xs text-muted-foreground">
               <Clock className="h-3 w-3" /> {result.duration_ms} ms
             </span>
