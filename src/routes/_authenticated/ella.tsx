@@ -4,6 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import {
   Send,
   Loader2,
+  Bot,
   Sparkles,
   Wrench,
   ChevronDown,
