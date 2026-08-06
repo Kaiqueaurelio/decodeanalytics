@@ -145,7 +145,7 @@ function StoreHeader() {
             className="flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-bold text-purple-600 hover:bg-purple-50 transition-colors"
           >
             <Sparkles className="h-4 w-4" />
-            Ella AI
+            Assistente IA
           </Link>
           <a
             href={waLink("Olá! Vim do site da Alcateia's.")}
@@ -234,7 +234,7 @@ function StoreHeader() {
                     className="flex items-center gap-3 px-3 py-3 rounded-lg text-sm font-bold text-purple-600 hover:bg-purple-50 transition-colors"
                   >
                     <Sparkles className="h-4 w-4" />
-                    Perguntar à Ella
+                    Falar com o assistente
                   </Link>
                   <Link
                     to="/auth"
