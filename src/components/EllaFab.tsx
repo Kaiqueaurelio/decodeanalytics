@@ -1,7 +1,6 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Sparkles } from "lucide-react";
+import { Bot, Sparkles } from "lucide-react";
 import { useAuth } from "@/lib/auth";
-import { EllaAvatar } from "@/components/EllaAvatar";
 import { cn } from "@/lib/utils";
 
 /**
@@ -20,8 +19,8 @@ export function EllaFab() {
   return (
     <Link
       to="/ella"
-      aria-label="Abrir Ella — assistente de IA"
-      title="Perguntar à Ella"
+      aria-label="Abrir assistente de IA"
+      title="Falar com o assistente"
       style={{
         bottom: "max(1.25rem, env(safe-area-inset-bottom))",
         right: "max(1rem, env(safe-area-inset-right))",
@@ -34,12 +33,7 @@ export function EllaFab() {
       )}
     >
       <span className="relative grid h-11 w-11 shrink-0 place-items-center overflow-hidden rounded-full bg-white ring-2 ring-brand-yellow">
-        <EllaAvatar
-          size={44}
-          alt="Avatar de Ella"
-          ringClassName=""
-          imgClassName="transition-transform duration-500 group-hover:scale-110"
-        />
+        <Bot className="h-6 w-6 text-brand-blue transition-transform duration-500 group-hover:scale-110" />
         <span
           aria-hidden
           className="absolute inset-0 rounded-full ring-2 ring-brand-yellow/60 animate-[soft-pulse_2.4s_ease-in-out_infinite]"
@@ -49,7 +43,7 @@ export function EllaFab() {
         <span className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-[0.18em] text-brand-yellow">
           <Sparkles className="h-3 w-3" /> IA
         </span>
-        <span className="block text-sm font-extrabold">Perguntar à Ella</span>
+        <span className="block text-sm font-extrabold">Assistente IA</span>
       </span>
     </Link>
   );

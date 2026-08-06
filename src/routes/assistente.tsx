@@ -10,18 +10,25 @@ import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { ellaPublicChat } from "@/lib/api/ella-public.functions";
 import { StoreShell } from "@/components/storefront/StoreShell";
-import { EllaAvatar } from "@/components/EllaAvatar";
+import { Bot } from "lucide-react";
 
 export const Route = createFileRoute("/assistente")({
   component: AssistantePage,
   head: () => ({
     meta: [
-      { title: "Ella — Consultora virtual da Alcateia's Gráfica" },
+      { title: "Assistente virtual — Alcateia's Produções Gráficas" },
       {
         name: "description",
         content:
-          "Fale com a Ella, nossa consultora virtual: ela te ajuda a escolher o produto gráfico ideal (cartão, banner, adesivo, brindes e mais).",
+          "Fale com nosso assistente virtual: ele te ajuda a escolher o produto gráfico ideal (cartão, banner, adesivo, brindes e mais).",
       },
+      { property: "og:title", content: "Assistente virtual — Alcateia's Produções Gráficas" },
+      {
+        property: "og:description",
+        content: "Tire dúvidas sobre impressos, acabamentos, prazos e orçamentos com nosso assistente virtual.",
+      },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
 });
@@ -46,7 +53,7 @@ function AssistantePage() {
       id: "welcome",
       role: "assistant",
       content:
-        "Oi! Sou a **Ella** 👋 consultora da Alcateia's. Me conta o que você precisa imprimir e eu te ajudo a escolher a melhor opção — papel, acabamento, quantidade e prazo. 🎨",
+        "Oi! 👋 Sou o assistente virtual da Alcateia's. Me conta o que você precisa imprimir e eu te ajudo a escolher a melhor opção — papel, acabamento, quantidade e prazo. 🎨",
     },
   ]);
   const [input, setInput] = useState("");
@@ -89,17 +96,15 @@ function AssistantePage() {
     <StoreShell>
       <div className="mx-auto flex max-w-3xl flex-col px-3 sm:px-6 py-6 min-h-[70vh]">
         <header className="grid grid-cols-[auto_minmax(0,1fr)] items-center gap-3 pb-4 border-b border-[var(--store-border)]">
-          <EllaAvatar
-            size={48}
-            alt="Avatar de Ella Ribeiro"
-            ringClassName="ring-2 ring-[var(--store-secondary)]"
-          />
+          <span className="grid h-12 w-12 shrink-0 place-items-center rounded-full bg-[var(--store-primary)] text-white ring-2 ring-[var(--store-secondary)]">
+            <Bot className="h-6 w-6" />
+          </span>
           <div className="min-w-0">
             <h1 className="truncate text-xl font-black tracking-tight text-[var(--store-primary)]">
-              Ella Ribeiro
+              Assistente virtual
             </h1>
             <p className="truncate text-sm text-[var(--store-text-muted)]">
-              Consultora virtual da Alcateia's — te ajuda a escolher o produto ideal
+              Alcateia's Produções Gráficas — te ajuda a escolher o produto ideal
             </p>
           </div>
         </header>
@@ -132,7 +137,7 @@ function AssistantePage() {
             <div className="flex justify-start">
               <div className="bg-[var(--store-surface-soft)] rounded-2xl rounded-bl-sm px-4 py-2.5 flex items-center gap-2 text-sm text-[var(--store-text-muted)]">
                 <Loader2 className="h-4 w-4 animate-spin" />
-                Ella está pensando…
+                Pensando…
               </div>
             </div>
           )}
