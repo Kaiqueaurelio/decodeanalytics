@@ -85,7 +85,7 @@ function AssistantePage() {
       ]);
     } catch (err) {
       console.error(err);
-      toast.error("Não consegui falar com a Ella agora.");
+      toast.error("Não consegui falar com o assistente agora.");
     } finally {
       setLoading(false);
       setTimeout(() => inputRef.current?.focus(), 0);
