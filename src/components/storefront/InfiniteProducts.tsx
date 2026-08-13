@@ -170,7 +170,7 @@ function FeedCard({
           src={product.image_url} 
           alt={product.name}
           fallbackEmoji="📦"
-          className="transition-transform duration-500 group-hover:scale-[1.06]"
+          className="brightness-[1.02] contrast-[1.05] transition-transform duration-500 group-hover:scale-110"
         />
         {product.badge && (
           <span className="absolute left-2 top-2 rounded-sm bg-[var(--store-ink)] px-2 py-0.5 text-[9px] font-extrabold uppercase tracking-wider text-[var(--store-gold)]">
