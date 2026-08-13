@@ -43,6 +43,16 @@ function Page() {
         default_order_text: form.default_order_text,
         default_deadline_days: Number(form.default_deadline_days) || 3,
         show_prices: form.show_prices !== false,
+        hero_title: form.hero_title,
+        hero_subtitle: form.hero_subtitle,
+        hero_cta_primary: form.hero_cta_primary,
+        hero_cta_secondary: form.hero_cta_secondary,
+        bento_kicker: form.bento_kicker,
+        bento_title: form.bento_title,
+        bento_description: form.bento_description,
+        how_it_works_title: form.how_it_works_title,
+        contact_title: form.contact_title,
+        contact_description: form.contact_description,
       })
       .eq("id", form.id);
     if (error) return toast.error(error.message);
@@ -209,7 +219,101 @@ function Page() {
             />
           </div>
         </div>
-        <Button onClick={save}>Salvar</Button>
+
+        <h2 className="font-semibold text-primary pt-6">Textos da Landing Page</h2>
+        <div className="space-y-6">
+          <Card className="p-4 bg-muted/30">
+            <h3 className="text-sm font-bold uppercase tracking-wider mb-4 opacity-70">Seção Hero (Topo)</h3>
+            <div className="grid gap-4">
+              <div>
+                <Label>Título Principal (Aceita HTML como &lt;br /&gt;)</Label>
+                <Input
+                  value={form.hero_title ?? ""}
+                  onChange={(e) => setForm({ ...form, hero_title: e.target.value })}
+                />
+              </div>
+              <div>
+                <Label>Subtítulo</Label>
+                <Textarea
+                  value={form.hero_subtitle ?? ""}
+                  onChange={(e) => setForm({ ...form, hero_subtitle: e.target.value })}
+                />
+              </div>
+              <div className="grid md:grid-cols-2 gap-3">
+                <div>
+                  <Label>Botão Principal (CTA)</Label>
+                  <Input
+                    value={form.hero_cta_primary ?? ""}
+                    onChange={(e) => setForm({ ...form, hero_cta_primary: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <Label>Botão Secundário</Label>
+                  <Input
+                    value={form.hero_cta_secondary ?? ""}
+                    onChange={(e) => setForm({ ...form, hero_cta_secondary: e.target.value })}
+                  />
+                </div>
+              </div>
+            </div>
+          </Card>
+
+          <Card className="p-4 bg-muted/30">
+            <h3 className="text-sm font-bold uppercase tracking-wider mb-4 opacity-70">Seção Mais Pedidos (Bento)</h3>
+            <div className="grid gap-4">
+              <div>
+                <Label>Kicker (Texto pequeno acima do título)</Label>
+                <Input
+                  value={form.bento_kicker ?? ""}
+                  onChange={(e) => setForm({ ...form, bento_kicker: e.target.value })}
+                />
+              </div>
+              <div>
+                <Label>Título da Seção</Label>
+                <Input
+                  value={form.bento_title ?? ""}
+                  onChange={(e) => setForm({ ...form, bento_title: e.target.value })}
+                />
+              </div>
+              <div>
+                <Label>Descrição</Label>
+                <Textarea
+                  value={form.bento_description ?? ""}
+                  onChange={(e) => setForm({ ...form, bento_description: e.target.value })}
+                />
+              </div>
+            </div>
+          </Card>
+
+          <Card className="p-4 bg-muted/30">
+            <h3 className="text-sm font-bold uppercase tracking-wider mb-4 opacity-70">Como Funciona & Contato</h3>
+            <div className="grid gap-4">
+              <div>
+                <Label>Título "Como Funciona"</Label>
+                <Input
+                  value={form.how_it_works_title ?? ""}
+                  onChange={(e) => setForm({ ...form, how_it_works_title: e.target.value })}
+                />
+              </div>
+              <div className="border-t pt-4 mt-2">
+                <Label>Título Seção de Contato</Label>
+                <Input
+                  value={form.contact_title ?? ""}
+                  onChange={(e) => setForm({ ...form, contact_title: e.target.value })}
+                />
+              </div>
+              <div>
+                <Label>Descrição Contato</Label>
+                <Textarea
+                  value={form.contact_description ?? ""}
+                  onChange={(e) => setForm({ ...form, contact_description: e.target.value })}
+                />
+              </div>
+            </div>
+          </Card>
+        </div>
+
+        <Button onClick={save} className="w-full md:w-auto h-12 px-8">Salvar Alterações</Button>
       </Card>
     </div>
   );
