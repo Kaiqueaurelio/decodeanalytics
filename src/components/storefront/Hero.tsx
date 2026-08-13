@@ -1,10 +1,11 @@
 import { Link } from "@tanstack/react-router";
 import { ArrowRight, Upload, Calculator, Sparkles, Tag } from "lucide-react";
-import { useWaLink } from "@/hooks/useCompanyInfo";
+import { useWaLink, useCompanyInfo } from "@/hooks/useCompanyInfo";
 import { CATEGORY_IMAGES } from "./productImages";
 
 export function Hero() {
   const waLink = useWaLink();
+  const { heroTitle, heroSubtitle, heroCtaPrimary, heroCtaSecondary } = useCompanyInfo();
   return (
     <section className="mx-auto w-full max-w-[1280px] px-3 pt-3 sm:px-4 sm:pt-4 md:pt-6">
       {/* Big bright blue hero banner — Futuraim-style */}
@@ -26,16 +27,12 @@ export function Hero() {
             <span className="inline-flex max-w-full items-center gap-2 rounded-full bg-white/15 px-3 py-1 text-[10px] font-extrabold uppercase text-white backdrop-blur sm:text-[11px]" style={{ letterSpacing: "0.08em" }}>
               <Sparkles className="h-3 w-3" /> Alcateia · produções gráficas · 48h
             </span>
-            <h1 className="font-display mt-5 text-[2rem] leading-[0.98] sm:text-5xl md:text-6xl lg:text-7xl">
-              IMPRESSÃO
-              <br />
-              <span className="inline-block max-w-full rounded-md bg-[var(--store-secondary)] px-2 py-1 text-[var(--store-primary-dark)] sm:px-3">
-                PRODUÇÕES GRÁFICAS
-              </span>
-            </h1>
+            <h1 
+              className="font-display mt-5 text-[2rem] leading-[0.98] sm:text-5xl md:text-6xl lg:text-7xl"
+              dangerouslySetInnerHTML={{ __html: heroTitle }}
+            />
             <p className="mt-5 max-w-md text-sm sm:text-base font-medium text-white/85">
-              Cartões, banners, camisetas, canecas, adesivos e brindes feitos com
-              acabamento profissional pela Alcateia — gráfica que uiva por qualidade.
+              {heroSubtitle}
             </p>
 
             <div className="mt-6 inline-flex max-w-full items-center gap-2 rounded-lg bg-white/10 px-3 py-2 text-xs font-bold backdrop-blur sm:px-4 sm:text-sm">
@@ -53,7 +50,7 @@ export function Hero() {
                 to="/produtos"
                 className="inline-flex min-h-12 items-center justify-center gap-2 rounded-[var(--store-radius-md)] bg-white px-5 py-3 text-sm font-extrabold uppercase tracking-wide text-store-primary shadow-md transition-transform hover:scale-[1.03] sm:px-8"
               >
-                Ver produtos <ArrowRight className="h-4 w-4" />
+                {heroCtaPrimary} <ArrowRight className="h-4 w-4" />
               </Link>
               <a
                 href={waLink("Olá! Quero enviar minha arte para um orçamento.")}
@@ -61,7 +58,7 @@ export function Hero() {
                 rel="noopener noreferrer"
                 className="inline-flex min-h-12 items-center justify-center gap-2 rounded-[var(--store-radius-md)] border-2 border-white/70 bg-transparent px-5 py-3 text-sm font-extrabold uppercase tracking-wide text-white transition-colors hover:bg-white hover:text-store-primary sm:px-8"
               >
-                <Upload className="h-4 w-4" /> Enviar minha arte
+                <Upload className="h-4 w-4" /> {heroCtaSecondary}
               </a>
             </div>
           </div>

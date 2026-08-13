@@ -14,6 +14,17 @@ export interface CompanyInfo {
   mapsUrl: string;
   hours: { day: string; time: string }[];
   showPrices: boolean;
+  // Landing page dynamic texts
+  heroTitle: string;
+  heroSubtitle: string;
+  heroCtaPrimary: string;
+  heroCtaSecondary: string;
+  bentoKicker: string;
+  bentoTitle: string;
+  bentoDescription: string;
+  howItWorksTitle: string;
+  contactTitle: string;
+  contactDescription: string;
 }
 
 function digitsOnly(v?: string | null) {
@@ -44,7 +55,12 @@ export function useCompanyInfo(): CompanyInfo {
     queryFn: async () => {
       const { data } = await supabase
         .from("company_settings")
-        .select("name,logo_url,whatsapp,instagram,address,show_prices")
+        .select(`
+          name, logo_url, whatsapp, instagram, address, show_prices,
+          hero_title, hero_subtitle, hero_cta_primary, hero_cta_secondary,
+          bento_kicker, bento_title, bento_description,
+          how_it_works_title, contact_title, contact_description
+        `)
         .limit(1)
         .maybeSingle();
       return data;
@@ -69,6 +85,16 @@ export function useCompanyInfo(): CompanyInfo {
       : STORE_CONTACT.mapsUrl,
     hours: STORE_CONTACT.hours,
     showPrices: data?.show_prices !== false,
+    heroTitle: data?.hero_title ?? "IMPRESSÃO<br />PRODUÇÕES GRÁFICAS",
+    heroSubtitle: data?.hero_subtitle ?? "Cartões, banners, camisetas, canecas, adesivos e brindes feitos com acabamento profissional pela Alcateia — gráfica que uiva por qualidade.",
+    heroCtaPrimary: data?.hero_cta_primary ?? "Ver produtos",
+    heroCtaSecondary: data?.hero_cta_secondary ?? "Enviar minha arte",
+    bentoKicker: data?.bento_kicker ?? "Os favoritos dos IMbatíveis",
+    bentoTitle: data?.bento_title ?? "MAIS PEDIDOS DA GRÁFICA",
+    bentoDescription: data?.bento_description ?? "Preços direto da nossa produção — atualizados em tempo real pelo painel.",
+    howItWorksTitle: data?.how_it_works_title ?? "Do briefing à entrega em poucos passos",
+    contactTitle: data?.contact_title ?? "Fale com a Alcateia",
+    contactDescription: data?.contact_description ?? "Tire dúvidas sobre prazos, materiais ou peça um orçamento personalizado pelo nosso canal oficial.",
   };
 }
 

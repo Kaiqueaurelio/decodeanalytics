@@ -96,6 +96,7 @@ function FeaturedBento() {
   const { data, isLoading } = useStoreProducts(24);
   const items = data ?? [];
   const waLink = useWaLink();
+  const { bentoKicker, bentoTitle, bentoDescription } = useCompanyInfo();
   const featured = items.slice(0, 10);
 
   return (
@@ -103,13 +104,13 @@ function FeaturedBento() {
       <header className="mb-5 flex flex-col items-start justify-between gap-2 sm:flex-row sm:items-end">
         <div className="min-w-0">
           <p className="text-[11px] font-extrabold uppercase tracking-[0.22em] text-[#172554]">
-            Os favoritos dos IMbatíveis
+            {bentoKicker}
           </p>
           <h2 className="font-display mt-1 text-4xl leading-none text-[var(--store-primary-dark)] sm:text-5xl">
-            MAIS PEDIDOS DA GRÁFICA
+            {bentoTitle}
           </h2>
           <p className="mt-2 max-w-2xl text-sm text-[var(--store-text-muted)]">
-            Preços direto da nossa produção — atualizados em tempo real pelo painel.
+            {bentoDescription}
           </p>
         </div>
         <Link
@@ -331,6 +332,7 @@ function CategoriesSection() {
 
 function HowItWorks() {
   const waLink = useWaLink();
+  const { howItWorksTitle } = useCompanyInfo();
   const steps = [
     { icon: Sparkles, title: "Escolha o produto", desc: "Navegue pelo catálogo e selecione a opção ideal." },
     { icon: Upload, title: "Envie sua arte", desc: "Anexe o arquivo ou peça para nossa equipe criar." },
@@ -341,7 +343,7 @@ function HowItWorks() {
     <section className="mx-auto max-w-[1280px] px-4 py-12 sm:py-16">
       <SectionHeader
         kicker="Como funciona"
-        title="Do briefing à entrega em poucos passos"
+        title={howItWorksTitle}
       />
       <ol className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {steps.map((s, idx) => (
@@ -636,11 +638,10 @@ function _ContactSection() {
             Atendimento
           </p>
           <h2 className="mt-2 text-3xl font-extrabold sm:text-4xl">
-            Estamos por perto para tirar sua ideia do papel
+            {info.contactTitle}
           </h2>
           <p className="mt-3 text-white/70">
-            Fale com a equipe Alcateia's no WhatsApp, na loja ou por e-mail. Resposta rápida nos
-            horários de atendimento.
+            {info.contactDescription}
           </p>
           <a
             href={waLink("Olá! Quero fazer um orçamento.")}

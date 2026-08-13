@@ -305,10 +305,20 @@ export type Database = {
       company_settings: {
         Row: {
           address: string | null
+          bento_description: string | null
+          bento_kicker: string | null
+          bento_title: string | null
+          contact_description: string | null
+          contact_title: string | null
           default_deadline_days: number | null
           default_order_text: string | null
           default_quote_text: string | null
           document: string | null
+          hero_cta_primary: string | null
+          hero_cta_secondary: string | null
+          hero_subtitle: string | null
+          hero_title: string | null
+          how_it_works_title: string | null
           id: string
           instagram: string | null
           logo_url: string | null
@@ -319,10 +329,20 @@ export type Database = {
         }
         Insert: {
           address?: string | null
+          bento_description?: string | null
+          bento_kicker?: string | null
+          bento_title?: string | null
+          contact_description?: string | null
+          contact_title?: string | null
           default_deadline_days?: number | null
           default_order_text?: string | null
           default_quote_text?: string | null
           document?: string | null
+          hero_cta_primary?: string | null
+          hero_cta_secondary?: string | null
+          hero_subtitle?: string | null
+          hero_title?: string | null
+          how_it_works_title?: string | null
           id?: string
           instagram?: string | null
           logo_url?: string | null
@@ -333,10 +353,20 @@ export type Database = {
         }
         Update: {
           address?: string | null
+          bento_description?: string | null
+          bento_kicker?: string | null
+          bento_title?: string | null
+          contact_description?: string | null
+          contact_title?: string | null
           default_deadline_days?: number | null
           default_order_text?: string | null
           default_quote_text?: string | null
           document?: string | null
+          hero_cta_primary?: string | null
+          hero_cta_secondary?: string | null
+          hero_subtitle?: string | null
+          hero_title?: string | null
+          how_it_works_title?: string | null
           id?: string
           instagram?: string | null
           logo_url?: string | null
