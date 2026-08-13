@@ -27,7 +27,7 @@ export function EllaAvatar({
   className,
   imgClassName,
   ringClassName = "ring-2 ring-brand-yellow",
-  alt = "Avatar de Ella Ribeiro",
+  alt = "Avatar do Assistente",
   maxRetries = 3,
   retryDelayMs = 2000,
   loading = "lazy",
