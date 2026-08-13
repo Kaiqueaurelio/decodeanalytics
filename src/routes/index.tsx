@@ -638,11 +638,10 @@ function _ContactSection() {
             Atendimento
           </p>
           <h2 className="mt-2 text-3xl font-extrabold sm:text-4xl">
-            Estamos por perto para tirar sua ideia do papel
+            {info.contactTitle}
           </h2>
           <p className="mt-3 text-white/70">
-            Fale com a equipe Alcateia's no WhatsApp, na loja ou por e-mail. Resposta rápida nos
-            horários de atendimento.
+            {info.contactDescription}
           </p>
           <a
             href={waLink("Olá! Quero fazer um orçamento.")}
