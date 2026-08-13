@@ -319,6 +319,10 @@
   svg {
     max-width: 100%;
     height: auto;
+    /* Consistência visual suave em todas as imagens do app */
+    font-smoothing: antialiased;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
   }
 
   p,
