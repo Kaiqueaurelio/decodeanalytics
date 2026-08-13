@@ -49,8 +49,10 @@ export function emitAuthTelemetry(
     ...extra,
   };
   try {
-    // eslint-disable-next-line no-console
-    console.info("[auth-telemetry]", detail);
+    // Only log critical failures or if specifically debugging
+    if (event === "auth_input_focus_failed" || event === "auth_submit_error") {
+      console.warn("[auth-telemetry]", detail);
+    }
     window.dispatchEvent(new CustomEvent("auth-telemetry", { detail }));
   } catch {
     /* noop */

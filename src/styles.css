@@ -212,10 +212,11 @@
     /* Trava overflow horizontal em toda a árvore.
        `clip` é mais rígido que `hidden` e não cria contexto de scroll. */
     overflow-x: clip;
-    max-width: 100%;
+    max-width: 100vw;
     width: 100%;
     overscroll-behavior-x: none;
     scroll-padding-bottom: env(safe-area-inset-bottom);
+    position: relative;
   }
 
   /* Rolagem suave (âncoras e scrollIntoView), respeitando quem prefere menos movimento. */
@@ -246,8 +247,9 @@
       linear-gradient(180deg, color-mix(in oklab, var(--background) 96%, white), var(--background));
     background-attachment: fixed;
     overflow-x: clip;
-    max-width: 100%;
+    max-width: 100vw;
     width: 100%;
+    position: relative;
   }
 
   /* Safe zone global — reserva as insets do iPhone (notch/home-bar/gestos)
