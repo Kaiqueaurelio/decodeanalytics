@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { ArrowRight, Upload, Calculator, Sparkles, Tag } from "lucide-react";
-import { useWaLink } from "@/hooks/useCompanyInfo";
+import { useWaLink, useCompanyInfo } from "@/hooks/useCompanyInfo";
 import { CATEGORY_IMAGES } from "./productImages";
 
 export function Hero() {
