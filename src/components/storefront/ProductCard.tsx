@@ -152,7 +152,7 @@ export function SectionHeader({
             {kicker}
           </p>
         )}
-        <h2 className="mt-1 text-2xl font-extrabold tracking-tight text-[var(--store-primary)] sm:text-[28px]">
+        <h2 className="mt-1 text-2xl font-extrabold tracking-tight text-[var(--store-primary)] sm:text-3xl md:text-4xl">
           {title}
         </h2>
         {description && (
