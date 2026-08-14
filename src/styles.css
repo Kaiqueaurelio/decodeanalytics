@@ -310,9 +310,7 @@
     color: var(--foreground);
   }
 
-  /* Defesa contra overflow horizontal:
-     - imagens/vídeos nunca ultrapassam o container
-     - palavras muito longas (URLs, e-mails) quebram em vez de esticar o layout */
+  /* Defesa contra overflow horizontal e consistência visual */
   img,
   video,
   canvas,
@@ -323,6 +321,8 @@
     font-smoothing: antialiased;
     -webkit-backface-visibility: hidden;
     backface-visibility: hidden;
+    /* Filtros sutis para realismo e consistência */
+    filter: brightness(1.02) contrast(1.02);
   }
 
   p,
