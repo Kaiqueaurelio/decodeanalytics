@@ -63,8 +63,6 @@ export const Route = createFileRoute("/")({
 function HomePage() {
   return (
     <StoreShell>
-      <CursorFollower />
-      <AnalyticsDebugPanel />
       <Hero />
       <CategoryCircles />
       <LightBand>
@@ -148,13 +146,13 @@ function FeaturedBento() {
               />
             ))}
 
-        {/* Creative bento card — "Criamos sua arte" */}
-        <a
+        <BentoFeatureCard 
           href={waLink("Olá! Quero contratar a criação de uma arte.")}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="store-bento-card group flex flex-col items-center justify-center bg-[var(--store-gold)] p-5 text-center text-[var(--store-ink)] animate-fade-in"
-          style={{ animationDelay: "280ms", animationFillMode: "both" }}
+          icon={Palette}
+          title="CRIAMOS SUA ARTE"
+          description="Designers prontos para criar do zero."
+          cta="Saiba mais"
+          animationDelay="280ms"
           onClick={() =>
             trackCta({
               cta_id: "bento_criar_arte",
@@ -163,22 +161,17 @@ function FeaturedBento() {
               channel: "whatsapp",
             })
           }
-        >
-          <Palette className="mb-2 h-7 w-7" />
-          <p className="font-display text-2xl leading-none sm:text-3xl">CRIAMOS SUA ARTE</p>
-          <p className="mt-2 text-xs font-medium">
-            Designers prontos para criar do zero.
-          </p>
-          <span className="mt-4 inline-flex items-center justify-center bg-[var(--store-ink)] px-4 py-2 text-[10px] font-extrabold uppercase tracking-[0.2em] text-white transition-transform group-hover:scale-105">
-            Saiba mais
-          </span>
-        </a>
+        />
 
-        {/* Card "mais produtos" */}
-        <Link
-          to="/produtos"
-          className="store-bento-card group flex flex-col items-center justify-center bg-[#172554] p-5 text-center text-white animate-fade-in"
-          style={{ animationDelay: "360ms", animationFillMode: "both" }}
+        <BentoFeatureCard 
+          href="/produtos"
+          isInternal
+          variant="navy"
+          icon={Plus}
+          title="MAIS PRODUTOS"
+          description="Catálogo completo"
+          cta="Ver catálogo"
+          animationDelay="360ms"
           onClick={() =>
             trackCta({
               cta_id: "bento_mais_produtos",
@@ -188,13 +181,7 @@ function FeaturedBento() {
               channel: "internal",
             })
           }
-        >
-          <div className="grid h-12 w-12 place-items-center rounded-full border-2 border-white text-white transition-transform group-hover:rotate-90">
-            <Plus className="h-5 w-5" />
-          </div>
-          <p className="font-display mt-3 text-2xl leading-none">MAIS PRODUTOS</p>
-          <p className="mt-1 text-xs text-white/80">Catálogo completo</p>
-        </Link>
+        />
 
         {/* Mais 4 produtos */}
         {!isLoading &&
@@ -488,9 +475,9 @@ function TechSecuritySection() {
   return (
     <section className="mx-auto max-w-[1280px] px-4 py-12 sm:py-16">
       <SectionHeader
-        kicker="Tecnologia e segurança"
-        title="Um app moderno, rápido e protegido"
-        description="Construído com React, TanStack Start e backend gerenciado com criptografia, RLS e HTTPS de ponta a ponta."
+        kicker="Tecnologia e confiança"
+        title="Experiência moderna e protegida"
+        description="Infraestrutura otimizada para garantir rapidez e segurança em todos os seus pedidos."
       />
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {items.map((it) => (
@@ -508,7 +495,7 @@ function TechSecuritySection() {
         ))}
       </div>
       <div className="mt-6 flex flex-wrap items-center justify-center gap-2 text-xs font-semibold text-[var(--store-text-muted)]">
-        {["React 19", "TanStack Start", "TypeScript", "Tailwind CSS", "Supabase", "HTTPS", "PWA"].map(
+        {["Segurança SSL", "Pagamento Protegido", "Entrega Garantida", "Produção Ágil", "Suporte Especializado"].map(
           (t) => (
             <span
               key={t}
@@ -736,4 +723,65 @@ function _ContactSection() {
       </div>
     </section>
   );
+}
+
+interface BentoFeatureCardProps {
+  href: string;
+  isInternal?: boolean;
+  variant?: "gold" | "navy";
+  icon: any;
+  title: string;
+  description: string;
+  cta: string;
+  animationDelay: string;
+  onClick?: () => void;
+}
+
+function BentoFeatureCard({
+  href,
+  isInternal,
+  variant = "gold",
+  icon: Icon,
+  title,
+  description,
+  cta,
+  animationDelay,
+  onClick,
+}: BentoFeatureCardProps) {
+  const isGold = variant === "gold";
+  const Container = isInternal ? Link : "a";
+  const linkProps = isInternal ? { to: href } : { href, target: "_blank", rel: "noopener noreferrer" };
+
+  return (
+    <Container
+      {...(linkProps as any)}
+      className={cn(
+        "store-bento-card group flex flex-col items-center justify-center p-5 text-center animate-fade-in",
+        isGold ? "bg-[var(--store-gold)] text-[var(--store-ink)]" : "bg-[#172554] text-white"
+      )}
+      style={{ animationDelay, animationFillMode: "both" }}
+      onClick={onClick}
+    >
+      <div className={cn(
+        "mb-2 flex h-12 w-12 items-center justify-center rounded-full transition-transform group-hover:scale-110",
+        isGold ? "" : "border-2 border-white"
+      )}>
+        <Icon className="h-7 w-7" />
+      </div>
+      <p className="font-display text-2xl leading-none sm:text-3xl">{title}</p>
+      <p className={cn("mt-2 text-xs font-medium", isGold ? "" : "text-white/80")}>
+        {description}
+      </p>
+      <span className={cn(
+        "mt-4 inline-flex items-center justify-center px-4 py-2 text-[10px] font-extrabold uppercase tracking-[0.2em] transition-transform group-hover:scale-105",
+        isGold ? "bg-[var(--store-ink)] text-white" : "bg-white text-[#172554]"
+      )}>
+        {cta}
+      </span>
+    </Container>
+  );
+}
+
+function cn(...classes: any[]) {
+  return classes.filter(Boolean).join(" ");
 }
