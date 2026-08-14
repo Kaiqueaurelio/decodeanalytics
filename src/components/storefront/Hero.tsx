@@ -27,9 +27,9 @@ export function Hero() {
             <span className="inline-flex max-w-full items-center gap-2 rounded-full bg-white/15 px-3 py-1 text-[10px] font-extrabold uppercase text-white backdrop-blur sm:text-[11px]" style={{ letterSpacing: "0.08em" }}>
               <Sparkles className="h-3 w-3" /> Alcateia · produções gráficas · 48h
             </span>
-            <h1 
-              className="font-display mt-5 text-[2rem] leading-[0.98] sm:text-5xl md:text-6xl lg:text-7xl">
+            <h1 className="font-display mt-5 text-[2rem] leading-[0.98] sm:text-5xl md:text-6xl lg:text-7xl">
               QUALIDADE EM<br />PRODUÇÕES GRÁFICAS
+            </h1>
             />
             <p className="mt-5 max-w-md text-sm sm:text-base font-medium text-white/85">
               {heroSubtitle}
