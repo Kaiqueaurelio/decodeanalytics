@@ -30,7 +30,6 @@ export function Hero() {
             <h1 className="font-display mt-5 text-[2rem] leading-[0.98] sm:text-5xl md:text-6xl lg:text-7xl">
               QUALIDADE EM<br />PRODUÇÕES GRÁFICAS
             </h1>
-            />
             <p className="mt-5 max-w-md text-sm sm:text-base font-medium text-white/85">
               {heroSubtitle}
             </p>
