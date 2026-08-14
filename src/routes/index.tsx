@@ -103,13 +103,13 @@ function FeaturedBento() {
       <header className="mb-5 flex flex-col items-start justify-between gap-2 sm:flex-row sm:items-end">
         <div className="min-w-0">
           <p className="text-[11px] font-extrabold uppercase tracking-[0.22em] text-[#172554]">
-            {bentoKicker}
+            Os favoritos da nossa produção
           </p>
           <h2 className="font-display mt-1 text-4xl leading-none text-[var(--store-primary-dark)] sm:text-5xl">
-            {bentoTitle}
+            PRODUTOS EM DESTAQUE
           </h2>
           <p className="mt-2 max-w-2xl text-sm text-[var(--store-text-muted)]">
-            {bentoDescription}
+            Qualidade profissional com entrega ágil para sua marca.
           </p>
         </div>
         <Link
