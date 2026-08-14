@@ -321,8 +321,8 @@
     font-smoothing: antialiased;
     -webkit-backface-visibility: hidden;
     backface-visibility: hidden;
-    /* Filtros sutis para realismo e consistência */
-    filter: brightness(1.02) contrast(1.02);
+    /* Filtros sutis para realismo e consistência profissional */
+    filter: brightness(1.02) contrast(1.04) saturate(1.05);
   }
 
   p,

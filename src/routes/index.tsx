@@ -105,7 +105,7 @@ function FeaturedBento() {
           <p className="text-[11px] font-extrabold uppercase tracking-[0.22em] text-[#172554]">
             Os favoritos da nossa produção
           </p>
-          <h2 className="font-display mt-1 text-4xl leading-none text-[var(--store-primary-dark)] sm:text-5xl">
+          <h2 className="font-display mt-1 text-4xl leading-none text-[var(--store-primary-dark)] sm:text-5xl lg:text-6xl">
             PRODUTOS EM DESTAQUE
           </h2>
           <p className="mt-2 max-w-2xl text-sm text-[var(--store-text-muted)]">
