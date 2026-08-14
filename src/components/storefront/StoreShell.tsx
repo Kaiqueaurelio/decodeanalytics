@@ -140,13 +140,6 @@ function StoreHeader() {
         </form>
 
         <nav className="hidden items-center gap-1 md:flex">
-          <Link
-            to="/assistente"
-            className="flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-bold text-purple-600 hover:bg-purple-50 transition-colors"
-          >
-            <Sparkles className="h-4 w-4" />
-            Assistente IA
-          </Link>
           <a
             href={waLink("Olá! Vim do site da Alcateia's.")}
             target="_blank"
@@ -228,14 +221,6 @@ function StoreHeader() {
                   Minha Conta
                 </h3>
                 <div className="space-y-2">
-                  <Link
-                    to="/assistente"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center gap-3 px-3 py-3 rounded-lg text-sm font-bold text-purple-600 hover:bg-purple-50 transition-colors"
-                  >
-                    <Sparkles className="h-4 w-4" />
-                    Falar com o assistente
-                  </Link>
                   <Link
                     to="/auth"
                     onClick={() => setMobileMenuOpen(false)}

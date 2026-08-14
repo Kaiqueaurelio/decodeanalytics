@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import React from "react";
 import {
   ArrowRight,
   ChevronRight,
