@@ -45,7 +45,7 @@ export function ProductCard({ product }: { product: StoreProduct }) {
           src={product.image_url} 
           alt={product.name}
           fallbackEmoji="🛍️"
-          className="brightness-[1.02] contrast-[1.05] transition-transform duration-500 group-hover:scale-110"
+          className="brightness-[1.02] contrast-[1.05] saturate-[1.08] transition-transform duration-500 group-hover:scale-110"
         />
         {product.badge && tone && (
           <span

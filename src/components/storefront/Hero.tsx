@@ -71,7 +71,7 @@ export function Hero() {
                 <img
                   src={CATEGORY_IMAGES["Cartões"]}
                   alt="Cartões de Visita Premium"
-                  className="h-full w-full rounded-[var(--store-radius-lg)] object-cover brightness-[1.02] contrast-[1.05]"
+                  className="h-full w-full rounded-[var(--store-radius-lg)] object-cover brightness-[1.02] contrast-[1.05] saturate-[1.1]"
                   loading="eager"
                 />
               </div>
