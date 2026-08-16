@@ -99,13 +99,13 @@ function FeaturedBento() {
   const featured = items.slice(0, 10);
 
   return (
-    <section className="mx-auto mt-3 w-full max-w-[1280px] px-4 sm:mt-4">
-      <header className="mb-5 flex flex-col items-start justify-between gap-2 sm:flex-row sm:items-end">
+    <section className="mx-auto mt-2 w-full max-w-[1280px] px-4 sm:mt-4">
+      <header className="mb-4 flex flex-col items-start justify-between gap-2 sm:mb-5 sm:flex-row sm:items-end">
         <div className="min-w-0">
           <p className="text-[11px] font-extrabold uppercase tracking-[0.22em] text-[#172554]">
             Os favoritos da nossa produção
           </p>
-          <h2 className="font-display mt-1 text-4xl leading-none text-[var(--store-primary-dark)] sm:text-5xl lg:text-6xl">
+          <h2 className="font-display mt-1 text-[2.15rem] leading-none text-[var(--store-primary-dark)] sm:text-5xl lg:text-6xl">
             PRODUTOS EM DESTAQUE
           </h2>
           <p className="mt-2 max-w-2xl text-sm text-[var(--store-text-muted)]">
@@ -129,7 +129,7 @@ function FeaturedBento() {
         </Link>
       </header>
 
-      <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-2.5 sm:gap-4 lg:grid-cols-4">
         {isLoading
           ? Array.from({ length: 6 }).map((_, i) => (
               <div

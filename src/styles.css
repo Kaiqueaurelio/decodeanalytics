@@ -279,7 +279,7 @@
     padding-bottom: env(safe-area-inset-bottom);
   }
   .store-sticky-header {
-    top: env(safe-area-inset-top);
+    top: 0;
   }
 
   @media (display-mode: standalone) {
@@ -287,7 +287,7 @@
       padding-top: max(env(safe-area-inset-top), 1.5rem);
     }
     .store-sticky-header {
-      top: max(env(safe-area-inset-top), 1.5rem);
+      top: 0;
     }
   }
 
