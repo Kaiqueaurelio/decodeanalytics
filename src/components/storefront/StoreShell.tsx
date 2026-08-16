@@ -91,22 +91,22 @@ function StoreHeader() {
   const info = useCompanyInfo();
   const waLink = useWaLink();
   return (
-    <header className="store-sticky-header sticky z-30 border-b border-[var(--store-border)] bg-[var(--store-surface)]/95 backdrop-blur">
-      <div className="mx-auto grid max-w-[1280px] grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2 px-3 py-2 sm:gap-3 sm:px-4 sm:py-3 md:flex md:gap-6 md:py-4">
-        <Link to="/" className="flex shrink-0 items-center gap-2 sm:gap-3">
+    <header className="store-sticky-header sticky z-40 border-b border-[var(--store-border)] bg-[var(--store-surface)]/95 backdrop-blur transition-all duration-300">
+      <div className="mx-auto flex max-w-[1280px] items-center justify-between gap-3 px-3 py-2 sm:px-4 sm:py-3 md:gap-6 md:py-4">
+        <Link to="/" className="flex shrink-0 items-center gap-2 sm:gap-3 transition-transform hover:scale-[1.02]">
           <img
             src="/brand/alcateia-symbol.png"
             alt="Alcateia's"
-            className="h-10 w-auto sm:h-12 md:h-14 object-contain"
+            className="h-9 w-auto sm:h-12 md:h-14 object-contain"
           />
-          <div className="hidden leading-tight sm:block">
+          <div className="leading-tight">
             <div
-              className="font-display text-xl sm:text-2xl leading-none text-[var(--store-primary)]"
+              className="font-display text-lg sm:text-2xl leading-none text-[var(--store-primary)]"
               style={{ letterSpacing: "0.04em" }}
             >
               ALCATEIA&apos;S
             </div>
-            <div className="text-[9px] sm:text-[10px] font-bold uppercase tracking-[0.15em] sm:tracking-[0.2em] text-[var(--store-accent)]">
+            <div className="text-[8px] sm:text-[10px] font-bold uppercase tracking-[0.15em] sm:tracking-[0.2em] text-[var(--store-accent)]">
               Gráfica online
             </div>
           </div>
@@ -117,7 +117,7 @@ function StoreHeader() {
             e.preventDefault();
             window.location.href = `/produtos?q=${encodeURIComponent(q)}`;
           }}
-          className="relative flex-1"
+          className="relative hidden flex-1 max-w-2xl lg:block"
           role="search"
         >
           <label htmlFor="store-search" className="sr-only">
@@ -129,11 +129,11 @@ function StoreHeader() {
             value={q}
             onChange={(e) => setQ(e.target.value)}
             placeholder="O que você está procurando?"
-            className="h-10 w-full min-w-0 rounded-[var(--store-radius-lg)] border border-[var(--store-border)] bg-white pl-10 pr-20 text-base sm:h-11 sm:pl-12 sm:pr-28 sm:text-base md:h-12 md:text-base outline-none transition-all placeholder:text-[var(--store-text-light)] focus:border-[var(--store-primary-light)] focus:ring-4 focus:ring-[var(--store-primary-light)]/15"
+            className="h-10 w-full min-w-0 rounded-[var(--store-radius-lg)] border border-[var(--store-border)] bg-white pl-10 pr-20 text-base sm:h-11 sm:pl-12 sm:pr-28 outline-none transition-all placeholder:text-[var(--store-text-light)] focus:border-[var(--store-primary-light)] focus:ring-4 focus:ring-[var(--store-primary-light)]/15"
           />
           <button
             type="submit"
-            className="absolute right-1 top-1/2 inline-flex min-h-11 min-w-11 -translate-y-1/2 items-center justify-center rounded-[var(--store-radius-md)] bg-[var(--store-primary)] px-3 text-[10px] font-bold uppercase tracking-wide text-white transition-colors hover:bg-[var(--store-primary-light)] sm:right-1.5 sm:text-xs md:px-4 md:text-sm"
+            className="absolute right-1 top-1/2 inline-flex h-8 -translate-y-1/2 items-center justify-center rounded-[var(--store-radius-md)] bg-[var(--store-primary)] px-3 text-[10px] font-bold uppercase tracking-wide text-white transition-colors hover:bg-[var(--store-primary-light)] md:px-4 md:text-sm"
           >
             Buscar
           </button>
@@ -159,16 +159,27 @@ function StoreHeader() {
           <CartButton />
         </nav>
 
-        <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
-          <SheetTrigger asChild>
-            <button
-              type="button"
-              aria-label="Menu"
-              className="grid h-11 w-11 shrink-0 place-items-center rounded-lg border border-[var(--store-border)] bg-white md:hidden transition-colors hover:bg-[var(--store-surface-soft)]"
-            >
-              <Menu className="h-5 w-5 text-[var(--store-primary)]" />
-            </button>
-          </SheetTrigger>
+        <div className="flex items-center gap-2">
+          <Link
+            to="/carrinho"
+            className="relative flex h-10 w-10 items-center justify-center rounded-lg border border-[var(--store-border)] bg-white md:hidden hover:bg-[var(--store-surface-soft)]"
+          >
+            <ShoppingCart className="h-5 w-5 text-[var(--store-primary)]" />
+            <span className="absolute -right-1 -top-1 rounded-full bg-[var(--store-secondary)] px-1.5 text-[9px] font-extrabold text-[var(--store-primary-dark)] shadow-sm">
+              {useCart().count}
+            </span>
+          </Link>
+
+          <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
+            <SheetTrigger asChild>
+              <button
+                type="button"
+                aria-label="Menu"
+                className="grid h-10 w-10 shrink-0 place-items-center rounded-lg border border-[var(--store-border)] bg-white md:hidden transition-colors hover:bg-[var(--store-surface-soft)]"
+              >
+                <Menu className="h-5 w-5 text-[var(--store-primary)]" />
+              </button>
+            </SheetTrigger>
           <SheetContent
             side="left"
             className="w-full sm:w-80 bg-white p-0 flex flex-col [&>button.absolute]:hidden"
@@ -290,6 +301,8 @@ function StoreHeader() {
         </Sheet>
       </div>
     </header>
+  );
+}
   );
 }
 
