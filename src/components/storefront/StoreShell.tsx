@@ -303,8 +303,6 @@ function StoreHeader() {
     </header>
   );
 }
-  );
-}
 
 function CategoryNav() {
   return (
