@@ -299,6 +299,7 @@ function StoreHeader() {
             </div>
           </SheetContent>
         </Sheet>
+        </div>
       </div>
     </header>
   );
