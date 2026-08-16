@@ -180,10 +180,10 @@ function StoreHeader() {
                 <Menu className="h-5 w-5 text-[var(--store-primary)]" />
               </button>
             </SheetTrigger>
-          <SheetContent
-            side="left"
-            className="w-full sm:w-80 bg-white p-0 flex flex-col [&>button.absolute]:hidden"
-          >
+            <SheetContent
+              side="left"
+              className="w-[85%] sm:w-80 bg-white p-0 flex flex-col [&>button.absolute]:hidden"
+            >
             <div className="flex items-center justify-between border-b border-[var(--store-border)] px-6 py-5">
               <div className="flex items-center gap-3">
                 <img
@@ -205,7 +205,7 @@ function StoreHeader() {
               </SheetClose>
             </div>
 
-            <nav className="flex-1 overflow-y-auto py-4">
+            <nav className="flex-1 overflow-y-auto py-2">
               {/* Categorias */}
               <div className="border-b border-[var(--store-border)] px-6 py-4">
                 <h3 className="text-xs font-bold uppercase tracking-wide text-[var(--store-text-muted)] mb-3">
@@ -226,9 +226,8 @@ function StoreHeader() {
                 </div>
               </div>
 
-              {/* Ações principais */}
               <div className="border-b border-[var(--store-border)] px-6 py-4">
-                <h3 className="text-xs font-bold uppercase tracking-wide text-[var(--store-text-muted)] mb-3">
+                <h3 className="text-[10px] font-bold uppercase tracking-widest text-[var(--store-text-muted)] mb-3">
                   Minha Conta
                 </h3>
                 <div className="space-y-2">
@@ -252,9 +251,8 @@ function StoreHeader() {
                 </div>
               </div>
 
-              {/* Atendimento */}
               <div className="px-6 py-4">
-                <h3 className="text-xs font-bold uppercase tracking-wide text-[var(--store-text-muted)] mb-3">
+                <h3 className="text-[10px] font-bold uppercase tracking-widest text-[var(--store-text-muted)] mb-3">
                   Atendimento
                 </h3>
                 <a
