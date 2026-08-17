@@ -418,12 +418,8 @@ function PDVPage() {
 
   const products = useMemo(() => {
     const serviceProducts = services.map((service) => ({
-      id: service.id,
-      name: service.name,
-      category: service.category || "Outros",
-      price: Number(service.base_price || 0),
-      detail: service.description || service.category || "Serviço gráfico",
-      imageUrl: service.image_url || undefined,
+      ...service,
+      image: "linear-gradient(135deg,#f3f4f6,#080c16)", // fallback solid gradient
     }));
     return serviceProducts.length ? serviceProducts : QUICK_PRODUCTS;
   }, [services]);
