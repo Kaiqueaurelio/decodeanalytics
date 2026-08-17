@@ -1403,7 +1403,6 @@ function PDVPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-
       <Dialog open={showCheckout} onOpenChange={setShowCheckout}>
         <DialogContent className="max-w-2xl rounded-3xl">
           <DialogHeader>
