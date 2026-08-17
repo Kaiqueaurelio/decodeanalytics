@@ -38,7 +38,6 @@ import { InfiniteProducts } from "@/components/storefront/InfiniteProducts";
 import { CategoryCircles } from "@/components/storefront/CategoryCircles";
 import { Reveal } from "@/components/storefront/Reveal";
 import { CursorFollower } from "@/components/storefront/CursorFollower";
-import { AnalyticsDebugPanel } from "@/components/storefront/AnalyticsDebugPanel";
 import { trackCardClick, trackCta } from "@/lib/analytics";
 
 export const Route = createFileRoute("/")({
@@ -69,13 +68,11 @@ function HomePage() {
       <LightBand>
         <Reveal variant="up"><FeaturedBento /></Reveal>
       </LightBand>
-      <Reveal variant="up"><StatsStrip /></Reveal>
       <Reveal variant="up"><CategoriesSection /></Reveal>
       <Reveal variant="up"><InfiniteProducts /></Reveal>
       <Reveal variant="up"><TestimonialsSection /></Reveal>
       <Reveal variant="up"><HowItWorks /></Reveal>
       <Reveal variant="up"><ArtTipsSection /></Reveal>
-      <Reveal variant="up"><TechSecuritySection /></Reveal>
       <Reveal variant="up"><ContactSection /></Reveal>
     </StoreShell>
   );
@@ -396,9 +393,9 @@ function ArtTipsSection() {
       desc: "Trabalhe em CMYK (não RGB) e deixe 3mm de sangria além do corte para evitar bordas brancas.",
     },
     {
-      icon: Bot,
-      title: "Arte feita por IA? Avise!",
-      desc: "Imagens geradas por IA (Midjourney, DALL·E, etc.) costumam ter resolução baixa. Nos avise para tratarmos a arte antes de imprimir.",
+      icon: FileText,
+      title: "Resolução e Arquivos",
+      desc: "Imagens em 300 DPI garantem nitidez. Prefira sempre enviar em PDF editável para o melhor resultado.",
     },
     {
       icon: Sparkles,
@@ -440,8 +437,7 @@ function ArtTipsSection() {
           <p className="flex items-start gap-2">
             <CheckCircle2 className="mt-0.5 h-5 w-5 text-[var(--store-success)]" />
             <span>
-              <strong>Resumo rápido:</strong> PDF editável · 300 DPI · CMYK · sangria 3mm · avisar
-              se for IA ou Canva. Aceitamos PDF, AI, CDR, PSD, SVG, PNG e JPG até 50 MB.
+              <strong>Resumo rápido:</strong> PDF editável · 300 DPI · CMYK · sangria 3mm. Aceitamos PDF, AI, CDR, PSD, SVG, PNG e JPG até 50 MB.
             </span>
           </p>
         </div>

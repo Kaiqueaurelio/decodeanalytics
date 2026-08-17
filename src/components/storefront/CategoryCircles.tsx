@@ -37,7 +37,7 @@ export function CategoryCircles() {
               className="group flex w-[76px] shrink-0 flex-col items-center gap-2 rounded-xl outline-none focus-visible:ring-2 focus-visible:ring-store-primary focus-visible:ring-offset-2 sm:w-28 animate-fade-in"
               style={{ animationDelay: `${60 + i * 40}ms`, animationFillMode: "both" }}
             >
-              <div className="relative grid h-[76px] w-[76px] place-items-center overflow-hidden rounded-full bg-linear-to-br from-store-primary/12 to-store-primary/4 text-store-primary ring-2 ring-transparent transition-all duration-300 group-hover:-translate-y-1 group-hover:ring-store-primary group-hover:shadow-[var(--store-shadow-md)] sm:h-24 sm:w-24">
+              <div className="relative grid h-[76px] w-[76px] place-items-center overflow-hidden rounded-full bg-slate-50 text-store-primary ring-1 ring-slate-200 transition-all duration-300 group-hover:-translate-y-1 group-hover:ring-store-primary group-hover:shadow-[var(--store-shadow-md)] sm:h-24 sm:w-24">
                 <c.Icon
                   className="h-8 w-8 transition-transform duration-300 group-hover:scale-110 sm:h-9 sm:w-9"
                   strokeWidth={1.75}

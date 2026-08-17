@@ -25,7 +25,7 @@ export function Hero() {
         <div className="relative grid items-center gap-6 sm:gap-8 md:grid-cols-2">
           <div className="min-w-0">
             <span className="inline-flex max-w-full items-center gap-2 rounded-full bg-white/15 px-3 py-1 text-[10px] font-extrabold uppercase text-white backdrop-blur sm:text-[11px]" style={{ letterSpacing: "0.08em" }}>
-              <Sparkles className="h-3 w-3" /> Alcateia · produções gráficas · 48h
+              <Sparkles className="h-3 w-3" /> Alcateia · Produção Gráfica Profissional · 48h
             </span>
             <h1 className="font-display mt-4 text-[2.15rem] leading-[0.98] sm:mt-5 sm:text-6xl md:text-7xl lg:text-8xl">
               QUALIDADE EM<br />PRODUÇÕES GRÁFICAS
