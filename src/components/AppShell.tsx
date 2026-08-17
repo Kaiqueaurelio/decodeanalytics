@@ -253,7 +253,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                 onFocus={() => setSearchFocused(true)}
                 onBlur={() => setTimeout(() => setSearchFocused(false), 200)}
                 className={cn(
-                  "ml-2 flex-1 bg-transparent text-xs text-[#dee2ec] placeholder:text-[#7d84ab]/50 focus:outline-hidden",
+                  "ml-2 flex-1 bg-transparent text-xs text-white placeholder:text-[#7d84ab] focus:outline-hidden",
                   collapsed && "md:hidden",
                 )}
               />
@@ -289,7 +289,7 @@ export function AppShell({ children }: { children: ReactNode }) {
               <div key={section}>
                 <p
                   className={cn(
-                    "mb-2 px-3 text-[9px] font-bold uppercase tracking-[0.2em] text-[#7d84ab]/60",
+                    "mb-2 px-3 text-[10px] font-black uppercase tracking-[0.2em] text-[#dee2ec]/90",
                     collapsed && "md:hidden",
                   )}
                 >
@@ -309,12 +309,12 @@ export function AppShell({ children }: { children: ReactNode }) {
                         className={cn(
                           "group relative flex items-center gap-3 rounded-xl px-3 py-3 text-xs transition-all duration-300",
                           active
-                            ? "bg-[#0b1a2c] text-[#dee2ec] font-bold shadow-lg shadow-black/20"
-                            : "text-[#7d84ab] hover:bg-[#0b1a2c]/50 hover:text-[#dee2ec]",
+                            ? "bg-[#0b1a2c] text-white font-bold shadow-lg shadow-black/30 border border-[#535d7d]/30"
+                            : "text-[#dee2ec] hover:bg-[#0b1a2c]/50 hover:text-white",
                           collapsed && "md:justify-center md:px-0 md:w-10 md:mx-auto"
                         )}
                       >
-                        <Icon className={cn("h-4 w-4 shrink-0 transition-transform duration-300", active ? "text-[#dee2ec] scale-110" : "text-[#7d84ab]")} />
+                        <Icon className={cn("h-4 w-4 shrink-0 transition-transform duration-300", active ? "text-white scale-110" : "text-[#7d84ab] group-hover:text-[#dee2ec]")} />
                         <span className={cn("flex-1 truncate transition-opacity duration-300", collapsed && "md:hidden")}>
                           {item.label}
                         </span>
@@ -329,7 +329,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                           </span>
                         )}
                         {active && !collapsed && (
-                          <ChevronRight className="h-3 w-3 text-[#dee2ec]/40" />
+                          <ChevronRight className="h-3 w-3 text-white/40" />
                         )}
                         {active && collapsed && (
                           <div className="absolute right-2 top-1/2 -translate-y-1/2 w-1 h-1 rounded-full bg-brand-yellow hidden md:block" />
@@ -368,7 +368,7 @@ export function AppShell({ children }: { children: ReactNode }) {
               })
             }
             className={cn(
-              "group flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-xs text-[#7d84ab] transition-all hover:bg-[#0b1a2c] hover:text-[#dee2ec]",
+              "group flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-xs text-[#dee2ec] transition-all hover:bg-[#0b1a2c] hover:text-white",
               collapsed && "md:justify-center md:px-0 md:w-10 md:mx-auto"
             )}
           >
@@ -384,7 +384,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           <button
             onClick={() => signOut()}
             className={cn(
-              "group mt-1 flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-xs text-rose-500/50 transition-all hover:bg-rose-500/10 hover:text-rose-400",
+              "group mt-1 flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-xs text-rose-400 transition-all hover:bg-rose-500/10 hover:text-rose-300",
               collapsed && "md:justify-center md:px-0 md:w-10 md:mx-auto"
             )}
           >
