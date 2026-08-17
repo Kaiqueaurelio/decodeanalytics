@@ -213,9 +213,12 @@ export function AppShell({ children }: { children: ReactNode }) {
         )}
       >
         <div className="flex flex-col gap-6 px-3 py-8">
-          <div className="flex items-center justify-between">
-            <div className={cn("flex items-center gap-2.5 transition-all duration-500", collapsed && "md:translate-x-[-4px]")}>
-              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#ff8100] font-black text-white shadow-md shadow-[#ff8100]/20 text-xs">
+          <div className={cn("flex items-center justify-between", collapsed && "md:justify-center")}>
+            <div className={cn("flex items-center transition-all duration-500", collapsed ? "md:justify-center" : "gap-2.5")}>
+              <div className={cn(
+                "flex shrink-0 items-center justify-center rounded-lg bg-[#ff8100] font-black text-white shadow-md shadow-[#ff8100]/20 transition-all duration-300",
+                collapsed ? "md:h-10 md:w-10 md:text-sm" : "h-8 w-8 text-xs"
+              )}>
                 A
               </div>
               <div className={cn("flex flex-col leading-none transition-all duration-500", collapsed && "md:opacity-0 md:w-0 md:overflow-hidden")}>
