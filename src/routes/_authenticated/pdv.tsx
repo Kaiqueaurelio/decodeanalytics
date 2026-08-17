@@ -1279,7 +1279,6 @@ function PDVPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-
       <Dialog open={showSquareMeter} onOpenChange={setShowSquareMeter}>
         <DialogContent className="max-w-2xl rounded-3xl">
           <DialogHeader>
