@@ -384,7 +384,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           <button
             onClick={() => signOut()}
             className={cn(
-              "group mt-1 flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-xs text-rose-500/50 transition-all hover:bg-rose-500/10 hover:text-rose-400",
+              "group mt-1 flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-xs text-rose-400 transition-all hover:bg-rose-500/10 hover:text-rose-300",
               collapsed && "md:justify-center md:px-0 md:w-10 md:mx-auto"
             )}
           >
