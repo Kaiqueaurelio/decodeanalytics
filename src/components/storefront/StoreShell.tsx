@@ -141,7 +141,7 @@ function StoreHeader() {
 
         <nav className="hidden items-center gap-1 md:flex">
           <a
-            href={waLink("Olá! Vim do site da Alcateia's.")}
+            href={waLink("Olá! Vim do site da Alcateia Produções Gráficas.")}
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium text-[var(--store-text)] hover:bg-[var(--store-surface-soft)]"
