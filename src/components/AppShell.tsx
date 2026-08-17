@@ -314,7 +314,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                           collapsed && "md:justify-center md:px-0 md:w-10 md:mx-auto"
                         )}
                       >
-                        <Icon className={cn("h-4 w-4 shrink-0 transition-transform duration-300", active && "scale-110")} />
+                        <Icon className={cn("h-4 w-4 shrink-0 transition-transform duration-300", active ? "text-[#dee2ec] scale-110" : "text-[#7d84ab]")} />
                         <span className={cn("flex-1 truncate transition-opacity duration-300", collapsed && "md:hidden")}>
                           {item.label}
                         </span>
