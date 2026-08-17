@@ -326,7 +326,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                         >
                           <Icon className="h-3.5 w-3.5" />
                         </span>
-                        <span className={cn("min-w-0 flex-1 truncate", collapsed && "md:hidden")}>
+                        <span className={cn("min-w-0 flex-1 truncate md:block", collapsed && "md:hidden")}>
                           {item.label}
                         </span>
                         {active && (
