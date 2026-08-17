@@ -861,32 +861,28 @@ function PDVPage() {
         </div>
       </div>
       {/* Saldo em Destaque - Visual Premium */}
-      <div className="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <div className="relative overflow-hidden rounded-[2rem] bg-[#080c16] p-6 text-white shadow-2xl">
+      <div className="mb-8 grid gap-4 grid-cols-2 lg:grid-cols-4">
+        <div className="relative overflow-hidden rounded-[1.5rem] bg-[#080c16] p-4 text-white shadow-xl">
           <div className="relative z-10">
-            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/40">Saldo do Dia</p>
-            <p className="mt-1 text-3xl font-black text-brand-yellow tabular-nums">{brl(dayBalance)}</p>
+            <p className="text-[9px] font-black uppercase tracking-[0.1em] text-white/40">Saldo</p>
+            <p className="mt-0.5 text-xl font-black text-brand-yellow tabular-nums">{brl(dayBalance)}</p>
           </div>
-          <div className="absolute -right-4 -bottom-4 opacity-10">
-            <Zap className="h-24 w-24" />
-          </div>
+          <Zap className="absolute -right-2 -bottom-2 h-12 w-12 opacity-10" />
         </div>
 
-        <div className="rounded-[2rem] border border-white bg-white/60 p-6 backdrop-blur-xl shadow-sm border-slate-100">
-          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Entradas</p>
-          <p className="mt-1 text-2xl font-black text-emerald-600 tabular-nums">{brl(totalToday)}</p>
+        <div className="rounded-[1.5rem] border border-slate-100 bg-white/60 p-4 backdrop-blur-xl shadow-sm">
+          <p className="text-[9px] font-black uppercase tracking-[0.1em] text-slate-400">Entradas</p>
+          <p className="mt-0.5 text-xl font-black text-emerald-600 tabular-nums">{brl(totalToday)}</p>
         </div>
 
-        <div className="rounded-[2rem] border border-white bg-white/60 p-6 backdrop-blur-xl shadow-sm border-slate-100">
-          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Cartões / PIX</p>
-          <p className="mt-1 text-2xl font-black text-[#080c16] tabular-nums">
-            {brl(paymentTotals.debit + paymentTotals.credit + paymentTotals.pix)}
-          </p>
+        <div className="rounded-[1.5rem] border border-slate-100 bg-white/60 p-4 backdrop-blur-xl shadow-sm">
+          <p className="text-[9px] font-black uppercase tracking-[0.1em] text-slate-400">Saídas</p>
+          <p className="mt-0.5 text-xl font-black text-rose-600 tabular-nums">{brl(expenseTotal)}</p>
         </div>
 
-        <div className="rounded-[2rem] border border-white bg-white/60 p-6 backdrop-blur-xl shadow-sm border-slate-100">
-          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Saídas / Despesas</p>
-          <p className="mt-1 text-2xl font-black text-rose-600 tabular-nums">{brl(expenseTotal)}</p>
+        <div className="hidden lg:block rounded-[1.5rem] border border-slate-100 bg-white/60 p-4 backdrop-blur-xl shadow-sm">
+          <p className="text-[9px] font-black uppercase tracking-[0.1em] text-slate-400">Operador</p>
+          <p className="mt-0.5 text-base font-black text-[#080c16] truncate">{cashSession?.operator || "Sessão Inativa"}</p>
         </div>
       </div>
       <div className="grid gap-6 lg:grid-cols-[1fr_400px]">
