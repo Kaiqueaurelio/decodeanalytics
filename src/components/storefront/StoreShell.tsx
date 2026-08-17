@@ -461,7 +461,7 @@ function StoreFooter() {
       </div>
       <div className="border-t border-white/10">
         <div className="mx-auto flex max-w-[1280px] flex-col items-center justify-between gap-2 px-4 py-4 text-xs text-white/50 md:flex-row">
-          <p>© {new Date().getFullYear()} Alcateia's Produções Gráficas. Todos os direitos reservados.</p>
+          <p>© {new Date().getFullYear()} Alcateia Produções Gráficas. Todos os direitos reservados.</p>
           <p>Feito com cuidado para sua marca brilhar.</p>
         </div>
       </div>
