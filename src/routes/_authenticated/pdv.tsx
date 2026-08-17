@@ -205,14 +205,14 @@ const QUICK_PRODUCTS = [
 ];
 
 const CATEGORIES = [
-  "Todos",
-  "Impressão",
-  "Canecas",
-  "Camisetas",
-  "Adesivos",
-  "Banners",
-  "Cartões",
-  "Outros",
+  { slug: "Todos", label: "Todos", Icon: Package },
+  { slug: "Impressão", label: "Impressão", Icon: FileText },
+  { slug: "Canecas", label: "Canecas", Icon: Coffee },
+  { slug: "Camisetas", label: "Camisetas", Icon: Shirt },
+  { slug: "Adesivos", label: "Adesivos", Icon: Tags },
+  { slug: "Banners", label: "Banners", Icon: Flag },
+  { slug: "Cartões", label: "Cartões", Icon: Contact },
+  { slug: "Outros", label: "Outros", Icon: Gift },
 ];
 const PAYMENT_OPTIONS = [
   { id: "PIX QR Code", label: "PIX QR", icon: QrCode },
