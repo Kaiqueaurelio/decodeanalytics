@@ -229,7 +229,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             </div>
             <button
               onClick={() => setOpen(false)}
-              className="grid h-8 w-8 place-items-center rounded-lg bg-white/5 text-white/40 hover:bg-white/10 md:hidden"
+              className="grid h-8 w-8 place-items-center rounded-lg bg-[#0b1a2c] text-[#7d84ab] hover:bg-[#0b1a2c]/80 hover:text-[#dee2ec] md:hidden"
             >
               <X className="h-4 w-4" />
             </button>
