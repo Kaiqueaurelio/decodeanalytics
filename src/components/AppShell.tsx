@@ -238,8 +238,8 @@ export function AppShell({ children }: { children: ReactNode }) {
           <div className={cn("relative transition-all duration-300", collapsed && "md:px-0")}>
             <div
               className={cn(
-                "group relative flex h-10 items-center rounded-xl bg-white/5 px-3 transition-all focus-within:bg-white/8 focus-within:ring-1 focus-within:ring-white/20",
-                collapsed && "md:h-10 md:w-10 md:px-0 md:justify-center mx-auto",
+                "group relative flex h-9 items-center rounded-lg bg-white/[0.03] px-3 transition-all focus-within:bg-white/[0.06] border border-white/[0.05]",
+                collapsed && "md:h-9 md:w-9 md:px-0 md:justify-center mx-auto",
               )}
             >
               <Search
