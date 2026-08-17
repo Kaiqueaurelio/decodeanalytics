@@ -1235,7 +1235,6 @@ function PDVPage() {
             )}
           </div>
         </Card>
-      </div>
 
 
       <PdvCalculator
