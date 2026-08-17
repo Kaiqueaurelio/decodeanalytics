@@ -804,7 +804,7 @@ function PDVPage() {
             A
           </div>
           <div>
-            <h2 className="text-xl font-black tracking-tight text-[#080c16]">PDV Mercado Alcateia</h2>
+            <h2 className="text-xl font-black tracking-tight text-[#080c16]">PDV Alcateia Produções Gráficas</h2>
             <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-slate-400">
               <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
               Terminal de Vendas Ativo
