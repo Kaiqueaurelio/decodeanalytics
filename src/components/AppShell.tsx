@@ -322,7 +322,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                           <div className="h-1 w-1 rounded-full bg-brand-yellow shadow-[0_0_8px_rgba(250,204,21,0.6)]" />
                         )}
                         {active && collapsed && (
-                          <div className="absolute left-0 w-1 h-4 bg-brand-yellow rounded-r-full hidden md:block" />
+                          <div className="absolute right-2 top-1/2 -translate-y-1/2 w-1 h-1 rounded-full bg-brand-yellow hidden md:block" />
                         )}
                       </Link>
                     );
