@@ -22,7 +22,6 @@ import {
   ShoppingCart,
   Activity,
   Users,
-  Activity,
   GraduationCap,
   Beaker,
   X,
@@ -150,7 +149,7 @@ const NAV: NavItem[] = [
   {
     to: "/ella-training",
     label: "Treinar a IA",
-    description: "Base de conhecimento e comportamento da assistente",
+    description: "Base de conhecimento e regras do gestor",
     icon: GraduationCap,
     section: "Administração",
     roles: ["administrador"],
