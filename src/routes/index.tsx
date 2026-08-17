@@ -298,14 +298,22 @@ function CategoriesSection() {
               search={{ cat: c.slug }}
               className="group flex flex-col justify-between rounded-[var(--store-radius-lg)] border border-[var(--store-border)] bg-white p-5 shadow-[var(--store-shadow-sm)] transition-all hover:-translate-y-1 hover:border-[var(--store-primary-light)]/40 hover:shadow-[var(--store-shadow-md)]"
             >
-              <div className="grid h-12 w-12 place-items-center rounded-xl bg-[var(--store-primary)] text-white transition-colors group-hover:bg-[var(--store-accent)]">
-                <Zap className="h-5 w-5" />
+              <div>
+                <div className="grid h-12 w-12 place-items-center rounded-xl bg-[var(--store-primary)] text-white transition-colors group-hover:bg-[var(--store-accent)]">
+                  <Zap className="h-5 w-5" />
+                </div>
+                <div className="mt-5">
+                  <p className="text-base font-extrabold text-[var(--store-text)]">{c.label}</p>
+                  <p className="mt-1 text-[11px] text-[var(--store-text-muted)] line-clamp-2">
+                    Confira nossa linha completa de {c.label.toLowerCase()} personalizados.
+                  </p>
+                </div>
               </div>
-              <div className="mt-5">
-                <p className="text-base font-extrabold text-[var(--store-text)]">{c.label}</p>
-                <p className="mt-1 inline-flex items-center gap-1 text-xs font-semibold text-[var(--store-primary)]">
-                  Ver produtos <ChevronRight className="h-3.5 w-3.5" />
-                </p>
+              <div className="mt-5 flex items-center justify-between">
+                <span className="inline-flex h-9 items-center justify-center rounded-[var(--store-radius-md)] bg-[var(--store-surface-soft)] px-4 text-xs font-bold text-[var(--store-primary)] transition-colors group-hover:bg-[var(--store-primary)] group-hover:text-white">
+                  Ver catálogo
+                </span>
+                <ChevronRight className="h-4 w-4 text-[var(--store-text-light)] transition-transform group-hover:translate-x-1 group-hover:text-[var(--store-primary)]" />
               </div>
             </Link>
           ))}
