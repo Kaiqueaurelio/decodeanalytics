@@ -256,7 +256,7 @@ function StoreHeader() {
                   Atendimento
                 </h3>
                 <a
-                  href={waLink("Olá! Vim do site da Alcateia's.")}
+                  href={waLink("Olá! Vim do site da Alcateia Produções Gráficas.")}
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={() => setMobileMenuOpen(false)}
