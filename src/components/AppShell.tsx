@@ -329,7 +329,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                           </span>
                         )}
                         {active && !collapsed && (
-                          <ChevronRight className="h-3 w-3 text-[#dee2ec]/40" />
+                          <ChevronRight className="h-3 w-3 text-white/40" />
                         )}
                         {active && collapsed && (
                           <div className="absolute right-2 top-1/2 -translate-y-1/2 w-1 h-1 rounded-full bg-brand-yellow hidden md:block" />
