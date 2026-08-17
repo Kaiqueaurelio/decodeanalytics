@@ -4,8 +4,8 @@ import { useServerFn } from "@tanstack/react-start";
 import {
   Send,
   Loader2,
-  Bot,
-  Sparkles,
+  LayoutDashboard,
+  Zap,
   Wrench,
   ChevronDown,
   Paperclip,
@@ -92,7 +92,7 @@ function ToolChip({ t }: { t: ToolActivity }) {
         onClick={() => setOpen((o) => !o)}
         className="flex w-full items-center gap-2 px-2 py-1.5 text-left"
       >
-        <Wrench className="h-3.5 w-3.5 text-brand-orange" />
+        <LayoutDashboard className="h-3.5 w-3.5 text-brand-orange" />
         <span className="font-medium">{TOOL_LABELS[t.name] ?? t.name}</span>
         <ChevronDown
           className={cn("ml-auto h-3.5 w-3.5 transition-transform", open && "rotate-180")}
@@ -114,7 +114,7 @@ function EllaPage() {
       id: "welcome",
       role: "assistant",
       content:
-        "Olá! 👋 Sou seu **assistente operacional** completo. Executo tudo: OS, cobranças, clientes, usuários e papéis, lembretes e mais. Você pode falar por **áudio** 🎤 ou anexar **arquivos** 📎 (imagem, PDF, vídeo, áudio) que eu analiso pra você.",
+        "Olá! 👋 Sou seu **gestor operacional**. Executo tudo: OS, cobranças, clientes, usuários e papéis, lembretes e mais. Você pode falar por **áudio** 🎤 ou anexar **arquivos** 📎 (imagem, PDF, vídeo, áudio) para análise técnica.",
     },
   ]);
   const [input, setInput] = useState("");
@@ -261,7 +261,7 @@ function EllaPage() {
     try {
       const data: any = await chat({
         data: {
-          message: content || "Analise os arquivos anexados.",
+          message: content || "Realize a análise técnica dos arquivos anexados.",
           conversationHistory: history,
           attachments: currentAtts.map((a) => ({
             name: a.name,
@@ -296,11 +296,11 @@ function EllaPage() {
   return (
     <div className="flex flex-col h-[calc(100dvh-4rem)] sm:h-[calc(100dvh-5rem)] max-w-3xl mx-auto w-full px-3 sm:px-6 py-3 sm:py-6">
       <header className="grid grid-cols-[auto_minmax(0,1fr)] items-center gap-3 pb-3 sm:pb-4 border-b">
-        <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-primary text-primary-foreground"><Bot className="h-6 w-6" /></span>
+        <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-primary text-primary-foreground"><LayoutDashboard className="h-6 w-6" /></span>
         <div className="min-w-0">
-          <h1 className="truncate text-lg sm:text-xl font-black tracking-tight">Assistente IA</h1>
+          <h1 className="truncate text-lg sm:text-xl font-black tracking-tight">Gestor Inteligente</h1>
           <p className="truncate text-xs sm:text-sm text-muted-foreground">
-            Assistente operacional — cria OS, cobranças, lembretes e faz consultas
+            Interface de automação — cria OS, cobranças, lembretes e faz consultas via processamento inteligente
           </p>
         </div>
       </header>
@@ -381,7 +381,7 @@ function EllaPage() {
               onClick={() => send(s)}
               className="rounded-xl border p-3 text-left text-sm hover:bg-muted transition-colors flex items-start gap-2"
             >
-              <Sparkles className="h-4 w-4 text-brand-orange shrink-0 mt-0.5" />
+              <Zap className="h-4 w-4 text-brand-orange shrink-0 mt-0.5" />
               <span className="min-w-0">{s}</span>
             </button>
           ))}

@@ -85,10 +85,10 @@ export function InfiniteProducts() {
         <header className="mb-6 flex flex-col items-start justify-between gap-2 sm:flex-row sm:items-end">
           <div>
             <p className="text-[11px] font-extrabold uppercase tracking-[0.22em] text-[var(--store-accent)]">
-              Catálogo sem fim
+              Nosso portfólio completo
             </p>
             <h2 className="font-display mt-1 text-4xl leading-none text-[var(--store-primary)] sm:text-5xl lg:text-6xl">
-              EXPLORE NOSSA PRODUÇÃO
+              CONFIRA NOSSA PRODUÇÃO
             </h2>
             <p className="mt-2 max-w-2xl text-sm text-[var(--store-text-muted)]">
               Centenas de produtos personalizados — role à vontade para descobrir mais.

@@ -124,7 +124,7 @@ async function ellaLocalFallback({
       recRes.data?.reduce((sum: number, row: any) => sum + Number(row.amount || 0), 0) ?? 0;
     pushTool("dashboard_summary", {}, { activeOrders, pendingReceivables });
     return {
-      response: `Estou em modo Vercel básico, mas consegui consultar: ${activeOrders} OS ativas e R$ ${pendingReceivables.toFixed(2)} em cobranças pendentes.`,
+      response: `Estou em modo básico de automação, mas consegui consultar: ${activeOrders} OS ativas e R$ ${pendingReceivables.toFixed(2)} em cobranças pendentes.`,
       toolActivity,
     };
   }
@@ -219,7 +219,7 @@ async function ellaLocalFallback({
           current_quantity: quantity,
           min_quantity: 0,
           cost_price: 0,
-          notes: "Criado pela Ella",
+          notes: "Criado via automação operacional",
           active: true,
           created_by: userId,
         })
@@ -247,8 +247,8 @@ async function ellaLocalFallback({
         quantity: Math.abs(next - previous),
         previous_quantity: previous,
         new_quantity: next,
-        reason: "Pedido feito no chat da Ella",
-        reference: "Ella",
+        reason: "Pedido feito via automação de gestão",
+        reference: "Automação",
         created_by: userId,
       });
     }
@@ -263,7 +263,7 @@ async function ellaLocalFallback({
 
   return {
     response:
-      "Estou funcionando na Vercel em modo básico. Para a Ella completa com IA, áudio e análise de anexos, configure LOVABLE_API_KEY na Vercel. Mesmo assim, já consigo executar comandos simples como atualizar preço, criar produto, listar OS e mexer no estoque.",
+      "Estou funcionando em modo básico de automação. Para a experiência completa de processamento inteligente, áudio e análise técnica de anexos, configure LOVABLE_API_KEY. Mesmo assim, já consigo executar comandos como atualizar preço, criar produto, listar OS e gerir o estoque.",
     toolActivity,
   };
 }

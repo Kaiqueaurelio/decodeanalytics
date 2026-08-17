@@ -3,7 +3,7 @@ import React from "react";
 import {
   ArrowRight,
   ChevronRight,
-  Sparkles,
+  Zap,
   Upload,
   Send,
   PackageCheck,
@@ -13,16 +13,16 @@ import {
   Cloud,
   FileText,
   Palette,
-  Bot,
+  LayoutDashboard,
   AlertTriangle,
   CheckCircle2,
   Image as ImageIcon,
   Plus,
   Star,
   Quote,
-  Zap,
   Users,
   Award,
+  Settings,
 } from "lucide-react";
 import { StoreShell } from "@/components/storefront/StoreShell";
 import { Hero } from "@/components/storefront/Hero";
@@ -232,7 +232,7 @@ function BentoProductCard({
         <SmartImage 
           src={product.image_url} 
           alt={product.name}
-          fallbackEmoji="✨"
+          fallbackEmoji="📦"
           className="transition-transform duration-500 group-hover:scale-[1.06]"
         />
         {product.badge && (
@@ -299,7 +299,7 @@ function CategoriesSection() {
               className="group flex flex-col justify-between rounded-[var(--store-radius-lg)] border border-[var(--store-border)] bg-white p-5 shadow-[var(--store-shadow-sm)] transition-all hover:-translate-y-1 hover:border-[var(--store-primary-light)]/40 hover:shadow-[var(--store-shadow-md)]"
             >
               <div className="grid h-12 w-12 place-items-center rounded-xl bg-[var(--store-primary)] text-white transition-colors group-hover:bg-[var(--store-accent)]">
-                <Sparkles className="h-5 w-5" />
+                <Zap className="h-5 w-5" />
               </div>
               <div className="mt-5">
                 <p className="text-base font-extrabold text-[var(--store-text)]">{c.label}</p>
@@ -319,7 +319,7 @@ function HowItWorks() {
   const waLink = useWaLink();
   const { howItWorksTitle } = useCompanyInfo();
   const steps = [
-    { icon: Sparkles, title: "Escolha o produto", desc: "Navegue pelo catálogo e selecione a opção ideal." },
+    { icon: CheckCircle2, title: "Escolha o produto", desc: "Navegue pelo catálogo e selecione a opção ideal." },
     { icon: Upload, title: "Envie sua arte", desc: "Anexe o arquivo ou peça para nossa equipe criar." },
     { icon: Send, title: "Aprovação rápida", desc: "Confirmamos detalhes e prazos pelo WhatsApp." },
     { icon: PackageCheck, title: "Produção e entrega", desc: "Retirada na loja ou entrega no endereço." },
@@ -398,7 +398,7 @@ function ArtTipsSection() {
       desc: "Imagens em 300 DPI garantem nitidez. Prefira sempre enviar em PDF editável para o melhor resultado.",
     },
     {
-      icon: Sparkles,
+      icon: Settings,
       title: "Arte feita no Canva? Conta pra gente",
       desc: "No Canva, exporte como “PDF para impressão” com marcas de corte e sangria. Avise no envio para conferirmos antes da produção.",
     },
@@ -446,100 +446,11 @@ function ArtTipsSection() {
   );
 }
 
-function TechSecuritySection() {
-  const items = [
-    {
-      icon: Lock,
-      title: "Login criptografado",
-      desc: "Autenticação protegida e senhas com hash seguro. Seu acesso é só seu.",
-    },
-    {
-      icon: ShieldCheck,
-      title: "Arquivos privados",
-      desc: "Cada pedido tem link único. Suas artes ficam isoladas e só sua equipe enxerga.",
-    },
-    {
-      icon: Server,
-      title: "Banco com RLS",
-      desc: "Banco de dados com regras linha-a-linha (Row Level Security) — ninguém vê dados de outro cliente.",
-    },
-    {
-      icon: Cloud,
-      title: "Infra global",
-      desc: "Hospedagem em nuvem com HTTPS, backups e disponibilidade alta. App rápido em qualquer dispositivo.",
-    },
-  ];
-  return (
-    <section className="mx-auto max-w-[1280px] px-4 py-12 sm:py-16">
-      <SectionHeader
-        kicker="Tecnologia e confiança"
-        title="Experiência moderna e protegida"
-        description="Infraestrutura otimizada para garantir rapidez e segurança em todos os seus pedidos."
-      />
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {items.map((it) => (
-          <Reveal
-            key={it.title}
-            variant="up"
-            className="lift-on-hover rounded-[var(--store-radius-lg)] border border-[var(--store-border)] bg-white p-5 shadow-[var(--store-shadow-sm)]"
-          >
-            <span className="grid h-10 w-10 place-items-center rounded-xl bg-[var(--store-success)]/10 text-[var(--store-success)]">
-              <it.icon className="h-5 w-5" />
-            </span>
-            <p className="mt-4 text-base font-extrabold text-[var(--store-text)]">{it.title}</p>
-            <p className="mt-1 text-sm text-[var(--store-text-muted)]">{it.desc}</p>
-          </Reveal>
-        ))}
-      </div>
-      <div className="mt-6 flex flex-wrap items-center justify-center gap-2 text-xs font-semibold text-[var(--store-text-muted)]">
-        {["Segurança SSL", "Pagamento Protegido", "Entrega Garantida", "Produção Ágil", "Suporte Especializado"].map(
-          (t) => (
-            <span
-              key={t}
-              className="rounded-full border border-[var(--store-border)] bg-white px-3 py-1"
-            >
-              {t}
-            </span>
-          ),
-        )}
-      </div>
-    </section>
-  );
-}
 
 function ContactSection() {
   return _ContactSection();
 }
 
-function StatsStrip() {
-  const stats = [
-    { icon: Users, value: "+12.000", label: "Clientes atendidos" },
-    { icon: Zap, value: "48h", label: "Produção média" },
-    { icon: Award, value: "4.9★", label: "Avaliação dos clientes" },
-    { icon: PackageCheck, value: "+200k", label: "Pedidos entregues" },
-  ];
-  return (
-    <section className="border-y border-[var(--store-border)] bg-white">
-      <div className="mx-auto grid max-w-[1280px] grid-cols-2 gap-3 px-4 py-8 sm:gap-4 sm:py-10 md:grid-cols-4">
-        {stats.map((s) => (
-          <div key={s.label} className="flex flex-col items-center gap-2 text-center sm:flex-row sm:gap-3 sm:text-left">
-            <span className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-[var(--store-ink)] text-[var(--store-gold)] sm:h-12 sm:w-12 sm:rounded-xl">
-              <s.icon className="h-4 w-4 sm:h-5 sm:w-5" />
-            </span>
-            <div className="min-w-0">
-              <p className="font-display text-2xl leading-none text-[var(--store-primary)] sm:text-3xl md:text-4xl">
-                {s.value}
-              </p>
-              <p className="mt-0.5 text-[10px] font-bold uppercase tracking-[0.15em] text-[var(--store-text-muted)] sm:mt-1 sm:text-[11px]">
-                {s.label}
-              </p>
-            </div>
-          </div>
-        ))}
-      </div>
-    </section>
-  );
-}
 
 function TestimonialsSection() {
   const items = [
