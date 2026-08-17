@@ -446,66 +446,6 @@ function ArtTipsSection() {
   );
 }
 
-function TechSecuritySection() {
-  const items = [
-    {
-      icon: Lock,
-      title: "Login criptografado",
-      desc: "Autenticação protegida e senhas com hash seguro. Seu acesso é só seu.",
-    },
-    {
-      icon: ShieldCheck,
-      title: "Arquivos privados",
-      desc: "Cada pedido tem link único. Suas artes ficam isoladas e só sua equipe enxerga.",
-    },
-    {
-      icon: Server,
-      title: "Banco com RLS",
-      desc: "Banco de dados com regras linha-a-linha (Row Level Security) — ninguém vê dados de outro cliente.",
-    },
-    {
-      icon: Cloud,
-      title: "Infra global",
-      desc: "Hospedagem em nuvem com HTTPS, backups e disponibilidade alta. App rápido em qualquer dispositivo.",
-    },
-  ];
-  return (
-    <section className="mx-auto max-w-[1280px] px-4 py-12 sm:py-16">
-      <SectionHeader
-        kicker="Tecnologia e confiança"
-        title="Experiência moderna e protegida"
-        description="Infraestrutura otimizada para garantir rapidez e segurança em todos os seus pedidos."
-      />
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {items.map((it) => (
-          <Reveal
-            key={it.title}
-            variant="up"
-            className="lift-on-hover rounded-[var(--store-radius-lg)] border border-[var(--store-border)] bg-white p-5 shadow-[var(--store-shadow-sm)]"
-          >
-            <span className="grid h-10 w-10 place-items-center rounded-xl bg-[var(--store-success)]/10 text-[var(--store-success)]">
-              <it.icon className="h-5 w-5" />
-            </span>
-            <p className="mt-4 text-base font-extrabold text-[var(--store-text)]">{it.title}</p>
-            <p className="mt-1 text-sm text-[var(--store-text-muted)]">{it.desc}</p>
-          </Reveal>
-        ))}
-      </div>
-      <div className="mt-6 flex flex-wrap items-center justify-center gap-2 text-xs font-semibold text-[var(--store-text-muted)]">
-        {["Segurança SSL", "Pagamento Protegido", "Entrega Garantida", "Produção Ágil", "Suporte Especializado"].map(
-          (t) => (
-            <span
-              key={t}
-              className="rounded-full border border-[var(--store-border)] bg-white px-3 py-1"
-            >
-              {t}
-            </span>
-          ),
-        )}
-      </div>
-    </section>
-  );
-}
 
 function ContactSection() {
   return _ContactSection();
