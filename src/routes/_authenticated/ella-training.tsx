@@ -87,7 +87,7 @@ const CATEGORY_META: Record<
   },
   geral: {
     label: "Geral",
-    description: "Outros aprendizados salvos pelo assistente",
+    description: "Outros aprendizados salvos pelo sistema",
     icon: BookOpen,
     tone: "bg-slate-100 text-slate-800",
   },
