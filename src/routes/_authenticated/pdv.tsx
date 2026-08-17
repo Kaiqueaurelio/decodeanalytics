@@ -1968,7 +1968,7 @@ function PDVPage() {
             >
               Imprimir prévia
             </Button>
-            <Button className="bg-brand-blue hover:bg-brand-blue-light" onClick={closeCashAndSave}>
+            <Button className="h-12 rounded-xl bg-[#080c16] font-black text-brand-yellow hover:bg-[#1a202c]" onClick={closeCashAndSave}>
               Fechar e salvar
             </Button>
           </DialogFooter>
