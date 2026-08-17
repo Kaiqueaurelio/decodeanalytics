@@ -1236,10 +1236,6 @@ function PDVPage() {
           </div>
         </Card>
       </div>
-
-
-
-
       <PdvCalculator
         open={showCalculator}
         onOpenChange={setShowCalculator}
