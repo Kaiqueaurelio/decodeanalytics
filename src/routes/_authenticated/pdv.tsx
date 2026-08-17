@@ -861,32 +861,28 @@ function PDVPage() {
         </div>
       </div>
       {/* Saldo em Destaque - Visual Premium */}
-      <div className="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <div className="relative overflow-hidden rounded-[2rem] bg-[#080c16] p-6 text-white shadow-2xl">
+      <div className="mb-8 grid gap-4 grid-cols-2 lg:grid-cols-4">
+        <div className="relative overflow-hidden rounded-[1.5rem] bg-[#080c16] p-4 text-white shadow-xl">
           <div className="relative z-10">
-            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/40">Saldo do Dia</p>
-            <p className="mt-1 text-3xl font-black text-brand-yellow tabular-nums">{brl(dayBalance)}</p>
+            <p className="text-[9px] font-black uppercase tracking-[0.1em] text-white/40">Saldo</p>
+            <p className="mt-0.5 text-xl font-black text-brand-yellow tabular-nums">{brl(dayBalance)}</p>
           </div>
-          <div className="absolute -right-4 -bottom-4 opacity-10">
-            <Zap className="h-24 w-24" />
-          </div>
+          <Zap className="absolute -right-2 -bottom-2 h-12 w-12 opacity-10" />
         </div>
 
-        <div className="rounded-[2rem] border border-white bg-white/60 p-6 backdrop-blur-xl shadow-sm border-slate-100">
-          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Entradas</p>
-          <p className="mt-1 text-2xl font-black text-emerald-600 tabular-nums">{brl(totalToday)}</p>
+        <div className="rounded-[1.5rem] border border-slate-100 bg-white/60 p-4 backdrop-blur-xl shadow-sm">
+          <p className="text-[9px] font-black uppercase tracking-[0.1em] text-slate-400">Entradas</p>
+          <p className="mt-0.5 text-xl font-black text-emerald-600 tabular-nums">{brl(totalToday)}</p>
         </div>
 
-        <div className="rounded-[2rem] border border-white bg-white/60 p-6 backdrop-blur-xl shadow-sm border-slate-100">
-          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Cartões / PIX</p>
-          <p className="mt-1 text-2xl font-black text-[#080c16] tabular-nums">
-            {brl(paymentTotals.debit + paymentTotals.credit + paymentTotals.pix)}
-          </p>
+        <div className="rounded-[1.5rem] border border-slate-100 bg-white/60 p-4 backdrop-blur-xl shadow-sm">
+          <p className="text-[9px] font-black uppercase tracking-[0.1em] text-slate-400">Saídas</p>
+          <p className="mt-0.5 text-xl font-black text-rose-600 tabular-nums">{brl(expenseTotal)}</p>
         </div>
 
-        <div className="rounded-[2rem] border border-white bg-white/60 p-6 backdrop-blur-xl shadow-sm border-slate-100">
-          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Saídas / Despesas</p>
-          <p className="mt-1 text-2xl font-black text-rose-600 tabular-nums">{brl(expenseTotal)}</p>
+        <div className="hidden lg:block rounded-[1.5rem] border border-slate-100 bg-white/60 p-4 backdrop-blur-xl shadow-sm">
+          <p className="text-[9px] font-black uppercase tracking-[0.1em] text-slate-400">Operador</p>
+          <p className="mt-0.5 text-base font-black text-[#080c16] truncate">{cashSession?.operator || "Sessão Inativa"}</p>
         </div>
       </div>
       <div className="grid gap-6 lg:grid-cols-[1fr_400px]">
@@ -904,14 +900,63 @@ function PDVPage() {
               />
             </div>
 
-            {/* Ações Rápidas */}
-            <div className="flex flex-wrap gap-2">
+            {/* Área de Venda Rápida Integrada - Tablet First */}
+            <div className="grid gap-4 sm:grid-cols-[1fr_120px_auto]">
+              <div className="relative group">
+                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-[#080c16] transition-colors">
+                  <Zap className="h-5 w-5" />
+                </div>
+                <Input
+                  value={fastSale.description}
+                  onChange={(e) => setFastSale(prev => ({ ...prev, description: e.target.value }))}
+                  className="h-14 w-full rounded-2xl border-slate-200 bg-white pl-12 text-base shadow-sm focus:border-[#080c16] focus:ring-2 focus:ring-[#080c16]/5"
+                  placeholder="Venda rápida: Descrição do item..."
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && fastSale.description && fastSale.value) {
+                      addToCart({
+                        id: `fast-${Date.now()}`,
+                        name: fastSale.description,
+                        price: toNumber(fastSale.value),
+                        category: "Venda Rápida",
+                        detail: "Item avulso",
+                        image: "linear-gradient(135deg,#ede9fe,#6d28d9)",
+                      });
+                      setFastSale({ description: "", value: "" });
+                    }
+                  }}
+                />
+              </div>
+              <div className="relative group">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm font-bold text-slate-400">R$</span>
+                <Input
+                  value={fastSale.value}
+                  onChange={(e) => setFastSale(prev => ({ ...prev, value: e.target.value }))}
+                  className="h-14 w-full rounded-2xl border-slate-200 bg-white pl-9 text-base font-black shadow-sm focus:border-[#080c16] focus:ring-2 focus:ring-[#080c16]/5"
+                  placeholder="0,00"
+                  inputMode="decimal"
+                />
+              </div>
               <Button
-                className="h-10 rounded-xl bg-[#080c16] px-4 font-bold text-white shadow-md transition-all hover:bg-[#1a202c] active:scale-95"
-                onClick={() => setShowFastSale(true)}
+                disabled={!fastSale.description || !fastSale.value}
+                className="h-14 rounded-2xl bg-[#080c16] px-6 font-black text-brand-yellow shadow-lg shadow-black/5 transition-all hover:scale-[1.02] active:scale-[0.98]"
+                onClick={() => {
+                  addToCart({
+                    id: `fast-${Date.now()}`,
+                    name: fastSale.description,
+                    price: toNumber(fastSale.value),
+                    category: "Venda Rápida",
+                    detail: "Item avulso",
+                    image: "linear-gradient(135deg,#ede9fe,#6d28d9)",
+                  });
+                  setFastSale({ description: "", value: "" });
+                }}
               >
-                <Plus className="mr-2 h-4 w-4" /> Venda Rápida
+                <Plus className="mr-2 h-5 w-5" /> ADICIONAR
               </Button>
+            </div>
+
+            {/* Ações Secundárias */}
+            <div className="flex flex-wrap gap-2">
               <Button
                 variant="outline"
                 className="h-10 rounded-xl border-slate-200 bg-white px-4 font-bold text-slate-700 shadow-sm transition-all hover:bg-slate-50 active:scale-95"
@@ -925,6 +970,13 @@ function PDVPage() {
                 onClick={() => setShowOrderPicker(true)}
               >
                 <ClipboardList className="mr-2 h-4 w-4 text-slate-400" /> Cobrar O.S
+              </Button>
+              <Button
+                variant="outline"
+                className="h-10 rounded-xl border-slate-200 bg-white px-4 font-bold text-slate-700 shadow-sm transition-all hover:bg-slate-50 active:scale-95"
+                onClick={() => setShowCalculator(true)}
+              >
+                <Monitor className="mr-2 h-4 w-4 text-slate-400" /> Calculadora
               </Button>
             </div>
           </div>
@@ -962,7 +1014,7 @@ function PDVPage() {
           </div>
 
           {/* Grid de Produtos Moderno */}
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3">
             {filteredProducts.map((product) => (
               <Card
                 key={product.id}
@@ -1004,8 +1056,8 @@ function PDVPage() {
         {/* Carrinho / Receipt Sidebar */}
         <aside className="relative">
           <div className="sticky top-6 flex flex-col gap-4">
-            <div className="overflow-hidden rounded-[2.5rem] border-2 border-[#080c16] bg-[#080c16] p-1 shadow-2xl">
-              <div className="rounded-[2.2rem] bg-white p-6 shadow-inner">
+            <div className="overflow-hidden rounded-[2rem] border-2 border-[#080c16] bg-[#080c16] p-1 shadow-2xl">
+              <div className="rounded-[1.8rem] bg-white p-6 shadow-inner">
                 <div className="mb-6 flex items-center justify-between">
                   <div>
                     <h2 className="text-lg font-black text-[#080c16]">Cupom Atual</h2>
@@ -1028,28 +1080,28 @@ function PDVPage() {
                         key={item.id}
                         className="group flex items-start gap-3 rounded-2xl border border-slate-50 p-3 transition-colors hover:bg-slate-50"
                       >
-                        <div className="flex flex-col items-center gap-1 rounded-xl bg-slate-100 p-1">
+                        <div className="flex flex-col items-center gap-1.5 rounded-xl bg-slate-100 p-1.5 min-w-[36px]">
                           <button
-                            className="flex h-6 w-6 items-center justify-center rounded-lg bg-white text-[#080c16] shadow-sm hover:bg-slate-50"
+                            className="flex h-7 w-7 items-center justify-center rounded-lg bg-white text-[#080c16] shadow-sm hover:bg-slate-50 active:scale-90"
                             onClick={() => changeQty(item.id, 1)}
                           >
-                            <Plus className="h-3 w-3" />
+                            <Plus className="h-4 w-4" />
                           </button>
-                          <span className="text-xs font-black">{item.quantity}</span>
+                          <span className="text-sm font-black text-[#080c16]">{item.quantity}</span>
                           <button
-                            className="flex h-6 w-6 items-center justify-center rounded-lg bg-white text-[#080c16] shadow-sm hover:bg-slate-50"
+                            className="flex h-7 w-7 items-center justify-center rounded-lg bg-white text-[#080c16] shadow-sm hover:bg-slate-50 active:scale-90"
                             onClick={() => changeQty(item.id, -1)}
                           >
-                            <Minus className="h-3 w-3" />
+                            <Minus className="h-4 w-4" />
                           </button>
                         </div>
-                        <div className="flex-1 min-w-0">
+                        <div className="flex-1 min-w-0 py-0.5">
                           <p className="truncate text-sm font-black text-[#080c16]">{item.name}</p>
                           <p className="truncate text-[10px] font-bold text-slate-400">{item.detail}</p>
                           <div className="mt-1 flex items-center justify-between">
-                            <span className="text-xs font-black text-[#080c16]">{brl(item.price * item.quantity)}</span>
+                            <span className="text-sm font-black text-[#080c16]">{brl(item.price * item.quantity)}</span>
                             <button
-                              className="text-[10px] font-black uppercase text-rose-500 opacity-0 transition-opacity group-hover:opacity-100"
+                              className="text-[10px] font-black uppercase text-rose-500 opacity-0 transition-opacity group-hover:opacity-100 p-1"
                               onClick={() => changeQty(item.id, -999)}
                             >
                               Remover
@@ -1741,11 +1793,14 @@ function PDVPage() {
         </DialogContent>
       </Dialog>
       <Dialog open={showOpenCash} onOpenChange={setShowOpenCash}>
-        <DialogContent className="rounded-3xl">
-          <DialogHeader>
-            <DialogTitle>Abrir caixa</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-3">
+        <DialogContent className="rounded-[2rem] border-2 border-[#080c16] p-0 overflow-hidden sm:max-w-md">
+          <div className="bg-[#080c16] p-6 text-white text-center">
+            <DialogHeader>
+              <DialogTitle className="text-xl font-black text-brand-yellow text-center">Abertura de Caixa</DialogTitle>
+              <p className="text-xs font-bold text-white/60">Informe os dados para iniciar as vendas</p>
+            </DialogHeader>
+          </div>
+          <div className="p-6 space-y-4">
             <div>
               <Label>Operador</Label>
               <Input
@@ -1762,20 +1817,23 @@ function PDVPage() {
               />
             </div>
           </div>
-          <DialogFooter>
-            <Button className="bg-brand-blue hover:bg-brand-blue-light" onClick={openCash}>
-              Abrir
+          <DialogFooter className="pt-4">
+            <Button className="h-12 w-full rounded-xl bg-[#080c16] font-black text-brand-yellow hover:bg-[#1a202c]" onClick={openCash}>
+              ABRIR CAIXA
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
       <Dialog open={showCloseCash} onOpenChange={setShowCloseCash}>
-        <DialogContent className="max-w-2xl rounded-3xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>Fechar caixa — confira antes de salvar</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-3">
-            <div className="rounded-2xl bg-brand-blue p-4 text-white">
+        <DialogContent className="max-w-2xl rounded-[2rem] border-2 border-[#080c16] p-0 overflow-hidden">
+          <div className="bg-[#080c16] p-6 text-white">
+            <DialogHeader>
+              <DialogTitle className="text-xl font-black text-brand-yellow">Fechar Caixa</DialogTitle>
+              <p className="text-xs font-bold text-white/60">Confira os valores antes de salvar o fechamento</p>
+            </DialogHeader>
+          </div>
+          <div className="p-6 space-y-4 max-h-[70vh] overflow-y-auto">
+            <div className="rounded-2xl bg-[#080c16] p-5 text-white shadow-xl shadow-black/10">
               <p className="text-xs font-bold uppercase tracking-wider text-blue-200">
                 Resultado do dia
               </p>
@@ -1913,7 +1971,7 @@ function PDVPage() {
             >
               Imprimir prévia
             </Button>
-            <Button className="bg-brand-blue hover:bg-brand-blue-light" onClick={closeCashAndSave}>
+            <Button className="h-12 rounded-xl bg-[#080c16] font-black text-brand-yellow hover:bg-[#1a202c]" onClick={closeCashAndSave}>
               Fechar e salvar
             </Button>
           </DialogFooter>
