@@ -1822,12 +1822,15 @@ function PDVPage() {
         </DialogContent>
       </Dialog>
       <Dialog open={showCloseCash} onOpenChange={setShowCloseCash}>
-        <DialogContent className="max-w-2xl rounded-3xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>Fechar caixa — confira antes de salvar</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-3">
-            <div className="rounded-2xl bg-brand-blue p-4 text-white">
+        <DialogContent className="max-w-2xl rounded-[2rem] border-2 border-[#080c16] p-0 overflow-hidden">
+          <div className="bg-[#080c16] p-6 text-white">
+            <DialogHeader>
+              <DialogTitle className="text-xl font-black text-brand-yellow">Fechar Caixa</DialogTitle>
+              <p className="text-xs font-bold text-white/60">Confira os valores antes de salvar o fechamento</p>
+            </DialogHeader>
+          </div>
+          <div className="p-6 space-y-4 max-h-[70vh] overflow-y-auto">
+            <div className="rounded-2xl bg-[#080c16] p-5 text-white shadow-xl shadow-black/10">
               <p className="text-xs font-bold uppercase tracking-wider text-blue-200">
                 Resultado do dia
               </p>
