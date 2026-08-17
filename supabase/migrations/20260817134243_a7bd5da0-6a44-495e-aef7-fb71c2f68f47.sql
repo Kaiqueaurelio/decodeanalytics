@@ -1,0 +1,2 @@
+ALTER FUNCTION public.has_role(uuid, public.app_role) SECURITY INVOKER;
+ALTER FUNCTION public.is_admin(uuid) SECURITY INVOKER;
