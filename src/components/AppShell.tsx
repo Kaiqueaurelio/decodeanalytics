@@ -1,15 +1,12 @@
-import type { ReactNode } from "react";
-import { useMemo, useState } from "react";
-import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
+import { useState, useMemo, type ReactNode } from "react";
+import { Link, useRouterState, useNavigate } from "@tanstack/react-router";
 import {
-  BarChart3,
+  LayoutDashboard,
+  FileText,
+  ClipboardList,
+  Kanban,
   Boxes,
   ChevronRight,
-  ClipboardList,
-  Cog,
-  FileText,
-  Kanban,
-  LayoutDashboard,
   LogOut,
   Menu,
   Package,
@@ -180,20 +177,21 @@ export function AppShell({ children }: { children: ReactNode }) {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(() => {
-    if (typeof window === "undefined") return true;
+    if (typeof window === "undefined") return false;
     const saved = localStorage.getItem("alcateia_sidebar_collapsed");
-    return saved ? saved === "1" : true;
+    return saved ? saved === "1" : false;
   });
   const [search, setSearch] = useState("");
   const [searchFocused, setSearchFocused] = useState(false);
 
-  const items = useMemo(
-    () =>
-      NAV.filter(
-        (item) => !item.roles || isAdmin || roles.some((role) => item.roles?.includes(role)),
-      ),
-    [isAdmin, roles],
-  );
+  const items = useMemo(() => {
+    return NAV.filter((item) => {
+      if (!item.roles) return true;
+      if (isAdmin) return true;
+      return roles.some((role) => item.roles?.includes(role));
+    });
+  }, [isAdmin, roles]);
+
   const results = search.trim()
     ? items.filter((item) =>
         `${item.label} ${item.description}`
@@ -201,6 +199,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           .includes(search.toLocaleLowerCase("pt-BR")),
       )
     : [];
+
   const title = currentTitle(path);
   const userInitial = user?.email?.charAt(0).toUpperCase() ?? "A";
 
@@ -216,74 +215,89 @@ export function AppShell({ children }: { children: ReactNode }) {
         <div className="app-grid-pattern border-b border-white/10 px-3 py-3">
           <button
             type="button"
-            onClick={() =>
-              setCollapsed((value) => {
-                const next = !value;
-                localStorage.setItem("alcateia_sidebar_collapsed", next ? "1" : "0");
-                return next;
-              })
-            }
-            className="mb-2 hidden w-full items-center justify-center gap-2 rounded-lg bg-white/10 px-2 py-1.5 text-xs font-bold text-white/80 hover:bg-white/15 hover:text-white md:flex"
-            aria-label={collapsed ? "Expandir menu" : "Recolher menu"}
+            onClick={() => {
+              localStorage.setItem("alcateia_sidebar_collapsed", !collapsed ? "1" : "0");
+              setCollapsed(!collapsed);
+            }}
+            className="hidden h-10 w-full items-center justify-center rounded-xl bg-white/5 text-white/50 transition-colors hover:bg-white/10 md:flex"
           >
-            {collapsed ? (
-              <>
-                <PanelLeftOpen className="h-3.5 w-3.5" />
-                <span className="sr-only">Expandir menu</span>
-              </>
-            ) : (
-              <>
-                <PanelLeftClose className="h-3.5 w-3.5" />
-                Recolher menu
-              </>
-            )}
+            {collapsed ? <PanelLeftOpen className="h-4 w-4" /> : <PanelLeftClose className="h-4 w-4" />}
           </button>
-          <div className="flex items-center justify-between gap-3">
-            <div
-              className={cn(
-                "flex min-w-0 flex-1 items-center justify-center rounded-xl bg-white p-2 shadow-lg ring-2 ring-brand-yellow/70",
-                collapsed ? "h-24 md:hidden" : "h-24",
-              )}
-            >
-              <img
-                src="/brand/alcateia-logo.png"
-                alt="Logo da Alcateia's Produções Gráficas"
-                className="h-full max-h-20 w-full object-contain"
-              />
-            </div>
-            <div
-              className={cn(
-                "hidden h-10 w-10 shrink-0 place-items-center rounded-xl bg-white p-1 shadow-lg ring-2 ring-brand-yellow/70",
-                collapsed && "md:grid",
-              )}
-            >
-              <img
-                src="/brand/alcateia-symbol.png"
-                alt="Símbolo da Alcateia's"
-                className="h-full w-full object-contain"
-              />
+          <div className="mt-3 flex items-center justify-between px-1">
+            <div className={cn("flex min-w-0 flex-1 items-center gap-2", collapsed && "md:hidden")}>
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-brand-yellow font-black text-brand-blue">
+                A
+              </div>
+              <span className="min-w-0 truncate text-xs font-bold uppercase tracking-widest text-white/90">
+                Alcateia
+              </span>
             </div>
             <button
-              type="button"
               onClick={() => setOpen(false)}
-              className="rounded-lg p-2 text-white/70 hover:bg-white/10 hover:text-white md:hidden"
-              aria-label="Fechar menu"
+              className="grid h-8 w-8 place-items-center rounded-lg bg-white/5 text-white/40 hover:bg-white/10 md:hidden"
             >
               <X className="h-4 w-4" />
             </button>
           </div>
-          <div
-            className={cn(
-              "mt-3 rounded-xl border border-white/10 bg-white/5 px-3 py-2",
-              collapsed && "md:hidden",
-            )}
-          >
-            <p className="text-[10px] font-bold uppercase tracking-wider text-brand-yellow">
-              Central de operações
-            </p>
-            <p className="mt-0.5 text-xs leading-relaxed text-white/65">
-              Do briefing à entrega, tudo em um só lugar.
-            </p>
+          <div className="mt-4 px-1">
+            <div
+              className={cn(
+                "relative flex h-10 items-center rounded-xl bg-white/5 px-3 ring-1 ring-white/10 transition-all focus-within:bg-white/8 focus-within:ring-brand-yellow/50",
+                collapsed && "md:h-8 md:px-0 md:justify-center",
+              )}
+            >
+              <Search
+                className={cn("h-4 w-4 shrink-0 text-white/30", collapsed && "md:h-3.5 md:w-3.5")}
+              />
+              <input
+                type="text"
+                placeholder="Buscar..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                onFocus={() => setSearchFocused(true)}
+                onBlur={() => setTimeout(() => setSearchFocused(false), 200)}
+                className={cn(
+                  "ml-2 flex-1 bg-transparent text-xs text-white placeholder:text-white/20 focus:outline-hidden",
+                  collapsed && "md:hidden",
+                )}
+              />
+              {searchFocused && results.length > 0 && (
+                <div className="absolute top-full right-0 left-0 z-50 mt-1 max-h-60 overflow-y-auto rounded-xl border border-white/10 bg-[#0f172a] p-1 shadow-2xl">
+                  {results.map((item) => (
+                    <Link
+                      key={item.to}
+                      to={item.to}
+                      onClick={() => {
+                        setSearch("");
+                        setOpen(false);
+                      }}
+                      className="flex items-center gap-3 rounded-lg px-3 py-2 text-xs text-white/70 hover:bg-white/5 hover:text-white"
+                    >
+                      <item.icon className="h-3.5 w-3.5 shrink-0" />
+                      <div className="min-w-0">
+                        <p className="font-medium">{item.label}</p>
+                        <p className="truncate text-[10px] opacity-50">{item.description}</p>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
+            <div
+              className={cn(
+                "mt-3 rounded-xl border border-white/10 bg-white/5 px-3 py-2",
+                collapsed && "md:hidden",
+              )}
+            >
+              <div className="flex items-center gap-2">
+                <div className="flex h-5 w-5 items-center justify-center rounded-full bg-brand-yellow/20 text-[10px] font-bold text-brand-yellow">
+                  {isAdmin ? "AD" : roles[0]?.substring(0, 2).toUpperCase() || "US"}
+                </div>
+                <span className="text-[10px] font-bold tracking-wider text-white/40 uppercase">
+                  {isAdmin ? "ADMIN" : ROLE_LABEL[roles[0]] || "USUÁRIO"}
+                </span>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -326,7 +340,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                         >
                           <Icon className="h-3.5 w-3.5" />
                         </span>
-                        <span className={cn("min-w-0 flex-1 truncate", collapsed && "md:hidden")}>
+                        <span className={cn("min-w-0 flex-1 truncate md:block", collapsed && "md:hidden")}>
                           {item.label}
                         </span>
                         {active && (
@@ -348,172 +362,100 @@ export function AppShell({ children }: { children: ReactNode }) {
             type="button"
             onClick={() =>
               setCollapsed((value) => {
-                const next = !value;
-                localStorage.setItem("alcateia_sidebar_collapsed", next ? "1" : "0");
-                return next;
+                localStorage.setItem("alcateia_sidebar_collapsed", !value ? "1" : "0");
+                return !value;
               })
             }
-            className="mb-2 hidden w-full items-center justify-center gap-2 rounded-lg bg-white/8 px-2 py-1.5 text-xs font-bold text-white/75 hover:bg-white/12 hover:text-white md:flex"
-            aria-label={collapsed ? "Expandir menu" : "Recolher menu"}
+            className="group flex w-full items-center gap-2.5 rounded-xl px-2.5 py-2 text-sm text-white/50 transition-all hover:bg-white/5 hover:text-white"
           >
-            {collapsed ? (
-              <PanelLeftOpen className="h-4 w-4" />
-            ) : (
-              <>
-                <PanelLeftClose className="h-4 w-4" />
-                <span>Recolher menu</span>
-              </>
-            )}
+            <div className="grid h-7 w-7 shrink-0 place-items-center rounded-lg bg-white/5 group-hover:bg-white/10">
+              {collapsed ? (
+                <PanelLeftOpen className="h-3.5 w-3.5" />
+              ) : (
+                <PanelLeftClose className="h-3.5 w-3.5" />
+              )}
+            </div>
+            <span className={cn("flex-1 truncate md:block", collapsed && "md:hidden")}>
+              Recolher menu
+            </span>
           </button>
-          <div className="mb-2 flex items-center gap-2 rounded-xl px-2 py-1.5">
-            <div className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-brand-yellow text-xs font-extrabold text-brand-blue">
-              {userInitial}
-            </div>
-            <div className={cn("min-w-0 flex-1", collapsed && "md:hidden")}>
-              <div className="truncate text-xs font-semibold text-white">{user?.email}</div>
-              <div className="truncate text-[11px] text-white/50">
-                {roles.map((role) => ROLE_LABEL[role]).join(", ") || "Sem papel"}
-              </div>
-            </div>
-          </div>
           <button
-            type="button"
-            onClick={async () => {
-              await signOut();
-              navigate({ to: "/auth" });
-            }}
-            className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 text-sm font-medium text-white/65 transition-colors hover:bg-white/8 hover:text-white"
+            onClick={() => signOut()}
+            className="group mt-1 flex w-full items-center gap-2.5 rounded-xl px-2.5 py-2 text-sm text-rose-400/70 transition-all hover:bg-rose-500/10 hover:text-rose-400"
           >
-            <LogOut className="h-3.5 w-3.5" />{" "}
-            <span className={cn(collapsed && "md:hidden")}>Sair da conta</span>
+            <div className="grid h-7 w-7 shrink-0 place-items-center rounded-lg bg-rose-500/5 group-hover:bg-rose-500/10">
+              <LogOut className="h-3.5 w-3.5" />
+            </div>
+            <span className={cn("flex-1 truncate md:block", collapsed && "md:hidden")}>Sair</span>
           </button>
         </div>
       </aside>
 
-      {open && (
-        <button
-          type="button"
-          onClick={() => setOpen(false)}
-          className="fixed inset-0 z-30 bg-brand-blue/55 backdrop-blur-sm md:hidden"
-          aria-label="Fechar menu"
-        />
-      )}
-
       <div
         className={cn(
-          "flex min-h-screen min-w-0 max-w-full flex-col overflow-x-hidden transition-[margin] duration-300",
-          collapsed ? "md:ml-16" : "md:ml-64",
+          "flex flex-col transition-[padding] duration-300",
+          collapsed ? "md:pl-16" : "md:pl-64",
         )}
       >
-        <div className="hidden h-8 items-center justify-between bg-brand-blue px-6 text-[11px] font-medium text-white/70 lg:flex">
-          <span>Produção gráfica organizada do briefing à entrega</span>
-          <span className="font-semibold text-brand-yellow">Alcateia Produções Gráficas</span>
-        </div>
-
-        <header className="safe-area-header sticky top-0 z-20 border-b border-border/80 bg-white/92 px-2 backdrop-blur-xl md:px-4 lg:top-0">
-          <div className="flex h-16 md:h-[72px] items-center gap-2 md:gap-3">
-            {isAdmin && (
-              <Link
-                to="/ella"
-                className="hidden h-11 shrink-0 items-center gap-2 rounded-xl border border-blue-200 bg-blue-50 px-3 text-sm font-extrabold text-brand-blue hover:bg-blue-100 xl:inline-flex"
+        <header className="sticky top-0 z-30 h-16 border-b border-slate-200 bg-white/80 backdrop-blur-md">
+          <div className="flex h-full items-center justify-between px-4 md:px-6">
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => setOpen(true)}
+                className="grid h-10 w-10 place-items-center rounded-xl bg-slate-100 text-slate-600 hover:bg-slate-200 md:hidden"
               >
-                <LayoutDashboard className="h-4 w-4" /> Gestor Inteligente
-              </Link>
-            )}
-
-            <button
-              type="button"
-              className="shrink-0 rounded-xl border border-border bg-white p-2 text-brand-blue shadow-sm md:hidden"
-              onClick={() => setOpen(true)}
-              aria-label="Abrir menu"
-            >
-              <Menu className="h-5 w-5" />
-            </button>
-
-            <div className="min-w-0 flex-1 lg:flex-none lg:min-w-44">
-              <p className="hidden text-[10px] font-bold uppercase tracking-[0.18em] text-brand-orange sm:block">
-                Central de gestão
-              </p>
-              <h1 className="truncate text-base font-extrabold text-brand-blue sm:text-xl">
-                {title}
-              </h1>
-            </div>
-
-            <div className="relative ml-auto hidden w-full max-w-xl lg:block">
-              <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-              <input
-                value={search}
-                onChange={(event) => setSearch(event.target.value)}
-                onFocus={() => setSearchFocused(true)}
-                onBlur={() => window.setTimeout(() => setSearchFocused(false), 150)}
-                placeholder="Buscar clientes, pedidos ou áreas..."
-                className="h-11 w-full rounded-xl border border-border bg-muted/45 pl-10 pr-4 text-sm outline-none transition-all placeholder:text-muted-foreground focus:border-brand-yellow focus:bg-white focus:ring-4 focus:ring-brand-yellow/15"
-                aria-label="Buscar no sistema"
-              />
-              {searchFocused && search.trim() && (
-                <div className="absolute left-0 right-0 top-[calc(100%+8px)] overflow-hidden rounded-2xl border border-border bg-white p-2 shadow-[var(--shadow-lg)]">
-                  {results.length ? (
-                    results.map((item) => {
-                      const Icon = item.icon;
-                      return (
-                        <Link
-                          key={item.to}
-                          to={item.to}
-                          onClick={() => setSearch("")}
-                          className="flex items-center gap-3 rounded-xl px-3 py-2.5 hover:bg-muted"
-                        >
-                          <span className="grid h-9 w-9 place-items-center rounded-lg bg-brand-blue/8 text-brand-blue">
-                            <Icon className="h-4 w-4" />
-                          </span>
-                          <span>
-                            <span className="block text-sm font-bold text-foreground">
-                              {item.label}
-                            </span>
-                            <span className="block text-xs text-muted-foreground">
-                              {item.description}
-                            </span>
-                          </span>
-                        </Link>
-                      );
-                    })
-                  ) : (
-                    <p className="px-3 py-5 text-center text-sm text-muted-foreground">
-                      Nenhuma área encontrada.
-                    </p>
-                  )}
+                <Menu className="h-5 w-5" />
+              </button>
+              <div>
+                <h1 className="text-sm font-bold tracking-tight text-slate-900 md:text-base">
+                  {title}
+                </h1>
+                <div className="hidden items-center gap-2 text-[10px] font-medium text-slate-500 uppercase tracking-wider md:flex">
+                  <span className="h-1 w-1 rounded-full bg-slate-300" />
+                  Alcateia Produções Gráficas
                 </div>
-              )}
+              </div>
             </div>
 
-            <NotificationsBell />
-
-            <ThemeToggle className="hidden sm:inline-flex" />
-
-            <Link
-              to="/orders"
-              className="inline-flex h-10 md:h-11 shrink-0 items-center justify-center gap-2 rounded-xl bg-brand-yellow px-2.5 md:px-3.5 text-sm font-extrabold text-brand-blue shadow-md transition-all hover:-translate-y-0.5 hover:brightness-105 hover:shadow-lg sm:px-5"
-            >
-              <Plus className="h-4 w-4" />
-              <span className="hidden sm:inline">Nova OS</span>
-            </Link>
+            <div className="flex items-center gap-2 md:gap-3">
+              <ThemeToggle />
+              <NotificationsBell />
+              <div className="mx-1 h-4 w-px bg-slate-200 md:mx-2" />
+              <div className="flex items-center gap-2 md:gap-3">
+                <div className="hidden text-right md:block">
+                  <p className="text-xs font-bold text-slate-900 truncate max-w-[120px]">
+                    {user?.email?.split("@")[0]}
+                  </p>
+                  <p className="text-[10px] font-medium text-slate-500 uppercase tracking-tighter">
+                    {isAdmin ? "Administrador" : ROLE_LABEL[roles[0]] || "Usuário"}
+                  </p>
+                </div>
+                <div className="grid h-9 w-9 place-items-center rounded-xl bg-[#0b4a3a] text-sm font-bold text-white shadow-lg shadow-emerald-900/10">
+                  {userInitial}
+                </div>
+              </div>
+            </div>
           </div>
         </header>
 
-        <main
-          className="app-page min-w-0 flex-1 overflow-x-hidden pb-24 md:pb-6"
-          style={{ paddingBottom: "max(6rem, calc(env(safe-area-inset-bottom) + 5.5rem))" }}
-        >
-          {children}
+        <main className="flex-1 p-4 md:p-6 lg:p-8">
+          <div className="mx-auto max-w-7xl">{children}</div>
         </main>
       </div>
-      
+
+      <EllaFab />
+
+      {open && (
+        <div
+          className="fixed inset-0 z-30 bg-black/60 backdrop-blur-xs md:hidden"
+          onClick={() => setOpen(false)}
+        />
+      )}
     </div>
   );
 }
 
 function currentTitle(path: string) {
-  const match = NAV.find(
-    (item) => path === item.to || (item.to !== "/dashboard" && path.startsWith(item.to)),
-  );
-  return match?.label ?? "Alcateia's Gestão";
+  const item = NAV.find((i) => i.to === path || (i.to !== "/dashboard" && path.startsWith(i.to)));
+  return item?.label || "Painel";
 }
