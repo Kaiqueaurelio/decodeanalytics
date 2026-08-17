@@ -1080,28 +1080,28 @@ function PDVPage() {
                         key={item.id}
                         className="group flex items-start gap-3 rounded-2xl border border-slate-50 p-3 transition-colors hover:bg-slate-50"
                       >
-                        <div className="flex flex-col items-center gap-1 rounded-xl bg-slate-100 p-1">
+                        <div className="flex flex-col items-center gap-1.5 rounded-xl bg-slate-100 p-1.5 min-w-[36px]">
                           <button
-                            className="flex h-6 w-6 items-center justify-center rounded-lg bg-white text-[#080c16] shadow-sm hover:bg-slate-50"
+                            className="flex h-7 w-7 items-center justify-center rounded-lg bg-white text-[#080c16] shadow-sm hover:bg-slate-50 active:scale-90"
                             onClick={() => changeQty(item.id, 1)}
                           >
-                            <Plus className="h-3 w-3" />
+                            <Plus className="h-4 w-4" />
                           </button>
-                          <span className="text-xs font-black">{item.quantity}</span>
+                          <span className="text-sm font-black text-[#080c16]">{item.quantity}</span>
                           <button
-                            className="flex h-6 w-6 items-center justify-center rounded-lg bg-white text-[#080c16] shadow-sm hover:bg-slate-50"
+                            className="flex h-7 w-7 items-center justify-center rounded-lg bg-white text-[#080c16] shadow-sm hover:bg-slate-50 active:scale-90"
                             onClick={() => changeQty(item.id, -1)}
                           >
-                            <Minus className="h-3 w-3" />
+                            <Minus className="h-4 w-4" />
                           </button>
                         </div>
-                        <div className="flex-1 min-w-0">
+                        <div className="flex-1 min-w-0 py-0.5">
                           <p className="truncate text-sm font-black text-[#080c16]">{item.name}</p>
                           <p className="truncate text-[10px] font-bold text-slate-400">{item.detail}</p>
                           <div className="mt-1 flex items-center justify-between">
-                            <span className="text-xs font-black text-[#080c16]">{brl(item.price * item.quantity)}</span>
+                            <span className="text-sm font-black text-[#080c16]">{brl(item.price * item.quantity)}</span>
                             <button
-                              className="text-[10px] font-black uppercase text-rose-500 opacity-0 transition-opacity group-hover:opacity-100"
+                              className="text-[10px] font-black uppercase text-rose-500 opacity-0 transition-opacity group-hover:opacity-100 p-1"
                               onClick={() => changeQty(item.id, -999)}
                             >
                               Remover
