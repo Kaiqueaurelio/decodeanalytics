@@ -70,7 +70,7 @@ export function PdvCalculator({
             <p className="text-[11px] font-black uppercase tracking-widest text-slate-500">
               Total acumulado
             </p>
-            <p className="mt-1 text-3xl font-black text-brand-blue tabular-nums">{brl(total)}</p>
+            <p className="mt-1 text-3xl font-black text-[#080c16] tabular-nums">{brl(total)}</p>
           </div>
 
           <div className="grid gap-2">
@@ -118,7 +118,7 @@ export function PdvCalculator({
                       { id: crypto.randomUUID(), label: `R$ ${v}`, value: v },
                     ])
                   }
-                  className="h-9 rounded-xl border border-slate-200 bg-white text-sm font-black text-slate-700 hover:border-brand-blue hover:text-brand-blue"
+                  className="h-9 rounded-xl border border-slate-200 bg-white text-sm font-black text-slate-700 hover:border-[#080c16] hover:text-[#080c16]"
                 >
                   +{v}
                 </button>
@@ -175,7 +175,7 @@ export function PdvCalculator({
           {onSendToCart && (
             <Button
               type="button"
-              className="rounded-xl bg-brand-blue font-black hover:bg-brand-blue-light"
+              className="rounded-xl bg-[#080c16] font-black hover:bg-[#080c16]/90"
               disabled={total <= 0}
               onClick={() => {
                 const desc =

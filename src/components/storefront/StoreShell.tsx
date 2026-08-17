@@ -141,7 +141,7 @@ function StoreHeader() {
 
         <nav className="hidden items-center gap-1 md:flex">
           <a
-            href={waLink("Olá! Vim do site da Alcateia's.")}
+            href={waLink("Olá! Vim do site da Alcateia Produções Gráficas.")}
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium text-[var(--store-text)] hover:bg-[var(--store-surface-soft)]"
@@ -256,7 +256,7 @@ function StoreHeader() {
                   Atendimento
                 </h3>
                 <a
-                  href={waLink("Olá! Vim do site da Alcateia's.")}
+                  href={waLink("Olá! Vim do site da Alcateia Produções Gráficas.")}
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={() => setMobileMenuOpen(false)}
@@ -461,7 +461,7 @@ function StoreFooter() {
       </div>
       <div className="border-t border-white/10">
         <div className="mx-auto flex max-w-[1280px] flex-col items-center justify-between gap-2 px-4 py-4 text-xs text-white/50 md:flex-row">
-          <p>© {new Date().getFullYear()} Alcateia's Produções Gráficas. Todos os direitos reservados.</p>
+          <p>© {new Date().getFullYear()} Alcateia Produções Gráficas. Todos os direitos reservados.</p>
           <p>Feito com cuidado para sua marca brilhar.</p>
         </div>
       </div>

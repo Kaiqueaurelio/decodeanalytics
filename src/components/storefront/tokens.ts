@@ -20,7 +20,7 @@ export const WHATSAPP_NUMBER = "5511972235342";
 export const STORE_CONTACT = {
   phone: "+55 11 97223-5342",
   whatsapp: WHATSAPP_NUMBER,
-  email: "contato@alcateias.com.br",
+  email: "contato@alcateiaproducoesgraficas.com.br",
   address: "Estrada do Cabreúva, 703 — Vila Santa Lúcia",
   city: "Carapicuíba — SP, CEP 06321-001",
   hours: [
