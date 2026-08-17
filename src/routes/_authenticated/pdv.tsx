@@ -1605,7 +1605,6 @@ function PDVPage() {
           </div>
         </DialogContent>
       </Dialog>
-
       <Dialog open={showMachineEntry} onOpenChange={setShowMachineEntry}>
         <DialogContent className="max-w-lg rounded-3xl">
           <DialogHeader>
