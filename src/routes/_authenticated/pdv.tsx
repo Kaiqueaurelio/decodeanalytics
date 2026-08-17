@@ -1554,7 +1554,6 @@ function PDVPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-
       <Dialog open={showOrderPicker} onOpenChange={setShowOrderPicker}>
         <DialogContent className="max-w-2xl rounded-3xl">
           <DialogHeader>
