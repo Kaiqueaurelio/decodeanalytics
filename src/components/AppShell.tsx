@@ -180,9 +180,9 @@ export function AppShell({ children }: { children: ReactNode }) {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(() => {
-    if (typeof window === "undefined") return true;
+    if (typeof window === "undefined") return false;
     const saved = localStorage.getItem("alcateia_sidebar_collapsed");
-    return saved ? saved === "1" : true;
+    return saved ? saved === "1" : false;
   });
   const [search, setSearch] = useState("");
   const [searchFocused, setSearchFocused] = useState(false);
