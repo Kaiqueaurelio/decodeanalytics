@@ -1018,7 +1018,7 @@ function PDVPage() {
           </div>
 
           {/* Grid de Produtos Moderno */}
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3">
             {filteredProducts.map((product) => (
               <Card
                 key={product.id}
