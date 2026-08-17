@@ -18,6 +18,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as SitemapXmlRouteImport } from './routes/sitemap.xml'
 import { Route as ProdutoSlugRouteImport } from './routes/produto.$slug'
 import { Route as BriefingTokenRouteImport } from './routes/briefing.$token'
+import { Route as AuthenticatedUsersRouteImport } from './routes/_authenticated/users'
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
 import { Route as AuthenticatedServicesRouteImport } from './routes/_authenticated/services'
 import { Route as AuthenticatedReceivablesRouteImport } from './routes/_authenticated/receivables'
@@ -81,6 +82,11 @@ const BriefingTokenRoute = BriefingTokenRouteImport.update({
   id: '/briefing/$token',
   path: '/briefing/$token',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedUsersRoute = AuthenticatedUsersRouteImport.update({
+  id: '/users',
+  path: '/users',
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedSettingsRoute = AuthenticatedSettingsRouteImport.update({
   id: '/settings',
@@ -205,6 +211,7 @@ export interface FileRoutesByFullPath {
   '/receivables': typeof AuthenticatedReceivablesRoute
   '/services': typeof AuthenticatedServicesRoute
   '/settings': typeof AuthenticatedSettingsRoute
+  '/users': typeof AuthenticatedUsersRoute
   '/briefing/$token': typeof BriefingTokenRoute
   '/produto/$slug': typeof ProdutoSlugRoute
   '/sitemap/xml': typeof SitemapXmlRoute
@@ -234,6 +241,7 @@ export interface FileRoutesByTo {
   '/receivables': typeof AuthenticatedReceivablesRoute
   '/services': typeof AuthenticatedServicesRoute
   '/settings': typeof AuthenticatedSettingsRoute
+  '/users': typeof AuthenticatedUsersRoute
   '/briefing/$token': typeof BriefingTokenRoute
   '/produto/$slug': typeof ProdutoSlugRoute
   '/sitemap/xml': typeof SitemapXmlRoute
@@ -265,6 +273,7 @@ export interface FileRoutesById {
   '/_authenticated/receivables': typeof AuthenticatedReceivablesRoute
   '/_authenticated/services': typeof AuthenticatedServicesRoute
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
+  '/_authenticated/users': typeof AuthenticatedUsersRoute
   '/briefing/$token': typeof BriefingTokenRoute
   '/produto/$slug': typeof ProdutoSlugRoute
   '/sitemap/xml': typeof SitemapXmlRoute
@@ -296,6 +305,7 @@ export interface FileRouteTypes {
     | '/receivables'
     | '/services'
     | '/settings'
+    | '/users'
     | '/briefing/$token'
     | '/produto/$slug'
     | '/sitemap/xml'
@@ -325,6 +335,7 @@ export interface FileRouteTypes {
     | '/receivables'
     | '/services'
     | '/settings'
+    | '/users'
     | '/briefing/$token'
     | '/produto/$slug'
     | '/sitemap/xml'
@@ -355,6 +366,7 @@ export interface FileRouteTypes {
     | '/_authenticated/receivables'
     | '/_authenticated/services'
     | '/_authenticated/settings'
+    | '/_authenticated/users'
     | '/briefing/$token'
     | '/produto/$slug'
     | '/sitemap/xml'
@@ -439,6 +451,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/briefing/$token'
       preLoaderRoute: typeof BriefingTokenRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/users': {
+      id: '/_authenticated/users'
+      path: '/users'
+      fullPath: '/users'
+      preLoaderRoute: typeof AuthenticatedUsersRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/settings': {
       id: '/_authenticated/settings'
@@ -594,6 +613,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedReceivablesRoute: typeof AuthenticatedReceivablesRoute
   AuthenticatedServicesRoute: typeof AuthenticatedServicesRoute
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
+  AuthenticatedUsersRoute: typeof AuthenticatedUsersRoute
   AuthenticatedSandboxRunIdRoute: typeof AuthenticatedSandboxRunIdRoute
 }
 
@@ -615,6 +635,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedReceivablesRoute: AuthenticatedReceivablesRoute,
   AuthenticatedServicesRoute: AuthenticatedServicesRoute,
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
+  AuthenticatedUsersRoute: AuthenticatedUsersRoute,
   AuthenticatedSandboxRunIdRoute: AuthenticatedSandboxRunIdRoute,
 }
 
