@@ -368,7 +368,7 @@ export function AppShell({ children }: { children: ReactNode }) {
               })
             }
             className={cn(
-              "group flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-xs text-[#7d84ab] transition-all hover:bg-[#0b1a2c] hover:text-[#dee2ec]",
+              "group flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-xs text-[#dee2ec] transition-all hover:bg-[#0b1a2c] hover:text-white",
               collapsed && "md:justify-center md:px-0 md:w-10 md:mx-auto"
             )}
           >
