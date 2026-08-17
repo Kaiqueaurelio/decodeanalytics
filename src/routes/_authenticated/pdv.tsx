@@ -851,7 +851,6 @@ function PDVPage() {
           )}
         </div>
       </div>
-
       {/* Saldo em Destaque - Visual Premium */}
       <div className="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <div className="relative overflow-hidden rounded-[2rem] bg-[#080c16] p-6 text-white shadow-2xl">
