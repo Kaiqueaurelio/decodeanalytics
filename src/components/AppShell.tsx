@@ -175,7 +175,7 @@ const NAV: NavItem[] = [
 const SECTIONS: NavItem["section"][] = ["Visão geral", "Operação", "Financeiro", "Administração"];
 
 export function AppShell({ children }: { children: ReactNode }) {
-  const { user, roles, signOut, isAdmin } = useAuth();
+  const { user, roles, signOut, isAdmin, loading } = useAuth();
   const path = useRouterState({ select: (state) => state.location.pathname });
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
@@ -188,13 +188,13 @@ export function AppShell({ children }: { children: ReactNode }) {
   const [searchFocused, setSearchFocused] = useState(false);
 
   const items = useMemo(() => {
+    if (loading && !roles.length) return [];
     return NAV.filter((item) => {
       if (!item.roles) return true;
       if (isAdmin) return true;
-      const hasRole = roles.some((role) => item.roles?.includes(role));
-      return hasRole;
+      return roles.some((role) => item.roles?.includes(role));
     });
-  }, [isAdmin, roles]);
+  }, [isAdmin, roles, loading]);
   const results = search.trim()
     ? items.filter((item) =>
         `${item.label} ${item.description}`
@@ -287,9 +287,16 @@ export function AppShell({ children }: { children: ReactNode }) {
         </div>
 
         <nav className="app-scrollbar flex-1 overflow-y-auto px-2.5 py-3">
-          {SECTIONS.map((section) => {
-            const sectionItems = items.filter((item) => item.section === section);
-            if (!sectionItems.length) return null;
+          {loading && items.length === 0 ? (
+            <div className="flex flex-col gap-2 px-3 py-4">
+              {[1, 2, 3, 4, 5].map((i) => (
+                <div key={i} className="h-10 w-full animate-pulse rounded-xl bg-white/5" />
+              ))}
+            </div>
+          ) : (
+            SECTIONS.map((section) => {
+              const sectionItems = items.filter((item) => item.section === section);
+              if (!sectionItems.length) return null;
             return (
               <div key={section} className="mb-4">
                 <p
@@ -337,8 +344,8 @@ export function AppShell({ children }: { children: ReactNode }) {
                   })}
                 </div>
               </div>
-            );
-          })}
+            })
+          )}
         </nav>
 
         <div className="border-t border-white/10 bg-black/10 p-2.5">
