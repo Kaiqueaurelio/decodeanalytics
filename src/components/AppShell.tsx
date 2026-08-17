@@ -307,10 +307,10 @@ export function AppShell({ children }: { children: ReactNode }) {
                         onClick={() => setOpen(false)}
                         title={collapsed ? item.label : undefined}
                         className={cn(
-                          "group relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs transition-all duration-300",
+                          "group relative flex items-center gap-3 rounded-xl px-3 py-2 text-[11px] transition-all duration-300",
                           active
-                            ? "bg-white/10 text-white font-semibold"
-                            : "text-white/40 hover:bg-white/5 hover:text-white/70",
+                            ? "bg-white/[0.08] text-white font-medium shadow-sm"
+                            : "text-white/30 hover:bg-white/[0.03] hover:text-white/60",
                           collapsed && "md:justify-center md:px-0 md:w-10 md:mx-auto"
                         )}
                       >
