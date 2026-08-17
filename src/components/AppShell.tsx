@@ -386,8 +386,8 @@ export function AppShell({ children }: { children: ReactNode }) {
 
       <div
         className={cn(
-          "flex flex-col transition-[padding] duration-300",
-          collapsed ? "md:pl-16" : "md:pl-64",
+          "flex flex-col transition-[padding] duration-500 ease-[cubic-bezier(0.4,0,0.2,1)]",
+          collapsed ? "md:pl-20" : "md:pl-60",
         )}
       >
         <header className="sticky top-0 z-30 h-16 border-b border-slate-200 bg-white/80 backdrop-blur-md">
