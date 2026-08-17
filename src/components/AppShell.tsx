@@ -190,7 +190,7 @@ export function AppShell({ children }: { children: ReactNode }) {
   const items = useMemo(
     () =>
       NAV.filter(
-        (item) => !item.roles || isAdmin || item.roles.some((role) => roles.includes(role)),
+        (item) => !item.roles || isAdmin || roles.some((role) => item.roles?.includes(role)),
       ),
     [isAdmin, roles],
   );
