@@ -1247,7 +1247,6 @@ function PDVPage() {
           toast.success("Valor enviado ao carrinho.");
         }}
       />
-
       <Dialog open={showFastSale} onOpenChange={setShowFastSale}>
         <DialogContent className="rounded-3xl">
           <DialogHeader>
