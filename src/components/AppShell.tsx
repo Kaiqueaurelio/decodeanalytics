@@ -188,13 +188,12 @@ export function AppShell({ children }: { children: ReactNode }) {
   const [searchFocused, setSearchFocused] = useState(false);
 
   const items = useMemo(() => {
-    if (loading && !roles.length) return [];
     return NAV.filter((item) => {
       if (!item.roles) return true;
       if (isAdmin) return true;
       return roles.some((role) => item.roles?.includes(role));
     });
-  }, [isAdmin, roles, loading]);
+  }, [isAdmin, roles]);
   const results = search.trim()
     ? items.filter((item) =>
         `${item.label} ${item.description}`
