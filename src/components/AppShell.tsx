@@ -238,12 +238,12 @@ export function AppShell({ children }: { children: ReactNode }) {
           <div className={cn("relative transition-all duration-300", collapsed && "md:px-0")}>
             <div
               className={cn(
-                "group relative flex h-9 items-center rounded-lg bg-white/[0.03] px-3 transition-all focus-within:bg-white/[0.06] border border-white/[0.05]",
+                "group relative flex h-9 items-center rounded-lg bg-[#0b1a2c] px-3 transition-all focus-within:bg-[#0b1a2c]/80 border border-[#535d7d]/30",
                 collapsed && "md:h-9 md:w-9 md:px-0 md:justify-center mx-auto",
               )}
             >
               <Search
-                className={cn("h-4 w-4 shrink-0 text-white/20 group-focus-within:text-white/40 transition-colors", collapsed && "md:h-4 md:w-4")}
+                className={cn("h-4 w-4 shrink-0 text-[#7d84ab]/50 group-focus-within:text-[#dee2ec] transition-colors", collapsed && "md:h-4 md:w-4")}
               />
               <input
                 type="text"
