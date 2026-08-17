@@ -13,7 +13,7 @@ import {
   Instagram,
   Facebook,
   X,
-  Sparkles,
+  CheckCircle,
 } from "lucide-react";
 import { STORE_CATEGORIES } from "./tokens";
 import { useCompanyInfo, useWaLink } from "@/hooks/useCompanyInfo";
