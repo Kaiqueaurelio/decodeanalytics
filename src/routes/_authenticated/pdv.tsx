@@ -1137,8 +1137,6 @@ function PDVPage() {
           </div>
         </aside>
       </div>
-
-
       <div className="mt-8 space-y-6">
         {/* Lançamentos Rápidos / Favoritos */}
         {favoriteProducts.length > 0 && (
