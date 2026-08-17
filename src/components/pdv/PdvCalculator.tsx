@@ -70,7 +70,7 @@ export function PdvCalculator({
             <p className="text-[11px] font-black uppercase tracking-widest text-slate-500">
               Total acumulado
             </p>
-            <p className="mt-1 text-3xl font-black text-brand-blue tabular-nums">{brl(total)}</p>
+            <p className="mt-1 text-3xl font-black text-[#080c16] tabular-nums">{brl(total)}</p>
           </div>
 
           <div className="grid gap-2">
