@@ -241,8 +241,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           <div className="flex items-center justify-between gap-3">
             <div
               className={cn(
-                "flex min-w-0 flex-1 items-center justify-center rounded-xl bg-white p-2 shadow-lg ring-2 ring-brand-yellow/70",
-                collapsed ? "h-24 md:hidden" : "h-24",
+                "flex min-w-0 flex-1 items-center justify-center rounded-xl bg-white p-2 shadow-lg ring-2 ring-brand-yellow/70 h-24",
               )}
             >
               <img
@@ -275,7 +274,6 @@ export function AppShell({ children }: { children: ReactNode }) {
           <div
             className={cn(
               "mt-3 rounded-xl border border-white/10 bg-white/5 px-3 py-2",
-              collapsed && "md:hidden",
             )}
           >
             <p className="text-[10px] font-bold uppercase tracking-wider text-brand-yellow">
@@ -296,7 +294,6 @@ export function AppShell({ children }: { children: ReactNode }) {
                 <p
                   className={cn(
                     "mb-2 px-3 text-[10px] font-bold uppercase tracking-[0.18em] text-white/35",
-                    collapsed && "md:hidden",
                   )}
                 >
                   {section}
