@@ -54,7 +54,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       await supabase.auth.signOut();
     },
     hasRole: (...r) => r.some((x) => roles.includes(x)),
-    isAdmin: roles.includes("administrador") || session?.user?.email === "alcateias@admin.br" || !!session?.user?.email?.includes("alcateias"),
+    isAdmin: roles.includes("administrador") || session?.user?.email === "alcateias@admin.br" || !!session?.user?.email?.toLowerCase().includes("alcateias"),
   };
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
