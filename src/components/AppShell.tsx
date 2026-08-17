@@ -214,12 +214,12 @@ export function AppShell({ children }: { children: ReactNode }) {
       >
         <div className="flex flex-col gap-6 px-4 py-8">
           <div className="flex items-center justify-between">
-            <div className={cn("flex items-center gap-3 transition-opacity duration-300", collapsed && "md:opacity-0 md:pointer-events-none")}>
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-brand-yellow font-black text-[#0a0f1d] shadow-lg shadow-brand-yellow/20">
+            <div className={cn("flex items-center gap-2.5 transition-opacity duration-300", collapsed && "md:opacity-0 md:pointer-events-none")}>
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-brand-yellow font-black text-[#080c16] shadow-md shadow-brand-yellow/10 text-xs">
                 A
               </div>
               <div className="flex flex-col leading-none">
-                <span className="text-xs font-black uppercase tracking-[0.2em] text-white">
+                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white">
                   Alcateia
                 </span>
                 <span className="mt-0.5 text-[8px] font-bold uppercase tracking-[0.1em] text-white/30">
