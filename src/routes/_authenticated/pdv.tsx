@@ -323,7 +323,14 @@ function PDVPage() {
         .eq("active", true)
         .order("name", { ascending: true });
       if (error) throw error;
-      return data ?? [];
+      return (data ?? []).map((s: any) => ({
+        id: s.id,
+        name: s.name,
+        category: s.category,
+        price: Number(s.base_price || 0),
+        detail: s.description || "",
+        imageUrl: s.image_url,
+      }));
     },
   });
 
