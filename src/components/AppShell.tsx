@@ -318,8 +318,18 @@ export function AppShell({ children }: { children: ReactNode }) {
                         <span className={cn("flex-1 truncate transition-opacity duration-300", collapsed && "md:hidden")}>
                           {item.label}
                         </span>
+                        {item.label === "Dashboard" && !collapsed && (
+                          <span className="rounded-md bg-rose-500 px-1.5 py-0.5 text-[8px] font-black text-white uppercase animate-pulse">
+                            Novo
+                          </span>
+                        )}
+                        {item.label === "Ordens de Serviço" && !collapsed && (
+                          <span className="rounded-full bg-blue-500 w-4 h-4 flex items-center justify-center text-[8px] font-black text-white">
+                            3
+                          </span>
+                        )}
                         {active && !collapsed && (
-                          <div className="h-1 w-1 rounded-full bg-brand-yellow shadow-[0_0_8px_rgba(250,204,21,0.6)]" />
+                          <ChevronRight className="h-3 w-3 text-[#dee2ec]/40" />
                         )}
                         {active && collapsed && (
                           <div className="absolute right-2 top-1/2 -translate-y-1/2 w-1 h-1 rounded-full bg-brand-yellow hidden md:block" />
