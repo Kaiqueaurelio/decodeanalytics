@@ -22,15 +22,19 @@ function ClientsPage() {
   const [editing, setEditing] = useState<Partial<ClientRow> | null>(null);
   const [open, setOpen] = useState(false);
 
-  const { data: clients } = useQuery({
+  const { data: clients, isLoading } = useQuery({
     queryKey: ["clients", search],
     queryFn: async () => {
-      let q = supabase.from("clients").select("*").order("created_at", { ascending: false });
+      let q = supabase.from("clients").select("*").order("name", { ascending: true });
       if (search) q = q.ilike("name", `%${search}%`);
       const { data, error } = await q;
-      if (error) throw error;
+      if (error) {
+        console.error("Erro ao buscar clientes:", error);
+        throw error;
+      }
       return data as ClientRow[];
     },
+    staleTime: 0, // Garantir que sempre busque dados novos
   });
 
   async function save() {
@@ -115,7 +119,8 @@ function ClientsPage() {
                   </td>
                 </tr>
               ))}
-              {!clients?.length && (<tr><td colSpan={5} className="p-8 text-center text-muted-foreground">Nenhum cliente cadastrado</td></tr>)}
+              {isLoading && (<tr><td colSpan={5} className="p-12 text-center text-muted-foreground italic">Sincronizando com a base de dados...</td></tr>)}
+              {!isLoading && !clients?.length && (<tr><td colSpan={5} className="p-12 text-center text-muted-foreground">Nenhum cliente encontrado na base de dados.</td></tr>)}
             </tbody>
           </table>
         </div>

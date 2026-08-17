@@ -20,19 +20,22 @@ import { SafeAreaDebug } from "@/components/SafeAreaDebug";
 
 function NotFoundComponent() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4">
+    <div className="flex min-h-screen flex-col items-center justify-center bg-[#080c16] px-4 text-white">
+      <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-brand-yellow font-black text-[#080c16] shadow-2xl shadow-brand-yellow/20 text-2xl mb-8">
+        A
+      </div>
       <div className="max-w-md text-center">
-        <h1 className="text-7xl font-bold text-foreground">404</h1>
-        <h2 className="mt-4 text-xl font-semibold text-foreground">Page not found</h2>
-        <p className="mt-2 text-sm text-muted-foreground">
-          The page you're looking for doesn't exist or has been moved.
+        <h1 className="text-6xl font-black tracking-tighter text-white">404</h1>
+        <h2 className="mt-4 text-2xl font-bold text-white/90">Página não encontrada</h2>
+        <p className="mt-2 text-sm text-white/40">
+          A página que você está procurando não existe ou foi movida.
         </p>
-        <div className="mt-6">
+        <div className="mt-10">
           <Link
             to="/"
-            className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+            className="inline-flex h-12 items-center justify-center rounded-xl bg-brand-yellow px-8 text-sm font-bold text-[#080c16] transition-all hover:scale-105 active:scale-95 shadow-lg shadow-brand-yellow/10"
           >
-            Go home
+            Voltar para o Início
           </Link>
         </div>
       </div>
