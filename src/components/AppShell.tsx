@@ -253,7 +253,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                 onFocus={() => setSearchFocused(true)}
                 onBlur={() => setTimeout(() => setSearchFocused(false), 200)}
                 className={cn(
-                  "ml-2 flex-1 bg-transparent text-xs text-[#dee2ec] placeholder:text-[#7d84ab]/50 focus:outline-hidden",
+                  "ml-2 flex-1 bg-transparent text-xs text-white placeholder:text-[#7d84ab] focus:outline-hidden",
                   collapsed && "md:hidden",
                 )}
               />
