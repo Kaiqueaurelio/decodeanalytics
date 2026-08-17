@@ -795,96 +795,91 @@ function PDVPage() {
   }
 
   return (
-    <div className="min-h-[calc(100vh-9rem)] max-w-full overflow-x-hidden rounded-[2rem] bg-[#f8fafc] p-2 text-slate-950 sm:p-3 md:p-3 lg:p-4 [zoom:0.9] xl:[zoom:0.85] 2xl:[zoom:0.85]">
-      <div className="mb-3 flex flex-col gap-2 rounded-2xl border border-slate-200 bg-white p-3 shadow-sm lg:flex-row lg:items-center lg:justify-between">
-        <div>
-          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-brand-blue">
-            PDV Mercado Alcateia
-          </p>
-          <h2 className="text-xl font-black tracking-tight">Frente de Caixa</h2>
+    <div className="min-h-[calc(100vh-8rem)] max-w-full overflow-x-hidden bg-[#f8fafc] text-slate-950 p-4 md:p-6 [zoom:0.9] xl:[zoom:1]">
+      {/* Header Alinhado com a Marca */}
+      <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        <div className="flex items-center gap-3">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#080c16] font-black text-brand-yellow shadow-lg shadow-black/5">
+            A
+          </div>
+          <div>
+            <h2 className="text-xl font-black tracking-tight text-[#080c16]">PDV Mercado Alcateia</h2>
+            <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-slate-400">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+              Terminal de Vendas Ativo
+            </div>
+          </div>
         </div>
-        <div className="flex flex-wrap items-center gap-2 text-xs">
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1.5 font-bold text-emerald-700">
-            <span className="h-2 w-2 rounded-full bg-emerald-500" /> Online
-          </span>
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-2.5 py-1.5 font-bold">
-            <CalendarDays className="h-3.5 w-3.5" /> {new Date().toLocaleDateString("pt-BR")}
-          </span>
-          <span
-            className={cn(
-              "inline-flex items-center gap-1.5 rounded-full px-2.5 py-1.5 font-bold",
-              cashSession
-                ? "bg-emerald-50 text-emerald-700"
-                : "bg-amber-50 text-amber-700",
-            )}
-          >
-            <Banknote className="h-3.5 w-3.5" />
-            {cashSession ? "Caixa aberto" : "Caixa fechado"}
-          </span>
-          {!cashSession && (
+
+        <div className="flex flex-wrap items-center gap-3">
+          <div className="flex items-center gap-2 rounded-xl bg-white px-3 py-2 border border-slate-200 shadow-sm">
+            <CalendarDays className="h-4 w-4 text-slate-400" />
+            <span className="text-xs font-bold text-slate-600">{new Date().toLocaleDateString("pt-BR")}</span>
+          </div>
+
+          <div className={cn(
+            "flex items-center gap-2 rounded-xl px-3 py-2 border shadow-sm transition-colors",
+            cashSession ? "bg-emerald-50 border-emerald-100 text-emerald-700" : "bg-amber-50 border-amber-100 text-amber-700"
+          )}>
+            <Banknote className="h-4 w-4" />
+            <span className="text-xs font-bold">{cashSession ? "Caixa Aberto" : "Caixa Fechado"}</span>
+          </div>
+
+          {!cashSession ? (
             <Button
               size="sm"
-              className="rounded-xl bg-brand-blue hover:bg-brand-blue-light"
+              className="h-9 rounded-xl bg-[#080c16] hover:bg-[#1a202c] font-bold text-white shadow-md transition-all active:scale-95"
               onClick={() => setShowOpenCash(true)}
             >
-              Abrir caixa
+              Abrir Caixa
+            </Button>
+          ) : (
+            <Button
+              size="sm"
+              className="h-9 rounded-xl bg-rose-600 hover:bg-rose-700 font-bold text-white shadow-md transition-all active:scale-95"
+              onClick={() => {
+                setSessionForm((current) => ({
+                  ...current,
+                  informedCash: (paymentTotals.cash + Number(cashSession?.initialAmount || 0)).toFixed(2),
+                }));
+                setShowCloseCash(true);
+              }}
+            >
+              Fechar Caixa
             </Button>
           )}
-          <Button
-            size="sm"
-            className="rounded-xl bg-red-600 px-3 font-black text-white hover:bg-red-700"
-            onClick={() => {
-              setSessionForm((current) => ({
-                ...current,
-                informedCash: (paymentTotals.cash + Number(cashSession?.initialAmount || 0)).toFixed(2),
-              }));
-              setShowCloseCash(true);
-            }}
-          >
-            Fechar caixa
-          </Button>
         </div>
       </div>
 
-      <div className="mb-3 flex flex-col gap-3 rounded-2xl bg-brand-blue p-4 text-white shadow-lg shadow-blue-200 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-200">
-            Saldo somente de hoje
-          </p>
-          <p className="mt-1 text-2xl font-black">{brl(dayBalance)}</p>
-          <p className="mt-0.5 text-xs text-blue-100">
-            Entradas menos saídas de {new Date().toLocaleDateString("pt-BR")}.
-          </p>
+      {/* Saldo em Destaque - Visual Premium */}
+      <div className="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="relative overflow-hidden rounded-[2rem] bg-[#080c16] p-6 text-white shadow-2xl">
+          <div className="relative z-10">
+            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/40">Saldo do Dia</p>
+            <p className="mt-1 text-3xl font-black text-brand-yellow tabular-nums">{brl(dayBalance)}</p>
+          </div>
+          <div className="absolute -right-4 -bottom-4 opacity-10">
+            <Zap className="h-24 w-24" />
+          </div>
         </div>
-        <Button
-          className="h-10 w-full rounded-xl bg-white text-sm font-black text-brand-blue hover:bg-blue-50 sm:w-auto"
-          onClick={() => setShowMachineEntry(true)}
-        >
-          <ReceiptText className="mr-2 h-4 w-4" /> Lançar maquininha
-        </Button>
-      </div>
 
-      <div className="mb-3 grid gap-3 md:grid-cols-[minmax(0,1fr)_320px] xl:grid-cols-[minmax(0,1fr)_360px]">
-        <div className="grid h-full gap-2 grid-cols-2 grid-rows-2 content-stretch">
-          <Card className="rounded-2xl border-slate-200 p-3">
-            <p className="text-[10px] font-black uppercase tracking-wide text-slate-500">Entradas</p>
-            <p className="mt-0.5 text-xl font-black text-emerald-600">{brl(totalToday)}</p>
-          </Card>
-          <Card className="rounded-2xl border-slate-200 p-3">
-            <p className="text-[10px] font-black uppercase tracking-wide text-slate-500">Saídas</p>
-            <p className="mt-0.5 text-xl font-black text-red-600">{brl(expenseTotal)}</p>
-          </Card>
-          <Card className="rounded-2xl border-slate-200 p-3">
-            <p className="text-[10px] font-black uppercase tracking-wide text-slate-500">Cartões</p>
-            <p className="mt-0.5 text-xl font-black text-brand-blue">
-              {brl(paymentTotals.debit + paymentTotals.credit)}
-            </p>
-          </Card>
-          <Card className="rounded-2xl border-slate-200 p-3">
-            <p className="text-[10px] font-black uppercase tracking-wide text-slate-500">PIX</p>
-            <p className="mt-0.5 text-xl font-black text-brand-blue">{brl(paymentTotals.pix)}</p>
-          </Card>
+        <div className="rounded-[2rem] border border-white bg-white/60 p-6 backdrop-blur-xl shadow-sm border-slate-100">
+          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Entradas</p>
+          <p className="mt-1 text-2xl font-black text-emerald-600 tabular-nums">{brl(totalToday)}</p>
         </div>
+
+        <div className="rounded-[2rem] border border-white bg-white/60 p-6 backdrop-blur-xl shadow-sm border-slate-100">
+          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Cartões / PIX</p>
+          <p className="mt-1 text-2xl font-black text-[#080c16] tabular-nums">
+            {brl(paymentTotals.debit + paymentTotals.credit + paymentTotals.pix)}
+          </p>
+        </div>
+
+        <div className="rounded-[2rem] border border-white bg-white/60 p-6 backdrop-blur-xl shadow-sm border-slate-100">
+          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Saídas / Despesas</p>
+          <p className="mt-1 text-2xl font-black text-rose-600 tabular-nums">{brl(expenseTotal)}</p>
+        </div>
+      </div>
         <aside
           id="pdv-cart"
           className="min-w-0 rounded-2xl border-2 border-brand-blue/30 bg-white p-3 shadow-lg md:border md:border-slate-200 md:shadow-sm"
