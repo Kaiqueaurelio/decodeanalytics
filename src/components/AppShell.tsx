@@ -289,7 +289,7 @@ export function AppShell({ children }: { children: ReactNode }) {
               <div key={section}>
                 <p
                   className={cn(
-                    "mb-3 px-3 text-[9px] font-black uppercase tracking-[0.25em] text-white/20",
+                    "mb-2 px-3 text-[8px] font-bold uppercase tracking-[0.3em] text-white/10",
                     collapsed && "md:hidden",
                   )}
                 >
