@@ -407,7 +407,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       >
         <div className="hidden h-8 items-center justify-between bg-brand-blue px-6 text-[11px] font-medium text-white/70 lg:flex">
           <span>Produção gráfica organizada do briefing à entrega</span>
-          <span className="font-semibold text-brand-yellow">Alcateia's Produções Gráficas</span>
+          <span className="font-semibold text-brand-yellow">Alcateia Produções Gráficas</span>
         </div>
 
         <header className="safe-area-header sticky top-0 z-20 border-b border-border/80 bg-white/92 px-2 backdrop-blur-xl md:px-4 lg:top-0">

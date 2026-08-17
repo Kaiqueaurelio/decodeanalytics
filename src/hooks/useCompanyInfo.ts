@@ -72,7 +72,7 @@ export function useCompanyInfo(): CompanyInfo {
   const insta = normalizeInstagram(data?.instagram);
 
   return {
-    name: data?.name ?? "Alcateia's Produções Gráficas",
+    name: data?.name ?? "Alcateia Produções Gráficas",
     logoUrl: data?.logo_url ?? null,
     whatsappDigits: waDigits,
     whatsappDisplay: data?.whatsapp?.trim() || formatBrPhone(waDigits),

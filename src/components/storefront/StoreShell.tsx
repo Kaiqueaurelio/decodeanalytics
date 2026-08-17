@@ -95,19 +95,19 @@ function StoreHeader() {
       <div className="mx-auto flex max-w-[1280px] items-center justify-between gap-3 px-3 py-2 sm:px-4 sm:py-3 md:gap-6 md:py-4">
         <Link to="/" className="flex shrink-0 items-center gap-2 sm:gap-3 transition-transform hover:scale-[1.02]">
           <img
-            src="/brand/alcateia-symbol.png"
-            alt="Alcateia's"
-            className="h-9 w-auto sm:h-12 md:h-14 object-contain"
+            src="/brand/alcateia-logo.png"
+            alt="Alcateia Produções Gráficas"
+            className="h-10 w-auto sm:h-12 md:h-14 object-contain"
           />
-          <div className="leading-tight">
+          <div className="leading-tight hidden sm:block">
             <div
               className="font-display text-lg sm:text-2xl leading-none text-[var(--store-primary)]"
               style={{ letterSpacing: "0.04em" }}
             >
-              ALCATEIA&apos;S
+              ALCATEIA
             </div>
             <div className="text-[8px] sm:text-[10px] font-bold uppercase tracking-[0.15em] sm:tracking-[0.2em] text-[var(--store-accent)]">
-              Gráfica online
+              Produções Gráficas
             </div>
           </div>
         </Link>
@@ -187,16 +187,16 @@ function StoreHeader() {
             <div className="flex items-center justify-between border-b border-[var(--store-border)] px-6 py-5">
               <div className="flex items-center gap-3">
                 <img
-                  src="/brand/alcateia-symbol.png"
-                  alt="Alcateia's"
-                  className="h-11 w-auto object-contain"
+                  src="/brand/alcateia-logo.png"
+                  alt="Alcateia Produções Gráficas"
+                  className="h-10 w-auto object-contain"
                 />
                 <div className="leading-tight">
                   <div className="text-sm font-extrabold text-[var(--store-primary)]">
-                    Alcateia's
+                    Alcateia
                   </div>
                   <div className="text-[9px] font-bold uppercase tracking-[0.15em] text-[var(--store-accent)]">
-                    Gráfica
+                    Produções Gráficas
                   </div>
                 </div>
               </div>
@@ -338,14 +338,14 @@ function StoreFooter() {
         <div>
           <div className="flex items-center gap-3">
             <img
-              src="/brand/alcateia-symbol.png"
-              alt="Alcateia's"
+              src="/brand/alcateia-logo.png"
+              alt="Alcateia Produções Gráficas"
               className="h-16 w-auto object-contain"
             />
             <div>
-              <div className="text-lg font-extrabold">Alcateia's</div>
+              <div className="text-lg font-extrabold uppercase">Alcateia</div>
               <div className="text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--store-secondary)]">
-                Gráfica online
+                Produções Gráficas
               </div>
             </div>
           </div>
