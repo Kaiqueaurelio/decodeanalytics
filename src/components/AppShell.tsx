@@ -207,7 +207,7 @@ export function AppShell({ children }: { children: ReactNode }) {
     <div className="min-h-screen overflow-x-hidden bg-background">
       <aside
         className={cn(
-          "fixed inset-y-0 left-0 z-40 flex flex-col overflow-hidden border-r border-white/[0.05] bg-[#080c16] text-sidebar-foreground transition-[width,transform] duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] md:translate-x-0",
+          "fixed inset-y-0 left-0 z-40 flex flex-col overflow-hidden border-r border-[#535d7d]/20 bg-[#0c1e35] text-[#7d84ab] transition-[width,transform] duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] md:translate-x-0",
           collapsed ? "w-72 md:w-20" : "w-72 md:w-60",
           open ? "translate-x-0" : "-translate-x-full",
         )}
