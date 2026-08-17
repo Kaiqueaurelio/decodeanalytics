@@ -357,27 +357,29 @@ export function AppShell({ children }: { children: ReactNode }) {
                 return !value;
               })
             }
-            className="group flex w-full items-center gap-2.5 rounded-xl px-2.5 py-2 text-sm text-white/50 transition-all hover:bg-white/5 hover:text-white"
+            className={cn(
+              "group flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-xs text-white/30 transition-all hover:bg-white/5 hover:text-white/60",
+              collapsed && "md:justify-center md:px-0 md:w-10 md:mx-auto"
+            )}
           >
-            <div className="grid h-7 w-7 shrink-0 place-items-center rounded-lg bg-white/5 group-hover:bg-white/10">
-              {collapsed ? (
-                <PanelLeftOpen className="h-3.5 w-3.5" />
-              ) : (
-                <PanelLeftClose className="h-3.5 w-3.5" />
-              )}
-            </div>
-            <span className={cn("flex-1 truncate md:block", collapsed && "md:hidden")}>
+            {collapsed ? (
+              <PanelLeftOpen className="h-4 w-4 shrink-0" />
+            ) : (
+              <PanelLeftClose className="h-4 w-4 shrink-0" />
+            )}
+            <span className={cn("flex-1 truncate transition-opacity duration-300", collapsed && "md:hidden")}>
               Recolher menu
             </span>
           </button>
           <button
             onClick={() => signOut()}
-            className="group mt-1 flex w-full items-center gap-2.5 rounded-xl px-2.5 py-2 text-sm text-rose-400/70 transition-all hover:bg-rose-500/10 hover:text-rose-400"
+            className={cn(
+              "group mt-1 flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-xs text-rose-500/50 transition-all hover:bg-rose-500/10 hover:text-rose-400",
+              collapsed && "md:justify-center md:px-0 md:w-10 md:mx-auto"
+            )}
           >
-            <div className="grid h-7 w-7 shrink-0 place-items-center rounded-lg bg-rose-500/5 group-hover:bg-rose-500/10">
-              <LogOut className="h-3.5 w-3.5" />
-            </div>
-            <span className={cn("flex-1 truncate md:block", collapsed && "md:hidden")}>Sair</span>
+            <LogOut className="h-4 w-4 shrink-0" />
+            <span className={cn("flex-1 truncate transition-opacity duration-300", collapsed && "md:hidden")}>Sair</span>
           </button>
         </div>
       </aside>
