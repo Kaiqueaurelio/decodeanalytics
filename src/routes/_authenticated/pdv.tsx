@@ -1220,11 +1220,109 @@ function PDVPage() {
         </div>
       </Card>
 
-      <div className="min-w-0">
-        <section className="min-w-0 space-y-3">
-          <div className="space-y-2">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+      <div className="mt-8 space-y-6">
+        {/* Lançamentos Rápidos / Favoritos */}
+        {favoriteProducts.length > 0 && (
+          <div className="rounded-[2rem] border border-white bg-white/60 p-6 backdrop-blur-xl shadow-sm border-slate-100">
+            <div className="mb-4 flex items-center justify-between">
+              <div>
+                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Atalhos</p>
+                <h3 className="text-sm font-black text-[#080c16]">Produtos mais vendidos</h3>
+              </div>
+              <Activity className="h-5 w-5 text-[#080c16] opacity-10" />
+            </div>
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+              {favoriteProducts.map((product) => (
+                <button
+                  key={product.id}
+                  type="button"
+                  onClick={() => addToCart(product)}
+                  className="group flex flex-col gap-1 rounded-2xl border border-slate-100 bg-white p-3 text-left transition-all hover:border-[#080c16] hover:shadow-md active:scale-95"
+                >
+                  <p className="line-clamp-1 text-xs font-black text-[#080c16]">{product.name}</p>
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-slate-400">{brl(product.price)}</span>
+                    <Plus className="h-3 w-3 text-[#080c16] opacity-0 transition-opacity group-hover:opacity-100" />
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Lançamentos do Dia */}
+        <Card className="overflow-hidden rounded-[2rem] border-0 bg-white shadow-sm ring-1 ring-slate-100">
+          <div className="flex items-center justify-between border-b border-slate-50 px-6 py-4">
+            <div>
+              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#080c16]">Fluxo de Caixa</p>
+              <p className="text-xs font-bold text-slate-400">Movimentações registradas hoje</p>
+            </div>
+            <div className="flex items-center gap-2 rounded-full bg-slate-50 px-3 py-1 text-[10px] font-black text-slate-600">
+              {todayEntries.length} REGISTROS
+            </div>
+          </div>
+          <div className="max-h-[300px] overflow-y-auto p-4 app-scrollbar">
+            {todayEntriesError ? (
+              <div className="rounded-2xl bg-rose-50 p-4 text-xs font-bold text-rose-600">
+                Falha ao carregar registros: {todayEntriesError.message}
+              </div>
+            ) : latestTodayEntries.length ? (
+              <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+                {latestTodayEntries.map((entry) => (
+                  <div
+                    key={entry.id}
+                    className="group relative flex flex-col justify-between gap-3 rounded-[1.5rem] border border-slate-100 bg-slate-50/50 p-4 transition-all hover:bg-white hover:shadow-md"
+                  >
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="min-w-0">
+                        <p className="truncate text-xs font-black text-[#080c16]">
+                          {entry.description || entry.category || "Lançamento"}
+                        </p>
+                        <p className="truncate text-[9px] font-bold text-slate-400 uppercase tracking-wider">
+                          {entry.payment_method || "Geral"} · {new Date(entry.created_at).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}
+                        </p>
+                      </div>
+                      <span className={cn(
+                        "rounded-full px-2 py-0.5 text-[8px] font-black uppercase",
+                        entry.type === "saida" ? "bg-rose-100 text-rose-700" : "bg-emerald-100 text-emerald-700"
+                      )}>
+                        {entry.type === "saida" ? "Saída" : "Entrada"}
+                      </span>
+                    </div>
+                    <div className="flex items-end justify-between">
+                      <p className={cn(
+                        "text-lg font-black tracking-tight",
+                        entry.type === "saida" ? "text-rose-600" : "text-emerald-600"
+                      )}>
+                        {entry.type === "saida" ? "-" : "+"}{brl(Number(entry.amount || 0))}
+                      </p>
+                      <div className="flex items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100">
+                        <button onClick={() => editEntry(entry)} className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-[#080c16]">
+                          <Pencil className="h-3 w-3" />
+                        </button>
+                        <button onClick={() => deleteEntry(entry)} className="rounded-lg p-1.5 text-slate-400 hover:bg-rose-50 hover:text-rose-600">
+                          <Trash2 className="h-3 w-3" />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="flex flex-col items-center justify-center py-12 text-center text-slate-300">
+                <ClipboardList className="mb-2 h-8 w-8 opacity-20" />
+                <p className="text-xs font-bold uppercase tracking-widest">Nenhuma movimentação</p>
+              </div>
+            )}
+          </div>
+        </Card>
+      </div>
+
+      <div className="hidden">
+        <section>
+          <div>
+            <div>
+              <Search />
               <Input
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
