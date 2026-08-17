@@ -207,7 +207,7 @@ export function AppShell({ children }: { children: ReactNode }) {
     <div className="min-h-screen overflow-x-hidden bg-background">
       <aside
         className={cn(
-          "fixed inset-y-0 left-0 z-40 flex flex-col overflow-hidden border-r border-white/[0.05] bg-[#080c16] text-sidebar-foreground transition-[width,transform] duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] md:translate-x-0",
+          "fixed inset-y-0 left-0 z-40 flex flex-col overflow-hidden border-r border-[#535d7d]/20 bg-[#0c1e35] text-[#7d84ab] transition-[width,transform] duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] md:translate-x-0",
           collapsed ? "w-72 md:w-20" : "w-72 md:w-60",
           open ? "translate-x-0" : "-translate-x-full",
         )}
@@ -215,21 +215,21 @@ export function AppShell({ children }: { children: ReactNode }) {
         <div className="flex flex-col gap-6 px-4 py-8">
           <div className="flex items-center justify-between">
             <div className={cn("flex items-center gap-2.5 transition-opacity duration-300", collapsed && "md:opacity-0 md:pointer-events-none")}>
-              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-brand-yellow font-black text-[#080c16] shadow-md shadow-brand-yellow/10 text-xs">
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#ff8100] font-black text-white shadow-md shadow-[#ff8100]/20 text-xs">
                 A
               </div>
               <div className="flex flex-col leading-none">
-                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white">
+                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[#dee2ec]">
                   Alcateia
                 </span>
-                <span className="mt-0.5 text-[8px] font-bold uppercase tracking-[0.1em] text-white/30">
+                <span className="mt-0.5 text-[8px] font-bold uppercase tracking-[0.1em] text-[#7d84ab]">
                   Produções Gráficas
                 </span>
               </div>
             </div>
             <button
               onClick={() => setOpen(false)}
-              className="grid h-8 w-8 place-items-center rounded-lg bg-white/5 text-white/40 hover:bg-white/10 md:hidden"
+              className="grid h-8 w-8 place-items-center rounded-lg bg-[#0b1a2c] text-[#7d84ab] hover:bg-[#0b1a2c]/80 hover:text-[#dee2ec] md:hidden"
             >
               <X className="h-4 w-4" />
             </button>
@@ -238,12 +238,12 @@ export function AppShell({ children }: { children: ReactNode }) {
           <div className={cn("relative transition-all duration-300", collapsed && "md:px-0")}>
             <div
               className={cn(
-                "group relative flex h-9 items-center rounded-lg bg-white/[0.03] px-3 transition-all focus-within:bg-white/[0.06] border border-white/[0.05]",
+                "group relative flex h-9 items-center rounded-lg bg-[#0b1a2c] px-3 transition-all focus-within:bg-[#0b1a2c]/80 border border-[#535d7d]/30",
                 collapsed && "md:h-9 md:w-9 md:px-0 md:justify-center mx-auto",
               )}
             >
               <Search
-                className={cn("h-4 w-4 shrink-0 text-white/20 group-focus-within:text-white/40 transition-colors", collapsed && "md:h-4 md:w-4")}
+                className={cn("h-4 w-4 shrink-0 text-[#7d84ab]/50 group-focus-within:text-[#dee2ec] transition-colors", collapsed && "md:h-4 md:w-4")}
               />
               <input
                 type="text"
@@ -253,12 +253,12 @@ export function AppShell({ children }: { children: ReactNode }) {
                 onFocus={() => setSearchFocused(true)}
                 onBlur={() => setTimeout(() => setSearchFocused(false), 200)}
                 className={cn(
-                  "ml-2 flex-1 bg-transparent text-xs text-white placeholder:text-white/20 focus:outline-hidden",
+                  "ml-2 flex-1 bg-transparent text-xs text-[#dee2ec] placeholder:text-[#7d84ab]/50 focus:outline-hidden",
                   collapsed && "md:hidden",
                 )}
               />
               {searchFocused && results.length > 0 && (
-                <div className="absolute top-full right-0 left-0 z-50 mt-2 max-h-60 overflow-y-auto rounded-xl border border-white/10 bg-[#0f172a] p-1 shadow-2xl backdrop-blur-xl">
+                <div className="absolute top-full right-0 left-0 z-50 mt-2 max-h-60 overflow-y-auto rounded-xl border border-[#535d7d]/30 bg-[#0b1a2c] p-1 shadow-2xl backdrop-blur-xl">
                   {results.map((item) => (
                     <Link
                       key={item.to}
@@ -267,7 +267,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                         setSearch("");
                         setOpen(false);
                       }}
-                      className="flex items-center gap-3 rounded-lg px-3 py-2 text-xs text-white/70 hover:bg-white/5 hover:text-white transition-colors"
+                      className="flex items-center gap-3 rounded-lg px-3 py-2 text-xs text-[#7d84ab] hover:bg-[#0c1e35] hover:text-[#dee2ec] transition-colors"
                     >
                       <item.icon className="h-3.5 w-3.5 shrink-0" />
                       <div className="min-w-0">
@@ -289,7 +289,7 @@ export function AppShell({ children }: { children: ReactNode }) {
               <div key={section}>
                 <p
                   className={cn(
-                    "mb-2 px-3 text-[8px] font-bold uppercase tracking-[0.3em] text-white/10",
+                    "mb-2 px-3 text-[9px] font-bold uppercase tracking-[0.2em] text-[#7d84ab]/60",
                     collapsed && "md:hidden",
                   )}
                 >
@@ -307,19 +307,29 @@ export function AppShell({ children }: { children: ReactNode }) {
                         onClick={() => setOpen(false)}
                         title={collapsed ? item.label : undefined}
                         className={cn(
-                          "group relative flex items-center gap-3 rounded-xl px-3 py-2 text-[11px] transition-all duration-300",
+                          "group relative flex items-center gap-3 rounded-xl px-3 py-3 text-xs transition-all duration-300",
                           active
-                            ? "bg-white/[0.08] text-white font-medium shadow-sm"
-                            : "text-white/30 hover:bg-white/[0.03] hover:text-white/60",
+                            ? "bg-[#0b1a2c] text-[#dee2ec] font-bold shadow-lg shadow-black/20"
+                            : "text-[#7d84ab] hover:bg-[#0b1a2c]/50 hover:text-[#dee2ec]",
                           collapsed && "md:justify-center md:px-0 md:w-10 md:mx-auto"
                         )}
                       >
-                        <Icon className={cn("h-4 w-4 shrink-0 transition-transform duration-300", active && "scale-110")} />
+                        <Icon className={cn("h-4 w-4 shrink-0 transition-transform duration-300", active ? "text-[#dee2ec] scale-110" : "text-[#7d84ab]")} />
                         <span className={cn("flex-1 truncate transition-opacity duration-300", collapsed && "md:hidden")}>
                           {item.label}
                         </span>
+                        {item.label === "Dashboard" && !collapsed && (
+                          <span className="rounded-md bg-rose-500 px-1.5 py-0.5 text-[8px] font-black text-white uppercase animate-pulse">
+                            Novo
+                          </span>
+                        )}
+                        {item.label === "Ordens de Serviço" && !collapsed && (
+                          <span className="rounded-full bg-blue-500 w-4 h-4 flex items-center justify-center text-[8px] font-black text-white">
+                            3
+                          </span>
+                        )}
                         {active && !collapsed && (
-                          <div className="h-1 w-1 rounded-full bg-brand-yellow shadow-[0_0_8px_rgba(250,204,21,0.6)]" />
+                          <ChevronRight className="h-3 w-3 text-[#dee2ec]/40" />
                         )}
                         {active && collapsed && (
                           <div className="absolute right-2 top-1/2 -translate-y-1/2 w-1 h-1 rounded-full bg-brand-yellow hidden md:block" />
@@ -333,17 +343,17 @@ export function AppShell({ children }: { children: ReactNode }) {
           })}
         </nav>
 
-        <div className="mt-auto border-t border-white/5 bg-black/20 p-4">
+        <div className="mt-auto border-t border-[#535d7d]/20 bg-[#0b1a2c]/50 p-4">
           <div className={cn("mb-4 px-2 transition-opacity duration-300", collapsed && "md:opacity-0 md:hidden")}>
-            <div className="flex items-center gap-3 rounded-xl bg-white/5 p-2 ring-1 ring-white/5">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-yellow/10 text-[10px] font-black text-brand-yellow">
+            <div className="flex items-center gap-3 rounded-xl bg-[#0b1a2c] p-2 ring-1 ring-[#535d7d]/20">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#ff8100]/20 text-[10px] font-black text-[#ff8100]">
                 {isAdmin ? "AD" : roles[0]?.substring(0, 2).toUpperCase() || "US"}
               </div>
               <div className="flex flex-col min-w-0">
-                <span className="text-[10px] font-bold text-white/90 truncate uppercase tracking-wider">
+                <span className="text-[10px] font-bold text-[#dee2ec] truncate uppercase tracking-wider">
                   {user?.email?.split("@")[0]}
                 </span>
-                <span className="text-[9px] font-medium text-white/30 uppercase tracking-tighter">
+                <span className="text-[9px] font-medium text-[#7d84ab] uppercase tracking-tighter">
                   {isAdmin ? "Administrador" : ROLE_LABEL[roles[0]] || "Usuário"}
                 </span>
               </div>
@@ -358,7 +368,7 @@ export function AppShell({ children }: { children: ReactNode }) {
               })
             }
             className={cn(
-              "group flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-xs text-white/30 transition-all hover:bg-white/5 hover:text-white/60",
+              "group flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-xs text-[#7d84ab] transition-all hover:bg-[#0b1a2c] hover:text-[#dee2ec]",
               collapsed && "md:justify-center md:px-0 md:w-10 md:mx-auto"
             )}
           >
@@ -423,7 +433,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                     {isAdmin ? "Administrador" : ROLE_LABEL[roles[0]] || "Usuário"}
                   </p>
                 </div>
-                <div className="grid h-9 w-9 place-items-center rounded-xl bg-[#0b4a3a] text-sm font-bold text-white shadow-lg shadow-emerald-900/10">
+                <div className="grid h-9 w-9 place-items-center rounded-xl bg-[#0c1e35] text-sm font-bold text-white shadow-lg shadow-[#0c1e35]/10">
                   {userInitial}
                 </div>
               </div>
