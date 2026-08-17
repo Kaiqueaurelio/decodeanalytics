@@ -43,13 +43,13 @@ import { trackCardClick, trackCta } from "@/lib/analytics";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Alcateia's — Gráfica online com produtos personalizados" },
+      { title: "Alcateia Produções Gráficas — Gráfica online com produtos personalizados" },
       {
         name: "description",
         content:
           "Cartões de visita, canecas, camisetas, adesivos, banners e brindes personalizados com acabamento profissional. Peça pelo site ou WhatsApp.",
       },
-      { property: "og:title", content: "Alcateia's — Gráfica online" },
+      { property: "og:title", content: "Alcateia Produções Gráficas — Gráfica online" },
       {
         property: "og:description",
         content:
