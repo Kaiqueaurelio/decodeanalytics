@@ -971,8 +971,8 @@ function PDVPage() {
                 <div
                   className="relative h-32 w-full bg-slate-50"
                   style={{
-                    background: product.imageUrl ? undefined : product.image,
-                    backgroundImage: product.imageUrl ? `url(${product.imageUrl})` : product.image,
+                    background: (product as any).imageUrl ? undefined : (product as any).image,
+                    backgroundImage: (product as any).imageUrl ? `url(${(product as any).imageUrl})` : (product as any).image,
                     backgroundSize: "cover",
                     backgroundPosition: "center",
                   }}
