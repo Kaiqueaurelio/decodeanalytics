@@ -433,7 +433,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                     {isAdmin ? "Administrador" : ROLE_LABEL[roles[0]] || "Usuário"}
                   </p>
                 </div>
-                <div className="grid h-9 w-9 place-items-center rounded-xl bg-[#0b4a3a] text-sm font-bold text-white shadow-lg shadow-emerald-900/10">
+                <div className="grid h-9 w-9 place-items-center rounded-xl bg-[#0c1e35] text-sm font-bold text-white shadow-lg shadow-[#0c1e35]/10">
                   {userInitial}
                 </div>
               </div>
