@@ -207,9 +207,9 @@ export function AppShell({ children }: { children: ReactNode }) {
     <div className="min-h-screen overflow-x-hidden bg-background">
       <aside
         className={cn(
-          "fixed inset-y-0 left-0 z-40 flex flex-col overflow-hidden border-r border-[#535d7d]/20 bg-[#0c1e35] text-[#7d84ab] transition-[width,transform] duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] md:translate-x-0",
+          "fixed inset-y-0 left-0 z-40 flex flex-col overflow-hidden border-r border-[#535d7d]/20 bg-[#0c1e35] text-[#7d84ab] transition-[width,transform] duration-500 ease-[cubic-bezier(0.4,0,0.2,1)]",
           collapsed ? "w-72 md:w-20" : "w-72 md:w-60",
-          open ? "translate-x-0" : "-translate-x-full",
+          open ? "translate-x-0" : "-translate-x-full md:translate-x-0",
         )}
       >
         <div className="flex flex-col gap-6 px-3 py-8">
@@ -311,10 +311,10 @@ export function AppShell({ children }: { children: ReactNode }) {
                           active
                             ? "bg-[#0b1a2c] text-white font-bold shadow-lg shadow-black/30 border border-[#535d7d]/30"
                             : "text-[#dee2ec] hover:bg-[#0b1a2c]/50 hover:text-white",
-                          collapsed && "md:justify-center md:px-0 md:w-10 md:mx-auto"
+                          collapsed ? "md:justify-center md:px-0 md:w-10 md:mx-auto" : "justify-start px-3"
                         )}
                       >
-                        <Icon className={cn("h-4 w-4 shrink-0 transition-transform duration-300", active ? "text-white scale-110" : "text-[#7d84ab] group-hover:text-[#dee2ec]")} />
+                        <Icon className={cn("h-5 w-5 shrink-0 transition-transform duration-300", active ? "text-white scale-110" : "text-[#7d84ab] group-hover:text-[#dee2ec]", collapsed && "md:h-4 md:w-4")} />
                         <span className={cn("flex-1 truncate transition-opacity duration-300", collapsed && "md:hidden")}>
                           {item.label}
                         </span>
