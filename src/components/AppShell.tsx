@@ -333,17 +333,17 @@ export function AppShell({ children }: { children: ReactNode }) {
           })}
         </nav>
 
-        <div className="mt-auto border-t border-white/5 bg-black/20 p-4">
+        <div className="mt-auto border-t border-[#535d7d]/20 bg-[#0b1a2c]/50 p-4">
           <div className={cn("mb-4 px-2 transition-opacity duration-300", collapsed && "md:opacity-0 md:hidden")}>
-            <div className="flex items-center gap-3 rounded-xl bg-white/5 p-2 ring-1 ring-white/5">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-yellow/10 text-[10px] font-black text-brand-yellow">
+            <div className="flex items-center gap-3 rounded-xl bg-[#0b1a2c] p-2 ring-1 ring-[#535d7d]/20">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#ff8100]/20 text-[10px] font-black text-[#ff8100]">
                 {isAdmin ? "AD" : roles[0]?.substring(0, 2).toUpperCase() || "US"}
               </div>
               <div className="flex flex-col min-w-0">
-                <span className="text-[10px] font-bold text-white/90 truncate uppercase tracking-wider">
+                <span className="text-[10px] font-bold text-[#dee2ec] truncate uppercase tracking-wider">
                   {user?.email?.split("@")[0]}
                 </span>
-                <span className="text-[9px] font-medium text-white/30 uppercase tracking-tighter">
+                <span className="text-[9px] font-medium text-[#7d84ab] uppercase tracking-tighter">
                   {isAdmin ? "Administrador" : ROLE_LABEL[roles[0]] || "Usuário"}
                 </span>
               </div>
