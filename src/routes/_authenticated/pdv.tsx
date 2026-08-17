@@ -904,14 +904,63 @@ function PDVPage() {
               />
             </div>
 
-            {/* Ações Rápidas */}
-            <div className="flex flex-wrap gap-2">
+            {/* Área de Venda Rápida Integrada - Tablet First */}
+            <div className="grid gap-4 sm:grid-cols-[1fr_120px_auto]">
+              <div className="relative group">
+                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-[#080c16] transition-colors">
+                  <Zap className="h-5 w-5" />
+                </div>
+                <Input
+                  value={fastSale.description}
+                  onChange={(e) => setFastSale(prev => ({ ...prev, description: e.target.value }))}
+                  className="h-14 w-full rounded-2xl border-slate-200 bg-white pl-12 text-base shadow-sm focus:border-[#080c16] focus:ring-2 focus:ring-[#080c16]/5"
+                  placeholder="Venda rápida: Descrição do item..."
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && fastSale.description && fastSale.value) {
+                      addToCart({
+                        id: `fast-${Date.now()}`,
+                        name: fastSale.description,
+                        price: toNumber(fastSale.value),
+                        category: "Venda Rápida",
+                        detail: "Item avulso",
+                        image: "linear-gradient(135deg,#ede9fe,#6d28d9)",
+                      });
+                      setFastSale({ description: "", value: "" });
+                    }
+                  }}
+                />
+              </div>
+              <div className="relative group">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm font-bold text-slate-400">R$</span>
+                <Input
+                  value={fastSale.value}
+                  onChange={(e) => setFastSale(prev => ({ ...prev, value: e.target.value }))}
+                  className="h-14 w-full rounded-2xl border-slate-200 bg-white pl-9 text-base font-black shadow-sm focus:border-[#080c16] focus:ring-2 focus:ring-[#080c16]/5"
+                  placeholder="0,00"
+                  inputMode="decimal"
+                />
+              </div>
               <Button
-                className="h-10 rounded-xl bg-[#080c16] px-4 font-bold text-white shadow-md transition-all hover:bg-[#1a202c] active:scale-95"
-                onClick={() => setShowFastSale(true)}
+                disabled={!fastSale.description || !fastSale.value}
+                className="h-14 rounded-2xl bg-[#080c16] px-6 font-black text-brand-yellow shadow-lg shadow-black/5 transition-all hover:scale-[1.02] active:scale-[0.98]"
+                onClick={() => {
+                  addToCart({
+                    id: `fast-${Date.now()}`,
+                    name: fastSale.description,
+                    price: toNumber(fastSale.value),
+                    category: "Venda Rápida",
+                    detail: "Item avulso",
+                    image: "linear-gradient(135deg,#ede9fe,#6d28d9)",
+                  });
+                  setFastSale({ description: "", value: "" });
+                }}
               >
-                <Plus className="mr-2 h-4 w-4" /> Venda Rápida
+                <Plus className="mr-2 h-5 w-5" /> ADICIONAR
               </Button>
+            </div>
+
+            {/* Ações Secundárias */}
+            <div className="flex flex-wrap gap-2">
               <Button
                 variant="outline"
                 className="h-10 rounded-xl border-slate-200 bg-white px-4 font-bold text-slate-700 shadow-sm transition-all hover:bg-slate-50 active:scale-95"
@@ -925,6 +974,13 @@ function PDVPage() {
                 onClick={() => setShowOrderPicker(true)}
               >
                 <ClipboardList className="mr-2 h-4 w-4 text-slate-400" /> Cobrar O.S
+              </Button>
+              <Button
+                variant="outline"
+                className="h-10 rounded-xl border-slate-200 bg-white px-4 font-bold text-slate-700 shadow-sm transition-all hover:bg-slate-50 active:scale-95"
+                onClick={() => setShowCalculator(true)}
+              >
+                <Monitor className="mr-2 h-4 w-4 text-slate-400" /> Calculadora
               </Button>
             </div>
           </div>
