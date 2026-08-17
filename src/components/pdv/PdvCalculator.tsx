@@ -118,7 +118,7 @@ export function PdvCalculator({
                       { id: crypto.randomUUID(), label: `R$ ${v}`, value: v },
                     ])
                   }
-                  className="h-9 rounded-xl border border-slate-200 bg-white text-sm font-black text-slate-700 hover:border-brand-blue hover:text-brand-blue"
+                  className="h-9 rounded-xl border border-slate-200 bg-white text-sm font-black text-slate-700 hover:border-[#080c16] hover:text-[#080c16]"
                 >
                   +{v}
                 </button>
