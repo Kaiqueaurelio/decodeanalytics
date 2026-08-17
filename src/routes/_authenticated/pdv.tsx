@@ -21,6 +21,22 @@ import {
   UserPlus,
   Settings2,
   X,
+  Zap,
+  Target,
+  Monitor,
+  Printer,
+  ChevronRight,
+  User,
+  Star,
+  Package,
+  ArrowRight,
+  Contact,
+  FileText,
+  Tags,
+  Flag,
+  Shirt,
+  Coffee,
+  Gift,
 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
