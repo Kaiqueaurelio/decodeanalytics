@@ -212,38 +212,43 @@ export function AppShell({ children }: { children: ReactNode }) {
           open ? "translate-x-0" : "-translate-x-full md:translate-x-0",
         )}
       >
-        <div className="flex flex-col gap-6 px-3 py-8">
-          <div className={cn("flex items-center justify-between", collapsed && "md:justify-center")}>
-            <div className={cn("flex items-center transition-all duration-500", collapsed ? "md:justify-center" : "gap-2.5")}>
+        <div className={cn("flex flex-col py-8", collapsed ? "items-center px-0" : "px-3")}>
+          <div className={cn("flex w-full items-center px-3 mb-6", collapsed ? "justify-center" : "justify-between")}>
+            <div className={cn("flex items-center transition-all duration-500", collapsed ? "justify-center" : "gap-2.5")}>
               <div className={cn(
                 "flex shrink-0 items-center justify-center rounded-lg bg-[#ff8100] font-black text-white shadow-md shadow-[#ff8100]/20 transition-all duration-300",
-                collapsed ? "md:h-10 md:w-10 md:text-sm" : "h-8 w-8 text-xs"
+                collapsed ? "h-11 w-11 text-base" : "h-8 w-8 text-xs"
               )}>
                 A
               </div>
-              <div className={cn("flex flex-col leading-none transition-all duration-500", collapsed && "md:opacity-0 md:w-0 md:overflow-hidden")}>
-                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[#dee2ec]">
-                  Alcateia
-                </span>
-                <span className="mt-0.5 text-[8px] font-bold uppercase tracking-[0.1em] text-[#7d84ab]">
-                  Produções Gráficas
-                </span>
-              </div>
+              {!collapsed && (
+                <div className="flex flex-col leading-none animate-in fade-in duration-500">
+                  <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[#dee2ec]">
+                    Alcateia
+                  </span>
+                  <span className="mt-0.5 text-[8px] font-bold uppercase tracking-[0.1em] text-[#7d84ab]">
+                    Produções Gráficas
+                  </span>
+                </div>
+              )}
             </div>
-            <button
-              onClick={() => setOpen(false)}
-              className="grid h-8 w-8 place-items-center rounded-lg bg-[#0b1a2c] text-[#7d84ab] hover:bg-[#0b1a2c]/80 hover:text-[#dee2ec] md:hidden"
-            >
-              <X className="h-4 w-4" />
-            </button>
+            {!collapsed && (
+              <button
+                onClick={() => setOpen(false)}
+                className="grid h-8 w-8 place-items-center rounded-lg bg-[#0b1a2c] text-[#7d84ab] hover:bg-[#0b1a2c]/80 hover:text-[#dee2ec] md:hidden"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            )}
           </div>
 
-          <div className={cn("relative transition-all duration-300", collapsed && "md:px-0 md:flex md:justify-center")}>
+          <div className={cn("relative w-full transition-all duration-300 px-3", collapsed && "flex justify-center")}>
             <div
               className={cn(
-                "group relative flex h-9 items-center rounded-lg bg-[#0b1a2c] px-3 transition-all focus-within:bg-[#0b1a2c]/80 border border-[#535d7d]/30",
-                collapsed ? "md:w-10 md:px-0 md:justify-center" : "w-full",
+                "group relative flex h-10 items-center rounded-lg bg-[#0b1a2c] transition-all focus-within:bg-[#0b1a2c]/80 border border-[#535d7d]/30",
+                collapsed ? "w-11 justify-center px-0" : "w-full px-3",
               )}
+              title={collapsed ? "Buscar" : undefined}
             >
               <Search
                 className={cn("h-4 w-4 shrink-0 text-[#7d84ab]/50 group-focus-within:text-[#dee2ec] transition-colors")}
@@ -257,7 +262,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                 onBlur={() => setTimeout(() => setSearchFocused(false), 200)}
                 className={cn(
                   "ml-2 flex-1 bg-transparent text-xs text-white placeholder:text-[#7d84ab] focus:outline-hidden",
-                  collapsed && "md:hidden",
+                  collapsed && "hidden",
                 )}
               />
               {searchFocused && results.length > 0 && !collapsed && (
@@ -289,16 +294,13 @@ export function AppShell({ children }: { children: ReactNode }) {
             const sectionItems = items.filter((item) => item.section === section);
             if (!sectionItems.length) return null;
             return (
-              <div key={section}>
-                <p
-                  className={cn(
-                    "mb-2 px-3 text-[10px] font-black uppercase tracking-[0.2em] text-[#dee2ec]/90",
-                    collapsed && "md:hidden",
-                  )}
-                >
-                  {section}
-                </p>
-                <div className="space-y-1">
+              <div key={section} className={cn("flex flex-col", collapsed && "items-center")}>
+                {!collapsed && (
+                  <p className="mb-2 px-3 text-[10px] font-black uppercase tracking-[0.2em] text-[#dee2ec]/90">
+                    {section}
+                  </p>
+                )}
+                <div className={cn("space-y-1 w-full", collapsed && "flex flex-col items-center")}>
                   {sectionItems.map((item) => {
                     const active =
                       path === item.to || (item.to !== "/dashboard" && path.startsWith(item.to));
@@ -310,32 +312,36 @@ export function AppShell({ children }: { children: ReactNode }) {
                         onClick={() => setOpen(false)}
                         title={collapsed ? item.label : undefined}
                         className={cn(
-                          "group relative flex items-center gap-3 rounded-xl px-3 py-3 text-xs transition-all duration-300",
+                          "group relative flex items-center rounded-xl transition-all duration-300",
                           active
                             ? "bg-[#0b1a2c] text-white font-bold shadow-lg shadow-black/30 border border-[#535d7d]/30"
                             : "text-[#dee2ec] hover:bg-[#0b1a2c]/50 hover:text-white",
-                          collapsed ? "md:justify-center md:px-0 md:w-10 md:mx-auto" : "justify-start px-3"
+                          collapsed ? "h-11 w-11 justify-center px-0" : "h-auto w-full px-3 py-3 gap-3 justify-start"
                         )}
                       >
-                        <Icon className={cn("h-5 w-5 shrink-0 transition-transform duration-300", active ? "text-white scale-110" : "text-[#7d84ab] group-hover:text-[#dee2ec]", collapsed && "md:h-4 md:w-4")} />
-                        <span className={cn("flex-1 truncate transition-opacity duration-300", collapsed && "md:hidden")}>
-                          {item.label}
-                        </span>
-                        {item.label === "Dashboard" && !collapsed && (
-                          <span className="rounded-md bg-rose-500 px-1.5 py-0.5 text-[8px] font-black text-white uppercase animate-pulse">
-                            Novo
-                          </span>
-                        )}
-                        {item.label === "Ordens de Serviço" && !collapsed && (
-                          <span className="rounded-full bg-blue-500 w-4 h-4 flex items-center justify-center text-[8px] font-black text-white">
-                            3
-                          </span>
-                        )}
-                        {active && !collapsed && (
-                          <ChevronRight className="h-3 w-3 text-white/40" />
+                        <Icon className={cn("shrink-0 transition-transform duration-300", active ? "text-white scale-110" : "text-[#7d84ab] group-hover:text-[#dee2ec]", collapsed ? "h-5 w-5" : "h-5 w-5")} />
+                        {!collapsed && (
+                          <>
+                            <span className="flex-1 truncate">
+                              {item.label}
+                            </span>
+                            {item.label === "Dashboard" && (
+                              <span className="rounded-md bg-rose-500 px-1.5 py-0.5 text-[8px] font-black text-white uppercase animate-pulse">
+                                Novo
+                              </span>
+                            )}
+                            {item.label === "Ordens de Serviço" && (
+                              <span className="rounded-full bg-blue-500 w-4 h-4 flex items-center justify-center text-[8px] font-black text-white">
+                                3
+                              </span>
+                            )}
+                            {active && (
+                              <ChevronRight className="h-3 w-3 text-white/40" />
+                            )}
+                          </>
                         )}
                         {active && collapsed && (
-                          <div className="absolute right-2 top-1/2 -translate-y-1/2 w-1 h-1 rounded-full bg-brand-yellow hidden md:block" />
+                          <div className="absolute -right-0.5 top-1/2 -translate-y-1/2 w-1 h-3 rounded-l-full bg-[#ff8100] shadow-[0_0_8px_rgba(255,129,0,0.5)]" />
                         )}
                       </Link>
                     );
@@ -346,59 +352,66 @@ export function AppShell({ children }: { children: ReactNode }) {
           })}
         </nav>
 
-        <div className="mt-auto border-t border-[#535d7d]/20 bg-[#0b1a2c]/50 p-3">
-          <div className={cn("mb-4 transition-all duration-500", collapsed ? "md:flex md:justify-center" : "px-2")}>
+        <div className={cn("mt-auto border-t border-[#535d7d]/20 bg-[#0b1a2c]/50 p-3 flex flex-col", collapsed && "items-center")}>
+          <div className={cn("mb-4 w-full", collapsed && "flex justify-center")}>
             <div className={cn(
-              "flex items-center gap-3 rounded-xl bg-[#0b1a2c] p-2 ring-1 ring-[#535d7d]/20 transition-all duration-300",
-              collapsed && "md:w-12 md:h-12 md:p-0 md:justify-center"
-            )}>
+              "flex items-center rounded-xl bg-[#0b1a2c] ring-1 ring-[#535d7d]/20 transition-all duration-300",
+              collapsed ? "h-12 w-12 justify-center" : "gap-3 p-2 w-full"
+            )} title={collapsed ? (isAdmin ? "Administrador" : "Usuário") : undefined}>
               <div className={cn(
                 "flex shrink-0 items-center justify-center rounded-lg bg-[#ff8100]/20 text-[10px] font-black text-[#ff8100] transition-all duration-300",
-                collapsed ? "md:h-10 md:w-10" : "h-8 w-8"
+                collapsed ? "h-10 w-10" : "h-8 w-8"
               )}>
                 {isAdmin ? "AD" : roles[0]?.substring(0, 2).toUpperCase() || "US"}
               </div>
-              <div className={cn("flex flex-col min-w-0 transition-all duration-500", collapsed && "md:opacity-0 md:w-0 md:overflow-hidden")}>
-                <span className="text-[10px] font-bold text-[#dee2ec] truncate uppercase tracking-wider">
-                  {user?.email?.split("@")[0]}
-                </span>
-                <span className="text-[9px] font-medium text-[#7d84ab] uppercase tracking-tighter">
-                  {isAdmin ? "Administrador" : ROLE_LABEL[roles[0]] || "Usuário"}
-                </span>
-              </div>
+              {!collapsed && (
+                <div className="flex flex-col min-w-0 animate-in fade-in duration-500">
+                  <span className="text-[10px] font-bold text-[#dee2ec] truncate uppercase tracking-wider">
+                    {user?.email?.split("@")[0]}
+                  </span>
+                  <span className="text-[9px] font-medium text-[#7d84ab] uppercase tracking-tighter">
+                    {isAdmin ? "Administrador" : ROLE_LABEL[roles[0]] || "Usuário"}
+                  </span>
+                </div>
+              )}
             </div>
           </div>
+          
           <button
             type="button"
             onClick={() =>
               setCollapsed((value) => {
-                localStorage.setItem("alcateia_sidebar_collapsed", !value ? "1" : "0");
-                return !value;
+                const newValue = !value;
+                localStorage.setItem("alcateia_sidebar_collapsed", newValue ? "1" : "0");
+                return newValue;
               })
             }
             className={cn(
-              "group flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-xs text-[#dee2ec] transition-all hover:bg-[#0b1a2c] hover:text-white",
-              collapsed && "md:justify-center md:px-0 md:w-10 md:mx-auto"
+              "group flex items-center rounded-xl text-xs text-[#dee2ec] transition-all hover:bg-[#0b1a2c] hover:text-white",
+              collapsed ? "h-11 w-11 justify-center mx-auto" : "w-full gap-3 px-3 py-2.5"
             )}
+            title={collapsed ? "Expandir menu" : undefined}
           >
             {collapsed ? (
               <PanelLeftOpen className="h-4 w-4 shrink-0" />
             ) : (
-              <PanelLeftClose className="h-4 w-4 shrink-0" />
+              <>
+                <PanelLeftClose className="h-4 w-4 shrink-0" />
+                <span className="flex-1 truncate">Recolher menu</span>
+              </>
             )}
-            <span className={cn("flex-1 truncate transition-opacity duration-300", collapsed && "md:hidden")}>
-              Recolher menu
-            </span>
           </button>
+
           <button
             onClick={() => signOut()}
             className={cn(
-              "group mt-1 flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-xs text-rose-400 transition-all hover:bg-rose-500/10 hover:text-rose-300",
-              collapsed && "md:justify-center md:px-0 md:w-10 md:mx-auto"
+              "group mt-1 flex items-center rounded-xl text-xs text-rose-400 transition-all hover:bg-rose-500/10 hover:text-rose-300",
+              collapsed ? "h-11 w-11 justify-center mx-auto" : "w-full gap-3 px-3 py-2.5"
             )}
+            title={collapsed ? "Sair" : undefined}
           >
             <LogOut className="h-4 w-4 shrink-0" />
-            <span className={cn("flex-1 truncate transition-opacity duration-300", collapsed && "md:hidden")}>Sair</span>
+            {!collapsed && <span className="flex-1 truncate">Sair</span>}
           </button>
         </div>
       </aside>
