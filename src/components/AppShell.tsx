@@ -212,13 +212,13 @@ export function AppShell({ children }: { children: ReactNode }) {
           open ? "translate-x-0" : "-translate-x-full",
         )}
       >
-        <div className="flex flex-col gap-6 px-4 py-8">
+        <div className="flex flex-col gap-6 px-3 py-8">
           <div className="flex items-center justify-between">
-            <div className={cn("flex items-center gap-2.5 transition-opacity duration-300", collapsed && "md:opacity-0 md:pointer-events-none")}>
+            <div className={cn("flex items-center gap-2.5 transition-all duration-500", collapsed && "md:translate-x-[-4px]")}>
               <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#ff8100] font-black text-white shadow-md shadow-[#ff8100]/20 text-xs">
                 A
               </div>
-              <div className="flex flex-col leading-none">
+              <div className={cn("flex flex-col leading-none transition-all duration-500", collapsed && "md:opacity-0 md:w-0 md:overflow-hidden")}>
                 <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[#dee2ec]">
                   Alcateia
                 </span>
@@ -235,15 +235,15 @@ export function AppShell({ children }: { children: ReactNode }) {
             </button>
           </div>
 
-          <div className={cn("relative transition-all duration-300", collapsed && "md:px-0")}>
+          <div className={cn("relative transition-all duration-300", collapsed && "md:px-0 md:flex md:justify-center")}>
             <div
               className={cn(
                 "group relative flex h-9 items-center rounded-lg bg-[#0b1a2c] px-3 transition-all focus-within:bg-[#0b1a2c]/80 border border-[#535d7d]/30",
-                collapsed && "md:h-9 md:w-9 md:px-0 md:justify-center mx-auto",
+                collapsed ? "md:w-10 md:px-0 md:justify-center" : "w-full",
               )}
             >
               <Search
-                className={cn("h-4 w-4 shrink-0 text-[#7d84ab]/50 group-focus-within:text-[#dee2ec] transition-colors", collapsed && "md:h-4 md:w-4")}
+                className={cn("h-4 w-4 shrink-0 text-[#7d84ab]/50 group-focus-within:text-[#dee2ec] transition-colors")}
               />
               <input
                 type="text"
@@ -257,7 +257,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                   collapsed && "md:hidden",
                 )}
               />
-              {searchFocused && results.length > 0 && (
+              {searchFocused && results.length > 0 && !collapsed && (
                 <div className="absolute top-full right-0 left-0 z-50 mt-2 max-h-60 overflow-y-auto rounded-xl border border-[#535d7d]/30 bg-[#0b1a2c] p-1 shadow-2xl backdrop-blur-xl">
                   {results.map((item) => (
                     <Link
@@ -343,13 +343,16 @@ export function AppShell({ children }: { children: ReactNode }) {
           })}
         </nav>
 
-        <div className="mt-auto border-t border-[#535d7d]/20 bg-[#0b1a2c]/50 p-4">
-          <div className={cn("mb-4 px-2 transition-opacity duration-300", collapsed && "md:opacity-0 md:hidden")}>
-            <div className="flex items-center gap-3 rounded-xl bg-[#0b1a2c] p-2 ring-1 ring-[#535d7d]/20">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#ff8100]/20 text-[10px] font-black text-[#ff8100]">
+        <div className="mt-auto border-t border-[#535d7d]/20 bg-[#0b1a2c]/50 p-3">
+          <div className={cn("mb-4 transition-all duration-500", collapsed ? "md:flex md:justify-center" : "px-2")}>
+            <div className={cn(
+              "flex items-center gap-3 rounded-xl bg-[#0b1a2c] p-2 ring-1 ring-[#535d7d]/20",
+              collapsed && "md:w-10 md:h-10 md:p-0 md:justify-center"
+            )}>
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#ff8100]/20 text-[10px] font-black text-[#ff8100]">
                 {isAdmin ? "AD" : roles[0]?.substring(0, 2).toUpperCase() || "US"}
               </div>
-              <div className="flex flex-col min-w-0">
+              <div className={cn("flex flex-col min-w-0 transition-all duration-500", collapsed && "md:opacity-0 md:w-0 md:overflow-hidden")}>
                 <span className="text-[10px] font-bold text-[#dee2ec] truncate uppercase tracking-wider">
                   {user?.email?.split("@")[0]}
                 </span>
