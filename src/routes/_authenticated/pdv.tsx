@@ -161,6 +161,7 @@ const QUICK_PRODUCTS = [
     category: "Impressão",
     price: 59.9,
     detail: "4x4 cores • Couchê 300g",
+    imageUrl: undefined,
     image: "linear-gradient(135deg,#ede9fe,#6d28d9)",
   },
   {
@@ -169,6 +170,7 @@ const QUICK_PRODUCTS = [
     category: "Impressão",
     price: 129.9,
     detail: "15x21cm • Couchê 90g",
+    imageUrl: undefined,
     image: "linear-gradient(135deg,#f3f4f6,#7c3aed)",
   },
   {
@@ -177,6 +179,7 @@ const QUICK_PRODUCTS = [
     category: "Banners",
     price: 89.9,
     detail: "60x90cm • Lona 440g",
+    imageUrl: undefined,
     image: "linear-gradient(135deg,#ddd6fe,#312e81)",
   },
   {
@@ -185,6 +188,7 @@ const QUICK_PRODUCTS = [
     category: "Canecas",
     price: 49.9,
     detail: "Cerâmica • 325ml",
+    imageUrl: undefined,
     image: "linear-gradient(135deg,#fafafa,#a78bfa)",
   },
   {
@@ -193,6 +197,7 @@ const QUICK_PRODUCTS = [
     category: "Camisetas",
     price: 59.9,
     detail: "Poliéster • Sublimação",
+    imageUrl: undefined,
     image: "linear-gradient(135deg,#fff,#8b5cf6)",
   },
   {
@@ -201,6 +206,7 @@ const QUICK_PRODUCTS = [
     category: "Adesivos",
     price: 8.9,
     detail: "Personalizado • Vinil",
+    imageUrl: undefined,
     image: "linear-gradient(135deg,#fef3c7,#6d28d9)",
   },
 ];
