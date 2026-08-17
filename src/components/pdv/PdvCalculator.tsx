@@ -175,7 +175,7 @@ export function PdvCalculator({
           {onSendToCart && (
             <Button
               type="button"
-              className="rounded-xl bg-brand-blue font-black hover:bg-brand-blue-light"
+              className="rounded-xl bg-[#080c16] font-black hover:bg-[#080c16]/90"
               disabled={total <= 0}
               onClick={() => {
                 const desc =
