@@ -20,7 +20,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Beaker, Send, Sparkles, BookOpen, Cpu, Clock, Loader2, Copy, Link2, AlertTriangle, ListChecks, CheckCircle2, XCircle } from "lucide-react";
+import { Beaker, Send, Zap, BookOpen, Cpu, Clock, Loader2, Copy, Link2, AlertTriangle, ListChecks, CheckCircle2, XCircle, LayoutDashboard } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { toast } from "sonner";
 
@@ -49,11 +49,11 @@ function EllaSandboxPage() {
     mutationFn: async () => call({ data: { message: message.trim(), scope } }),
     onSuccess: (data) => { setResult(data); setFailure(null); },
     onError: (err: any) => {
-      toast.error(err?.message ?? "Falha ao consultar o assistente");
+      toast.error(err?.message ?? "Falha ao consultar o sistema");
       setResult(null);
       setFailure({
         run_id: err?.run_id,
-        message: err?.message ?? "Falha ao consultar o assistente",
+        message: err?.message ?? "Falha ao consultar o sistema",
         error_type: err?.error_type,
         stack_trace: err?.stack_trace ?? err?.stack ?? null,
         steps: err?.steps,
@@ -73,9 +73,9 @@ function EllaSandboxPage() {
           <Beaker className="h-6 w-6" />
         </div>
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Sandbox da IA</h1>
+          <h1 className="text-2xl font-semibold tracking-tight">Sandbox de Gestão</h1>
           <p className="text-sm text-muted-foreground">
-            Teste o assistente com as diretrizes atuais e veja exatamente qual treinamento foi usado
+            Teste o processamento inteligente com as diretrizes atuais e veja exatamente qual treinamento foi usado
             para responder.
           </p>
         </div>
@@ -88,7 +88,7 @@ function EllaSandboxPage() {
             <Textarea
               value={message}
               onChange={(e) => setMessage(e.target.value)}
-              placeholder="Digite sua pergunta aqui para testar o assistente..."
+              placeholder="Digite sua pergunta aqui para testar o sistema..."
               rows={4}
               onKeyDown={(e) => {
                 if ((e.metaKey || e.ctrlKey) && e.key === "Enter") submit();
@@ -221,8 +221,8 @@ function EllaSandboxPage() {
             </div>
           )}
           <div className="flex items-center gap-2">
-            <Sparkles className="h-5 w-5 text-primary" />
-            <h2 className="text-lg font-semibold">Resposta do assistente</h2>
+            <Zap className="h-5 w-5 text-primary" />
+            <h2 className="text-lg font-semibold">Resposta do sistema</h2>
             <span className="ml-auto flex items-center gap-1 text-xs text-muted-foreground">
               <Clock className="h-3 w-3" /> {result.duration_ms} ms
             </span>
@@ -333,7 +333,7 @@ function EllaSandboxPage() {
             <AccordionItem value="guidelines">
               <AccordionTrigger>
                 <span className="flex items-center gap-2">
-                  <Sparkles className="h-4 w-4" />
+                  <Zap className="h-4 w-4" />
                   Diretrizes aplicadas ({result.basePromptName})
                 </span>
               </AccordionTrigger>

@@ -34,14 +34,14 @@ import {
 } from "@/components/ui/alert-dialog";
 import {
   BookOpen,
-  Bot,
+  Activity,
   HeadphonesIcon,
   GraduationCap,
   Plus,
   Pencil,
   Trash2,
   Search,
-  Sparkles,
+  Zap,
 } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
@@ -65,12 +65,12 @@ type Knowledge = {
 
 const CATEGORY_META: Record<
   Category,
-  { label: string; description: string; icon: typeof Bot; tone: string }
+  { label: string; description: string; icon: typeof Activity; tone: string }
 > = {
   comportamento: {
     label: "Comportamento",
-    description: "Como o assistente deve agir, tom de voz, personalidade, limites",
-    icon: Bot,
+    description: "Como o sistema deve agir, tom de voz, regras, limites",
+    icon: Activity,
     tone: "bg-purple-100 text-purple-800",
   },
   atendimento: {
@@ -233,12 +233,12 @@ function EllaTrainingPage() {
       <header className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <h1 className="text-2xl font-black tracking-tight flex items-center gap-2">
-            <Sparkles className="h-6 w-6 text-primary" />
-            Treinamento da IA
+            <Zap className="h-6 w-6 text-primary" />
+            Regras do Sistema (Treinamento)
           </h1>
           <p className="text-sm text-muted-foreground max-w-2xl">
-            Ensine o assistente. Tudo que você registrar aqui vira base de conhecimento que ele
-            consulta em todo atendimento — no chat interno e na loja pública.
+            Ensine o sistema de automação. Tudo que você registrar aqui vira base de conhecimento que ele
+            consulta em todo processamento inteligente — no painel e na loja pública.
           </p>
         </div>
         <Button onClick={() => openNew()}>
@@ -327,7 +327,7 @@ function EllaTrainingPage() {
         ) : filtered.length === 0 ? (
           <div className="py-10 text-center text-muted-foreground">
             <BookOpen className="h-8 w-8 mx-auto mb-2 opacity-50" />
-            Nenhum treinamento aqui ainda. Comece cadastrando como o assistente deve se
+            Nenhum treinamento aqui ainda. Comece cadastrando como o sistema deve se
             comportar ou uma dica de atendimento.
           </div>
         ) : (
@@ -436,7 +436,7 @@ function EllaTrainingPage() {
               <Input
                 value={form.title}
                 onChange={(e) => setForm((f) => ({ ...f, title: e.target.value }))}
-                placeholder="Ex.: Tom de voz do assistente / Política de troca / Papel Couché"
+                placeholder="Ex.: Tom de voz do sistema / Política de troca / Papel Couché"
                 maxLength={140}
               />
             </div>
@@ -445,13 +445,13 @@ function EllaTrainingPage() {
               <Textarea
                 value={form.content}
                 onChange={(e) => setForm((f) => ({ ...f, content: e.target.value }))}
-                placeholder="Escreva com clareza — o assistente lê tudo isso ao atender. Ex.: 'Sempre cumprimente pelo nome quando souber. Nunca prometa prazos abaixo de 3 dias úteis.'"
+                placeholder="Escreva com clareza — o sistema lê tudo isso ao processar. Ex.: 'Sempre cumprimente pelo nome quando souber. Nunca prometa prazos abaixo de 3 dias úteis.'"
                 rows={10}
               />
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="grid gap-2">
-                <Label>Escopo (onde o assistente pode usar)</Label>
+                <Label>Escopo (onde o sistema pode usar)</Label>
                 <Select
                   value={form.scope}
                   onValueChange={(v: Scope) => setForm((f) => ({ ...f, scope: v }))}
