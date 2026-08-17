@@ -1056,8 +1056,8 @@ function PDVPage() {
         {/* Carrinho / Receipt Sidebar */}
         <aside className="relative">
           <div className="sticky top-6 flex flex-col gap-4">
-            <div className="overflow-hidden rounded-[2.5rem] border-2 border-[#080c16] bg-[#080c16] p-1 shadow-2xl">
-              <div className="rounded-[2.2rem] bg-white p-6 shadow-inner">
+            <div className="overflow-hidden rounded-[2rem] border-2 border-[#080c16] bg-[#080c16] p-1 shadow-2xl">
+              <div className="rounded-[1.8rem] bg-white p-6 shadow-inner">
                 <div className="mb-6 flex items-center justify-between">
                   <div>
                     <h2 className="text-lg font-black text-[#080c16]">Cupom Atual</h2>
