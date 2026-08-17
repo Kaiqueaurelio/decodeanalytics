@@ -130,7 +130,7 @@ export async function transcribeAttachment(
     form.append("file", blob, `audio.${ext}`);
     const res = await fetch("https://ai.gateway.lovable.dev/v1/audio/transcriptions", {
       method: "POST",
-      headers: { "Lovable-API-Key": key },
+      headers: { "Authorization": `Bearer ${key}` },
       body: form,
     });
     if (!res.ok) {
