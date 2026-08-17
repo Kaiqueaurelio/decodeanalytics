@@ -1694,7 +1694,6 @@ function PDVPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-
       <Dialog open={showNewClient} onOpenChange={setShowNewClient}>
         <DialogContent className="rounded-3xl">
           <DialogHeader>
