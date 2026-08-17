@@ -451,35 +451,6 @@ function ContactSection() {
   return _ContactSection();
 }
 
-function StatsStrip() {
-  const stats = [
-    { icon: Users, value: "+12.000", label: "Clientes atendidos" },
-    { icon: Zap, value: "48h", label: "Produção média" },
-    { icon: Award, value: "4.9★", label: "Avaliação dos clientes" },
-    { icon: PackageCheck, value: "+200k", label: "Pedidos entregues" },
-  ];
-  return (
-    <section className="border-y border-[var(--store-border)] bg-white">
-      <div className="mx-auto grid max-w-[1280px] grid-cols-2 gap-3 px-4 py-8 sm:gap-4 sm:py-10 md:grid-cols-4">
-        {stats.map((s) => (
-          <div key={s.label} className="flex flex-col items-center gap-2 text-center sm:flex-row sm:gap-3 sm:text-left">
-            <span className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-[var(--store-ink)] text-[var(--store-gold)] sm:h-12 sm:w-12 sm:rounded-xl">
-              <s.icon className="h-4 w-4 sm:h-5 sm:w-5" />
-            </span>
-            <div className="min-w-0">
-              <p className="font-display text-2xl leading-none text-[var(--store-primary)] sm:text-3xl md:text-4xl">
-                {s.value}
-              </p>
-              <p className="mt-0.5 text-[10px] font-bold uppercase tracking-[0.15em] text-[var(--store-text-muted)] sm:mt-1 sm:text-[11px]">
-                {s.label}
-              </p>
-            </div>
-          </div>
-        ))}
-      </div>
-    </section>
-  );
-}
 
 function TestimonialsSection() {
   const items = [
