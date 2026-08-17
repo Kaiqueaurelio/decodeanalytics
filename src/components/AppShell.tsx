@@ -346,10 +346,13 @@ export function AppShell({ children }: { children: ReactNode }) {
         <div className="mt-auto border-t border-[#535d7d]/20 bg-[#0b1a2c]/50 p-3">
           <div className={cn("mb-4 transition-all duration-500", collapsed ? "md:flex md:justify-center" : "px-2")}>
             <div className={cn(
-              "flex items-center gap-3 rounded-xl bg-[#0b1a2c] p-2 ring-1 ring-[#535d7d]/20",
-              collapsed && "md:w-10 md:h-10 md:p-0 md:justify-center"
+              "flex items-center gap-3 rounded-xl bg-[#0b1a2c] p-2 ring-1 ring-[#535d7d]/20 transition-all duration-300",
+              collapsed && "md:w-12 md:h-12 md:p-0 md:justify-center"
             )}>
-              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#ff8100]/20 text-[10px] font-black text-[#ff8100]">
+              <div className={cn(
+                "flex shrink-0 items-center justify-center rounded-lg bg-[#ff8100]/20 text-[10px] font-black text-[#ff8100] transition-all duration-300",
+                collapsed ? "md:h-10 md:w-10" : "h-8 w-8"
+              )}>
                 {isAdmin ? "AD" : roles[0]?.substring(0, 2).toUpperCase() || "US"}
               </div>
               <div className={cn("flex flex-col min-w-0 transition-all duration-500", collapsed && "md:opacity-0 md:w-0 md:overflow-hidden")}>
