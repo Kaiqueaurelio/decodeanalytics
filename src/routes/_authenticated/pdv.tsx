@@ -1814,9 +1814,9 @@ function PDVPage() {
               />
             </div>
           </div>
-          <DialogFooter>
-            <Button className="bg-brand-blue hover:bg-brand-blue-light" onClick={openCash}>
-              Abrir
+          <DialogFooter className="pt-4">
+            <Button className="h-12 w-full rounded-xl bg-[#080c16] font-black text-brand-yellow hover:bg-[#1a202c]" onClick={openCash}>
+              ABRIR CAIXA
             </Button>
           </DialogFooter>
         </DialogContent>
