@@ -1793,11 +1793,14 @@ function PDVPage() {
         </DialogContent>
       </Dialog>
       <Dialog open={showOpenCash} onOpenChange={setShowOpenCash}>
-        <DialogContent className="rounded-3xl">
-          <DialogHeader>
-            <DialogTitle>Abrir caixa</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-3">
+        <DialogContent className="rounded-[2rem] border-2 border-[#080c16] p-0 overflow-hidden sm:max-w-md">
+          <div className="bg-[#080c16] p-6 text-white text-center">
+            <DialogHeader>
+              <DialogTitle className="text-xl font-black text-brand-yellow text-center">Abertura de Caixa</DialogTitle>
+              <p className="text-xs font-bold text-white/60">Informe os dados para iniciar as vendas</p>
+            </DialogHeader>
+          </div>
+          <div className="p-6 space-y-4">
             <div>
               <Label>Operador</Label>
               <Input
