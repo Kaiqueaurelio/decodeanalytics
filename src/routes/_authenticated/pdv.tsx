@@ -107,7 +107,7 @@ td{padding:5px 0;border-bottom:1px dashed #cbd5e1;vertical-align:top}
 .ok{background:#d1fae5;color:#065f46}.bad{background:#fef3c7;color:#92400e}
 @media print{button{display:none}}
 </style></head><body>
-<div class="brand"><strong>Alcateia's Produções Gráficas</strong><span class="tag">Fechamento de caixa</span></div>
+<div class="brand"><strong>Alcateia Produções Gráficas</strong><span class="tag">Fechamento de caixa</span></div>
 <h1>Recibo de Fechamento</h1>
 <p class="muted">${date} · Fechado em ${closedAt} · Operador: ${c.operator || "—"} · <span class="badge ${ok ? "ok" : "bad"}">${ok ? "Caixa bate" : "Com diferença"}</span></p>
 
