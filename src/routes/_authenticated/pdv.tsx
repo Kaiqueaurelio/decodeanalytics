@@ -1761,7 +1761,6 @@ function PDVPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-
       <Dialog open={showCloseCash} onOpenChange={setShowCloseCash}>
         <DialogContent className="max-w-2xl rounded-3xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
