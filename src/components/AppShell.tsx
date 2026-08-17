@@ -189,9 +189,11 @@ export function AppShell({ children }: { children: ReactNode }) {
 
   const items = useMemo(
     () =>
-      NAV.filter(
-        (item) => !item.roles || isAdmin || roles.some((role) => item.roles?.includes(role)),
-      ),
+      NAV.filter((item) => {
+        if (!item.roles) return true;
+        if (isAdmin) return true;
+        return roles.some((role) => item.roles?.includes(role));
+      }),
     [isAdmin, roles],
   );
   const results = search.trim()
