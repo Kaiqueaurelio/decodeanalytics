@@ -61,7 +61,7 @@ function ClientsPage() {
   async function remove(id: string, name: string) {
     if (!confirm(`Excluir cliente "${name}"?`)) return;
     const { error } = await supabase.from("clients").delete().eq("id", id);
-    if (error) return toast.error(error.message + " (clientes com OS vinculadas não podem ser excluídos)");
+    if (error) return toast.error("Erro ao excluir cliente: " + error.message);
     toast.success("Excluído");
     qc.invalidateQueries({ queryKey: ["clients"] });
   }
