@@ -1731,7 +1731,6 @@ function PDVPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-
       <Dialog open={showOpenCash} onOpenChange={setShowOpenCash}>
         <DialogContent className="rounded-3xl">
           <DialogHeader>
