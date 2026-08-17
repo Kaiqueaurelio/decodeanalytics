@@ -3,7 +3,7 @@ import React from "react";
 import {
   ArrowRight,
   ChevronRight,
-  Sparkles,
+  Zap,
   Upload,
   Send,
   PackageCheck,
@@ -13,16 +13,16 @@ import {
   Cloud,
   FileText,
   Palette,
-  Bot,
+  LayoutDashboard,
   AlertTriangle,
   CheckCircle2,
   Image as ImageIcon,
   Plus,
   Star,
   Quote,
-  Zap,
   Users,
   Award,
+  Settings,
 } from "lucide-react";
 import { StoreShell } from "@/components/storefront/StoreShell";
 import { Hero } from "@/components/storefront/Hero";
@@ -232,7 +232,7 @@ function BentoProductCard({
         <SmartImage 
           src={product.image_url} 
           alt={product.name}
-          fallbackEmoji="✨"
+          fallbackEmoji="📦"
           className="transition-transform duration-500 group-hover:scale-[1.06]"
         />
         {product.badge && (
@@ -299,7 +299,7 @@ function CategoriesSection() {
               className="group flex flex-col justify-between rounded-[var(--store-radius-lg)] border border-[var(--store-border)] bg-white p-5 shadow-[var(--store-shadow-sm)] transition-all hover:-translate-y-1 hover:border-[var(--store-primary-light)]/40 hover:shadow-[var(--store-shadow-md)]"
             >
               <div className="grid h-12 w-12 place-items-center rounded-xl bg-[var(--store-primary)] text-white transition-colors group-hover:bg-[var(--store-accent)]">
-                <Sparkles className="h-5 w-5" />
+                <Zap className="h-5 w-5" />
               </div>
               <div className="mt-5">
                 <p className="text-base font-extrabold text-[var(--store-text)]">{c.label}</p>
@@ -319,7 +319,7 @@ function HowItWorks() {
   const waLink = useWaLink();
   const { howItWorksTitle } = useCompanyInfo();
   const steps = [
-    { icon: Sparkles, title: "Escolha o produto", desc: "Navegue pelo catálogo e selecione a opção ideal." },
+    { icon: CheckCircle2, title: "Escolha o produto", desc: "Navegue pelo catálogo e selecione a opção ideal." },
     { icon: Upload, title: "Envie sua arte", desc: "Anexe o arquivo ou peça para nossa equipe criar." },
     { icon: Send, title: "Aprovação rápida", desc: "Confirmamos detalhes e prazos pelo WhatsApp." },
     { icon: PackageCheck, title: "Produção e entrega", desc: "Retirada na loja ou entrega no endereço." },
@@ -398,7 +398,7 @@ function ArtTipsSection() {
       desc: "Imagens em 300 DPI garantem nitidez. Prefira sempre enviar em PDF editável para o melhor resultado.",
     },
     {
-      icon: Sparkles,
+      icon: Settings,
       title: "Arte feita no Canva? Conta pra gente",
       desc: "No Canva, exporte como “PDF para impressão” com marcas de corte e sangria. Avise no envio para conferirmos antes da produção.",
     },

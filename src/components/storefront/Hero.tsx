@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { ArrowRight, Upload, Calculator, Sparkles, Tag } from "lucide-react";
+import { ArrowRight, Upload, Calculator, Zap, Tag, CheckCircle } from "lucide-react";
 import { useWaLink, useCompanyInfo } from "@/hooks/useCompanyInfo";
 import { CATEGORY_IMAGES } from "./productImages";
 
@@ -25,7 +25,7 @@ export function Hero() {
         <div className="relative grid items-center gap-6 sm:gap-8 md:grid-cols-2">
           <div className="min-w-0">
             <span className="inline-flex max-w-full items-center gap-2 rounded-full bg-white/15 px-3 py-1 text-[10px] font-extrabold uppercase text-white backdrop-blur sm:text-[11px]" style={{ letterSpacing: "0.08em" }}>
-              <Sparkles className="h-3 w-3" /> Alcateia · Produção Gráfica Profissional · 48h
+              <CheckCircle className="h-3 w-3" /> Alcateia · Produção Gráfica Profissional · 48h
             </span>
             <h1 className="font-display mt-4 text-[2.15rem] leading-[0.98] sm:mt-5 sm:text-6xl md:text-7xl lg:text-8xl">
               QUALIDADE EM<br />PRODUÇÕES GRÁFICAS
@@ -75,7 +75,7 @@ export function Hero() {
                 />
               </div>
               <span className="pointer-events-none absolute -top-3 left-2 z-10 inline-flex items-center gap-1 rounded-full bg-store-secondary px-3 py-1 text-xs font-extrabold uppercase text-store-primary-dark shadow-md">
-                <Sparkles className="h-3 w-3" /> Acabamento premium
+                <CheckCircle className="h-3 w-3" /> Acabamento premium
               </span>
             </div>
           </div>
@@ -105,7 +105,7 @@ export function Hero() {
           style={{ animationDelay: "180ms", animationFillMode: "both" }}
         >
           <span className="grid h-10 w-10 shrink-0 place-items-center rounded-lg sm:h-11 sm:w-11 sm:rounded-xl bg-[var(--store-secondary)]/20 text-[var(--store-secondary-dark)]">
-            <Sparkles className="h-4 w-4 sm:h-5 sm:w-5" />
+            <Zap className="h-4 w-4 sm:h-5 sm:w-5" />
           </span>
           <div className="min-w-0">
             <p className="text-xs sm:text-sm font-extrabold text-[var(--store-text)]">Criamos sua arte</p>
