@@ -309,12 +309,12 @@ export function AppShell({ children }: { children: ReactNode }) {
                         className={cn(
                           "group relative flex items-center gap-3 rounded-xl px-3 py-3 text-xs transition-all duration-300",
                           active
-                            ? "bg-[#0b1a2c] text-[#dee2ec] font-bold shadow-lg shadow-black/20"
-                            : "text-[#7d84ab] hover:bg-[#0b1a2c]/50 hover:text-[#dee2ec]",
+                            ? "bg-[#0b1a2c] text-white font-bold shadow-lg shadow-black/30 border border-[#535d7d]/30"
+                            : "text-[#dee2ec] hover:bg-[#0b1a2c]/50 hover:text-white",
                           collapsed && "md:justify-center md:px-0 md:w-10 md:mx-auto"
                         )}
                       >
-                        <Icon className={cn("h-4 w-4 shrink-0 transition-transform duration-300", active ? "text-[#dee2ec] scale-110" : "text-[#7d84ab]")} />
+                        <Icon className={cn("h-4 w-4 shrink-0 transition-transform duration-300", active ? "text-white scale-110" : "text-[#7d84ab] group-hover:text-[#dee2ec]")} />
                         <span className={cn("flex-1 truncate transition-opacity duration-300", collapsed && "md:hidden")}>
                           {item.label}
                         </span>
