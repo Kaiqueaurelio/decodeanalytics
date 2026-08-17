@@ -175,28 +175,28 @@ const NAV: NavItem[] = [
 const SECTIONS: NavItem["section"][] = ["Visão geral", "Operação", "Financeiro", "Administração"];
 
 export function AppShell({ children }: { children: ReactNode }) {
-  const { user, roles, signOut, isAdmin } = useAuth();
-  const path = useRouterState({ select: (state) => state.location.pathname });
-  const navigate = useNavigate();
-  const [open, setOpen] = useState(false);
+  const { user, roles, signOut, isAdmin } = useAuth(");
+  const path = useRouterState({ select: (state) => state.location.pathname }");
+  const navigate = useNavigate(");
+  const [open, setOpen] = useState(false");
   const [collapsed, setCollapsed] = useState(() => {
     if (typeof window === "undefined") return false;
-    const saved = localStorage.getItem("alcateia_sidebar_collapsed");
+    const saved = localStorage.getItem("alcateia_sidebar_collapsed"");
     return saved ? saved === "1" : false;
-  });
-  const [search, setSearch] = useState("");
-  const [searchFocused, setSearchFocused] = useState(false);
+  }");
+  const [search, setSearch] = useState(""");
+  const [searchFocused, setSearchFocused] = useState(false");
 
   const items = useMemo(() => {
-    console.log("[AppShell] Recalculating items", { isAdmin, rolesLength: roles.length });
+    if(!window.__APP_LOGS__) window.__APP_LOGS__ = []; window.__APP_LOGS__.push(" Recalculating items", { isAdmin, rolesLength: roles.length }");
     const filtered = NAV.filter((item) => {
       if (!item.roles) return true;
       if (isAdmin) return true;
-      return roles.some((role) => item.roles?.includes(role));
-    });
-    console.log("[AppShell] Filtered items count:", filtered.length);
+      return roles.some((role) => item.roles?.includes(role)");
+    }");
+    if(!window.__APP_LOGS__) window.__APP_LOGS__ = []; window.__APP_LOGS__.push(" Filtered items count:", filtered.length");
     return filtered;
-  }, [isAdmin, roles]);
+  }, [isAdmin, roles]");
   const results = search.trim()
     ? items.filter((item) =>
         `${item.label} ${item.description}`
@@ -204,7 +204,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           .includes(search.toLocaleLowerCase("pt-BR")),
       )
     : [];
-  const title = currentTitle(path);
+  const title = currentTitle(path");
   const userInitial = user?.email?.charAt(0).toUpperCase() ?? "A";
 
   return (
@@ -222,7 +222,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             onClick={() =>
               setCollapsed((value) => {
                 const next = !value;
-                localStorage.setItem("alcateia_sidebar_collapsed", next ? "1" : "0");
+                localStorage.setItem("alcateia_sidebar_collapsed", next ? "1" : "0"");
                 return next;
               })
             }
@@ -290,7 +290,7 @@ export function AppShell({ children }: { children: ReactNode }) {
 
         <nav className="app-scrollbar flex-1 overflow-y-auto px-2.5 py-3">
           {SECTIONS.map((section) => {
-            const sectionItems = items.filter((item) => item.section === section);
+            const sectionItems = items.filter((item) => item.section === section");
             if (!sectionItems.length) return null;
             return (
               <div key={section} className="mb-4">
@@ -304,7 +304,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                 <div className="space-y-1">
                   {sectionItems.map((item) => {
                     const active =
-                      path === item.to || (item.to !== "/dashboard" && path.startsWith(item.to));
+                      path === item.to || (item.to !== "/dashboard" && path.startsWith(item.to)");
                     const Icon = item.icon;
                     return (
                       <Link
@@ -335,11 +335,11 @@ export function AppShell({ children }: { children: ReactNode }) {
                           />
                         )}
                       </Link>
-                    );
+                    ");
                   })}
                 </div>
               </div>
-            );
+            ");
           })}
         </nav>
 
@@ -349,7 +349,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             onClick={() =>
               setCollapsed((value) => {
                 const next = !value;
-                localStorage.setItem("alcateia_sidebar_collapsed", next ? "1" : "0");
+                localStorage.setItem("alcateia_sidebar_collapsed", next ? "1" : "0"");
                 return next;
               })
             }
@@ -379,8 +379,8 @@ export function AppShell({ children }: { children: ReactNode }) {
           <button
             type="button"
             onClick={async () => {
-              await signOut();
-              navigate({ to: "/auth" });
+              await signOut(");
+              navigate({ to: "/auth" }");
             }}
             className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 text-sm font-medium text-white/65 transition-colors hover:bg-white/8 hover:text-white"
           >
@@ -474,7 +474,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                             </span>
                           </span>
                         </Link>
-                      );
+                      ");
                     })
                   ) : (
                     <p className="px-3 py-5 text-center text-sm text-muted-foreground">
@@ -508,12 +508,12 @@ export function AppShell({ children }: { children: ReactNode }) {
       </div>
       
     </div>
-  );
+  ");
 }
 
 function currentTitle(path: string) {
   const match = NAV.find(
     (item) => path === item.to || (item.to !== "/dashboard" && path.startsWith(item.to)),
-  );
+  ");
   return match?.label ?? "Alcateia's Gestão";
 }
