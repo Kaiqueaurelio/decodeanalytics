@@ -258,7 +258,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                 )}
               />
               {searchFocused && results.length > 0 && (
-                <div className="absolute top-full right-0 left-0 z-50 mt-2 max-h-60 overflow-y-auto rounded-xl border border-white/10 bg-[#0f172a] p-1 shadow-2xl backdrop-blur-xl">
+                <div className="absolute top-full right-0 left-0 z-50 mt-2 max-h-60 overflow-y-auto rounded-xl border border-[#535d7d]/30 bg-[#0b1a2c] p-1 shadow-2xl backdrop-blur-xl">
                   {results.map((item) => (
                     <Link
                       key={item.to}
