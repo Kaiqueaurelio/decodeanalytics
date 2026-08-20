@@ -124,7 +124,7 @@ function HackedPrankOverlay({
       className="hack-prank-overlay fixed inset-0 z-[9999] overflow-y-auto bg-[#050505] text-white"
       role="dialog"
       aria-modal="true"
-      aria-label="Simulação de site hackeado"
+      aria-label="Acesso restrito por incidente de segurança"
     >
       <div className="hack-prank-noise pointer-events-none fixed inset-0 opacity-30" />
       <div className="hack-prank-scanlines pointer-events-none fixed inset-0 opacity-20" />
@@ -133,10 +133,10 @@ function HackedPrankOverlay({
         <header className="flex items-center justify-between border-b border-red-500/30 pb-4 font-mono text-[10px] uppercase tracking-[0.2em] text-red-300 sm:text-xs">
           <div className="flex items-center gap-2">
             <span className="h-2 w-2 animate-pulse rounded-full bg-red-500 shadow-[0_0_15px_#ef4444]" />
-            <span>Alcateia // acesso comprometido</span>
+            <span>Alcateia // sessão isolada</span>
           </div>
           <div className="hidden items-center gap-3 sm:flex">
-            <span className="text-red-500">[ transmissão interceptada ]</span>
+            <span className="text-red-500">[ canal de controle interrompido ]</span>
             <WifiOff className="h-4 w-4" />
           </div>
         </header>
@@ -145,7 +145,7 @@ function HackedPrankOverlay({
           <section className="min-w-0">
             <div className="mb-5 flex items-center gap-2 font-mono text-xs uppercase tracking-[0.24em] text-red-400">
               <AlertTriangle className="h-4 w-4" />
-              <span>Alerta de segurança // prank mode</span>
+              <span>Alerta crítico // incidente detectado</span>
             </div>
             <h1
               className="hack-prank-glitch max-w-5xl font-display text-[clamp(4.5rem,14vw,12rem)] leading-[0.78] tracking-[-0.06em] text-red-500"
@@ -154,42 +154,51 @@ function HackedPrankOverlay({
               HACKEADO
             </h1>
             <p className="mt-7 max-w-2xl font-mono text-base font-bold uppercase leading-relaxed tracking-[0.1em] text-white sm:text-xl">
-              Seu site foi interceptado por um operador remoto.
+              Acesso bloqueado. Uma atividade não autorizada foi detectada neste ambiente.
             </p>
 
             <div className="mt-8 grid max-w-3xl gap-3 font-mono text-[11px] uppercase tracking-[0.14em] text-red-100/70 sm:grid-cols-3">
-              <StatusLine icon={<Radio className="h-4 w-4" />} label="canal" value="offline" />
+              <StatusLine icon={<Radio className="h-4 w-4" />} label="canal" value="isolado" />
               <StatusLine
                 icon={<ShieldAlert className="h-4 w-4" />}
                 label="firewall"
-                value="bypass"
+                value="bloqueio ativo"
               />
               <StatusLine
                 icon={<Terminal className="h-4 w-4" />}
                 label="origem"
-                value="nó remoto CN"
+                value="nó externo"
               />
+            </div>
+
+            <div className="mt-4 max-w-3xl rounded-xl border border-red-500/20 bg-red-500/5 px-4 py-3 font-mono text-[10px] uppercase tracking-[0.15em] text-red-200/75">
+              <div className="flex items-center justify-between gap-4">
+                <span>bloqueio de sessão</span>
+                <strong className="text-red-300">100% ativo</strong>
+              </div>
+              <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-red-950">
+                <div className="h-full w-full rounded-full bg-gradient-to-r from-red-950 via-red-500 to-red-300 shadow-[0_0_14px_rgba(248,113,113,0.8)]" />
+              </div>
             </div>
 
             <div className="mt-8 max-w-3xl overflow-hidden rounded-xl border border-red-500/30 bg-black/60 shadow-[0_0_50px_rgba(239,68,68,0.1)]">
               <div className="flex items-center justify-between border-b border-red-500/20 px-4 py-3 font-mono text-[10px] uppercase tracking-[0.16em] text-red-300">
                 <span className="flex items-center gap-2">
-                  <Terminal className="h-3.5 w-3.5" /> intruder.log
+                  <Terminal className="h-3.5 w-3.5" /> security.log
                 </span>
                 <span className="text-red-500">live</span>
               </div>
               <div className="space-y-2 p-4 font-mono text-xs leading-relaxed text-red-200/75 sm:text-sm">
                 <p>
-                  <span className="text-red-500">root@alcateia:~$</span> ./takeover --visual-only
+                  <span className="text-red-500">root@alcateia:~$</span> ./isolate --force
                 </p>
-                <p className="text-red-300">
-                  [ok] interface intercepted — nenhum dado foi alterado
-                </p>
+                <p className="text-red-300">[ok] sessão isolada — operações externas bloqueadas</p>
                 <p className="text-white/60">
-                  [!!] assinatura visual: máscara DALI // canal vermelho
+                  [!!] chave administrativa exigida para restaurar o acesso
                 </p>
+                <p className="text-white/45">[id] ALC-E17-7F3A // recovery_channel: encrypted</p>
                 <p>
-                  <span className="text-red-500">root@alcateia:~$</span> await recovery_key
+                  <span className="text-red-500">root@alcateia:~$</span> await admin_recovery_key
                   <span className="hack-prank-caret" />
                 </p>
               </div>
@@ -201,27 +210,27 @@ function HackedPrankOverlay({
               <div className="absolute -right-12 -top-12 h-32 w-32 rounded-full bg-red-600/20 blur-3xl" />
               <div className="relative">
                 <div className="flex items-center justify-between font-mono text-[10px] uppercase tracking-[0.2em] text-red-300">
-                  <span>identidade do invasor</span>
+                  <span>assinatura detectada</span>
                   <span className="rounded border border-red-500/40 px-2 py-1 text-red-400">
-                    404
+                    E-17
                   </span>
                 </div>
                 <DaliMask />
                 <div className="mt-5 text-center">
-                  <p className="font-display text-4xl tracking-wide text-white">DALI PROTOCOL</p>
+                  <p className="font-display text-4xl tracking-wide text-white">REMOTE NODE</p>
                   <p className="mt-1 font-mono text-[10px] uppercase tracking-[0.18em] text-red-400">
-                    operação visual não autorizada
+                    origem não verificada // sessão bloqueada
                   </p>
                 </div>
 
                 <div className="mt-6 border-t border-red-500/20 pt-5">
                   <div className="mb-3 flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.16em] text-red-200/80">
                     <LockKeyhole className="h-4 w-4" />
-                    <span>chave de recuperação</span>
+                    <span>chave de restauração</span>
                   </div>
                   <form onSubmit={onSubmit}>
                     <label htmlFor="hack-recovery-key" className="sr-only">
-                      Digite a senha para sair do modo hackeado
+                      Digite a chave para restaurar o acesso
                     </label>
                     <input
                       id="hack-recovery-key"
@@ -237,7 +246,7 @@ function HackedPrankOverlay({
                       className="mt-3 inline-flex h-12 w-full items-center justify-center gap-2 rounded-lg bg-red-600 px-5 font-mono text-xs font-black uppercase tracking-[0.16em] text-white transition hover:bg-red-500 active:scale-[0.98]"
                     >
                       <KeyRound className="h-4 w-4" />
-                      Encerrar invasão
+                      Restaurar acesso
                     </button>
                   </form>
                   {wrongAttempts > 0 && (
@@ -257,10 +266,10 @@ function HackedPrankOverlay({
 
         <footer className="flex flex-col gap-2 border-t border-red-500/30 pt-4 font-mono text-[10px] uppercase tracking-[0.12em] text-red-200/50 sm:flex-row sm:items-center sm:justify-between">
           <span className="flex items-center gap-2">
-            <CheckCircle2 className="h-3.5 w-3.5 text-red-400" /> simulação visual // nenhum dado
-            foi alterado
+            <CheckCircle2 className="h-3.5 w-3.5 text-red-400" /> integridade da interface //
+            monitoramento ativo
           </span>
-          <span>toque duplo detectado // saída requer autenticação</span>
+          <span>sessão isolada // restauração requer autenticação</span>
         </footer>
       </div>
     </div>
@@ -285,7 +294,7 @@ function DaliMask() {
         viewBox="0 0 260 220"
         className="h-full w-full max-w-[280px]"
         role="img"
-        aria-label="Máscara teatral estilizada do protocolo Dali"
+        aria-label="Máscara teatral estilizada da assinatura remota"
       >
         <defs>
           <linearGradient id="maskHood" x1="0" x2="1" y1="0" y2="1">
