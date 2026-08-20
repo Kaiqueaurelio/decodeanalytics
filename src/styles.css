@@ -706,3 +706,135 @@
 a[href*="lovable.dev"][target="_blank"] {
   display: none !important;
 }
+
+/* Modo de prank: camada visual isolada, reversível e sem alteração de dados. */
+.hack-prank-overlay {
+  font-family: "Barlow", "Inter", sans-serif;
+  isolation: isolate;
+  animation: hack-prank-flicker 180ms ease-out both;
+}
+
+.hack-prank-noise {
+  background-image:
+    radial-gradient(circle at 20% 30%, rgba(248, 113, 113, 0.16) 0 1px, transparent 1.5px),
+    radial-gradient(circle at 80% 70%, rgba(255, 255, 255, 0.12) 0 1px, transparent 1.5px),
+    radial-gradient(circle at 50% 50%, rgba(239, 68, 68, 0.08) 0 1px, transparent 1.5px);
+  background-size: 13px 17px, 19px 23px, 29px 31px;
+  mix-blend-mode: screen;
+  animation: hack-prank-noise 180ms steps(2, end) infinite;
+}
+
+.hack-prank-scanlines {
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent 3px,
+    rgba(248, 113, 113, 0.11) 4px,
+    transparent 5px
+  );
+  mix-blend-mode: screen;
+}
+
+.hack-prank-glitch {
+  position: relative;
+  text-shadow: 0.035em 0 0 #fff, -0.035em 0 0 #7f1d1d;
+  animation: hack-prank-glitch 1.8s steps(2, end) infinite;
+}
+
+.hack-prank-glitch::before,
+.hack-prank-glitch::after {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  content: attr(data-text);
+  pointer-events: none;
+}
+
+.hack-prank-glitch::before {
+  color: #fca5a5;
+  clip-path: inset(0 0 58% 0);
+  transform: translate(0.025em, -0.02em);
+  animation: hack-prank-glitch-top 2.1s steps(2, end) infinite;
+}
+
+.hack-prank-glitch::after {
+  color: #450a0a;
+  clip-path: inset(62% 0 0 0);
+  transform: translate(-0.02em, 0.02em);
+  animation: hack-prank-glitch-bottom 1.4s steps(2, end) infinite;
+}
+
+.hack-prank-caret {
+  display: inline-block;
+  width: 0.55em;
+  height: 1em;
+  margin-left: 0.25rem;
+  vertical-align: -0.15em;
+  background: #ef4444;
+  animation: hack-prank-caret 800ms steps(2, end) infinite;
+}
+
+.hack-prank-mask {
+  animation: hack-prank-float 3.5s ease-in-out infinite;
+}
+
+@keyframes hack-prank-flicker {
+  0% { opacity: 0; transform: scale(1.015); }
+  70% { opacity: 0.94; transform: scale(1); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes hack-prank-noise {
+  0% { transform: translate(0, 0); }
+  25% { transform: translate(-1%, 0.5%); }
+  50% { transform: translate(0.5%, -1%); }
+  75% { transform: translate(1%, 0.5%); }
+  100% { transform: translate(-0.5%, -0.5%); }
+}
+
+@keyframes hack-prank-glitch {
+  0%, 83%, 100% { transform: translate(0); }
+  85% { transform: translate(-0.015em, 0.008em); }
+  87% { transform: translate(0.012em, -0.006em); }
+  89% { transform: translate(-0.008em, 0.01em); }
+}
+
+@keyframes hack-prank-glitch-top {
+  0%, 82%, 100% { opacity: 0; }
+  84% { opacity: 0.9; transform: translate(0.06em, -0.025em); }
+  86% { opacity: 0; }
+}
+
+@keyframes hack-prank-glitch-bottom {
+  0%, 72%, 100% { opacity: 0; }
+  74% { opacity: 0.85; transform: translate(-0.055em, 0.02em); }
+  77% { opacity: 0; }
+}
+
+@keyframes hack-prank-caret {
+  0%, 48% { opacity: 1; }
+  49%, 100% { opacity: 0; }
+}
+
+@keyframes hack-prank-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hack-prank-overlay,
+  .hack-prank-noise,
+  .hack-prank-glitch,
+  .hack-prank-glitch::before,
+  .hack-prank-glitch::after,
+  .hack-prank-caret,
+  .hack-prank-mask {
+    animation: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .hack-prank-glitch {
+    font-size: clamp(3.7rem, 19vw, 7rem);
+  }
+}

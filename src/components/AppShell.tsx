@@ -29,6 +29,7 @@ import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { NotificationsBell } from "@/components/NotificationsBell";
 import { EllaFab } from "@/components/EllaFab";
+import { useHackedPrank } from "@/components/useHackedPrank";
 
 type NavItem = {
   to: string;
@@ -173,6 +174,7 @@ const SECTIONS: NavItem["section"][] = ["Visão geral", "Operação", "Financeir
 
 export function AppShell({ children }: { children: ReactNode }) {
   const { user, roles, signOut, isAdmin } = useAuth();
+  const { registerLogoTap } = useHackedPrank();
   const path = useRouterState({ select: (state) => state.location.pathname });
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
@@ -215,12 +217,17 @@ export function AppShell({ children }: { children: ReactNode }) {
         <div className={cn("flex flex-col py-8", collapsed ? "items-center px-0" : "px-3")}>
           <div className={cn("flex w-full items-center px-3 mb-6", collapsed ? "justify-center" : "justify-between")}>
             <div className={cn("flex items-center transition-all duration-500", collapsed ? "justify-center" : "gap-2.5")}>
-              <div className={cn(
-                "flex shrink-0 items-center justify-center rounded-lg bg-[#ff8100] font-black text-white shadow-md shadow-[#ff8100]/20 transition-all duration-300",
-                collapsed ? "h-11 w-11 text-base" : "h-8 w-8 text-xs"
-              )}>
+              <button
+                type="button"
+                aria-label="Logo Alcateia"
+                onPointerUp={registerLogoTap}
+                className={cn(
+                  "flex shrink-0 touch-manipulation items-center justify-center rounded-lg bg-[#ff8100] font-black text-white shadow-md shadow-[#ff8100]/20 transition-all duration-300",
+                  collapsed ? "h-11 w-11 text-base" : "h-8 w-8 text-xs"
+                )}
+              >
                 A
-              </div>
+              </button>
               {!collapsed && (
                 <div className="flex flex-col leading-none animate-in fade-in duration-500">
                   <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[#dee2ec]">
