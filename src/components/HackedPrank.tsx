@@ -13,13 +13,18 @@ import {
 
 const EXIT_PASSWORD = "Aurelio0496@@$$";
 const DOUBLE_TAP_WINDOW = 650;
+const ENTER_DURATION = 900;
+const RESTORE_DURATION = 1500;
+type HackPhase = "idle" | "entering" | "active" | "restoring";
 
 export function HackedPrankProvider({ children }: { children: ReactNode }) {
-  const [isHacked, setIsHacked] = useState(true);
+  const [isHacked, setIsHacked] = useState(false);
+  const [hackPhase, setHackPhase] = useState<HackPhase>("idle");
   const [password, setPassword] = useState("");
   const [wrongAttempts, setWrongAttempts] = useState(0);
   const lastTapAt = useRef(0);
   const resetTapTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const transitionTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const siteContentRef = useRef<HTMLDivElement>(null);
 
   const registerLogoTap = useCallback(() => {
@@ -27,10 +32,13 @@ export function HackedPrankProvider({ children }: { children: ReactNode }) {
 
     if (now - lastTapAt.current <= DOUBLE_TAP_WINDOW) {
       if (resetTapTimer.current) clearTimeout(resetTapTimer.current);
+      if (transitionTimer.current) clearTimeout(transitionTimer.current);
       lastTapAt.current = 0;
       setPassword("");
       setWrongAttempts(0);
+      setHackPhase("entering");
       setIsHacked(true);
+      transitionTimer.current = setTimeout(() => setHackPhase("active"), ENTER_DURATION);
       return;
     }
 
@@ -44,6 +52,7 @@ export function HackedPrankProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     return () => {
       if (resetTapTimer.current) clearTimeout(resetTapTimer.current);
+      if (transitionTimer.current) clearTimeout(transitionTimer.current);
     };
   }, []);
 
@@ -81,9 +90,14 @@ export function HackedPrankProvider({ children }: { children: ReactNode }) {
   const submitPassword = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (password === EXIT_PASSWORD) {
-      setIsHacked(false);
-      setPassword("");
-      setWrongAttempts(0);
+      if (transitionTimer.current) clearTimeout(transitionTimer.current);
+      setHackPhase("restoring");
+      transitionTimer.current = setTimeout(() => {
+        setIsHacked(false);
+        setHackPhase("idle");
+        setPassword("");
+        setWrongAttempts(0);
+      }, RESTORE_DURATION);
       return;
     }
 
@@ -102,6 +116,7 @@ export function HackedPrankProvider({ children }: { children: ReactNode }) {
           wrongAttempts={wrongAttempts}
           onPasswordChange={setPassword}
           onSubmit={submitPassword}
+          phase={hackPhase === "idle" ? "active" : hackPhase}
         />
       )}
     </HackedPrankContext.Provider>
@@ -113,23 +128,32 @@ function HackedPrankOverlay({
   wrongAttempts,
   onPasswordChange,
   onSubmit,
+  phase,
 }: {
   password: string;
   wrongAttempts: number;
   onPasswordChange: (value: string) => void;
   onSubmit: (event: FormEvent<HTMLFormElement>) => void;
+  phase: Exclude<HackPhase, "idle">;
 }) {
+  if (phase === "restoring") return <SystemRestoredView />;
+
   return (
     <div
-      className="hack-prank-overlay fixed inset-0 z-[9999] overflow-y-auto bg-[#050505] text-white"
+      className={`hack-prank-overlay fixed inset-0 z-[9999] overflow-y-auto bg-[#050505] text-white ${phase === "entering" ? "hack-prank-entering" : "hack-prank-active"}`}
+      data-phase={phase}
       role="dialog"
       aria-modal="true"
       aria-label="Acesso restrito por incidente de segurança"
     >
       <div className="hack-prank-noise pointer-events-none fixed inset-0 opacity-30" />
       <div className="hack-prank-scanlines pointer-events-none fixed inset-0 opacity-20" />
+      <pre
+        className="hack-prank-code-stream pointer-events-none fixed inset-0 select-none"
+        aria-hidden="true"
+      >{`01001101 00110001  0xE17  ::  NODE_SYNC\nACCESS_GATE // 0xFF 0xA9 0x07 0xCC\nSECURITY_OVERRIDE [██████████] 100%\nDATA_ACCESS_DETECTED // channel: encrypted\n11001010 01101111  SYSTEM_BREACHED\nROOT_SESSION // awaiting recovery key`}</pre>
 
-      <div className="relative mx-auto flex min-h-dvh w-full max-w-[1320px] flex-col px-4 py-5 sm:px-6 md:px-10 md:py-7">
+      <div className="relative z-10 mx-auto flex min-h-dvh w-full max-w-[1320px] flex-col px-4 py-5 sm:px-6 md:px-10 md:py-7">
         <header className="flex items-center justify-between border-b border-red-500/30 pb-4 font-mono text-[10px] uppercase tracking-[0.2em] text-red-300 sm:text-xs">
           <div className="flex items-center gap-2">
             <span className="h-2 w-2 animate-pulse rounded-full bg-red-500 shadow-[0_0_15px_#ef4444]" />
@@ -147,12 +171,20 @@ function HackedPrankOverlay({
               <AlertTriangle className="h-4 w-4" />
               <span>Alerta crítico // incidente detectado</span>
             </div>
-            <h1
-              className="hack-prank-glitch max-w-5xl font-display text-[clamp(4.5rem,14vw,12rem)] leading-[0.78] tracking-[-0.06em] text-red-500"
-              data-text="HACKEADO"
-            >
-              HACKEADO
-            </h1>
+            <div className="flex items-end gap-3">
+              <span className="pb-2 font-mono text-3xl text-red-500 sm:text-5xl" aria-hidden="true">
+                ⚠
+              </span>
+              <h1
+                className="hack-prank-glitch max-w-5xl font-display text-[clamp(4.5rem,14vw,12rem)] leading-[0.78] tracking-[-0.06em] text-red-500"
+                data-text="HACKEADO"
+              >
+                HACKEADO
+              </h1>
+              <span className="pb-2 font-mono text-3xl text-red-500 sm:text-5xl" aria-hidden="true">
+                ⚠
+              </span>
+            </div>
             <p className="mt-7 max-w-2xl font-mono text-base font-bold uppercase leading-relaxed tracking-[0.1em] text-white sm:text-xl">
               Acesso bloqueado. Uma atividade não autorizada foi detectada neste ambiente.
             </p>
@@ -192,7 +224,11 @@ function HackedPrankOverlay({
                 <p>
                   <span className="text-red-500">root@alcateia:~$</span> ./isolate --force
                 </p>
+                <p className="text-red-400">[!!] UNAUTHORIZED ACCESS</p>
+                <p className="text-red-500">[!!] SYSTEM BREACHED</p>
+                <p className="text-red-300">[ok] ACCESS GRANTED // sessão administrativa</p>
                 <p className="text-red-300">[ok] sessão isolada — operações externas bloqueadas</p>
+                <p className="text-white/60">[!!] SECURITY OVERRIDE // DATA ACCESS DETECTED</p>
                 <p className="text-white/60">
                   [!!] chave administrativa exigida para restaurar o acesso
                 </p>
@@ -271,6 +307,35 @@ function HackedPrankOverlay({
           </span>
           <span>sessão isolada // restauração requer autenticação</span>
         </footer>
+      </div>
+    </div>
+  );
+}
+
+function SystemRestoredView() {
+  return (
+    <div
+      className="hack-prank-overlay hack-prank-restoring fixed inset-0 z-[9999] grid place-items-center bg-[#050505] px-5 text-white"
+      role="status"
+      aria-label="Sistema restaurado"
+    >
+      <div className="w-full max-w-xl rounded-2xl border border-emerald-400/40 bg-emerald-950/20 p-6 font-mono shadow-[0_0_80px_rgba(52,211,153,0.18)] sm:p-10">
+        <div className="flex items-center gap-3 text-xs uppercase tracking-[0.2em] text-emerald-300">
+          <CheckCircle2 className="h-5 w-5" />
+          <span>recovery_sequence // complete</span>
+        </div>
+        <h2 className="mt-7 font-display text-6xl leading-none tracking-wide text-emerald-300 sm:text-8xl">
+          SISTEMA RESTAURADO
+        </h2>
+        <div className="mt-8 space-y-2 border-t border-emerald-400/20 pt-5 text-xs leading-relaxed text-emerald-100/75 sm:text-sm">
+          <p>[ok] security override encerrado</p>
+          <p>[ok] sessão administrativa liberada</p>
+          <p>[ok] integridade do ambiente verificada</p>
+          <p className="text-emerald-300">
+            returning_to_application
+            <span className="hack-prank-caret hack-prank-caret-green" />
+          </p>
+        </div>
       </div>
     </div>
   );

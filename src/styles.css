@@ -838,3 +838,114 @@ a[href*="lovable.dev"][target="_blank"] {
     font-size: clamp(3.7rem, 19vw, 7rem);
   }
 }
+
+/* Easter Egg de segurança: efeitos puramente visuais de entrada e restauração. */
+.hack-prank-code-stream {
+  z-index: 1;
+  padding: 12vh 3vw;
+  color: rgba(248, 113, 113, 0.26);
+  font-family: "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
+  font-size: clamp(0.6rem, 1.2vw, 0.9rem);
+  line-height: 2.65;
+  letter-spacing: 0.15em;
+  white-space: pre-wrap;
+  overflow: hidden;
+  opacity: 0.34;
+  text-shadow: 0 0 12px rgba(239, 68, 68, 0.45);
+  animation: hack-prank-code-drift 2.8s linear infinite;
+}
+
+.hack-prank-entering {
+  animation: hack-prank-entry-glitch 900ms steps(4, end) both;
+}
+
+.hack-prank-entering::before {
+  position: fixed;
+  inset: 0;
+  z-index: 5;
+  content: "";
+  pointer-events: none;
+  background:
+    repeating-linear-gradient(0deg, transparent 0 5px, rgba(248, 113, 113, 0.22) 6px 7px),
+    linear-gradient(90deg, transparent 0 48%, rgba(255, 255, 255, 0.18) 49% 50%, transparent 51%);
+  mix-blend-mode: screen;
+  animation: hack-prank-interference 140ms steps(2, end) infinite;
+}
+
+.hack-prank-entering .hack-prank-code-stream {
+  opacity: 0.72;
+  animation-duration: 280ms;
+}
+
+.hack-prank-active {
+  animation: hack-prank-active-pulse 3.8s ease-in-out infinite;
+}
+
+.hack-prank-restoring {
+  animation: hack-prank-restore 1.5s ease-out both;
+}
+
+.hack-prank-caret-green {
+  background: #34d399;
+}
+
+@keyframes hack-prank-entry-glitch {
+  0% {
+    opacity: 0;
+    filter: contrast(3) saturate(2) hue-rotate(25deg);
+    transform: translateX(-3%) skewX(10deg) scaleY(0.94);
+    clip-path: inset(48% 0 48% 0);
+  }
+  24% {
+    opacity: 1;
+    filter: contrast(2.2) saturate(2.2) hue-rotate(-10deg);
+    transform: translateX(2%) skewX(-6deg) scaleY(1.03);
+    clip-path: inset(12% 0 30% 0);
+  }
+  52% {
+    transform: translateX(-1%) skewX(2deg) scaleY(0.99);
+    clip-path: inset(0);
+  }
+  100% {
+    opacity: 1;
+    filter: none;
+    transform: none;
+    clip-path: inset(0);
+  }
+}
+
+@keyframes hack-prank-interference {
+  0% { transform: translateY(-3%); opacity: 0.2; }
+  35% { transform: translateY(4%); opacity: 0.9; }
+  68% { transform: translateY(-1%); opacity: 0.35; }
+  100% { transform: translateY(3%); opacity: 0.75; }
+}
+
+@keyframes hack-prank-code-drift {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-18px); }
+  100% { transform: translateY(0); }
+}
+
+@keyframes hack-prank-active-pulse {
+  0%, 100% { filter: none; }
+  96% { filter: brightness(1.01); }
+  97% { filter: brightness(1.25) contrast(1.15); }
+  98% { filter: none; }
+}
+
+@keyframes hack-prank-restore {
+  0% { opacity: 0; filter: hue-rotate(110deg) brightness(1.8); transform: scale(1.03); }
+  22% { opacity: 1; filter: hue-rotate(40deg) brightness(1.25); transform: scale(1); }
+  100% { opacity: 1; filter: none; transform: scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hack-prank-code-stream,
+  .hack-prank-entering,
+  .hack-prank-entering::before,
+  .hack-prank-active,
+  .hack-prank-restoring {
+    animation: none;
+  }
+}
