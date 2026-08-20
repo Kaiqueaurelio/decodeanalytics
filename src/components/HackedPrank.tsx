@@ -15,11 +15,12 @@ const EXIT_PASSWORD = "Aurelio0496@@$$";
 const DOUBLE_TAP_WINDOW = 650;
 
 export function HackedPrankProvider({ children }: { children: ReactNode }) {
-  const [isHacked, setIsHacked] = useState(false);
+  const [isHacked, setIsHacked] = useState(true);
   const [password, setPassword] = useState("");
   const [wrongAttempts, setWrongAttempts] = useState(0);
   const lastTapAt = useRef(0);
   const resetTapTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const siteContentRef = useRef<HTMLDivElement>(null);
 
   const registerLogoTap = useCallback(() => {
     const now = Date.now();
@@ -45,6 +46,23 @@ export function HackedPrankProvider({ children }: { children: ReactNode }) {
       if (resetTapTimer.current) clearTimeout(resetTapTimer.current);
     };
   }, []);
+
+  useEffect(() => {
+    const siteContent = siteContentRef.current;
+    if (!siteContent) return;
+
+    siteContent.inert = isHacked;
+    if (isHacked) {
+      siteContent.setAttribute("aria-hidden", "true");
+    } else {
+      siteContent.removeAttribute("aria-hidden");
+    }
+
+    return () => {
+      siteContent.inert = false;
+      siteContent.removeAttribute("aria-hidden");
+    };
+  }, [isHacked]);
 
   useEffect(() => {
     if (!isHacked) return;
@@ -75,7 +93,9 @@ export function HackedPrankProvider({ children }: { children: ReactNode }) {
 
   return (
     <HackedPrankContext.Provider value={{ registerLogoTap }}>
-      {children}
+      <div ref={siteContentRef} className="contents">
+        {children}
+      </div>
       {isHacked && (
         <HackedPrankOverlay
           password={password}
