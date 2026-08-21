@@ -18,8 +18,8 @@ const RESTORE_DURATION = 1500;
 type HackPhase = "idle" | "entering" | "active" | "restoring";
 
 export function HackedPrankProvider({ children }: { children: ReactNode }) {
-  const [isHacked, setIsHacked] = useState(false);
-  const [hackPhase, setHackPhase] = useState<HackPhase>("idle");
+  const [isHacked, setIsHacked] = useState(true);
+  const [hackPhase, setHackPhase] = useState<HackPhase>("active");
   const [password, setPassword] = useState("");
   const [wrongAttempts, setWrongAttempts] = useState(0);
   const lastTapAt = useRef(0);
