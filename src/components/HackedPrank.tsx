@@ -213,6 +213,39 @@ function HackedPrankOverlay({
               </div>
             </div>
 
+            <div className="hack-prank-ransom-panel mt-5 max-w-3xl rounded-xl border border-amber-400/35 bg-amber-950/10 p-4 font-mono shadow-[0_0_35px_rgba(245,158,11,0.08)] sm:p-5">
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <p className="text-[10px] uppercase tracking-[0.2em] text-amber-300">
+                    release protocol // bitcoin
+                  </p>
+                  <p className="mt-2 text-xs font-bold uppercase tracking-[0.12em] text-amber-100 sm:text-sm">
+                    Pagamento em Bitcoin solicitado para liberar o acesso.
+                  </p>
+                </div>
+                <span className="rounded border border-amber-400/30 px-2 py-1 text-[10px] uppercase tracking-widest text-amber-300">
+                  BTC
+                </span>
+              </div>
+              <div className="mt-4 grid gap-3 text-[10px] uppercase tracking-[0.14em] text-amber-100/70 sm:grid-cols-3">
+                <div className="rounded border border-amber-400/20 bg-black/30 p-3">
+                  <span className="block text-amber-300/70">valor exigido</span>
+                  <strong className="mt-1 block text-base text-amber-200">0.0048 BTC</strong>
+                </div>
+                <div className="rounded border border-amber-400/20 bg-black/30 p-3">
+                  <span className="block text-amber-300/70">prazo restante</span>
+                  <strong className="mt-1 block text-base text-amber-200">14:59:32</strong>
+                </div>
+                <div className="rounded border border-amber-400/20 bg-black/30 p-3">
+                  <span className="block text-amber-300/70">status</span>
+                  <strong className="mt-1 block text-base text-red-300">PENDENTE</strong>
+                </div>
+              </div>
+              <p className="mt-4 border-t border-amber-400/15 pt-3 text-[10px] uppercase tracking-[0.12em] text-amber-100/50">
+                recovery_channel: admin_key // wallet endpoint: locked
+              </p>
+            </div>
+
             <div className="mt-8 max-w-3xl overflow-hidden rounded-xl border border-red-500/30 bg-black/60 shadow-[0_0_50px_rgba(239,68,68,0.1)]">
               <div className="flex items-center justify-between border-b border-red-500/20 px-4 py-3 font-mono text-[10px] uppercase tracking-[0.16em] text-red-300">
                 <span className="flex items-center gap-2">
