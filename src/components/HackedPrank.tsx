@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState, type FormEvent, type ReactNode } from "react";
 import { HackedPrankContext } from "@/components/useHackedPrank";
+import { BilingualText } from "@/components/storefront/BilingualText";
 import {
   AlertTriangle,
   CheckCircle2,
@@ -144,7 +145,7 @@ function HackedPrankOverlay({
       data-phase={phase}
       role="dialog"
       aria-modal="true"
-      aria-label="Acesso restrito por incidente de segurança"
+      aria-label="安全事件限制访问 / Acesso restrito por incidente de segurança"
     >
       <div className="hack-prank-noise pointer-events-none fixed inset-0 opacity-30" />
       <div className="hack-prank-scanlines pointer-events-none fixed inset-0 opacity-20" />
@@ -157,10 +158,19 @@ function HackedPrankOverlay({
         <header className="flex items-center justify-between border-b border-red-500/30 pb-4 font-mono text-[10px] uppercase tracking-[0.2em] text-red-300 sm:text-xs">
           <div className="flex items-center gap-2">
             <span className="h-2 w-2 animate-pulse rounded-full bg-red-500 shadow-[0_0_15px_#ef4444]" />
-            <span>Alcateia // sessão isolada</span>
+            <BilingualText
+              primary="Alcateia // 会话隔离"
+              secondary="Alcateia // sessão isolada"
+              compact
+            />
           </div>
           <div className="hidden items-center gap-3 sm:flex">
-            <span className="text-red-500">[ canal de controle interrompido ]</span>
+            <BilingualText
+              primary="[ 控制通道中断 ]"
+              secondary="[ canal de controle interrompido ]"
+              compact
+              className="text-red-500"
+            />
             <WifiOff className="h-4 w-4" />
           </div>
         </header>
@@ -169,7 +179,11 @@ function HackedPrankOverlay({
           <section className="min-w-0">
             <div className="mb-5 flex items-center gap-2 font-mono text-xs uppercase tracking-[0.24em] text-red-400">
               <AlertTriangle className="h-4 w-4" />
-              <span>Alerta crítico // incidente detectado</span>
+              <BilingualText
+                primary="严重警报 // 检测到事件"
+                secondary="Alerta crítico // incidente detectado"
+                compact
+              />
             </div>
             <div className="flex items-end gap-3">
               <span className="pb-2 font-mono text-3xl text-red-500 sm:text-5xl" aria-hidden="true">
@@ -177,16 +191,22 @@ function HackedPrankOverlay({
               </span>
               <h1
                 className="hack-prank-glitch max-w-5xl font-display text-[clamp(4.5rem,14vw,12rem)] leading-[0.78] tracking-[-0.06em] text-red-500"
-                data-text="HACKEADO"
+                data-text="已被入侵 / HACKEADO"
               >
-                HACKEADO
+                已被入侵
+                <span className="block text-[0.42em] tracking-[0.05em]">
+                  HACKEADO / SITE INVADIDO
+                </span>
               </h1>
               <span className="pb-2 font-mono text-3xl text-red-500 sm:text-5xl" aria-hidden="true">
                 ⚠
               </span>
             </div>
             <p className="mt-7 max-w-2xl font-mono text-base font-bold uppercase leading-relaxed tracking-[0.1em] text-white sm:text-xl">
-              Acesso bloqueado. Uma atividade não autorizada foi detectada neste ambiente.
+              <BilingualText
+                primary="访问已锁定。此环境检测到未经授权的活动。"
+                secondary="Acesso bloqueado. Uma atividade não autorizada foi detectada neste ambiente."
+              />
             </p>
 
             <div className="mt-8 grid max-w-3xl gap-3 font-mono text-[11px] uppercase tracking-[0.14em] text-red-100/70 sm:grid-cols-3">
@@ -205,8 +225,13 @@ function HackedPrankOverlay({
 
             <div className="mt-4 max-w-3xl rounded-xl border border-red-500/20 bg-red-500/5 px-4 py-3 font-mono text-[10px] uppercase tracking-[0.15em] text-red-200/75">
               <div className="flex items-center justify-between gap-4">
-                <span>bloqueio de sessão</span>
-                <strong className="text-red-300">100% ativo</strong>
+                <BilingualText primary="会话锁定" secondary="bloqueio de sessão" compact />
+                <BilingualText
+                  primary="100% 已启用"
+                  secondary="100% ativo"
+                  compact
+                  className="text-red-300"
+                />
               </div>
               <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-red-950">
                 <div className="h-full w-full rounded-full bg-gradient-to-r from-red-950 via-red-500 to-red-300 shadow-[0_0_14px_rgba(248,113,113,0.8)]" />
@@ -217,10 +242,14 @@ function HackedPrankOverlay({
               <div className="flex items-start justify-between gap-4">
                 <div>
                   <p className="text-[10px] uppercase tracking-[0.2em] text-amber-300">
-                    release protocol // bitcoin
+                    释放协议 // 比特币 / release protocol // bitcoin
                   </p>
                   <p className="mt-2 text-xs font-bold uppercase tracking-[0.12em] text-amber-100 sm:text-sm">
-                    Pagamento em Bitcoin solicitado para liberar o acesso.
+                    <BilingualText
+                      primary="需要支付比特币以恢复访问。"
+                      secondary="Pagamento em Bitcoin solicitado para liberar o acesso."
+                      compact
+                    />
                   </p>
                 </div>
                 <span className="rounded border border-amber-400/30 px-2 py-1 text-[10px] uppercase tracking-widest text-amber-300">
@@ -229,43 +258,67 @@ function HackedPrankOverlay({
               </div>
               <div className="mt-4 grid gap-3 text-[10px] uppercase tracking-[0.14em] text-amber-100/70 sm:grid-cols-3">
                 <div className="rounded border border-amber-400/20 bg-black/30 p-3">
-                  <span className="block text-amber-300/70">valor exigido</span>
+                  <BilingualText
+                    primary="要求金额"
+                    secondary="valor exigido"
+                    compact
+                    className="text-amber-300/70"
+                  />
                   <strong className="mt-1 block text-base text-amber-200">0.0048 BTC</strong>
                 </div>
                 <div className="rounded border border-amber-400/20 bg-black/30 p-3">
-                  <span className="block text-amber-300/70">prazo restante</span>
+                  <BilingualText
+                    primary="剩余时间"
+                    secondary="prazo restante"
+                    compact
+                    className="text-amber-300/70"
+                  />
                   <strong className="mt-1 block text-base text-amber-200">14:59:32</strong>
                 </div>
                 <div className="rounded border border-amber-400/20 bg-black/30 p-3">
-                  <span className="block text-amber-300/70">status</span>
-                  <strong className="mt-1 block text-base text-red-300">PENDENTE</strong>
+                  <BilingualText
+                    primary="状态"
+                    secondary="status"
+                    compact
+                    className="text-amber-300/70"
+                  />
+                  <strong className="mt-1 block text-base text-red-300">待处理 / PENDENTE</strong>
                 </div>
               </div>
               <p className="mt-4 border-t border-amber-400/15 pt-3 text-[10px] uppercase tracking-[0.12em] text-amber-100/50">
-                recovery_channel: admin_key // wallet endpoint: locked
+                recovery_channel: admin_key // 钱包端点已锁定 / wallet endpoint: locked
               </p>
             </div>
 
             <div className="mt-8 max-w-3xl overflow-hidden rounded-xl border border-red-500/30 bg-black/60 shadow-[0_0_50px_rgba(239,68,68,0.1)]">
               <div className="flex items-center justify-between border-b border-red-500/20 px-4 py-3 font-mono text-[10px] uppercase tracking-[0.16em] text-red-300">
                 <span className="flex items-center gap-2">
-                  <Terminal className="h-3.5 w-3.5" /> security.log
+                  <Terminal className="h-3.5 w-3.5" /> 安全日志 / security.log
                 </span>
-                <span className="text-red-500">live</span>
+                <span className="text-red-500">实时 / live</span>
               </div>
               <div className="space-y-2 p-4 font-mono text-xs leading-relaxed text-red-200/75 sm:text-sm">
                 <p>
                   <span className="text-red-500">root@alcateia:~$</span> ./isolate --force
                 </p>
-                <p className="text-red-400">[!!] UNAUTHORIZED ACCESS</p>
-                <p className="text-red-500">[!!] SYSTEM BREACHED</p>
-                <p className="text-red-300">[ok] ACCESS GRANTED // sessão administrativa</p>
-                <p className="text-red-300">[ok] sessão isolada — operações externas bloqueadas</p>
-                <p className="text-white/60">[!!] SECURITY OVERRIDE // DATA ACCESS DETECTED</p>
-                <p className="text-white/60">
-                  [!!] chave administrativa exigida para restaurar o acesso
+                <p className="text-red-400">[!!] 未经授权的访问 / UNAUTHORIZED ACCESS</p>
+                <p className="text-red-500">[!!] 系统已被入侵 / SYSTEM BREACHED</p>
+                <p className="text-red-300">
+                  [ok] 访问已授权 / ACCESS GRANTED // sessão administrativa
                 </p>
-                <p className="text-white/45">[id] ALC-E17-7F3A // recovery_channel: encrypted</p>
+                <p className="text-red-300">
+                  [ok] 会话隔离 — 外部操作已阻止 / sessão isolada — operações externas bloqueadas
+                </p>
+                <p className="text-white/60">
+                  [!!] 安全覆盖 // 检测到数据访问 / SECURITY OVERRIDE // DATA ACCESS DETECTED
+                </p>
+                <p className="text-white/60">
+                  [!!] 需要管理员密钥来恢复访问 / chave administrativa exigida para restaurar o
+                  acesso
+                </p>
+                <p className="text-white/45">
+                  [id] ALC-E17-7F3A // 恢复通道：已加密 / recovery_channel: encrypted
+                </p>
                 <p>
                   <span className="text-red-500">root@alcateia:~$</span> await admin_recovery_key
                   <span className="hack-prank-caret" />
@@ -279,7 +332,7 @@ function HackedPrankOverlay({
               <div className="absolute -right-12 -top-12 h-32 w-32 rounded-full bg-red-600/20 blur-3xl" />
               <div className="relative">
                 <div className="flex items-center justify-between font-mono text-[10px] uppercase tracking-[0.2em] text-red-300">
-                  <span>assinatura detectada</span>
+                  <BilingualText primary="检测到签名" secondary="assinatura detectada" compact />
                   <span className="rounded border border-red-500/40 px-2 py-1 text-red-400">
                     E-17
                   </span>
@@ -288,18 +341,18 @@ function HackedPrankOverlay({
                 <div className="mt-5 text-center">
                   <p className="font-display text-4xl tracking-wide text-white">REMOTE NODE</p>
                   <p className="mt-1 font-mono text-[10px] uppercase tracking-[0.18em] text-red-400">
-                    origem não verificada // sessão bloqueada
+                    来源未验证 // 会话已锁定 / origem não verificada // sessão bloqueada
                   </p>
                 </div>
 
                 <div className="mt-6 border-t border-red-500/20 pt-5">
                   <div className="mb-3 flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.16em] text-red-200/80">
                     <LockKeyhole className="h-4 w-4" />
-                    <span>chave de restauração</span>
+                    <BilingualText primary="恢复密钥" secondary="chave de restauração" compact />
                   </div>
                   <form onSubmit={onSubmit}>
                     <label htmlFor="hack-recovery-key" className="sr-only">
-                      Digite a chave para restaurar o acesso
+                      输入密钥以恢复访问 / Digite a chave para restaurar o acesso
                     </label>
                     <input
                       id="hack-recovery-key"
@@ -307,7 +360,7 @@ function HackedPrankOverlay({
                       value={password}
                       autoFocus
                       onChange={(event) => onPasswordChange(event.target.value)}
-                      placeholder="Digite a senha..."
+                      placeholder="输入密码 / Digite a senha..."
                       className="h-12 w-full rounded-lg border border-red-500/40 bg-black/70 px-4 font-mono text-sm text-white outline-none transition focus:border-red-400 focus:ring-2 focus:ring-red-500/30 placeholder:text-red-100/30"
                     />
                     <button
@@ -315,7 +368,7 @@ function HackedPrankOverlay({
                       className="mt-3 inline-flex h-12 w-full items-center justify-center gap-2 rounded-lg bg-red-600 px-5 font-mono text-xs font-black uppercase tracking-[0.16em] text-white transition hover:bg-red-500 active:scale-[0.98]"
                     >
                       <KeyRound className="h-4 w-4" />
-                      Restaurar acesso
+                      <BilingualText primary="恢复访问" secondary="Restaurar acesso" compact />
                     </button>
                   </form>
                   {wrongAttempts > 0 && (
@@ -323,8 +376,8 @@ function HackedPrankOverlay({
                       className="mt-3 flex items-center gap-2 font-mono text-[11px] uppercase tracking-wide text-red-400"
                       role="alert"
                     >
-                      <AlertTriangle className="h-3.5 w-3.5" /> chave rejeitada // tentativa{" "}
-                      {wrongAttempts}
+                      <AlertTriangle className="h-3.5 w-3.5" /> 密钥被拒绝 / chave rejeitada //
+                      tentativa {wrongAttempts}
                     </p>
                   )}
                 </div>
@@ -335,10 +388,14 @@ function HackedPrankOverlay({
 
         <footer className="flex flex-col gap-2 border-t border-red-500/30 pt-4 font-mono text-[10px] uppercase tracking-[0.12em] text-red-200/50 sm:flex-row sm:items-center sm:justify-between">
           <span className="flex items-center gap-2">
-            <CheckCircle2 className="h-3.5 w-3.5 text-red-400" /> integridade da interface //
-            monitoramento ativo
+            <CheckCircle2 className="h-3.5 w-3.5 text-red-400" /> 界面完整性 // integridade da
+            interface · 主动监控 / monitoramento ativo
           </span>
-          <span>sessão isolada // restauração requer autenticação</span>
+          <BilingualText
+            primary="会话隔离 // 恢复需要身份验证"
+            secondary="sessão isolada // restauração requer autenticação"
+            compact
+          />
         </footer>
       </div>
     </div>
@@ -355,15 +412,20 @@ function SystemRestoredView() {
       <div className="w-full max-w-xl rounded-2xl border border-emerald-400/40 bg-emerald-950/20 p-6 font-mono shadow-[0_0_80px_rgba(52,211,153,0.18)] sm:p-10">
         <div className="flex items-center gap-3 text-xs uppercase tracking-[0.2em] text-emerald-300">
           <CheckCircle2 className="h-5 w-5" />
-          <span>recovery_sequence // complete</span>
+          <BilingualText
+            primary="恢复序列 // 完成"
+            secondary="recovery_sequence // complete"
+            compact
+          />
         </div>
         <h2 className="mt-7 font-display text-6xl leading-none tracking-wide text-emerald-300 sm:text-8xl">
-          SISTEMA RESTAURADO
+          系统已恢复
+          <span className="block text-[0.34em] tracking-[0.08em]">SISTEMA RESTAURADO</span>
         </h2>
         <div className="mt-8 space-y-2 border-t border-emerald-400/20 pt-5 text-xs leading-relaxed text-emerald-100/75 sm:text-sm">
-          <p>[ok] security override encerrado</p>
-          <p>[ok] sessão administrativa liberada</p>
-          <p>[ok] integridade do ambiente verificada</p>
+          <p>[ok] 安全覆盖已结束 / security override encerrado</p>
+          <p>[ok] 管理会话已释放 / sessão administrativa liberada</p>
+          <p>[ok] 环境完整性已验证 / integridade do ambiente verificada</p>
           <p className="text-emerald-300">
             returning_to_application
             <span className="hack-prank-caret hack-prank-caret-green" />
@@ -374,13 +436,24 @@ function SystemRestoredView() {
   );
 }
 
+const STATUS_ZH: Record<string, string> = {
+  canal: "通道",
+  isolado: "已隔离",
+  firewall: "防火墙",
+  "bloqueio ativo": "阻止已启用",
+  origem: "来源",
+  "nó externo": "外部节点",
+};
+
 function StatusLine({ icon, label, value }: { icon: ReactNode; label: string; value: string }) {
   return (
     <div className="flex items-center gap-2 rounded border border-red-500/20 bg-red-500/5 px-3 py-2">
       <span className="text-red-500">{icon}</span>
-      <span>
-        {label}: <strong className="text-red-300">{value}</strong>
-      </span>
+      <BilingualText
+        primary={`${STATUS_ZH[label] ?? label}: ${STATUS_ZH[value] ?? value}`}
+        secondary={`${label}: ${value}`}
+        compact
+      />
     </div>
   );
 }

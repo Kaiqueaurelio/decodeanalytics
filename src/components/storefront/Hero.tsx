@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { ArrowRight, Upload, Calculator, Zap, Tag, CheckCircle } from "lucide-react";
 import { useWaLink, useCompanyInfo } from "@/hooks/useCompanyInfo";
 import { CATEGORY_IMAGES } from "./productImages";
+import { BilingualText } from "./BilingualText";
 
 export function Hero() {
   const waLink = useWaLink();
@@ -24,20 +25,28 @@ export function Hero() {
         />
         <div className="relative grid items-center gap-6 sm:gap-8 md:grid-cols-2">
           <div className="min-w-0">
-            <span className="inline-flex max-w-full items-center gap-2 rounded-full bg-white/15 px-3 py-1 text-[10px] font-extrabold uppercase text-white backdrop-blur sm:text-[11px]" style={{ letterSpacing: "0.08em" }}>
-              <CheckCircle className="h-3 w-3" /> Alcateia Produções Gráficas · Profissional · 48h
+            <span
+              className="inline-flex max-w-full items-center gap-2 rounded-full bg-white/15 px-3 py-1 text-[10px] font-extrabold uppercase text-white backdrop-blur sm:text-[11px]"
+              style={{ letterSpacing: "0.08em" }}
+            >
+              <CheckCircle className="h-3 w-3" /> Alcateia Produções Gráficas · 专业 · 48小时 /
+              Profissional · 48h
             </span>
             <h1 className="font-display mt-4 text-[2.15rem] leading-[0.98] sm:mt-5 sm:text-6xl md:text-7xl lg:text-8xl">
-              QUALIDADE EM<br />PRODUÇÕES GRÁFICAS
+              专业印刷
+              <br />
+              QUALITY IN PRINT / PRODUÇÕES GRÁFICAS
             </h1>
             <p className="mt-5 max-w-md text-sm sm:text-base font-medium text-white/85">
+              为您的品牌打造高品质定制产品。
+              <br />
               {heroSubtitle}
             </p>
 
             <div className="mt-6 inline-flex max-w-full items-center gap-2 rounded-lg bg-white/10 px-3 py-2 text-xs font-bold backdrop-blur sm:px-4 sm:text-sm">
               <Tag className="h-4 w-4 text-[var(--store-secondary)]" />
               <span className="min-w-0">
-                10% OFF na 1ª compra ·{" "}
+                首次购买享受 10% 折扣 / 10% OFF na 1ª compra ·{" "}
                 <span className="rounded bg-[var(--store-secondary)] px-1.5 py-0.5 text-[12px] text-[var(--store-primary-dark)]">
                   BEMVINDO10
                 </span>
@@ -49,7 +58,8 @@ export function Hero() {
                 to="/produtos"
                 className="inline-flex min-h-[52px] items-center justify-center gap-2 rounded-[var(--store-radius-md)] bg-white px-5 py-3 text-sm font-extrabold uppercase tracking-wide text-store-primary shadow-md transition-transform hover:scale-[1.03] sm:px-8"
               >
-                {heroCtaPrimary} <ArrowRight className="h-4 w-4" />
+                <BilingualText primary="查看产品" secondary={heroCtaPrimary} compact />{" "}
+                <ArrowRight className="h-4 w-4" />
               </Link>
               <a
                 href={waLink("Olá! Quero enviar minha arte para um orçamento.")}
@@ -57,7 +67,8 @@ export function Hero() {
                 rel="noopener noreferrer"
                 className="inline-flex min-h-[52px] items-center justify-center gap-2 rounded-[var(--store-radius-md)] border-2 border-white/70 bg-transparent px-5 py-3 text-sm font-extrabold uppercase tracking-wide text-white transition-colors hover:bg-white hover:text-store-primary sm:px-8"
               >
-                <Upload className="h-4 w-4" /> {heroCtaSecondary}
+                <Upload className="h-4 w-4" />{" "}
+                <BilingualText primary="上传我的设计" secondary={heroCtaSecondary} compact />
               </a>
             </div>
           </div>
@@ -93,8 +104,12 @@ export function Hero() {
             <Calculator className="h-4 w-4 sm:h-5 sm:w-5" />
           </span>
           <div className="min-w-0">
-            <p className="text-xs sm:text-sm font-extrabold text-[var(--store-text)]">Orçamento rápido</p>
-            <p className="text-[10px] sm:text-xs text-[var(--store-text-muted)]">Calcule o preço em segundos</p>
+            <p className="text-xs sm:text-sm font-extrabold text-[var(--store-text)]">
+              快速报价 / Orçamento rápido
+            </p>
+            <p className="text-[10px] sm:text-xs text-[var(--store-text-muted)]">
+              几秒钟计算价格 / Calcule o preço em segundos
+            </p>
           </div>
         </Link>
         <a
@@ -108,8 +123,12 @@ export function Hero() {
             <Zap className="h-4 w-4 sm:h-5 sm:w-5" />
           </span>
           <div className="min-w-0">
-            <p className="text-xs sm:text-sm font-extrabold text-[var(--store-text)]">Criamos sua arte</p>
-            <p className="text-[10px] sm:text-xs text-[var(--store-text-muted)]">Designers prontos pra ajudar</p>
+            <p className="text-xs sm:text-sm font-extrabold text-[var(--store-text)]">
+              我们为您设计 / Criamos sua arte
+            </p>
+            <p className="text-[10px] sm:text-xs text-[var(--store-text-muted)]">
+              设计师随时为您服务 / Designers prontos pra ajudar
+            </p>
           </div>
         </a>
         <a
@@ -123,8 +142,12 @@ export function Hero() {
             <Upload className="h-4 w-4 sm:h-5 sm:w-5" />
           </span>
           <div className="min-w-0">
-            <p className="text-xs sm:text-sm font-extrabold text-[var(--store-text)]">Envie sua arte</p>
-            <p className="text-[10px] sm:text-xs text-[var(--store-text-muted)]">PDF, AI, PSD, PNG até 50MB</p>
+            <p className="text-xs sm:text-sm font-extrabold text-[var(--store-text)]">
+              上传您的设计 / Envie sua arte
+            </p>
+            <p className="text-[10px] sm:text-xs text-[var(--store-text-muted)]">
+              支持 PDF、AI、PSD、PNG，最大50MB / até 50MB
+            </p>
           </div>
         </a>
       </div>

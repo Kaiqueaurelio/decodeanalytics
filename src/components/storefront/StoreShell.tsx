@@ -19,6 +19,7 @@ import { STORE_CATEGORIES } from "./tokens";
 import { useCompanyInfo, useWaLink } from "@/hooks/useCompanyInfo";
 import { useCart } from "@/lib/cart-context";
 import { useHackedPrank } from "@/components/useHackedPrank";
+import { BilingualText } from "./BilingualText";
 import { useState } from "react";
 import {
   Sheet,
@@ -53,7 +54,7 @@ function CartButton() {
       className="relative flex items-center gap-1.5 rounded-lg bg-[var(--store-primary)] px-3 py-2 text-sm font-bold text-white hover:bg-[var(--store-primary-light)]"
     >
       <ShoppingCart className="h-4 w-4" />
-      Carrinho
+      <BilingualText primary="购物车" secondary="Carrinho" compact />
       <span className="ml-1 rounded-full bg-[var(--store-secondary)] px-1.5 text-[10px] font-extrabold text-[var(--store-primary-dark)]">
         {count}
       </span>
@@ -76,7 +77,12 @@ function TopPromoBar() {
       <div className="mx-auto flex min-h-9 max-w-[1280px] items-center justify-center gap-1 px-3 py-1.5 text-center text-[11px] font-semibold leading-tight sm:min-h-10 sm:gap-2 sm:px-4 sm:py-2 sm:text-[13px] md:text-sm">
         <Tag className="h-4 w-4 shrink-0" aria-hidden="true" />
         <span className="min-w-0 break-words">
-          Ganhe <strong>10% OFF</strong> na sua primeira compra — cupom{" "}
+          <BilingualText
+            primary="首次购买享受 10% 折扣"
+            secondary="Ganhe 10% OFF na sua primeira compra"
+            compact
+          />{" "}
+          — 优惠码 / cupom{" "}
           <strong className="inline-block rounded-md bg-[var(--store-primary)] px-2 py-0.5 text-[var(--store-secondary)]">
             BEMVINDO10
           </strong>
@@ -128,21 +134,25 @@ function StoreHeader() {
           role="search"
         >
           <label htmlFor="store-search" className="sr-only">
-            O que você está procurando?
+            <BilingualText
+              primary="你在寻找什么？"
+              secondary="O que você está procurando?"
+              compact
+            />
           </label>
           <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--store-text-light)] sm:left-4 sm:h-5 sm:w-5" />
           <input
             id="store-search"
             value={q}
             onChange={(e) => setQ(e.target.value)}
-            placeholder="O que você está procurando?"
+            placeholder="你在寻找什么？ / O que você está procurando?"
             className="h-10 w-full min-w-0 rounded-[var(--store-radius-lg)] border border-[var(--store-border)] bg-white pl-10 pr-20 text-base sm:h-11 sm:pl-12 sm:pr-28 outline-none transition-all placeholder:text-[var(--store-text-light)] focus:border-[var(--store-primary-light)] focus:ring-4 focus:ring-[var(--store-primary-light)]/15"
           />
           <button
             type="submit"
             className="absolute right-1 top-1/2 inline-flex h-8 -translate-y-1/2 items-center justify-center rounded-[var(--store-radius-md)] bg-[var(--store-primary)] px-3 text-[10px] font-bold uppercase tracking-wide text-white transition-colors hover:bg-[var(--store-primary-light)] md:px-4 md:text-sm"
           >
-            Buscar
+            <BilingualText primary="搜索" secondary="Buscar" compact />
           </button>
         </form>
 
@@ -154,14 +164,14 @@ function StoreHeader() {
             className="flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium text-[var(--store-text)] hover:bg-[var(--store-surface-soft)]"
           >
             <MessageCircle className="h-4 w-4 text-[var(--store-success)]" />
-            Atendimento
+            <BilingualText primary="客服" secondary="Atendimento" compact />
           </a>
           <Link
             to="/auth"
             className="flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium text-[var(--store-text)] hover:bg-[var(--store-surface-soft)]"
           >
             <User className="h-4 w-4" />
-            Entrar
+            <BilingualText primary="登录" secondary="Entrar" compact />
           </Link>
           <CartButton />
         </nav>
@@ -191,119 +201,125 @@ function StoreHeader() {
               side="left"
               className="w-[85%] sm:w-80 bg-white p-0 flex flex-col [&>button.absolute]:hidden"
             >
-            <div className="flex items-center justify-between border-b border-[var(--store-border)] px-6 py-5">
-              <div className="flex items-center gap-3">
-                <img
-                  src="/brand/alcateia-logo.png"
-                  alt="Alcateia Produções Gráficas"
-                  className="h-10 w-auto object-contain"
-                />
-                <div className="leading-tight">
-                  <div className="text-sm font-extrabold text-[var(--store-primary)]">
-                    Alcateia
-                  </div>
-                  <div className="text-[9px] font-bold uppercase tracking-[0.15em] text-[var(--store-accent)]">
-                    Produções Gráficas
+              <div className="flex items-center justify-between border-b border-[var(--store-border)] px-6 py-5">
+                <div className="flex items-center gap-3">
+                  <img
+                    src="/brand/alcateia-logo.png"
+                    alt="Alcateia Produções Gráficas"
+                    className="h-10 w-auto object-contain"
+                  />
+                  <div className="leading-tight">
+                    <div className="text-sm font-extrabold text-[var(--store-primary)]">
+                      Alcateia
+                    </div>
+                    <div className="text-[9px] font-bold uppercase tracking-[0.15em] text-[var(--store-accent)]">
+                      Produções Gráficas
+                    </div>
                   </div>
                 </div>
+                <SheetClose className="rounded-lg p-1 hover:bg-[var(--store-surface-soft)]">
+                  <X className="h-5 w-5 text-[var(--store-text)]" />
+                </SheetClose>
               </div>
-              <SheetClose className="rounded-lg p-1 hover:bg-[var(--store-surface-soft)]">
-                <X className="h-5 w-5 text-[var(--store-text)]" />
-              </SheetClose>
-            </div>
 
-            <nav className="flex-1 overflow-y-auto py-2">
-              {/* Categorias */}
-              <div className="border-b border-[var(--store-border)] px-6 py-4">
-                <h3 className="text-xs font-bold uppercase tracking-wide text-[var(--store-text-muted)] mb-3">
-                  Categorias
-                </h3>
-                <div className="space-y-2">
-                  {STORE_CATEGORIES.map((c) => (
+              <nav className="flex-1 overflow-y-auto py-2">
+                {/* Categorias */}
+                <div className="border-b border-[var(--store-border)] px-6 py-4">
+                  <h3 className="text-xs font-bold uppercase tracking-wide text-[var(--store-text-muted)] mb-3">
+                    <BilingualText primary="分类" secondary="Categorias" compact />
+                  </h3>
+                  <div className="space-y-2">
+                    {STORE_CATEGORIES.map((c) => (
+                      <Link
+                        key={c.slug}
+                        to="/produtos"
+                        search={{ cat: c.slug }}
+                        onClick={() => setMobileMenuOpen(false)}
+                        className="block px-3 py-2 rounded-lg text-sm font-medium text-[var(--store-text)] hover:bg-[var(--store-surface-soft)] transition-colors"
+                      >
+                        <BilingualText primary={c.zh} secondary={c.label} compact />
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="border-b border-[var(--store-border)] px-6 py-4">
+                  <h3 className="text-[10px] font-bold uppercase tracking-widest text-[var(--store-text-muted)] mb-3">
+                    <BilingualText primary="我的账户" secondary="Minha Conta" compact />
+                  </h3>
+                  <div className="space-y-2">
                     <Link
-                      key={c.slug}
-                      to="/produtos"
-                      search={{ cat: c.slug }}
+                      to="/auth"
                       onClick={() => setMobileMenuOpen(false)}
-                      className="block px-3 py-2 rounded-lg text-sm font-medium text-[var(--store-text)] hover:bg-[var(--store-surface-soft)] transition-colors"
+                      className="flex items-center gap-3 px-3 py-3 rounded-lg text-sm font-medium text-[var(--store-text)] hover:bg-[var(--store-surface-soft)] transition-colors"
                     >
-                      {c.label}
+                      <User className="h-4 w-4 text-[var(--store-primary)]" />
+                      <BilingualText primary="登录账户" secondary="Entrar na conta" compact />
                     </Link>
-                  ))}
-                </div>
-              </div>
-
-              <div className="border-b border-[var(--store-border)] px-6 py-4">
-                <h3 className="text-[10px] font-bold uppercase tracking-widest text-[var(--store-text-muted)] mb-3">
-                  Minha Conta
-                </h3>
-                <div className="space-y-2">
-                  <Link
-                    to="/auth"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center gap-3 px-3 py-3 rounded-lg text-sm font-medium text-[var(--store-text)] hover:bg-[var(--store-surface-soft)] transition-colors"
-                  >
-                    <User className="h-4 w-4 text-[var(--store-primary)]" />
-                    Entrar na conta
-                  </Link>
-                  <Link
-                    to="/carrinho"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center gap-3 px-3 py-3 rounded-lg text-sm font-medium text-[var(--store-text)] hover:bg-[var(--store-surface-soft)] transition-colors"
-                  >
-                    <ShoppingCart className="h-4 w-4 text-[var(--store-primary)]" />
-                    Carrinho
-                    <CartCountBadge />
-                  </Link>
-                </div>
-              </div>
-
-              <div className="px-6 py-4">
-                <h3 className="text-[10px] font-bold uppercase tracking-widest text-[var(--store-text-muted)] mb-3">
-                  Atendimento
-                </h3>
-                <a
-                  href={waLink("Olá! Vim do site da Alcateia Produções Gráficas.")}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center gap-3 px-3 py-3 rounded-lg text-sm font-medium text-[var(--store-text)] hover:bg-[var(--store-surface-soft)] transition-colors bg-[var(--store-secondary)]/10"
-                >
-                  <MessageCircle className="h-4 w-4 text-[var(--store-success)]" />
-                  <div>
-                    <div className="font-semibold text-[var(--store-success)]">WhatsApp</div>
-                    <div className="text-xs text-[var(--store-text-muted)]">{info.whatsappDisplay}</div>
+                    <Link
+                      to="/carrinho"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="flex items-center gap-3 px-3 py-3 rounded-lg text-sm font-medium text-[var(--store-text)] hover:bg-[var(--store-surface-soft)] transition-colors"
+                    >
+                      <ShoppingCart className="h-4 w-4 text-[var(--store-primary)]" />
+                      <BilingualText primary="购物车" secondary="Carrinho" compact />
+                      <CartCountBadge />
+                    </Link>
                   </div>
-                </a>
-              </div>
-            </nav>
+                </div>
 
-            {/* Footer do menu */}
-            <div className="border-t border-[var(--store-border)] px-6 py-4 bg-[var(--store-surface-soft)]">
-              <p className="text-xs text-[var(--store-text-muted)] leading-relaxed mb-3">
-                Produtos personalizados com acabamento profissional para sua marca brilhar.
-              </p>
-              <div className="flex gap-2">
-                <a
-                  href={info.instagramUrl ?? "#"}
-                  target={info.instagramUrl ? "_blank" : undefined}
-                  rel={info.instagramUrl ? "noopener noreferrer" : undefined}
-                  aria-label="Instagram"
-                  className="grid h-11 w-11 place-items-center rounded-lg bg-white hover:bg-[var(--store-primary)] hover:text-white transition-colors"
-                >
-                  <Instagram className="h-4 w-4" />
-                </a>
-                <a
-                  href="#"
-                  aria-label="Facebook"
-                  className="grid h-11 w-11 place-items-center rounded-lg bg-white hover:bg-[var(--store-primary)] hover:text-white transition-colors"
-                >
-                  <Facebook className="h-4 w-4" />
-                </a>
+                <div className="px-6 py-4">
+                  <h3 className="text-[10px] font-bold uppercase tracking-widest text-[var(--store-text-muted)] mb-3">
+                    <BilingualText primary="客服" secondary="Atendimento" compact />
+                  </h3>
+                  <a
+                    href={waLink("Olá! Vim do site da Alcateia Produções Gráficas.")}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center gap-3 px-3 py-3 rounded-lg text-sm font-medium text-[var(--store-text)] hover:bg-[var(--store-surface-soft)] transition-colors bg-[var(--store-secondary)]/10"
+                  >
+                    <MessageCircle className="h-4 w-4 text-[var(--store-success)]" />
+                    <div>
+                      <div className="font-semibold text-[var(--store-success)]">
+                        WhatsApp / 联系客服
+                      </div>
+                      <div className="text-xs text-[var(--store-text-muted)]">
+                        {info.whatsappDisplay}
+                      </div>
+                    </div>
+                  </a>
+                </div>
+              </nav>
+
+              {/* Footer do menu */}
+              <div className="border-t border-[var(--store-border)] px-6 py-4 bg-[var(--store-surface-soft)]">
+                <p className="text-xs text-[var(--store-text-muted)] leading-relaxed mb-3">
+                  定制印刷产品，让您的品牌更加闪耀。
+                  <br />
+                  Produtos personalizados com acabamento profissional para sua marca brilhar.
+                </p>
+                <div className="flex gap-2">
+                  <a
+                    href={info.instagramUrl ?? "#"}
+                    target={info.instagramUrl ? "_blank" : undefined}
+                    rel={info.instagramUrl ? "noopener noreferrer" : undefined}
+                    aria-label="Instagram"
+                    className="grid h-11 w-11 place-items-center rounded-lg bg-white hover:bg-[var(--store-primary)] hover:text-white transition-colors"
+                  >
+                    <Instagram className="h-4 w-4" />
+                  </a>
+                  <a
+                    href="#"
+                    aria-label="Facebook"
+                    className="grid h-11 w-11 place-items-center rounded-lg bg-white hover:bg-[var(--store-primary)] hover:text-white transition-colors"
+                  >
+                    <Facebook className="h-4 w-4" />
+                  </a>
+                </div>
               </div>
-            </div>
-          </SheetContent>
-        </Sheet>
+            </SheetContent>
+          </Sheet>
         </div>
       </div>
     </header>
@@ -328,7 +344,7 @@ function CategoryNav() {
                 "shrink-0 rounded-full bg-[var(--store-primary)] px-4 py-2 text-sm font-semibold text-white",
             }}
           >
-            {c.label}
+            <BilingualText primary={c.zh} secondary={c.label} compact />
           </Link>
         ))}
       </div>
@@ -380,7 +396,7 @@ function StoreFooter() {
         </div>
         <div>
           <h3 className="text-sm font-bold uppercase tracking-wide text-[var(--store-secondary)]">
-            Produtos
+            <BilingualText primary="产品" secondary="Produtos" compact />
           </h3>
           <ul className="mt-2 text-sm text-white/70">
             {STORE_CATEGORIES.slice(1, 6).map((c) => (
@@ -398,7 +414,7 @@ function StoreFooter() {
         </div>
         <div>
           <h3 className="text-sm font-bold uppercase tracking-wide text-[var(--store-secondary)]">
-            Atendimento
+            <BilingualText primary="客服" secondary="Atendimento" compact />
           </h3>
           <ul className="mt-4 space-y-3 text-sm text-white/70">
             <li className="flex items-center gap-2">
@@ -409,7 +425,7 @@ function StoreFooter() {
                 rel="noopener noreferrer"
                 className="inline-flex min-h-11 items-center transition-colors hover:text-white"
               >
-                WhatsApp {info.whatsappDisplay}
+                WhatsApp / 联系客服 {info.whatsappDisplay}
               </a>
             </li>
             <li className="flex items-start gap-2">
@@ -440,26 +456,38 @@ function StoreFooter() {
         </div>
         <div>
           <h3 className="text-sm font-bold uppercase tracking-wide text-[var(--store-secondary)]">
-            Institucional
+            <BilingualText primary="公司信息" secondary="Institucional" compact />
           </h3>
           <ul className="mt-2 text-sm text-white/70">
             <li>
-              <Link to="/produtos" className="inline-flex min-h-11 items-center transition-colors hover:text-white">
-                Catálogo completo
+              <Link
+                to="/produtos"
+                className="inline-flex min-h-11 items-center transition-colors hover:text-white"
+              >
+                <BilingualText primary="完整目录" secondary="Catálogo completo" compact />
               </Link>
             </li>
             <li>
-              <Link to="/auth" className="inline-flex min-h-11 items-center transition-colors hover:text-white">
-                Minha conta
+              <Link
+                to="/auth"
+                className="inline-flex min-h-11 items-center transition-colors hover:text-white"
+              >
+                <BilingualText primary="我的账户" secondary="Minha conta" compact />
               </Link>
             </li>
             <li>
-              <a href="#" className="inline-flex min-h-11 items-center transition-colors hover:text-white">
+              <a
+                href="#"
+                className="inline-flex min-h-11 items-center transition-colors hover:text-white"
+              >
                 Política de privacidade
               </a>
             </li>
             <li>
-              <a href="#" className="inline-flex min-h-11 items-center transition-colors hover:text-white">
+              <a
+                href="#"
+                className="inline-flex min-h-11 items-center transition-colors hover:text-white"
+              >
                 Trocas e devoluções
               </a>
             </li>
@@ -468,8 +496,11 @@ function StoreFooter() {
       </div>
       <div className="border-t border-white/10">
         <div className="mx-auto flex max-w-[1280px] flex-col items-center justify-between gap-2 px-4 py-4 text-xs text-white/50 md:flex-row">
-          <p>© {new Date().getFullYear()} Alcateia Produções Gráficas. Todos os direitos reservados.</p>
-          <p>Feito com cuidado para sua marca brilhar.</p>
+          <p>
+            © {new Date().getFullYear()} Alcateia Produções Gráficas. 版权所有 / Todos os direitos
+            reservados.
+          </p>
+          <p>用心制作，让您的品牌闪耀。 / Feito com cuidado para sua marca brilhar.</p>
         </div>
       </div>
     </footer>

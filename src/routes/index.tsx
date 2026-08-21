@@ -26,12 +26,9 @@ import {
 } from "lucide-react";
 import { StoreShell } from "@/components/storefront/StoreShell";
 import { Hero } from "@/components/storefront/Hero";
-import {
-  SectionHeader,
-  type StoreProduct,
-} from "@/components/storefront/ProductCard";
+import { SectionHeader, type StoreProduct } from "@/components/storefront/ProductCard";
 import { SmartImage } from "@/components/storefront/SmartImage";
-import { STORE_CATEGORIES, brl } from "@/components/storefront/tokens";
+import { STORE_CATEGORIES, brl, productNameZh } from "@/components/storefront/tokens";
 import { useCompanyInfo, useShowPrices, useWaLink } from "@/hooks/useCompanyInfo";
 import { useStoreProducts } from "@/components/storefront/useStoreProducts";
 import { InfiniteProducts } from "@/components/storefront/InfiniteProducts";
@@ -39,6 +36,7 @@ import { CategoryCircles } from "@/components/storefront/CategoryCircles";
 import { Reveal } from "@/components/storefront/Reveal";
 import { CursorFollower } from "@/components/storefront/CursorFollower";
 import { trackCardClick, trackCta } from "@/lib/analytics";
+import { BilingualText } from "@/components/storefront/BilingualText";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -52,8 +50,7 @@ export const Route = createFileRoute("/")({
       { property: "og:title", content: "Alcateia Produções Gráficas — Gráfica online" },
       {
         property: "og:description",
-        content:
-          "Produtos personalizados com acabamento profissional. Peça pelo site ou WhatsApp.",
+        content: "Produtos personalizados com acabamento profissional. Peça pelo site ou WhatsApp.",
       },
     ],
   }),
@@ -66,23 +63,35 @@ function HomePage() {
       <Hero />
       <CategoryCircles />
       <LightBand>
-        <Reveal variant="up"><FeaturedBento /></Reveal>
+        <Reveal variant="up">
+          <FeaturedBento />
+        </Reveal>
       </LightBand>
-      <Reveal variant="up"><CategoriesSection /></Reveal>
-      <Reveal variant="up"><InfiniteProducts /></Reveal>
-      <Reveal variant="up"><TestimonialsSection /></Reveal>
-      <Reveal variant="up"><HowItWorks /></Reveal>
-      <Reveal variant="up"><ArtTipsSection /></Reveal>
-      <Reveal variant="up"><ContactSection /></Reveal>
+      <Reveal variant="up">
+        <CategoriesSection />
+      </Reveal>
+      <Reveal variant="up">
+        <InfiniteProducts />
+      </Reveal>
+      <Reveal variant="up">
+        <TestimonialsSection />
+      </Reveal>
+      <Reveal variant="up">
+        <HowItWorks />
+      </Reveal>
+      <Reveal variant="up">
+        <ArtTipsSection />
+      </Reveal>
+      <Reveal variant="up">
+        <ContactSection />
+      </Reveal>
     </StoreShell>
   );
 }
 
 function LightBand({ children }: { children: React.ReactNode }) {
   return (
-    <div
-      className="relative overflow-hidden bg-[var(--store-bg)] pb-12 pt-2 sm:pb-16 sm:pt-4"
-    >
+    <div className="relative overflow-hidden bg-[var(--store-bg)] pb-12 pt-2 sm:pb-16 sm:pt-4">
       {children}
     </div>
   );
@@ -100,13 +109,17 @@ function FeaturedBento() {
       <header className="mb-4 flex flex-col items-start justify-between gap-2 sm:mb-5 sm:flex-row sm:items-end">
         <div className="min-w-0">
           <p className="text-[11px] font-extrabold uppercase tracking-[0.22em] text-[#172554]">
-            Os favoritos da nossa produção
+            <BilingualText primary="本店精选" secondary="Os favoritos da nossa produção" compact />
           </p>
           <h2 className="font-display mt-1 text-[2.15rem] leading-none text-[var(--store-primary-dark)] sm:text-5xl lg:text-6xl">
-            PRODUTOS EM DESTAQUE
+            <BilingualText primary="精选产品" secondary="PRODUTOS EM DESTAQUE" />
           </h2>
           <p className="mt-2 max-w-2xl text-sm text-[var(--store-text-muted)]">
-            Qualidade profissional com entrega ágil para sua marca.
+            <BilingualText
+              primary="专业品质，快速交付，助力您的品牌。"
+              secondary="Qualidade profissional com entrega ágil para sua marca."
+              compact
+            />
           </p>
         </div>
         <Link
@@ -122,7 +135,8 @@ function FeaturedBento() {
             })
           }
         >
-          Ver tudo <ArrowRight className="h-4 w-4" />
+          <BilingualText primary="查看全部" secondary="Ver tudo" compact />{" "}
+          <ArrowRight className="h-4 w-4" />
         </Link>
       </header>
 
@@ -135,21 +149,23 @@ function FeaturedBento() {
                 style={{ minHeight: 260 }}
               />
             ))
-          : featured.slice(0, 2).map((p, idx) => (
-              <BentoProductCard
-                key={p.id}
-                product={p}
-                animationDelay={120 + idx * 80}
-                position={idx + 1}
-              />
-            ))}
+          : featured
+              .slice(0, 2)
+              .map((p, idx) => (
+                <BentoProductCard
+                  key={p.id}
+                  product={p}
+                  animationDelay={120 + idx * 80}
+                  position={idx + 1}
+                />
+              ))}
 
-        <BentoFeatureCard 
+        <BentoFeatureCard
           href={waLink("Olá! Quero contratar a criação de uma arte.")}
           icon={Palette}
-          title="CRIAMOS SUA ARTE"
-          description="Designers prontos para criar do zero."
-          cta="Saiba mais"
+          title="我们为您设计 / CRIAMOS SUA ARTE"
+          description="设计师随时为您服务 / Designers prontos para criar do zero."
+          cta="了解更多 / Saiba mais"
           animationDelay="280ms"
           onClick={() =>
             trackCta({
@@ -161,14 +177,14 @@ function FeaturedBento() {
           }
         />
 
-        <BentoFeatureCard 
+        <BentoFeatureCard
           href="/produtos"
           isInternal
           variant="navy"
           icon={Plus}
-          title="MAIS PRODUTOS"
-          description="Catálogo completo"
-          cta="Ver catálogo"
+          title="更多产品 / MAIS PRODUTOS"
+          description="完整产品目录 / Catálogo completo"
+          cta="查看目录 / Ver catálogo"
           animationDelay="360ms"
           onClick={() =>
             trackCta({
@@ -183,14 +199,16 @@ function FeaturedBento() {
 
         {/* Mais 4 produtos */}
         {!isLoading &&
-          featured.slice(2, 6).map((p, idx) => (
-            <BentoProductCard
-              key={p.id}
-              product={p}
-              animationDelay={440 + idx * 80}
-              position={idx + 3}
-            />
-          ))}
+          featured
+            .slice(2, 6)
+            .map((p, idx) => (
+              <BentoProductCard
+                key={p.id}
+                product={p}
+                animationDelay={440 + idx * 80}
+                position={idx + 3}
+              />
+            ))}
       </div>
     </section>
   );
@@ -209,6 +227,7 @@ function BentoProductCard({
   const rating = product.rating ? Number(product.rating) : null;
   const showPrices = useShowPrices();
   const categoryShort = (product.category ?? "PRINT").slice(0, 9).toUpperCase();
+  const nameZh = productNameZh(product.name, product.category);
 
   return (
     <Link
@@ -229,8 +248,8 @@ function BentoProductCard({
       }
     >
       <div className="relative mb-3 flex aspect-square items-center justify-center overflow-hidden rounded-[var(--store-radius-md)] bg-slate-100">
-        <SmartImage 
-          src={product.image_url} 
+        <SmartImage
+          src={product.image_url}
           alt={product.name}
           fallbackEmoji="📦"
           className="transition-transform duration-500 group-hover:scale-[1.06]"
@@ -246,7 +265,7 @@ function BentoProductCard({
         {product.category ?? "Personalizado"}
       </p>
       <h4 className="mt-0.5 line-clamp-2 text-sm font-bold leading-snug sm:text-base">
-        {product.name}
+        <BilingualText primary={nameZh} secondary={product.name} compact />
       </h4>
 
       <div className="mt-auto flex items-end justify-between gap-2 pt-3">
@@ -257,9 +276,7 @@ function BentoProductCard({
               <span className="text-[11px] font-bold text-[var(--store-ink)]">
                 {rating.toFixed(1)}
               </span>
-              <span className="text-[10px] text-slate-400">
-                ({product.reviews_count ?? 0})
-              </span>
+              <span className="text-[10px] text-slate-400">({product.reviews_count ?? 0})</span>
             </div>
           )}
           {showPrices ? (
@@ -303,15 +320,21 @@ function CategoriesSection() {
                   <Zap className="h-5 w-5" />
                 </div>
                 <div className="mt-5">
-                  <p className="text-base font-extrabold text-[var(--store-text)]">{c.label}</p>
+                  <p className="text-base font-extrabold text-[var(--store-text)]">
+                    <BilingualText primary={c.zh} secondary={c.label} compact />
+                  </p>
                   <p className="mt-1 text-[11px] text-[var(--store-text-muted)] line-clamp-2">
-                    Confira nossa linha completa de {c.label.toLowerCase()} personalizados.
+                    <BilingualText
+                      primary={`查看完整的${c.zh}定制产品。`}
+                      secondary={`Confira nossa linha completa de ${c.label.toLowerCase()} personalizados.`}
+                      compact
+                    />
                   </p>
                 </div>
               </div>
               <div className="mt-5 flex items-center justify-between">
                 <span className="inline-flex h-9 items-center justify-center rounded-[var(--store-radius-md)] bg-[var(--store-surface-soft)] px-4 text-xs font-bold text-[var(--store-primary)] transition-colors group-hover:bg-[var(--store-primary)] group-hover:text-white">
-                  Ver catálogo
+                  <BilingualText primary="查看目录" secondary="Ver catálogo" compact />
                 </span>
                 <ChevronRight className="h-4 w-4 text-[var(--store-text-light)] transition-transform group-hover:translate-x-1 group-hover:text-[var(--store-primary)]" />
               </div>
@@ -327,17 +350,38 @@ function HowItWorks() {
   const waLink = useWaLink();
   const { howItWorksTitle } = useCompanyInfo();
   const steps = [
-    { icon: CheckCircle2, title: "Escolha o produto", desc: "Navegue pelo catálogo e selecione a opção ideal." },
-    { icon: Upload, title: "Envie sua arte", desc: "Anexe o arquivo ou peça para nossa equipe criar." },
-    { icon: Send, title: "Aprovação rápida", desc: "Confirmamos detalhes e prazos pelo WhatsApp." },
-    { icon: PackageCheck, title: "Produção e entrega", desc: "Retirada na loja ou entrega no endereço." },
+    {
+      icon: CheckCircle2,
+      title: "Escolha o produto",
+      zhTitle: "选择产品",
+      desc: "Navegue pelo catálogo e selecione a opção ideal.",
+      zhDesc: "浏览目录并选择理想产品。",
+    },
+    {
+      icon: Upload,
+      title: "Envie sua arte",
+      zhTitle: "上传设计",
+      desc: "Anexe o arquivo ou peça para nossa equipe criar.",
+      zhDesc: "上传文件，或请我们的团队为您创作。",
+    },
+    {
+      icon: Send,
+      title: "Aprovação rápida",
+      zhTitle: "快速确认",
+      desc: "Confirmamos detalhes e prazos pelo WhatsApp.",
+      zhDesc: "通过 WhatsApp 确认细节和交付时间。",
+    },
+    {
+      icon: PackageCheck,
+      title: "Produção e entrega",
+      zhTitle: "生产与交付",
+      desc: "Retirada na loja ou entrega no endereço.",
+      zhDesc: "到店取货或送货上门。",
+    },
   ];
   return (
     <section className="mx-auto max-w-[1280px] px-4 py-12 sm:py-16">
-      <SectionHeader
-        kicker="Como funciona"
-        title={howItWorksTitle}
-      />
+      <SectionHeader kicker="Como funciona" title={howItWorksTitle} />
       <ol className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {steps.map((s, idx) => (
           <Reveal
@@ -353,14 +397,22 @@ function HowItWorks() {
               </span>
               <s.icon className="h-5 w-5 text-[var(--store-accent)]" />
             </div>
-            <p className="mt-4 text-base font-extrabold text-[var(--store-text)]">{s.title}</p>
-            <p className="mt-1 text-sm text-[var(--store-text-muted)]">{s.desc}</p>
+            <p className="mt-4 text-base font-extrabold text-[var(--store-text)]">
+              <BilingualText primary={s.zhTitle} secondary={s.title} compact />
+            </p>
+            <p className="mt-1 text-sm text-[var(--store-text-muted)]">
+              <BilingualText primary={s.zhDesc} secondary={s.desc} compact />
+            </p>
           </Reveal>
         ))}
       </ol>
       <div className="mt-8 flex flex-col items-center gap-3 text-center">
         <p className="text-sm text-[var(--store-text-muted)]">
-          Tem dúvida sobre qual produto escolher?
+          <BilingualText
+            primary="不知道选择哪种产品？"
+            secondary="Tem dúvida sobre qual produto escolher?"
+            compact
+          />
         </p>
         <a
           href={waLink("Olá! Preciso de ajuda para escolher um produto.")}
@@ -376,12 +428,34 @@ function HowItWorks() {
             })
           }
         >
-          Falar com a equipe no WhatsApp
+          <BilingualText
+            primary="通过 WhatsApp 联系团队"
+            secondary="Falar com a equipe no WhatsApp"
+            compact
+          />
         </a>
       </div>
     </section>
   );
 }
+
+const TIP_ZH: Record<string, string> = {
+  "PDF editável é o ideal": "可编辑 PDF 是最佳选择",
+  "300 DPI no tamanho final": "最终尺寸使用 300 DPI",
+  "Cores em CMYK + sangria de 3mm": "CMYK 颜色 + 3mm 出血",
+  "Resolução e Arquivos": "分辨率与文件",
+  "Arte feita no Canva? Conta pra gente": "使用 Canva 制作？告诉我们",
+  "Confira o que NÃO mandar": "请确认不要发送的文件",
+};
+
+const TIP_DESC_ZH: Record<string, string> = {
+  "PDF editável é o ideal": "请发送 PDF/X-1a 或嵌入字体的 PDF，确保颜色和文字清晰。",
+  "300 DPI no tamanho final": "图片请使用 CMYK 的 300 DPI，避免使用网络图片或屏幕截图。",
+  "Cores em CMYK + sangria de 3mm": "使用 CMYK，并在裁切边缘预留 3mm 出血。",
+  "Resolução e Arquivos": "300 DPI 可保证清晰度，优先发送可编辑 PDF。",
+  "Arte feita no Canva? Conta pra gente": "请导出带裁切标记和出血的印刷 PDF，并告知我们的团队。",
+  "Confira o que NÃO mandar": "避免压缩 JPG/PNG、Word、PowerPoint、截图和低于 1MB 的文件。",
+};
 
 function ArtTipsSection() {
   const tips = [
@@ -435,9 +509,17 @@ function ArtTipsSection() {
                 <span className="grid h-10 w-10 place-items-center rounded-xl bg-[var(--store-primary)] text-white">
                   <t.icon className="h-5 w-5" />
                 </span>
-                <p className="text-base font-extrabold text-[var(--store-text)]">{t.title}</p>
+                <p className="text-base font-extrabold text-[var(--store-text)]">
+                  <BilingualText primary={TIP_ZH[t.title] ?? t.title} secondary={t.title} compact />
+                </p>
               </div>
-              <p className="mt-3 text-sm text-[var(--store-text-muted)]">{t.desc}</p>
+              <p className="mt-3 text-sm text-[var(--store-text-muted)]">
+                <BilingualText
+                  primary={TIP_DESC_ZH[t.title] ?? t.desc}
+                  secondary={t.desc}
+                  compact
+                />
+              </p>
             </Reveal>
           ))}
         </div>
@@ -445,7 +527,8 @@ function ArtTipsSection() {
           <p className="flex items-start gap-2">
             <CheckCircle2 className="mt-0.5 h-5 w-5 text-[var(--store-success)]" />
             <span>
-              <strong>Resumo rápido:</strong> PDF editável · 300 DPI · CMYK · sangria 3mm. Aceitamos PDF, AI, CDR, PSD, SVG, PNG e JPG até 50 MB.
+              <strong>快速摘要 / Resumo rápido:</strong> 可编辑 PDF · 300 DPI · CMYK · 3mm
+              出血。接受 PDF、AI、CDR、PSD、SVG、PNG 和 JPG，最大 50 MB.
             </span>
           </p>
         </div>
@@ -454,11 +537,9 @@ function ArtTipsSection() {
   );
 }
 
-
 function ContactSection() {
   return _ContactSection();
 }
-
 
 function TestimonialsSection() {
   const items = [
@@ -538,13 +619,17 @@ function _ContactSection() {
       <div className="mx-auto grid max-w-[1280px] gap-8 px-4 lg:grid-cols-2 lg:items-start">
         <div>
           <p className="text-xs font-bold uppercase tracking-[0.2em] text-[var(--store-secondary)]">
-            Atendimento
+            <BilingualText primary="客服" secondary="Atendimento" compact />
           </p>
           <h2 className="mt-2 text-3xl font-extrabold sm:text-4xl">
-            {info.contactTitle}
+            <BilingualText primary="欢迎联系 Alcateia 团队" secondary={info.contactTitle} />
           </h2>
           <p className="mt-3 text-white/70">
-            {info.contactDescription}
+            <BilingualText
+              primary="关于交付、材料或报价，请通过官方渠道联系我们。"
+              secondary={info.contactDescription}
+              compact
+            />
           </p>
           <a
             href={waLink("Olá! Quero fazer um orçamento.")}
@@ -560,13 +645,14 @@ function _ContactSection() {
               })
             }
           >
-            <Send className="h-4 w-4" /> Falar no WhatsApp
+            <Send className="h-4 w-4" />{" "}
+            <BilingualText primary="通过 WhatsApp 联系" secondary="Falar no WhatsApp" compact />
           </a>
         </div>
         <div className="grid gap-3 sm:gap-4 sm:grid-cols-2">
           <div className="rounded-[var(--store-radius-lg)] bg-white/5 p-4 sm:p-5">
             <p className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-[var(--store-secondary)]">
-              Telefone / WhatsApp
+              电话 / WhatsApp
             </p>
             <p className="mt-2 text-base sm:text-lg font-extrabold">{info.whatsappDisplay}</p>
           </div>
@@ -578,7 +664,7 @@ function _ContactSection() {
           </div>
           <div className="rounded-[var(--store-radius-lg)] bg-white/5 p-4 sm:p-5 sm:col-span-2">
             <p className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-[var(--store-secondary)]">
-              Endereço
+              地址 / Endereço
             </p>
             <a
               href={info.mapsUrl}
@@ -597,7 +683,7 @@ function _ContactSection() {
           </div>
           <div className="rounded-[var(--store-radius-lg)] bg-white/5 p-5 sm:col-span-2">
             <p className="text-xs font-bold uppercase tracking-wider text-[var(--store-secondary)]">
-              Horário de atendimento
+              营业时间 / Horário de atendimento
             </p>
             <ul className="mt-2 space-y-1 text-sm">
               {info.hours.map((h) => (
@@ -623,9 +709,7 @@ function _ContactSection() {
             referrerPolicy="no-referrer-when-downgrade"
           />
           <div className="flex items-center justify-between border-t border-white/10 px-4 py-3 sm:px-5">
-            <p className="text-xs font-semibold text-white/80">
-              {info.address}
-            </p>
+            <p className="text-xs font-semibold text-white/80">{info.address}</p>
             <a
               href={info.mapsUrl}
               target="_blank"
@@ -666,32 +750,36 @@ function BentoFeatureCard({
 }: BentoFeatureCardProps) {
   const isGold = variant === "gold";
   const Container = isInternal ? Link : "a";
-  const linkProps = isInternal ? { to: href } : { href, target: "_blank", rel: "noopener noreferrer" };
+  const linkProps = isInternal
+    ? { to: href }
+    : { href, target: "_blank", rel: "noopener noreferrer" };
 
   return (
     <Container
       {...(linkProps as any)}
       className={cn(
         "store-bento-card group flex flex-col items-center justify-center p-5 text-center animate-fade-in",
-        isGold ? "bg-[var(--store-gold)] text-[var(--store-ink)]" : "bg-[#172554] text-white"
+        isGold ? "bg-[var(--store-gold)] text-[var(--store-ink)]" : "bg-[#172554] text-white",
       )}
       style={{ animationDelay, animationFillMode: "both" }}
       onClick={onClick}
     >
-      <div className={cn(
-        "mb-2 flex h-12 w-12 items-center justify-center rounded-full transition-transform group-hover:scale-110",
-        isGold ? "" : "border-2 border-white"
-      )}>
+      <div
+        className={cn(
+          "mb-2 flex h-12 w-12 items-center justify-center rounded-full transition-transform group-hover:scale-110",
+          isGold ? "" : "border-2 border-white",
+        )}
+      >
         <Icon className="h-7 w-7" />
       </div>
       <p className="font-display text-2xl leading-none sm:text-3xl">{title}</p>
-      <p className={cn("mt-2 text-xs font-medium", isGold ? "" : "text-white/80")}>
-        {description}
-      </p>
-      <span className={cn(
-        "mt-4 inline-flex items-center justify-center px-4 py-2 text-[10px] font-extrabold uppercase tracking-[0.2em] transition-transform group-hover:scale-105",
-        isGold ? "bg-[var(--store-ink)] text-white" : "bg-white text-[#172554]"
-      )}>
+      <p className={cn("mt-2 text-xs font-medium", isGold ? "" : "text-white/80")}>{description}</p>
+      <span
+        className={cn(
+          "mt-4 inline-flex items-center justify-center px-4 py-2 text-[10px] font-extrabold uppercase tracking-[0.2em] transition-transform group-hover:scale-105",
+          isGold ? "bg-[var(--store-ink)] text-white" : "bg-white text-[#172554]",
+        )}
+      >
         {cta}
       </span>
     </Container>

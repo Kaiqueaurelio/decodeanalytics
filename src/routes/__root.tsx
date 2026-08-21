@@ -88,22 +88,29 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       {
         name: "viewport",
-        content: "width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content",
+        content:
+          "width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content",
       },
-      { title: "Alcateia's Gestão" },
-      { name: "description", content: "Sistema de gestão para a Alcateia's Produções Gráficas" },
+      { title: "Alcateia 生产管理 / Alcateia's Gestão" },
+      {
+        name: "description",
+        content:
+          "Alcateia 图文生产与定制产品平台。Sistema de gestão e produtos personalizados da Alcateia's.",
+      },
       { name: "author", content: "Alcateia" },
-      { property: "og:title", content: "Alcateia's Gestão" },
+      { property: "og:title", content: "Alcateia 生产管理 / Alcateia's Gestão" },
       {
         property: "og:description",
-        content: "Sistema de gestão para a Alcateia's Produções Gráficas",
+        content:
+          "Alcateia 图文生产与定制产品平台。Sistema de gestão e produtos personalizados da Alcateia's.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
-      { name: "twitter:title", content: "Alcateia's Gestão" },
+      { name: "twitter:title", content: "Alcateia 生产管理 / Alcateia's Gestão" },
       {
         name: "twitter:description",
-        content: "Sistema de gestão para a Alcateia's Produções Gráficas",
+        content:
+          "Alcateia 图文生产与定制产品平台。Sistema de gestão e produtos personalizados da Alcateia's.",
       },
       { property: "og:image", content: "/brand/app-icon-full.png" },
       { name: "twitter:image", content: "/brand/app-icon-full.png" },
@@ -144,7 +151,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 
 function RootShell({ children }: { children: ReactNode }) {
   return (
-    <html lang="pt-BR" suppressHydrationWarning>
+    <html lang="zh-CN" suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
         <HeadContent />

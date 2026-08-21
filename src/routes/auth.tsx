@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { emitAuthTelemetry, trackInputFocus } from "@/lib/auth-telemetry";
+import { BilingualText } from "@/components/storefront/BilingualText";
 
 export const Route = createFileRoute("/auth")({
   head: () => ({ meta: [{ title: "Entrar | Alcateia's Gestão" }] }),
@@ -92,18 +93,32 @@ function AuthPage() {
             alt="Alcateia's Produções Gráficas - Criando impacto a cada imagem"
             className="auth-logo mx-auto mb-3 h-24 w-auto max-w-full object-contain sm:mb-4 sm:h-36 md:h-44"
           />
-          <h1 className="text-xl sm:text-2xl font-bold text-primary">Alcateia's Gestão</h1>
-          <p className="text-sm text-muted-foreground">Sistema de gestão da produção gráfica</p>
+          <h1 className="text-xl sm:text-2xl font-bold text-primary">
+            <BilingualText primary="Alcateia 管理" secondary="Alcateia's Gestão" />
+          </h1>
+          <p className="text-sm text-muted-foreground">
+            <BilingualText
+              primary="图文生产管理系统"
+              secondary="Sistema de gestão da produção gráfica"
+              compact
+            />
+          </p>
         </div>
         <Tabs defaultValue="login">
           <TabsList className="grid grid-cols-2 w-full mb-4 h-12">
-            <TabsTrigger value="login" className="h-10 text-base">Entrar</TabsTrigger>
-            <TabsTrigger value="signup" className="h-10 text-base">Criar conta</TabsTrigger>
+            <TabsTrigger value="login" className="h-10 text-base">
+              <BilingualText primary="登录" secondary="Entrar" compact />
+            </TabsTrigger>
+            <TabsTrigger value="signup" className="h-10 text-base">
+              <BilingualText primary="创建账户" secondary="Criar conta" compact />
+            </TabsTrigger>
           </TabsList>
           <TabsContent value="login">
             <form onSubmit={handleLogin} className="space-y-3">
               <div>
-                <Label htmlFor={loginEmailId}>E-mail</Label>
+                <Label htmlFor={loginEmailId}>
+                  <BilingualText primary="电子邮箱" secondary="E-mail" compact />
+                </Label>
                 <Input
                   id={loginEmailId}
                   name="email"
@@ -125,7 +140,9 @@ function AuthPage() {
                 />
               </div>
               <div>
-                <Label htmlFor={loginPwdId}>Senha</Label>
+                <Label htmlFor={loginPwdId}>
+                  <BilingualText primary="密码" secondary="Senha" compact />
+                </Label>
                 <div className="relative">
                   <Input
                     ref={loginPasswordRef}
@@ -155,21 +172,27 @@ function AuthPage() {
                 </div>
               </div>
               <Button type="submit" disabled={loading} className="w-full min-h-12 text-base">
-                {loading ? "Entrando..." : "Entrar"}
+                {loading ? (
+                  "正在登录..."
+                ) : (
+                  <BilingualText primary="登录" secondary="Entrar" compact />
+                )}
               </Button>
               <button
                 type="button"
                 onClick={handleReset}
                 className="text-sm text-muted-foreground hover:text-primary block w-full min-h-11 text-center mt-2 py-2 transition-colors"
               >
-                Esqueci minha senha
+                <BilingualText primary="忘记密码" secondary="Esqueci minha senha" compact />
               </button>
             </form>
           </TabsContent>
           <TabsContent value="signup">
             <form onSubmit={handleSignup} className="space-y-3">
               <div>
-                <Label htmlFor={signupNameId}>Nome</Label>
+                <Label htmlFor={signupNameId}>
+                  <BilingualText primary="姓名" secondary="Nome" compact />
+                </Label>
                 <Input
                   id={signupNameId}
                   name="name"
@@ -189,7 +212,9 @@ function AuthPage() {
                 />
               </div>
               <div>
-                <Label htmlFor={signupEmailId}>E-mail</Label>
+                <Label htmlFor={signupEmailId}>
+                  <BilingualText primary="电子邮箱" secondary="E-mail" compact />
+                </Label>
                 <Input
                   ref={signupEmailRef}
                   id={signupEmailId}
@@ -212,7 +237,9 @@ function AuthPage() {
                 />
               </div>
               <div>
-                <Label htmlFor={signupPwdId}>Senha</Label>
+                <Label htmlFor={signupPwdId}>
+                  <BilingualText primary="密码" secondary="Senha" compact />
+                </Label>
                 <div className="relative">
                   <Input
                     ref={signupPasswordRef}
@@ -243,10 +270,15 @@ function AuthPage() {
                 </div>
               </div>
               <Button type="submit" disabled={loading} className="w-full min-h-12 text-base">
-                {loading ? "Criando..." : "Criar conta"}
+                {loading ? (
+                  "正在创建..."
+                ) : (
+                  <BilingualText primary="创建账户" secondary="Criar conta" compact />
+                )}
               </Button>
               <p className="text-xs text-muted-foreground text-center mt-2">
-                A primeira conta criada vira administrador automaticamente.
+                第一个创建的账户将自动成为管理员。
+                <br />A primeira conta criada vira administrador automaticamente.
               </p>
             </form>
           </TabsContent>
