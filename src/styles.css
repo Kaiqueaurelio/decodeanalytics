@@ -589,7 +589,6 @@
     .auth-screen:focus-within {
       padding-bottom: max(9rem, calc(env(safe-area-inset-bottom) + 9rem));
     }
-
   }
 
   @supports (-webkit-touch-callout: none) {
@@ -600,30 +599,54 @@
 }
 
 @keyframes float-y {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
 }
 
 @keyframes shimmer-bg {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 }
 
 @keyframes soft-pulse {
-  0%, 100% { transform: scale(1); opacity: 1; }
-  50% { transform: scale(1.04); opacity: 0.9; }
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.04);
+    opacity: 0.9;
+  }
 }
 
-.animate-float { animation: float-y 5.5s ease-in-out infinite; }
-.animate-soft-pulse { animation: soft-pulse 3s ease-in-out infinite; }
+.animate-float {
+  animation: float-y 5.5s ease-in-out infinite;
+}
+.animate-soft-pulse {
+  animation: soft-pulse 3s ease-in-out infinite;
+}
 .animate-shimmer-bg {
   background-size: 200% 200%;
   animation: shimmer-bg 8s ease-in-out infinite;
 }
 
 .lift-on-hover {
-  transition: transform 380ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 380ms ease;
+  transition:
+    transform 380ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 380ms ease;
 }
 .lift-on-hover:hover {
   transform: translateY(-6px);
@@ -633,7 +656,9 @@
 @media (prefers-reduced-motion: reduce) {
   .animate-float,
   .animate-soft-pulse,
-  .animate-shimmer-bg { animation: none !important; }
+  .animate-shimmer-bg {
+    animation: none !important;
+  }
 }
 
 /* ============ Cursor follower (desktop only) ============ */
@@ -659,7 +684,8 @@
     height: 34px;
     border-radius: 9999px;
     border: 1.5px solid rgba(255, 255, 255, 0.85);
-    transition: width 220ms cubic-bezier(0.22, 1, 0.36, 1),
+    transition:
+      width 220ms cubic-bezier(0.22, 1, 0.36, 1),
       height 220ms cubic-bezier(0.22, 1, 0.36, 1),
       background-color 220ms ease,
       border-color 220ms ease,
@@ -696,7 +722,9 @@
 @media (prefers-reduced-motion: reduce) {
   .cursor-follower-dot,
   .cursor-follower-ring,
-  .cursor-follower-ripple { display: none !important; }
+  .cursor-follower-ripple {
+    display: none !important;
+  }
 }
 
 /* Hide Lovable badge */
@@ -705,247 +733,4 @@
 [id^="lovable-badge"],
 a[href*="lovable.dev"][target="_blank"] {
   display: none !important;
-}
-
-/* Modo de prank: camada visual isolada, reversível e sem alteração de dados. */
-.hack-prank-overlay {
-  font-family: "Barlow", "Inter", sans-serif;
-  isolation: isolate;
-  animation: hack-prank-flicker 180ms ease-out both;
-}
-
-.hack-prank-noise {
-  background-image:
-    radial-gradient(circle at 20% 30%, rgba(248, 113, 113, 0.16) 0 1px, transparent 1.5px),
-    radial-gradient(circle at 80% 70%, rgba(255, 255, 255, 0.12) 0 1px, transparent 1.5px),
-    radial-gradient(circle at 50% 50%, rgba(239, 68, 68, 0.08) 0 1px, transparent 1.5px);
-  background-size: 13px 17px, 19px 23px, 29px 31px;
-  mix-blend-mode: screen;
-  animation: hack-prank-noise 180ms steps(2, end) infinite;
-}
-
-.hack-prank-scanlines {
-  background: repeating-linear-gradient(
-    to bottom,
-    transparent 0,
-    transparent 3px,
-    rgba(248, 113, 113, 0.11) 4px,
-    transparent 5px
-  );
-  mix-blend-mode: screen;
-}
-
-.hack-prank-glitch {
-  position: relative;
-  text-shadow: 0.035em 0 0 #fff, -0.035em 0 0 #7f1d1d;
-  animation: hack-prank-glitch 1.8s steps(2, end) infinite;
-}
-
-.hack-prank-glitch::before,
-.hack-prank-glitch::after {
-  position: absolute;
-  inset: 0;
-  overflow: hidden;
-  content: attr(data-text);
-  pointer-events: none;
-}
-
-.hack-prank-glitch::before {
-  color: #fca5a5;
-  clip-path: inset(0 0 58% 0);
-  transform: translate(0.025em, -0.02em);
-  animation: hack-prank-glitch-top 2.1s steps(2, end) infinite;
-}
-
-.hack-prank-glitch::after {
-  color: #450a0a;
-  clip-path: inset(62% 0 0 0);
-  transform: translate(-0.02em, 0.02em);
-  animation: hack-prank-glitch-bottom 1.4s steps(2, end) infinite;
-}
-
-.hack-prank-caret {
-  display: inline-block;
-  width: 0.55em;
-  height: 1em;
-  margin-left: 0.25rem;
-  vertical-align: -0.15em;
-  background: #ef4444;
-  animation: hack-prank-caret 800ms steps(2, end) infinite;
-}
-
-.hack-prank-mask {
-  animation: hack-prank-float 3.5s ease-in-out infinite;
-}
-
-@keyframes hack-prank-flicker {
-  0% { opacity: 0; transform: scale(1.015); }
-  70% { opacity: 0.94; transform: scale(1); }
-  100% { opacity: 1; transform: scale(1); }
-}
-
-@keyframes hack-prank-noise {
-  0% { transform: translate(0, 0); }
-  25% { transform: translate(-1%, 0.5%); }
-  50% { transform: translate(0.5%, -1%); }
-  75% { transform: translate(1%, 0.5%); }
-  100% { transform: translate(-0.5%, -0.5%); }
-}
-
-@keyframes hack-prank-glitch {
-  0%, 83%, 100% { transform: translate(0); }
-  85% { transform: translate(-0.015em, 0.008em); }
-  87% { transform: translate(0.012em, -0.006em); }
-  89% { transform: translate(-0.008em, 0.01em); }
-}
-
-@keyframes hack-prank-glitch-top {
-  0%, 82%, 100% { opacity: 0; }
-  84% { opacity: 0.9; transform: translate(0.06em, -0.025em); }
-  86% { opacity: 0; }
-}
-
-@keyframes hack-prank-glitch-bottom {
-  0%, 72%, 100% { opacity: 0; }
-  74% { opacity: 0.85; transform: translate(-0.055em, 0.02em); }
-  77% { opacity: 0; }
-}
-
-@keyframes hack-prank-caret {
-  0%, 48% { opacity: 1; }
-  49%, 100% { opacity: 0; }
-}
-
-@keyframes hack-prank-float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-5px); }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .hack-prank-overlay,
-  .hack-prank-noise,
-  .hack-prank-glitch,
-  .hack-prank-glitch::before,
-  .hack-prank-glitch::after,
-  .hack-prank-caret,
-  .hack-prank-mask {
-    animation: none;
-  }
-}
-
-@media (max-width: 640px) {
-  .hack-prank-glitch {
-    font-size: clamp(3.7rem, 19vw, 7rem);
-  }
-}
-
-/* Easter Egg de segurança: efeitos puramente visuais de entrada e restauração. */
-.hack-prank-code-stream {
-  z-index: 1;
-  padding: 12vh 3vw;
-  color: rgba(248, 113, 113, 0.26);
-  font-family: "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
-  font-size: clamp(0.6rem, 1.2vw, 0.9rem);
-  line-height: 2.65;
-  letter-spacing: 0.15em;
-  white-space: pre-wrap;
-  overflow: hidden;
-  opacity: 0.34;
-  text-shadow: 0 0 12px rgba(239, 68, 68, 0.45);
-  animation: hack-prank-code-drift 2.8s linear infinite;
-}
-
-.hack-prank-entering {
-  animation: hack-prank-entry-glitch 900ms steps(4, end) both;
-}
-
-.hack-prank-entering::before {
-  position: fixed;
-  inset: 0;
-  z-index: 5;
-  content: "";
-  pointer-events: none;
-  background:
-    repeating-linear-gradient(0deg, transparent 0 5px, rgba(248, 113, 113, 0.22) 6px 7px),
-    linear-gradient(90deg, transparent 0 48%, rgba(255, 255, 255, 0.18) 49% 50%, transparent 51%);
-  mix-blend-mode: screen;
-  animation: hack-prank-interference 140ms steps(2, end) infinite;
-}
-
-.hack-prank-entering .hack-prank-code-stream {
-  opacity: 0.72;
-  animation-duration: 280ms;
-}
-
-.hack-prank-active {
-  animation: hack-prank-active-pulse 3.8s ease-in-out infinite;
-}
-
-.hack-prank-restoring {
-  animation: hack-prank-restore 1.5s ease-out both;
-}
-
-.hack-prank-caret-green {
-  background: #34d399;
-}
-
-@keyframes hack-prank-entry-glitch {
-  0% {
-    opacity: 0;
-    filter: contrast(3) saturate(2) hue-rotate(25deg);
-    transform: translateX(-3%) skewX(10deg) scaleY(0.94);
-    clip-path: inset(48% 0 48% 0);
-  }
-  24% {
-    opacity: 1;
-    filter: contrast(2.2) saturate(2.2) hue-rotate(-10deg);
-    transform: translateX(2%) skewX(-6deg) scaleY(1.03);
-    clip-path: inset(12% 0 30% 0);
-  }
-  52% {
-    transform: translateX(-1%) skewX(2deg) scaleY(0.99);
-    clip-path: inset(0);
-  }
-  100% {
-    opacity: 1;
-    filter: none;
-    transform: none;
-    clip-path: inset(0);
-  }
-}
-
-@keyframes hack-prank-interference {
-  0% { transform: translateY(-3%); opacity: 0.2; }
-  35% { transform: translateY(4%); opacity: 0.9; }
-  68% { transform: translateY(-1%); opacity: 0.35; }
-  100% { transform: translateY(3%); opacity: 0.75; }
-}
-
-@keyframes hack-prank-code-drift {
-  0% { transform: translateY(0); }
-  50% { transform: translateY(-18px); }
-  100% { transform: translateY(0); }
-}
-
-@keyframes hack-prank-active-pulse {
-  0%, 100% { filter: none; }
-  96% { filter: brightness(1.01); }
-  97% { filter: brightness(1.25) contrast(1.15); }
-  98% { filter: none; }
-}
-
-@keyframes hack-prank-restore {
-  0% { opacity: 0; filter: hue-rotate(110deg) brightness(1.8); transform: scale(1.03); }
-  22% { opacity: 1; filter: hue-rotate(40deg) brightness(1.25); transform: scale(1); }
-  100% { opacity: 1; filter: none; transform: scale(1); }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .hack-prank-code-stream,
-  .hack-prank-entering,
-  .hack-prank-entering::before,
-  .hack-prank-active,
-  .hack-prank-restoring {
-    animation: none;
-  }
 }

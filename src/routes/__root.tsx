@@ -17,7 +17,6 @@ import { ThemeProvider, themeInitScript } from "@/lib/theme";
 import { Toaster } from "@/components/ui/sonner";
 import { installAnalytics } from "@/lib/analytics";
 import { SafeAreaDebug } from "@/components/SafeAreaDebug";
-import { HackedPrankProvider } from "@/components/HackedPrank";
 
 function NotFoundComponent() {
   return (
@@ -176,11 +175,9 @@ function RootComponent() {
       <ThemeProvider>
         <AuthProvider>
           <CartProvider>
-            <HackedPrankProvider>
-              <Outlet />
-              <Toaster richColors position="top-right" />
-              <SafeAreaDebug />
-            </HackedPrankProvider>
+            <Outlet />
+            <Toaster richColors position="top-right" />
+            <SafeAreaDebug />
           </CartProvider>
         </AuthProvider>
       </ThemeProvider>

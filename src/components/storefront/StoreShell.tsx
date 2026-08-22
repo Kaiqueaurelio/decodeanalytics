@@ -18,7 +18,6 @@ import {
 import { STORE_CATEGORIES } from "./tokens";
 import { useCompanyInfo, useWaLink } from "@/hooks/useCompanyInfo";
 import { useCart } from "@/lib/cart-context";
-import { useHackedPrank } from "@/components/useHackedPrank";
 import { BilingualText } from "./BilingualText";
 import { useState } from "react";
 import {
@@ -97,15 +96,13 @@ function StoreHeader() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const info = useCompanyInfo();
   const waLink = useWaLink();
-  const { registerLogoTap } = useHackedPrank();
   return (
     <header className="store-sticky-header sticky z-40 border-b border-[var(--store-border)] bg-[var(--store-surface)]/95 backdrop-blur transition-all duration-300">
       <div className="mx-auto flex max-w-[1280px] items-center justify-between gap-3 px-3 py-2 sm:px-4 sm:py-3 md:gap-6 md:py-4">
         <Link
           to="/"
-          onPointerUp={registerLogoTap}
           aria-label="Logo Alcateia"
-          className="flex shrink-0 touch-manipulation items-center gap-2 sm:gap-3 transition-transform hover:scale-[1.02]"
+          className="flex shrink-0 items-center gap-2 sm:gap-3 transition-transform hover:scale-[1.02]"
         >
           <img
             src="/brand/alcateia-logo.png"
