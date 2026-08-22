@@ -29,7 +29,6 @@ import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { NotificationsBell } from "@/components/NotificationsBell";
 import { EllaFab } from "@/components/EllaFab";
-import { BilingualText } from "@/components/storefront/BilingualText";
 
 type NavItem = {
   to: string;
@@ -172,32 +171,6 @@ const NAV: NavItem[] = [
 
 const SECTIONS: NavItem["section"][] = ["Visão geral", "Operação", "Financeiro", "Administração"];
 
-const SECTION_ZH: Record<NavItem["section"], string> = {
-  "Visão geral": "概览",
-  Operação: "运营",
-  Financeiro: "财务",
-  Administração: "管理",
-};
-
-const NAV_ZH: Record<string, string> = {
-  Dashboard: "仪表盘",
-  Clientes: "客户",
-  Orçamentos: "报价",
-  "Ordens de Serviço": "服务订单",
-  Produção: "生产",
-  Estoque: "库存",
-  "Caixa / PDV": "收银台 / POS",
-  "Contas a Receber": "应收账款",
-  "Fechamentos de Caixa": "收银结算",
-  Serviços: "服务",
-  Configurações: "设置",
-  Usuários: "用户",
-  "Gestor Inteligente": "智能管理器",
-  "Treinar a IA": "训练 AI",
-  "Sandbox da IA": "AI 沙盒",
-  "Logs de Automação": "自动化日志",
-};
-
 export function AppShell({ children }: { children: ReactNode }) {
   const { user, roles, signOut, isAdmin } = useAuth();
   const path = useRouterState({ select: (state) => state.location.pathname });
@@ -301,7 +274,7 @@ export function AppShell({ children }: { children: ReactNode }) {
               />
               <input
                 type="text"
-                placeholder="搜索 / Buscar..."
+                placeholder="Buscar..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 onFocus={() => setSearchFocused(true)}
@@ -343,7 +316,7 @@ export function AppShell({ children }: { children: ReactNode }) {
               <div key={section} className={cn("flex flex-col", collapsed && "items-center")}>
                 {!collapsed && (
                   <p className="mb-2 px-3 text-[10px] font-black uppercase tracking-[0.2em] text-[#dee2ec]/90">
-                    <BilingualText primary={SECTION_ZH[section]} secondary={section} compact />
+                    {section}
                   </p>
                 )}
                 <div className={cn("space-y-1 w-full", collapsed && "flex flex-col items-center")}>
@@ -378,16 +351,10 @@ export function AppShell({ children }: { children: ReactNode }) {
                         />
                         {!collapsed && (
                           <>
-                            <span className="flex-1 truncate">
-                              <BilingualText
-                                primary={NAV_ZH[item.label] ?? item.label}
-                                secondary={item.label}
-                                compact
-                              />
-                            </span>
+                            <span className="flex-1 truncate">{item.label}</span>
                             {item.label === "Dashboard" && (
                               <span className="rounded-md bg-rose-500 px-1.5 py-0.5 text-[8px] font-black text-white uppercase animate-pulse">
-                                新 / Novo
+                                Novo
                               </span>
                             )}
                             {item.label === "Ordens de Serviço" && (
@@ -438,11 +405,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                     {user?.email?.split("@")[0]}
                   </span>
                   <span className="text-[9px] font-medium text-[#7d84ab] uppercase tracking-tighter">
-                    <BilingualText
-                      primary={isAdmin ? "管理员" : "用户"}
-                      secondary={isAdmin ? "Administrador" : ROLE_LABEL[roles[0]] || "Usuário"}
-                      compact
-                    />
+                    {isAdmin ? "Administrador" : ROLE_LABEL[roles[0]] || "Usuário"}
                   </span>
                 </div>
               )}
@@ -469,12 +432,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             ) : (
               <>
                 <PanelLeftClose className="h-4 w-4 shrink-0" />
-                <BilingualText
-                  primary="收起菜单"
-                  secondary="Recolher menu"
-                  compact
-                  className="flex-1 truncate"
-                />
+                <span className="flex-1 truncate">Recolher menu</span>
               </>
             )}
           </button>
@@ -488,9 +446,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             title={collapsed ? "Sair" : undefined}
           >
             <LogOut className="h-4 w-4 shrink-0" />
-            {!collapsed && (
-              <BilingualText primary="退出" secondary="Sair" compact className="flex-1 truncate" />
-            )}
+            {!collapsed && <span className="flex-1 truncate">Sair</span>}
           </button>
         </div>
       </aside>
@@ -531,11 +487,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                     {user?.email?.split("@")[0]}
                   </p>
                   <p className="text-[10px] font-medium text-slate-500 uppercase tracking-tighter">
-                    <BilingualText
-                      primary={isAdmin ? "管理员" : "用户"}
-                      secondary={isAdmin ? "Administrador" : ROLE_LABEL[roles[0]] || "Usuário"}
-                      compact
-                    />
+                    {isAdmin ? "Administrador" : ROLE_LABEL[roles[0]] || "Usuário"}
                   </p>
                 </div>
                 <div className="grid h-9 w-9 place-items-center rounded-xl bg-[#0c1e35] text-sm font-bold text-white shadow-lg shadow-[#0c1e35]/10">

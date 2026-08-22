@@ -1,7 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { Star } from "lucide-react";
-import { brl, productNameZh, STORE_CATEGORIES } from "./tokens";
-import { BilingualText } from "./BilingualText";
+import { brl } from "./tokens";
 import { SmartImage } from "./SmartImage";
 import { useShowPrices } from "@/hooks/useCompanyInfo";
 
@@ -36,9 +35,6 @@ export function ProductCard({ product }: { product: StoreProduct }) {
     ? (BADGE_TONE[product.badge] ?? "bg-[var(--store-primary)] text-white")
     : null;
   const rating = product.rating ? Number(product.rating) : null;
-  const categoryZh =
-    STORE_CATEGORIES.find((category) => category.label === product.category)?.zh ?? "定制产品";
-  const nameZh = productNameZh(product.name, product.category);
 
   return (
     <article className="group flex flex-col overflow-hidden rounded-[var(--store-radius-lg)] border border-[var(--store-border)] bg-white shadow-[var(--store-shadow-sm)] transition-all duration-200 hover:-translate-y-1 hover:border-[var(--store-primary-light)]/40 hover:shadow-[var(--store-shadow-md)]">
@@ -63,15 +59,11 @@ export function ProductCard({ product }: { product: StoreProduct }) {
       </Link>
       <div className="flex flex-1 flex-col p-4">
         <p className="text-[11px] font-bold uppercase tracking-wide text-[var(--store-accent)]">
-          <BilingualText
-            primary={categoryZh}
-            secondary={product.category ?? "Personalizado"}
-            compact
-          />
+          {product.category ?? "Personalizado"}
         </p>
         <h3 className="mt-1 line-clamp-2 text-[15px] font-bold leading-snug text-[var(--store-text)]">
           <Link to="/produto/$slug" params={{ slug }} className="hover:text-[var(--store-primary)]">
-            <BilingualText primary={nameZh} secondary={product.name} compact />
+            {product.name}
           </Link>
         </h3>
         {rating != null && (
@@ -91,7 +83,7 @@ export function ProductCard({ product }: { product: StoreProduct }) {
             {showPrices ? (
               <>
                 <p className="text-[10px] uppercase tracking-wide text-[var(--store-text-light)]">
-                  <BilingualText primary="起价" secondary="A partir de" compact />
+                  A partir de
                 </p>
                 <p className="text-xl font-extrabold leading-tight text-[var(--store-primary)]">
                   {brl(product.base_price)}
@@ -99,16 +91,12 @@ export function ProductCard({ product }: { product: StoreProduct }) {
               </>
             ) : (
               <p className="text-base font-extrabold leading-tight text-[var(--store-primary)]">
-                <BilingualText primary="价格请咨询" secondary="Sob consulta" compact />
+                Sob consulta
               </p>
             )}
             {product.min_quantity ? (
               <p className="text-[11px] text-[var(--store-text-muted)]">
-                <BilingualText
-                  primary={`起订量 ${product.min_quantity} ${product.unit ?? "件"}`}
-                  secondary={`a partir de ${product.min_quantity} ${product.unit ?? "un"}`}
-                  compact
-                />
+                a partir de {product.min_quantity} {product.unit ?? "un"}
               </p>
             ) : null}
           </div>
@@ -118,7 +106,7 @@ export function ProductCard({ product }: { product: StoreProduct }) {
           params={{ slug }}
           className="mt-4 inline-flex h-10 items-center justify-center rounded-[var(--store-radius-md)] bg-[var(--store-primary)] text-sm font-bold text-white transition-colors hover:bg-[var(--store-primary-light)]"
         >
-          <BilingualText primary="查看产品" secondary="Ver produto" compact />
+          Ver produto
         </Link>
       </div>
     </article>
@@ -147,26 +135,6 @@ export function ProductGrid({ children }: { children: React.ReactNode }) {
   );
 }
 
-const SECTION_ZH: Record<string, string> = {
-  Catálogo: "产品目录",
-  "Todos os produtos": "全部产品",
-  "Serviços gráficos": "图文服务",
-  "Para todos os tipos de marca": "适合所有品牌",
-  "Como funciona": "使用方法",
-  "Os favoritos da nossa produção": "本店精选",
-  "Produtos em destaque": "精选产品",
-  "Confira nossa produção": "查看我们的作品",
-  "Boas práticas": "制作指南",
-};
-
-const SECTION_DESC_ZH: Record<string, string> = {
-  "Personalize seu produto e receba o orçamento em minutos.":
-    "定制您的产品，几分钟内即可收到报价。",
-  "Escolha uma categoria e personalize seu produto em poucos minutos.":
-    "选择一个类别，在几分钟内定制您的产品。",
-  "Qualidade profissional com entrega ágil para sua marca.": "专业品质，快速交付，助力您的品牌。",
-};
-
 export function SectionHeader({
   kicker,
   title,
@@ -183,20 +151,14 @@ export function SectionHeader({
       <div className="min-w-0">
         {kicker && (
           <p className="text-[11px] font-extrabold uppercase tracking-[0.18em] text-[var(--store-accent)]">
-            <BilingualText primary={SECTION_ZH[kicker] ?? kicker} secondary={kicker} compact />
+            {kicker}
           </p>
         )}
         <h2 className="mt-1 text-2xl font-extrabold tracking-tight text-[var(--store-primary)] sm:text-3xl md:text-4xl">
-          <BilingualText primary={SECTION_ZH[title] ?? title} secondary={title} />
+          {title}
         </h2>
         {description && (
-          <p className="mt-1 max-w-2xl text-sm text-[var(--store-text-muted)]">
-            <BilingualText
-              primary={SECTION_DESC_ZH[description] ?? description}
-              secondary={description}
-              compact
-            />
-          </p>
+          <p className="mt-1 max-w-2xl text-sm text-[var(--store-text-muted)]">{description}</p>
         )}
       </div>
       {action}

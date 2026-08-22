@@ -14,8 +14,7 @@ import {
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { StoreShell } from "@/components/storefront/StoreShell";
-import { brl, productNameZh, STORE_CATEGORIES } from "@/components/storefront/tokens";
-import { BilingualText } from "@/components/storefront/BilingualText";
+import { brl } from "@/components/storefront/tokens";
 import { useShowPrices, useWaLink } from "@/hooks/useCompanyInfo";
 import { useCart } from "@/lib/cart-context";
 import {
@@ -106,20 +105,16 @@ function ProductPage() {
       <StoreShell>
         <div className="mx-auto max-w-[1280px] px-4 py-20 text-center">
           <h1 className="text-2xl font-extrabold text-[var(--store-primary)]">
-            <BilingualText primary="未找到产品" secondary="Produto não encontrado" />
+            Produto não encontrado
           </h1>
           <p className="mt-2 text-sm text-[var(--store-text-muted)]">
-            <BilingualText
-              primary="链接可能已更改。请查看完整目录。"
-              secondary="O link pode ter mudado. Veja todo o catálogo."
-              compact
-            />
+            O link pode ter mudado. Veja todo o catálogo.
           </p>
           <Link
             to="/produtos"
             className="mt-6 inline-flex h-11 items-center justify-center rounded-[var(--store-radius-md)] bg-[var(--store-primary)] px-5 text-sm font-bold text-white"
           >
-            <BilingualText primary="查看目录" secondary="Ver catálogo" compact />
+            Ver catálogo
           </Link>
         </div>
       </StoreShell>
@@ -131,7 +126,7 @@ function ProductPage() {
       <article className="mx-auto max-w-[1280px] px-4 py-8 sm:py-12">
         <nav className="mb-6 flex items-center gap-2 text-xs text-[var(--store-text-muted)]">
           <Link to="/" className="hover:text-[var(--store-primary)]">
-            <BilingualText primary="首页" secondary="Início" compact />
+            Início
           </Link>
           <span>/</span>
           <Link
@@ -139,23 +134,10 @@ function ProductPage() {
             search={{ cat: product.category ?? "todos" }}
             className="hover:text-[var(--store-primary)]"
           >
-            <BilingualText
-              primary={
-                STORE_CATEGORIES.find((category) => category.label === product.category)?.zh ??
-                "产品目录"
-              }
-              secondary={product.category ?? "Catálogo"}
-              compact
-            />
+            {product.category ?? "Catálogo"}
           </Link>
           <span>/</span>
-          <span className="truncate text-[var(--store-text)]">
-            <BilingualText
-              primary={productNameZh(product.name, product.category)}
-              secondary={product.name}
-              compact
-            />
-          </span>
+          <span className="truncate text-[var(--store-text)]">{product.name}</span>
         </nav>
 
         <div className="grid gap-8 lg:grid-cols-[1.1fr_.9fr]">
@@ -166,7 +148,7 @@ function ProductPage() {
         <div className="mt-12 grid gap-8 lg:grid-cols-[1.2fr_.8fr]">
           <div className="rounded-[var(--store-radius-lg)] border border-[var(--store-border)] bg-white p-6">
             <h2 className="text-lg font-extrabold text-[var(--store-primary)]">
-              <BilingualText primary="关于此产品" secondary="Sobre este produto" />
+              Sobre este produto
             </h2>
             <p className="mt-3 text-sm leading-relaxed text-[var(--store-text-muted)]">
               {product.short_description ||
@@ -175,7 +157,7 @@ function ProductPage() {
             {product.specs?.length ? (
               <>
                 <h3 className="mt-6 text-sm font-bold uppercase tracking-wide text-[var(--store-accent)]">
-                  <BilingualText primary="规格" secondary="Especificações" compact />
+                  Especificações
                 </h3>
                 <ul className="mt-3 grid gap-2 sm:grid-cols-2">
                   {product.specs.map((s) => (
@@ -237,7 +219,6 @@ function BuyBox({ product }: { product: StoreProduct }) {
   const [obs, setObs] = useState("");
   const total = (Number(product.base_price) || 0) * qty;
   const rating = product.rating ? Number(product.rating) : null;
-  const nameZh = productNameZh(product.name, product.category);
 
   const message = `Olá! Tenho interesse no produto *${product.name}*. Quantidade: ${qty}${obs ? `. Observações: ${obs}` : ""}.`;
 
@@ -258,34 +239,23 @@ function BuyBox({ product }: { product: StoreProduct }) {
     <section className="space-y-5 rounded-[var(--store-radius-xl)] border border-[var(--store-border)] bg-white p-6 shadow-[var(--store-shadow-sm)]">
       <div>
         <p className="text-[11px] font-extrabold uppercase tracking-[0.18em] text-[var(--store-accent)]">
-          <BilingualText
-            primary={
-              STORE_CATEGORIES.find((category) => category.label === product.category)?.zh ??
-              "定制产品"
-            }
-            secondary={product.category ?? "Personalizado"}
-            compact
-          />
+          {product.category ?? "Personalizado"}
         </p>
         <h1 className="mt-1 text-2xl font-extrabold leading-tight text-[var(--store-text)] sm:text-3xl">
-          <BilingualText primary={nameZh} secondary={product.name} />
+          {product.name}
         </h1>
         {rating != null && (
           <div className="mt-2 flex items-center gap-1 text-sm text-[var(--store-text-muted)]">
             <Star className="h-4 w-4 fill-[var(--store-secondary)] text-[var(--store-secondary)]" />
             <span className="font-semibold text-[var(--store-text)]">{rating.toFixed(1)}</span>
-            <span>· {product.reviews_count ?? 0} 评价 / avaliações</span>
+            <span>· {product.reviews_count ?? 0} avaliações</span>
           </div>
         )}
       </div>
 
       <div className="rounded-[var(--store-radius-lg)] bg-[var(--store-surface-soft)] p-4">
         <p className="text-[10px] font-bold uppercase tracking-wide text-[var(--store-text-light)]">
-          <BilingualText
-            primary={showPrices ? "单价" : "价格"}
-            secondary={showPrices ? "Preço unitário" : "Valor"}
-            compact
-          />
+          {showPrices ? "Preço unitário" : "Valor"}
         </p>
         <p className="text-3xl font-extrabold leading-tight text-[var(--store-primary)]">
           {showPrices ? brl(product.base_price) : "Sob consulta"}
@@ -293,7 +263,7 @@ function BuyBox({ product }: { product: StoreProduct }) {
         <p className="text-xs text-[var(--store-text-muted)]">
           {showPrices
             ? `${product.unit ? `por ${product.unit}` : ""}${product.min_quantity ? ` · mínimo ${product.min_quantity}` : ""}`
-            : `通过 WhatsApp 获取报价 / Peça seu orçamento no WhatsApp${product.min_quantity ? ` · 最低起订量 / mínimo ${product.min_quantity}` : ""}`}
+            : `Peça seu orçamento no WhatsApp${product.min_quantity ? ` · mínimo ${product.min_quantity}` : ""}`}
         </p>
       </div>
 
@@ -303,7 +273,7 @@ function BuyBox({ product }: { product: StoreProduct }) {
             htmlFor="qty"
             className="text-xs font-bold uppercase tracking-wide text-[var(--store-text-muted)]"
           >
-            <BilingualText primary="数量" secondary="Quantidade" compact />
+            Quantidade
           </label>
           <input
             id="qty"
@@ -316,11 +286,7 @@ function BuyBox({ product }: { product: StoreProduct }) {
         </div>
         <div className="rounded-[var(--store-radius-md)] border border-dashed border-[var(--store-primary-light)]/40 bg-[var(--store-primary-light)]/5 p-3">
           <p className="text-[10px] font-bold uppercase tracking-wide text-[var(--store-text-muted)]">
-            <BilingualText
-              primary={showPrices ? "预计总额" : "报价"}
-              secondary={showPrices ? "Total estimado" : "Orçamento"}
-              compact
-            />
+            {showPrices ? "Total estimado" : "Orçamento"}
           </p>
           <p className="text-xl font-extrabold text-[var(--store-primary)]">
             {showPrices ? brl(total) : "Sob consulta"}
@@ -333,14 +299,14 @@ function BuyBox({ product }: { product: StoreProduct }) {
           htmlFor="obs"
           className="text-xs font-bold uppercase tracking-wide text-[var(--store-text-muted)]"
         >
-          <BilingualText primary="给团队的备注" secondary="Observações para a equipe" compact />
+          Observações para a equipe
         </label>
         <textarea
           id="obs"
           rows={3}
           value={obs}
           onChange={(e) => setObs(e.target.value)}
-          placeholder="例如：主色、所需格式、交付时间… / Ex.: cores predominantes, formato desejado, prazo..."
+          placeholder="Ex.: cores predominantes, formato desejado, prazo..."
           className="mt-1 w-full rounded-[var(--store-radius-md)] border border-[var(--store-border)] bg-white px-3 py-2 text-sm outline-none focus:border-[var(--store-primary-light)] focus:ring-4 focus:ring-[var(--store-primary-light)]/15"
         />
       </div>
@@ -352,42 +318,26 @@ function BuyBox({ product }: { product: StoreProduct }) {
           rel="noopener noreferrer"
           className="inline-flex h-12 items-center justify-center gap-2 rounded-[var(--store-radius-md)] bg-[var(--store-success)] text-sm font-extrabold uppercase tracking-wide text-white shadow-[var(--store-shadow-md)] transition-transform hover:-translate-y-0.5"
         >
-          <MessageCircle className="h-5 w-5" />{" "}
-          <BilingualText primary="通过 WhatsApp 购买" secondary="Comprar pelo WhatsApp" compact />
+          <MessageCircle className="h-5 w-5" /> Comprar pelo WhatsApp
         </a>
         <button
           type="button"
           onClick={handleAddToCart}
           className="inline-flex h-11 items-center justify-center gap-2 rounded-[var(--store-radius-md)] border border-[var(--store-border)] bg-white text-sm font-bold text-[var(--store-primary)] hover:bg-[var(--store-surface-soft)] transition-colors"
         >
-          <ShoppingCart className="h-4 w-4" />{" "}
-          <BilingualText primary="加入购物车" secondary="Adicionar ao carrinho" compact />
+          <ShoppingCart className="h-4 w-4" /> Adicionar ao carrinho
         </button>
         <button
           type="button"
           disabled
           className="inline-flex h-11 cursor-not-allowed items-center justify-center gap-2 rounded-[var(--store-radius-md)] border border-dashed border-[var(--store-border-strong)] bg-white text-sm font-bold text-[var(--store-text-muted)]"
         >
-          <Upload className="h-4 w-4" />{" "}
-          <BilingualText
-            primary="上传设计（即将推出）"
-            secondary="Enviar arte (em breve)"
-            compact
-          />
+          <Upload className="h-4 w-4" /> Enviar arte (em breve)
         </button>
       </div>
     </section>
   );
 }
-
-const INFO_ZH: Record<string, string> = {
-  "Produção rápida": "快速生产",
-  "Pronto em até 48h úteis": "最多 48 个工作小时完成",
-  "Entrega ou retirada": "配送或自取",
-  "Combine pelo WhatsApp": "通过 WhatsApp 协商",
-  "Aprovação garantida": "确认保障",
-  "Você confirma antes da produção": "生产前由您确认",
-};
 
 function InfoRow({ icon: Icon, title, text }: { icon: any; title: string; text: string }) {
   return (
@@ -396,12 +346,8 @@ function InfoRow({ icon: Icon, title, text }: { icon: any; title: string; text: 
         <Icon className="h-5 w-5" />
       </span>
       <div>
-        <p className="text-sm font-bold text-[var(--store-text)]">
-          <BilingualText primary={INFO_ZH[title] ?? title} secondary={title} compact />
-        </p>
-        <p className="text-xs text-[var(--store-text-muted)]">
-          <BilingualText primary={INFO_ZH[text] ?? text} secondary={text} compact />
-        </p>
+        <p className="text-sm font-bold text-[var(--store-text)]">{title}</p>
+        <p className="text-xs text-[var(--store-text-muted)]">{text}</p>
       </div>
     </div>
   );

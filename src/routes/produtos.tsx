@@ -13,7 +13,6 @@ import {
 } from "@/components/storefront/ProductCard";
 import { STORE_CATEGORIES } from "@/components/storefront/tokens";
 import { resolveProductImage } from "@/components/storefront/productImages";
-import { BilingualText } from "@/components/storefront/BilingualText";
 
 type Search = { cat?: string; q?: string };
 
@@ -86,7 +85,7 @@ function ProdutosPage() {
             <input
               value={text}
               onChange={(e) => setText(e.target.value)}
-              placeholder="搜索目录 / Buscar no catálogo..."
+              placeholder="Buscar no catálogo..."
               className="h-11 w-full rounded-[var(--store-radius-md)] border border-[var(--store-border)] bg-white pl-11 pr-4 text-sm outline-none focus:border-[var(--store-primary-light)] focus:ring-4 focus:ring-[var(--store-primary-light)]/15"
             />
           </div>
@@ -106,7 +105,7 @@ function ProdutosPage() {
                     : "border-[var(--store-border)] bg-white text-[var(--store-text-muted)] hover:border-[var(--store-primary-light)]/40 hover:text-[var(--store-primary)]"
                 }`}
               >
-                <BilingualText primary={c.zh} secondary={c.label} compact />
+                {c.label}
               </Link>
             );
           })}
@@ -127,14 +126,10 @@ function ProdutosPage() {
         ) : (
           <div className="rounded-[var(--store-radius-lg)] border border-dashed border-[var(--store-border)] bg-white p-12 text-center">
             <p className="text-base font-bold text-[var(--store-text)]">
-              <BilingualText primary="未找到产品" secondary="Nenhum produto encontrado" />
+              Nenhum produto encontrado
             </p>
             <p className="mt-1 text-sm text-[var(--store-text-muted)]">
-              <BilingualText
-                primary="请尝试其他类别或调整搜索。"
-                secondary="Tente outra categoria ou ajuste a busca."
-                compact
-              />
+              Tente outra categoria ou ajuste a busca.
             </p>
           </div>
         )}

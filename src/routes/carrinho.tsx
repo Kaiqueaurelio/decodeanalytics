@@ -5,7 +5,6 @@ import { useShowPrices, useWaLink } from "@/hooks/useCompanyInfo";
 import { StoreShell } from "@/components/storefront/StoreShell";
 import { ShoppingCart, Trash2, Minus, Plus, ArrowRight, MessageCircle } from "lucide-react";
 import { useMemo } from "react";
-import { BilingualText } from "@/components/storefront/BilingualText";
 
 export const Route = createFileRoute("/carrinho")({
   head: () => ({
@@ -43,21 +42,16 @@ function CartPage() {
         <section className="mx-auto max-w-[1280px] px-4 py-16 text-center">
           <ShoppingCart className="mx-auto h-12 w-12 text-[var(--store-text-light)]" />
           <h1 className="mt-4 text-2xl font-extrabold text-[var(--store-primary)]">
-            <BilingualText primary="购物车为空" secondary="Seu carrinho está vazio" />
+            Seu carrinho está vazio
           </h1>
           <p className="mt-2 text-sm text-[var(--store-text-muted)]">
-            <BilingualText
-              primary="浏览我们的目录并添加定制产品。"
-              secondary="Explore nosso catálogo e adicione produtos personalizados."
-              compact
-            />
+            Explore nosso catálogo e adicione produtos personalizados.
           </p>
           <Link
             to="/produtos"
             className="mt-6 inline-flex h-11 items-center justify-center gap-2 rounded-[var(--store-radius-md)] bg-[var(--store-primary)] px-5 text-sm font-bold text-white hover:bg-[var(--store-primary-light)]"
           >
-            <BilingualText primary="查看目录" secondary="Ver catálogo" compact />{" "}
-            <ArrowRight className="h-4 w-4" />
+            Ver catálogo <ArrowRight className="h-4 w-4" />
           </Link>
         </section>
       </StoreShell>
@@ -68,10 +62,10 @@ function CartPage() {
     <StoreShell>
       <section className="mx-auto max-w-[1280px] px-3 sm:px-4 py-6 sm:py-12 pb-32 lg:pb-12">
         <h1 className="text-2xl font-extrabold text-[var(--store-primary)] sm:text-3xl">
-          <BilingualText primary="购物车" secondary="Carrinho" />
+          Carrinho
         </h1>
         <p className="mt-1 text-sm text-[var(--store-text-muted)]">
-          {count} {count === 1 ? "item / 项" : "itens / 项"}
+          {count} {count === 1 ? "item" : "itens"}
         </p>
 
         <div className="mt-6 grid gap-8 lg:grid-cols-[1fr_380px]">
@@ -105,7 +99,7 @@ function CartPage() {
                       {item.name}
                     </p>
                     <p className="text-xs text-[var(--store-text-muted)]">
-                      {item.category ?? "Personalizado"} / 定制产品
+                      {item.category ?? "Personalizado"}
                       {showPrices ? ` · ${brl(item.price)} un` : ""}
                     </p>
                   </div>
@@ -114,7 +108,7 @@ function CartPage() {
                       type="button"
                       onClick={() => updateQuantity(item.id, item.quantity - 1)}
                       className="grid h-10 w-10 sm:h-9 sm:w-9 place-items-center rounded-lg border border-[var(--store-border)] bg-white text-[var(--store-text)] hover:bg-[var(--store-surface-soft)] active:scale-95"
-                      aria-label="减少数量 / Diminuir quantidade"
+                      aria-label="Diminuir quantidade"
                     >
                       <Minus className="h-4 w-4" />
                     </button>
@@ -125,7 +119,7 @@ function CartPage() {
                       type="button"
                       onClick={() => updateQuantity(item.id, item.quantity + 1)}
                       className="grid h-10 w-10 sm:h-9 sm:w-9 place-items-center rounded-lg border border-[var(--store-border)] bg-white text-[var(--store-text)] hover:bg-[var(--store-surface-soft)] active:scale-95"
-                      aria-label="增加数量 / Aumentar quantidade"
+                      aria-label="Aumentar quantidade"
                     >
                       <Plus className="h-4 w-4" />
                     </button>
@@ -137,7 +131,7 @@ function CartPage() {
                     type="button"
                     onClick={() => removeItem(item.id)}
                     className="grid h-10 w-10 sm:h-9 sm:w-9 place-items-center rounded-lg text-[var(--store-text-light)] hover:bg-red-50 hover:text-red-600"
-                    aria-label="删除商品 / Remover item"
+                    aria-label="Remover item"
                   >
                     <Trash2 className="h-4 w-4 sm:h-4 sm:w-4" />
                   </button>
@@ -151,29 +145,27 @@ function CartPage() {
                 onClick={clear}
                 className="text-xs font-semibold text-[var(--store-text-muted)] underline hover:text-[var(--store-danger)]"
               >
-                <BilingualText primary="清空购物车" secondary="Esvaziar carrinho" compact />
+                Esvaziar carrinho
               </button>
             </div>
           </div>
 
           <aside className="space-y-4 hidden lg:block">
             <div className="rounded-[var(--store-radius-xl)] border border-[var(--store-border)] bg-white p-6 shadow-[var(--store-shadow-sm)]">
-              <h2 className="text-lg font-extrabold text-[var(--store-primary)]">
-                <BilingualText primary="订单摘要" secondary="Resumo" />
-              </h2>
+              <h2 className="text-lg font-extrabold text-[var(--store-primary)]">Resumo</h2>
               <div className="mt-4 space-y-2">
                 <div className="flex justify-between text-sm text-[var(--store-text-muted)]">
-                  <BilingualText primary="小计" secondary="Subtotal" compact />
+                  <span>Subtotal</span>
                   <span>{money(total)}</span>
                 </div>
                 <div className="flex justify-between text-sm text-[var(--store-text-muted)]">
-                  <BilingualText primary="配送" secondary="Entrega" compact />
-                  <BilingualText primary="待确认" secondary="A combinar" compact />
+                  <span>Entrega</span>
+                  <span>A combinar</span>
                 </div>
               </div>
               <div className="mt-4 border-t border-[var(--store-border)] pt-4">
                 <div className="flex justify-between text-base font-extrabold text-[var(--store-text)]">
-                  <BilingualText primary="预计总额" secondary="Total estimado" compact />
+                  <span>Total estimado</span>
                   <span>{money(total)}</span>
                 </div>
               </div>
@@ -184,17 +176,10 @@ function CartPage() {
                 rel="noopener noreferrer"
                 className="mt-6 inline-flex h-12 w-full items-center justify-center gap-2 rounded-[var(--store-radius-md)] bg-[var(--store-success)] text-sm font-extrabold uppercase tracking-wide text-white shadow-[var(--store-shadow-md)] transition-transform hover:-translate-y-0.5"
               >
-                <MessageCircle className="h-5 w-5" />{" "}
-                <BilingualText
-                  primary="通过 WhatsApp 完成"
-                  secondary="Finalizar pelo WhatsApp"
-                  compact
-                />
+                <MessageCircle className="h-5 w-5" /> Finalizar pelo WhatsApp
               </a>
 
               <p className="mt-3 text-center text-xs text-[var(--store-text-muted)]">
-                您将被转到 WhatsApp，并附上订单摘要。
-                <br />
                 Você será redirecionado para o WhatsApp com o resumo do pedido.
               </p>
             </div>
@@ -203,7 +188,7 @@ function CartPage() {
               to="/produtos"
               className="flex h-11 items-center justify-center gap-2 rounded-[var(--store-radius-md)] border border-[var(--store-border)] bg-white text-sm font-bold text-[var(--store-primary)] hover:bg-[var(--store-surface-soft)]"
             >
-              <BilingualText primary="继续购物" secondary="Continuar comprando" compact />
+              Continuar comprando
             </Link>
           </aside>
         </div>
@@ -217,7 +202,7 @@ function CartPage() {
         <div className="mx-auto flex max-w-[1280px] items-center gap-3 px-3 py-3 sm:px-4">
           <div className="min-w-0 flex-1">
             <p className="text-[11px] font-semibold uppercase tracking-wide text-[var(--store-text-muted)]">
-              总计 / Total ({count} {count === 1 ? "item" : "itens"})
+              Total ({count} {count === 1 ? "item" : "itens"})
             </p>
             <p className="truncate text-lg font-extrabold text-[var(--store-primary)]">
               {money(total)}
@@ -229,8 +214,7 @@ function CartPage() {
             rel="noopener noreferrer"
             className="inline-flex h-12 shrink-0 items-center justify-center gap-2 rounded-[var(--store-radius-md)] bg-[var(--store-success)] px-5 text-sm font-extrabold uppercase tracking-wide text-white shadow-[var(--store-shadow-md)] active:scale-[0.98]"
           >
-            <MessageCircle className="h-5 w-5" />{" "}
-            <BilingualText primary="完成订单" secondary="Finalizar" compact />
+            <MessageCircle className="h-5 w-5" /> Finalizar
           </a>
         </div>
       </div>
