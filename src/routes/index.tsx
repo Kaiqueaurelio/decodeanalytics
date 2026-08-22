@@ -26,7 +26,10 @@ import {
 } from "lucide-react";
 import { StoreShell } from "@/components/storefront/StoreShell";
 import { Hero } from "@/components/storefront/Hero";
-import { SectionHeader, type StoreProduct } from "@/components/storefront/ProductCard";
+import {
+  SectionHeader,
+  type StoreProduct,
+} from "@/components/storefront/ProductCard";
 import { SmartImage } from "@/components/storefront/SmartImage";
 import { STORE_CATEGORIES, brl } from "@/components/storefront/tokens";
 import { useCompanyInfo, useShowPrices, useWaLink } from "@/hooks/useCompanyInfo";
@@ -49,7 +52,8 @@ export const Route = createFileRoute("/")({
       { property: "og:title", content: "Alcateia Produções Gráficas — Gráfica online" },
       {
         property: "og:description",
-        content: "Produtos personalizados com acabamento profissional. Peça pelo site ou WhatsApp.",
+        content:
+          "Produtos personalizados com acabamento profissional. Peça pelo site ou WhatsApp.",
       },
     ],
   }),
@@ -62,35 +66,23 @@ function HomePage() {
       <Hero />
       <CategoryCircles />
       <LightBand>
-        <Reveal variant="up">
-          <FeaturedBento />
-        </Reveal>
+        <Reveal variant="up"><FeaturedBento /></Reveal>
       </LightBand>
-      <Reveal variant="up">
-        <CategoriesSection />
-      </Reveal>
-      <Reveal variant="up">
-        <InfiniteProducts />
-      </Reveal>
-      <Reveal variant="up">
-        <TestimonialsSection />
-      </Reveal>
-      <Reveal variant="up">
-        <HowItWorks />
-      </Reveal>
-      <Reveal variant="up">
-        <ArtTipsSection />
-      </Reveal>
-      <Reveal variant="up">
-        <ContactSection />
-      </Reveal>
+      <Reveal variant="up"><CategoriesSection /></Reveal>
+      <Reveal variant="up"><InfiniteProducts /></Reveal>
+      <Reveal variant="up"><TestimonialsSection /></Reveal>
+      <Reveal variant="up"><HowItWorks /></Reveal>
+      <Reveal variant="up"><ArtTipsSection /></Reveal>
+      <Reveal variant="up"><ContactSection /></Reveal>
     </StoreShell>
   );
 }
 
 function LightBand({ children }: { children: React.ReactNode }) {
   return (
-    <div className="relative overflow-hidden bg-[var(--store-bg)] pb-12 pt-2 sm:pb-16 sm:pt-4">
+    <div
+      className="relative overflow-hidden bg-[var(--store-bg)] pb-12 pt-2 sm:pb-16 sm:pt-4"
+    >
       {children}
     </div>
   );
@@ -143,18 +135,16 @@ function FeaturedBento() {
                 style={{ minHeight: 260 }}
               />
             ))
-          : featured
-              .slice(0, 2)
-              .map((p, idx) => (
-                <BentoProductCard
-                  key={p.id}
-                  product={p}
-                  animationDelay={120 + idx * 80}
-                  position={idx + 1}
-                />
-              ))}
+          : featured.slice(0, 2).map((p, idx) => (
+              <BentoProductCard
+                key={p.id}
+                product={p}
+                animationDelay={120 + idx * 80}
+                position={idx + 1}
+              />
+            ))}
 
-        <BentoFeatureCard
+        <BentoFeatureCard 
           href={waLink("Olá! Quero contratar a criação de uma arte.")}
           icon={Palette}
           title="CRIAMOS SUA ARTE"
@@ -171,7 +161,7 @@ function FeaturedBento() {
           }
         />
 
-        <BentoFeatureCard
+        <BentoFeatureCard 
           href="/produtos"
           isInternal
           variant="navy"
@@ -193,16 +183,14 @@ function FeaturedBento() {
 
         {/* Mais 4 produtos */}
         {!isLoading &&
-          featured
-            .slice(2, 6)
-            .map((p, idx) => (
-              <BentoProductCard
-                key={p.id}
-                product={p}
-                animationDelay={440 + idx * 80}
-                position={idx + 3}
-              />
-            ))}
+          featured.slice(2, 6).map((p, idx) => (
+            <BentoProductCard
+              key={p.id}
+              product={p}
+              animationDelay={440 + idx * 80}
+              position={idx + 3}
+            />
+          ))}
       </div>
     </section>
   );
@@ -241,8 +229,8 @@ function BentoProductCard({
       }
     >
       <div className="relative mb-3 flex aspect-square items-center justify-center overflow-hidden rounded-[var(--store-radius-md)] bg-slate-100">
-        <SmartImage
-          src={product.image_url}
+        <SmartImage 
+          src={product.image_url} 
           alt={product.name}
           fallbackEmoji="📦"
           className="transition-transform duration-500 group-hover:scale-[1.06]"
@@ -269,7 +257,9 @@ function BentoProductCard({
               <span className="text-[11px] font-bold text-[var(--store-ink)]">
                 {rating.toFixed(1)}
               </span>
-              <span className="text-[10px] text-slate-400">({product.reviews_count ?? 0})</span>
+              <span className="text-[10px] text-slate-400">
+                ({product.reviews_count ?? 0})
+              </span>
             </div>
           )}
           {showPrices ? (
@@ -337,26 +327,17 @@ function HowItWorks() {
   const waLink = useWaLink();
   const { howItWorksTitle } = useCompanyInfo();
   const steps = [
-    {
-      icon: CheckCircle2,
-      title: "Escolha o produto",
-      desc: "Navegue pelo catálogo e selecione a opção ideal.",
-    },
-    {
-      icon: Upload,
-      title: "Envie sua arte",
-      desc: "Anexe o arquivo ou peça para nossa equipe criar.",
-    },
+    { icon: CheckCircle2, title: "Escolha o produto", desc: "Navegue pelo catálogo e selecione a opção ideal." },
+    { icon: Upload, title: "Envie sua arte", desc: "Anexe o arquivo ou peça para nossa equipe criar." },
     { icon: Send, title: "Aprovação rápida", desc: "Confirmamos detalhes e prazos pelo WhatsApp." },
-    {
-      icon: PackageCheck,
-      title: "Produção e entrega",
-      desc: "Retirada na loja ou entrega no endereço.",
-    },
+    { icon: PackageCheck, title: "Produção e entrega", desc: "Retirada na loja ou entrega no endereço." },
   ];
   return (
     <section className="mx-auto max-w-[1280px] px-4 py-12 sm:py-16">
-      <SectionHeader kicker="Como funciona" title={howItWorksTitle} />
+      <SectionHeader
+        kicker="Como funciona"
+        title={howItWorksTitle}
+      />
       <ol className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {steps.map((s, idx) => (
           <Reveal
@@ -464,8 +445,7 @@ function ArtTipsSection() {
           <p className="flex items-start gap-2">
             <CheckCircle2 className="mt-0.5 h-5 w-5 text-[var(--store-success)]" />
             <span>
-              <strong>Resumo rápido:</strong> PDF editável · 300 DPI · CMYK · sangria 3mm. Aceitamos
-              PDF, AI, CDR, PSD, SVG, PNG e JPG até 50 MB.
+              <strong>Resumo rápido:</strong> PDF editável · 300 DPI · CMYK · sangria 3mm. Aceitamos PDF, AI, CDR, PSD, SVG, PNG e JPG até 50 MB.
             </span>
           </p>
         </div>
@@ -474,9 +454,11 @@ function ArtTipsSection() {
   );
 }
 
+
 function ContactSection() {
   return _ContactSection();
 }
+
 
 function TestimonialsSection() {
   const items = [
@@ -558,8 +540,12 @@ function _ContactSection() {
           <p className="text-xs font-bold uppercase tracking-[0.2em] text-[var(--store-secondary)]">
             Atendimento
           </p>
-          <h2 className="mt-2 text-3xl font-extrabold sm:text-4xl">{info.contactTitle}</h2>
-          <p className="mt-3 text-white/70">{info.contactDescription}</p>
+          <h2 className="mt-2 text-3xl font-extrabold sm:text-4xl">
+            {info.contactTitle}
+          </h2>
+          <p className="mt-3 text-white/70">
+            {info.contactDescription}
+          </p>
           <a
             href={waLink("Olá! Quero fazer um orçamento.")}
             target="_blank"
@@ -637,7 +623,9 @@ function _ContactSection() {
             referrerPolicy="no-referrer-when-downgrade"
           />
           <div className="flex items-center justify-between border-t border-white/10 px-4 py-3 sm:px-5">
-            <p className="text-xs font-semibold text-white/80">{info.address}</p>
+            <p className="text-xs font-semibold text-white/80">
+              {info.address}
+            </p>
             <a
               href={info.mapsUrl}
               target="_blank"
@@ -678,36 +666,32 @@ function BentoFeatureCard({
 }: BentoFeatureCardProps) {
   const isGold = variant === "gold";
   const Container = isInternal ? Link : "a";
-  const linkProps = isInternal
-    ? { to: href }
-    : { href, target: "_blank", rel: "noopener noreferrer" };
+  const linkProps = isInternal ? { to: href } : { href, target: "_blank", rel: "noopener noreferrer" };
 
   return (
     <Container
       {...(linkProps as any)}
       className={cn(
         "store-bento-card group flex flex-col items-center justify-center p-5 text-center animate-fade-in",
-        isGold ? "bg-[var(--store-gold)] text-[var(--store-ink)]" : "bg-[#172554] text-white",
+        isGold ? "bg-[var(--store-gold)] text-[var(--store-ink)]" : "bg-[#172554] text-white"
       )}
       style={{ animationDelay, animationFillMode: "both" }}
       onClick={onClick}
     >
-      <div
-        className={cn(
-          "mb-2 flex h-12 w-12 items-center justify-center rounded-full transition-transform group-hover:scale-110",
-          isGold ? "" : "border-2 border-white",
-        )}
-      >
+      <div className={cn(
+        "mb-2 flex h-12 w-12 items-center justify-center rounded-full transition-transform group-hover:scale-110",
+        isGold ? "" : "border-2 border-white"
+      )}>
         <Icon className="h-7 w-7" />
       </div>
       <p className="font-display text-2xl leading-none sm:text-3xl">{title}</p>
-      <p className={cn("mt-2 text-xs font-medium", isGold ? "" : "text-white/80")}>{description}</p>
-      <span
-        className={cn(
-          "mt-4 inline-flex items-center justify-center px-4 py-2 text-[10px] font-extrabold uppercase tracking-[0.2em] transition-transform group-hover:scale-105",
-          isGold ? "bg-[var(--store-ink)] text-white" : "bg-white text-[#172554]",
-        )}
-      >
+      <p className={cn("mt-2 text-xs font-medium", isGold ? "" : "text-white/80")}>
+        {description}
+      </p>
+      <span className={cn(
+        "mt-4 inline-flex items-center justify-center px-4 py-2 text-[10px] font-extrabold uppercase tracking-[0.2em] transition-transform group-hover:scale-105",
+        isGold ? "bg-[var(--store-ink)] text-white" : "bg-white text-[#172554]"
+      )}>
         {cta}
       </span>
     </Container>

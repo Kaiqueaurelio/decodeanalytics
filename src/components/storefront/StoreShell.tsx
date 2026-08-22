@@ -93,11 +93,7 @@ function StoreHeader() {
   return (
     <header className="store-sticky-header sticky z-40 border-b border-[var(--store-border)] bg-[var(--store-surface)]/95 backdrop-blur transition-all duration-300">
       <div className="mx-auto flex max-w-[1280px] items-center justify-between gap-3 px-3 py-2 sm:px-4 sm:py-3 md:gap-6 md:py-4">
-        <Link
-          to="/"
-          aria-label="Logo Alcateia"
-          className="flex shrink-0 items-center gap-2 sm:gap-3 transition-transform hover:scale-[1.02]"
-        >
+        <Link to="/" className="flex shrink-0 items-center gap-2 sm:gap-3 transition-transform hover:scale-[1.02]">
           <img
             src="/brand/alcateia-logo.png"
             alt="Alcateia Produções Gráficas"
@@ -188,121 +184,119 @@ function StoreHeader() {
               side="left"
               className="w-[85%] sm:w-80 bg-white p-0 flex flex-col [&>button.absolute]:hidden"
             >
-              <div className="flex items-center justify-between border-b border-[var(--store-border)] px-6 py-5">
-                <div className="flex items-center gap-3">
-                  <img
-                    src="/brand/alcateia-logo.png"
-                    alt="Alcateia Produções Gráficas"
-                    className="h-10 w-auto object-contain"
-                  />
-                  <div className="leading-tight">
-                    <div className="text-sm font-extrabold text-[var(--store-primary)]">
-                      Alcateia
-                    </div>
-                    <div className="text-[9px] font-bold uppercase tracking-[0.15em] text-[var(--store-accent)]">
-                      Produções Gráficas
-                    </div>
+            <div className="flex items-center justify-between border-b border-[var(--store-border)] px-6 py-5">
+              <div className="flex items-center gap-3">
+                <img
+                  src="/brand/alcateia-logo.png"
+                  alt="Alcateia Produções Gráficas"
+                  className="h-10 w-auto object-contain"
+                />
+                <div className="leading-tight">
+                  <div className="text-sm font-extrabold text-[var(--store-primary)]">
+                    Alcateia
+                  </div>
+                  <div className="text-[9px] font-bold uppercase tracking-[0.15em] text-[var(--store-accent)]">
+                    Produções Gráficas
                   </div>
                 </div>
-                <SheetClose className="rounded-lg p-1 hover:bg-[var(--store-surface-soft)]">
-                  <X className="h-5 w-5 text-[var(--store-text)]" />
-                </SheetClose>
+              </div>
+              <SheetClose className="rounded-lg p-1 hover:bg-[var(--store-surface-soft)]">
+                <X className="h-5 w-5 text-[var(--store-text)]" />
+              </SheetClose>
+            </div>
+
+            <nav className="flex-1 overflow-y-auto py-2">
+              {/* Categorias */}
+              <div className="border-b border-[var(--store-border)] px-6 py-4">
+                <h3 className="text-xs font-bold uppercase tracking-wide text-[var(--store-text-muted)] mb-3">
+                  Categorias
+                </h3>
+                <div className="space-y-2">
+                  {STORE_CATEGORIES.map((c) => (
+                    <Link
+                      key={c.slug}
+                      to="/produtos"
+                      search={{ cat: c.slug }}
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="block px-3 py-2 rounded-lg text-sm font-medium text-[var(--store-text)] hover:bg-[var(--store-surface-soft)] transition-colors"
+                    >
+                      {c.label}
+                    </Link>
+                  ))}
+                </div>
               </div>
 
-              <nav className="flex-1 overflow-y-auto py-2">
-                {/* Categorias */}
-                <div className="border-b border-[var(--store-border)] px-6 py-4">
-                  <h3 className="text-xs font-bold uppercase tracking-wide text-[var(--store-text-muted)] mb-3">
-                    Categorias
-                  </h3>
-                  <div className="space-y-2">
-                    {STORE_CATEGORIES.map((c) => (
-                      <Link
-                        key={c.slug}
-                        to="/produtos"
-                        search={{ cat: c.slug }}
-                        onClick={() => setMobileMenuOpen(false)}
-                        className="block px-3 py-2 rounded-lg text-sm font-medium text-[var(--store-text)] hover:bg-[var(--store-surface-soft)] transition-colors"
-                      >
-                        {c.label}
-                      </Link>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="border-b border-[var(--store-border)] px-6 py-4">
-                  <h3 className="text-[10px] font-bold uppercase tracking-widest text-[var(--store-text-muted)] mb-3">
-                    Minha Conta
-                  </h3>
-                  <div className="space-y-2">
-                    <Link
-                      to="/auth"
-                      onClick={() => setMobileMenuOpen(false)}
-                      className="flex items-center gap-3 px-3 py-3 rounded-lg text-sm font-medium text-[var(--store-text)] hover:bg-[var(--store-surface-soft)] transition-colors"
-                    >
-                      <User className="h-4 w-4 text-[var(--store-primary)]" />
-                      Entrar na conta
-                    </Link>
-                    <Link
-                      to="/carrinho"
-                      onClick={() => setMobileMenuOpen(false)}
-                      className="flex items-center gap-3 px-3 py-3 rounded-lg text-sm font-medium text-[var(--store-text)] hover:bg-[var(--store-surface-soft)] transition-colors"
-                    >
-                      <ShoppingCart className="h-4 w-4 text-[var(--store-primary)]" />
-                      Carrinho
-                      <CartCountBadge />
-                    </Link>
-                  </div>
-                </div>
-
-                <div className="px-6 py-4">
-                  <h3 className="text-[10px] font-bold uppercase tracking-widest text-[var(--store-text-muted)] mb-3">
-                    Atendimento
-                  </h3>
-                  <a
-                    href={waLink("Olá! Vim do site da Alcateia Produções Gráficas.")}
-                    target="_blank"
-                    rel="noopener noreferrer"
+              <div className="border-b border-[var(--store-border)] px-6 py-4">
+                <h3 className="text-[10px] font-bold uppercase tracking-widest text-[var(--store-text-muted)] mb-3">
+                  Minha Conta
+                </h3>
+                <div className="space-y-2">
+                  <Link
+                    to="/auth"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center gap-3 px-3 py-3 rounded-lg text-sm font-medium text-[var(--store-text)] hover:bg-[var(--store-surface-soft)] transition-colors bg-[var(--store-secondary)]/10"
+                    className="flex items-center gap-3 px-3 py-3 rounded-lg text-sm font-medium text-[var(--store-text)] hover:bg-[var(--store-surface-soft)] transition-colors"
                   >
-                    <MessageCircle className="h-4 w-4 text-[var(--store-success)]" />
-                    <div>
-                      <div className="font-semibold text-[var(--store-success)]">WhatsApp</div>
-                      <div className="text-xs text-[var(--store-text-muted)]">
-                        {info.whatsappDisplay}
-                      </div>
-                    </div>
-                  </a>
-                </div>
-              </nav>
-
-              {/* Footer do menu */}
-              <div className="border-t border-[var(--store-border)] px-6 py-4 bg-[var(--store-surface-soft)]">
-                <p className="text-xs text-[var(--store-text-muted)] leading-relaxed mb-3">
-                  Produtos personalizados com acabamento profissional para sua marca brilhar.
-                </p>
-                <div className="flex gap-2">
-                  <a
-                    href={info.instagramUrl ?? "#"}
-                    target={info.instagramUrl ? "_blank" : undefined}
-                    rel={info.instagramUrl ? "noopener noreferrer" : undefined}
-                    aria-label="Instagram"
-                    className="grid h-11 w-11 place-items-center rounded-lg bg-white hover:bg-[var(--store-primary)] hover:text-white transition-colors"
+                    <User className="h-4 w-4 text-[var(--store-primary)]" />
+                    Entrar na conta
+                  </Link>
+                  <Link
+                    to="/carrinho"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center gap-3 px-3 py-3 rounded-lg text-sm font-medium text-[var(--store-text)] hover:bg-[var(--store-surface-soft)] transition-colors"
                   >
-                    <Instagram className="h-4 w-4" />
-                  </a>
-                  <a
-                    href="#"
-                    aria-label="Facebook"
-                    className="grid h-11 w-11 place-items-center rounded-lg bg-white hover:bg-[var(--store-primary)] hover:text-white transition-colors"
-                  >
-                    <Facebook className="h-4 w-4" />
-                  </a>
+                    <ShoppingCart className="h-4 w-4 text-[var(--store-primary)]" />
+                    Carrinho
+                    <CartCountBadge />
+                  </Link>
                 </div>
               </div>
-            </SheetContent>
-          </Sheet>
+
+              <div className="px-6 py-4">
+                <h3 className="text-[10px] font-bold uppercase tracking-widest text-[var(--store-text-muted)] mb-3">
+                  Atendimento
+                </h3>
+                <a
+                  href={waLink("Olá! Vim do site da Alcateia Produções Gráficas.")}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center gap-3 px-3 py-3 rounded-lg text-sm font-medium text-[var(--store-text)] hover:bg-[var(--store-surface-soft)] transition-colors bg-[var(--store-secondary)]/10"
+                >
+                  <MessageCircle className="h-4 w-4 text-[var(--store-success)]" />
+                  <div>
+                    <div className="font-semibold text-[var(--store-success)]">WhatsApp</div>
+                    <div className="text-xs text-[var(--store-text-muted)]">{info.whatsappDisplay}</div>
+                  </div>
+                </a>
+              </div>
+            </nav>
+
+            {/* Footer do menu */}
+            <div className="border-t border-[var(--store-border)] px-6 py-4 bg-[var(--store-surface-soft)]">
+              <p className="text-xs text-[var(--store-text-muted)] leading-relaxed mb-3">
+                Produtos personalizados com acabamento profissional para sua marca brilhar.
+              </p>
+              <div className="flex gap-2">
+                <a
+                  href={info.instagramUrl ?? "#"}
+                  target={info.instagramUrl ? "_blank" : undefined}
+                  rel={info.instagramUrl ? "noopener noreferrer" : undefined}
+                  aria-label="Instagram"
+                  className="grid h-11 w-11 place-items-center rounded-lg bg-white hover:bg-[var(--store-primary)] hover:text-white transition-colors"
+                >
+                  <Instagram className="h-4 w-4" />
+                </a>
+                <a
+                  href="#"
+                  aria-label="Facebook"
+                  className="grid h-11 w-11 place-items-center rounded-lg bg-white hover:bg-[var(--store-primary)] hover:text-white transition-colors"
+                >
+                  <Facebook className="h-4 w-4" />
+                </a>
+              </div>
+            </div>
+          </SheetContent>
+        </Sheet>
         </div>
       </div>
     </header>
@@ -443,34 +437,22 @@ function StoreFooter() {
           </h3>
           <ul className="mt-2 text-sm text-white/70">
             <li>
-              <Link
-                to="/produtos"
-                className="inline-flex min-h-11 items-center transition-colors hover:text-white"
-              >
+              <Link to="/produtos" className="inline-flex min-h-11 items-center transition-colors hover:text-white">
                 Catálogo completo
               </Link>
             </li>
             <li>
-              <Link
-                to="/auth"
-                className="inline-flex min-h-11 items-center transition-colors hover:text-white"
-              >
+              <Link to="/auth" className="inline-flex min-h-11 items-center transition-colors hover:text-white">
                 Minha conta
               </Link>
             </li>
             <li>
-              <a
-                href="#"
-                className="inline-flex min-h-11 items-center transition-colors hover:text-white"
-              >
+              <a href="#" className="inline-flex min-h-11 items-center transition-colors hover:text-white">
                 Política de privacidade
               </a>
             </li>
             <li>
-              <a
-                href="#"
-                className="inline-flex min-h-11 items-center transition-colors hover:text-white"
-              >
+              <a href="#" className="inline-flex min-h-11 items-center transition-colors hover:text-white">
                 Trocas e devoluções
               </a>
             </li>
@@ -479,9 +461,7 @@ function StoreFooter() {
       </div>
       <div className="border-t border-white/10">
         <div className="mx-auto flex max-w-[1280px] flex-col items-center justify-between gap-2 px-4 py-4 text-xs text-white/50 md:flex-row">
-          <p>
-            © {new Date().getFullYear()} Alcateia Produções Gráficas. Todos os direitos reservados.
-          </p>
+          <p>© {new Date().getFullYear()} Alcateia Produções Gráficas. Todos os direitos reservados.</p>
           <p>Feito com cuidado para sua marca brilhar.</p>
         </div>
       </div>

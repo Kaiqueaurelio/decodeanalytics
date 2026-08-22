@@ -213,24 +213,12 @@ export function AppShell({ children }: { children: ReactNode }) {
         )}
       >
         <div className={cn("flex flex-col py-8", collapsed ? "items-center px-0" : "px-3")}>
-          <div
-            className={cn(
-              "flex w-full items-center px-3 mb-6",
-              collapsed ? "justify-center" : "justify-between",
-            )}
-          >
-            <div
-              className={cn(
-                "flex items-center transition-all duration-500",
-                collapsed ? "justify-center" : "gap-2.5",
-              )}
-            >
-              <div
-                className={cn(
-                  "flex shrink-0 items-center justify-center rounded-lg bg-[#ff8100] font-black text-white shadow-md shadow-[#ff8100]/20 transition-all duration-300",
-                  collapsed ? "h-11 w-11 text-base" : "h-8 w-8 text-xs",
-                )}
-              >
+          <div className={cn("flex w-full items-center px-3 mb-6", collapsed ? "justify-center" : "justify-between")}>
+            <div className={cn("flex items-center transition-all duration-500", collapsed ? "justify-center" : "gap-2.5")}>
+              <div className={cn(
+                "flex shrink-0 items-center justify-center rounded-lg bg-[#ff8100] font-black text-white shadow-md shadow-[#ff8100]/20 transition-all duration-300",
+                collapsed ? "h-11 w-11 text-base" : "h-8 w-8 text-xs"
+              )}>
                 A
               </div>
               {!collapsed && (
@@ -254,12 +242,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             )}
           </div>
 
-          <div
-            className={cn(
-              "relative w-full transition-all duration-300 px-3",
-              collapsed && "flex justify-center",
-            )}
-          >
+          <div className={cn("relative w-full transition-all duration-300 px-3", collapsed && "flex justify-center")}>
             <div
               className={cn(
                 "group relative flex h-10 items-center rounded-lg bg-[#0b1a2c] transition-all focus-within:bg-[#0b1a2c]/80 border border-[#535d7d]/30",
@@ -268,9 +251,7 @@ export function AppShell({ children }: { children: ReactNode }) {
               title={collapsed ? "Buscar" : undefined}
             >
               <Search
-                className={cn(
-                  "h-4 w-4 shrink-0 text-[#7d84ab]/50 group-focus-within:text-[#dee2ec] transition-colors",
-                )}
+                className={cn("h-4 w-4 shrink-0 text-[#7d84ab]/50 group-focus-within:text-[#dee2ec] transition-colors")}
               />
               <input
                 type="text"
@@ -335,23 +316,15 @@ export function AppShell({ children }: { children: ReactNode }) {
                           active
                             ? "bg-[#0b1a2c] text-white font-bold shadow-lg shadow-black/30 border border-[#535d7d]/30"
                             : "text-[#dee2ec] hover:bg-[#0b1a2c]/50 hover:text-white",
-                          collapsed
-                            ? "h-11 w-11 justify-center px-0"
-                            : "h-auto w-full px-3 py-3 gap-3 justify-start",
+                          collapsed ? "h-11 w-11 justify-center px-0" : "h-auto w-full px-3 py-3 gap-3 justify-start"
                         )}
                       >
-                        <Icon
-                          className={cn(
-                            "shrink-0 transition-transform duration-300",
-                            active
-                              ? "text-white scale-110"
-                              : "text-[#7d84ab] group-hover:text-[#dee2ec]",
-                            collapsed ? "h-5 w-5" : "h-5 w-5",
-                          )}
-                        />
+                        <Icon className={cn("shrink-0 transition-transform duration-300", active ? "text-white scale-110" : "text-[#7d84ab] group-hover:text-[#dee2ec]", collapsed ? "h-5 w-5" : "h-5 w-5")} />
                         {!collapsed && (
                           <>
-                            <span className="flex-1 truncate">{item.label}</span>
+                            <span className="flex-1 truncate">
+                              {item.label}
+                            </span>
                             {item.label === "Dashboard" && (
                               <span className="rounded-md bg-rose-500 px-1.5 py-0.5 text-[8px] font-black text-white uppercase animate-pulse">
                                 Novo
@@ -362,7 +335,9 @@ export function AppShell({ children }: { children: ReactNode }) {
                                 3
                               </span>
                             )}
-                            {active && <ChevronRight className="h-3 w-3 text-white/40" />}
+                            {active && (
+                              <ChevronRight className="h-3 w-3 text-white/40" />
+                            )}
                           </>
                         )}
                         {active && collapsed && (
@@ -377,26 +352,16 @@ export function AppShell({ children }: { children: ReactNode }) {
           })}
         </nav>
 
-        <div
-          className={cn(
-            "mt-auto border-t border-[#535d7d]/20 bg-[#0b1a2c]/50 p-3 flex flex-col",
-            collapsed && "items-center",
-          )}
-        >
+        <div className={cn("mt-auto border-t border-[#535d7d]/20 bg-[#0b1a2c]/50 p-3 flex flex-col", collapsed && "items-center")}>
           <div className={cn("mb-4 w-full", collapsed && "flex justify-center")}>
-            <div
-              className={cn(
-                "flex items-center rounded-xl bg-[#0b1a2c] ring-1 ring-[#535d7d]/20 transition-all duration-300",
-                collapsed ? "h-12 w-12 justify-center" : "gap-3 p-2 w-full",
-              )}
-              title={collapsed ? (isAdmin ? "Administrador" : "Usuário") : undefined}
-            >
-              <div
-                className={cn(
-                  "flex shrink-0 items-center justify-center rounded-lg bg-[#ff8100]/20 text-[10px] font-black text-[#ff8100] transition-all duration-300",
-                  collapsed ? "h-10 w-10" : "h-8 w-8",
-                )}
-              >
+            <div className={cn(
+              "flex items-center rounded-xl bg-[#0b1a2c] ring-1 ring-[#535d7d]/20 transition-all duration-300",
+              collapsed ? "h-12 w-12 justify-center" : "gap-3 p-2 w-full"
+            )} title={collapsed ? (isAdmin ? "Administrador" : "Usuário") : undefined}>
+              <div className={cn(
+                "flex shrink-0 items-center justify-center rounded-lg bg-[#ff8100]/20 text-[10px] font-black text-[#ff8100] transition-all duration-300",
+                collapsed ? "h-10 w-10" : "h-8 w-8"
+              )}>
                 {isAdmin ? "AD" : roles[0]?.substring(0, 2).toUpperCase() || "US"}
               </div>
               {!collapsed && (
@@ -411,7 +376,7 @@ export function AppShell({ children }: { children: ReactNode }) {
               )}
             </div>
           </div>
-
+          
           <button
             type="button"
             onClick={() =>
@@ -423,7 +388,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             }
             className={cn(
               "group flex items-center rounded-xl text-xs text-[#dee2ec] transition-all hover:bg-[#0b1a2c] hover:text-white",
-              collapsed ? "h-11 w-11 justify-center mx-auto" : "w-full gap-3 px-3 py-2.5",
+              collapsed ? "h-11 w-11 justify-center mx-auto" : "w-full gap-3 px-3 py-2.5"
             )}
             title={collapsed ? "Expandir menu" : undefined}
           >
@@ -441,7 +406,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             onClick={() => signOut()}
             className={cn(
               "group mt-1 flex items-center rounded-xl text-xs text-rose-400 transition-all hover:bg-rose-500/10 hover:text-rose-300",
-              collapsed ? "h-11 w-11 justify-center mx-auto" : "w-full gap-3 px-3 py-2.5",
+              collapsed ? "h-11 w-11 justify-center mx-auto" : "w-full gap-3 px-3 py-2.5"
             )}
             title={collapsed ? "Sair" : undefined}
           >

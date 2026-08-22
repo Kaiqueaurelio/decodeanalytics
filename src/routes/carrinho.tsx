@@ -70,74 +70,64 @@ function CartPage() {
 
         <div className="mt-6 grid gap-8 lg:grid-cols-[1fr_380px]">
           <div className="space-y-3">
-            {items.map(
-              (item: {
-                id: string;
-                name: string;
-                category: string | null;
-                price: number;
-                quantity: number;
-                image_url?: string | null;
-              }) => (
-                <div
-                  key={item.id}
-                  className="flex items-center gap-4 rounded-[var(--store-radius-lg)] border border-[var(--store-border)] bg-white p-4 shadow-[var(--store-shadow-sm)]"
-                >
-                  <div className="grid h-16 w-16 shrink-0 place-items-center rounded-[var(--store-radius-md)] bg-[var(--store-surface-soft)] text-2xl">
-                    {item.image_url ? (
-                      <img
-                        src={item.image_url}
-                        alt={item.name}
-                        className="h-full w-full rounded-[var(--store-radius-md)] object-cover"
-                      />
-                    ) : (
-                      "🛍️"
-                    )}
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-bold text-[var(--store-text)]">
-                      {item.name}
-                    </p>
-                    <p className="text-xs text-[var(--store-text-muted)]">
-                      {item.category ?? "Personalizado"}
-                      {showPrices ? ` · ${brl(item.price)} un` : ""}
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-1.5 sm:gap-2">
-                    <button
-                      type="button"
-                      onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                      className="grid h-10 w-10 sm:h-9 sm:w-9 place-items-center rounded-lg border border-[var(--store-border)] bg-white text-[var(--store-text)] hover:bg-[var(--store-surface-soft)] active:scale-95"
-                      aria-label="Diminuir quantidade"
-                    >
-                      <Minus className="h-4 w-4" />
-                    </button>
-                    <span className="w-7 text-center text-sm font-bold text-[var(--store-text)]">
-                      {item.quantity}
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                      className="grid h-10 w-10 sm:h-9 sm:w-9 place-items-center rounded-lg border border-[var(--store-border)] bg-white text-[var(--store-text)] hover:bg-[var(--store-surface-soft)] active:scale-95"
-                      aria-label="Aumentar quantidade"
-                    >
-                      <Plus className="h-4 w-4" />
-                    </button>
-                  </div>
-                  <p className="hidden min-w-[5rem] text-right text-sm font-bold text-[var(--store-primary)] sm:block">
-                    {money(item.price * item.quantity)}
+            {items.map((item: { id: string; name: string; category: string | null; price: number; quantity: number; image_url?: string | null }) => (
+              <div
+                key={item.id}
+                className="flex items-center gap-4 rounded-[var(--store-radius-lg)] border border-[var(--store-border)] bg-white p-4 shadow-[var(--store-shadow-sm)]"
+              >
+                <div className="grid h-16 w-16 shrink-0 place-items-center rounded-[var(--store-radius-md)] bg-[var(--store-surface-soft)] text-2xl">
+                  {item.image_url ? (
+                    <img
+                      src={item.image_url}
+                      alt={item.name}
+                      className="h-full w-full rounded-[var(--store-radius-md)] object-cover"
+                    />
+                  ) : (
+                    "🛍️"
+                  )}
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm font-bold text-[var(--store-text)]">
+                    {item.name}
                   </p>
+                  <p className="text-xs text-[var(--store-text-muted)]">
+                    {item.category ?? "Personalizado"}{showPrices ? ` · ${brl(item.price)} un` : ""}
+                  </p>
+                </div>
+                <div className="flex items-center gap-1.5 sm:gap-2">
                   <button
                     type="button"
-                    onClick={() => removeItem(item.id)}
-                    className="grid h-10 w-10 sm:h-9 sm:w-9 place-items-center rounded-lg text-[var(--store-text-light)] hover:bg-red-50 hover:text-red-600"
-                    aria-label="Remover item"
+                    onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                    className="grid h-10 w-10 sm:h-9 sm:w-9 place-items-center rounded-lg border border-[var(--store-border)] bg-white text-[var(--store-text)] hover:bg-[var(--store-surface-soft)] active:scale-95"
+                    aria-label="Diminuir quantidade"
                   >
-                    <Trash2 className="h-4 w-4 sm:h-4 sm:w-4" />
+                    <Minus className="h-4 w-4" />
+                  </button>
+                  <span className="w-7 text-center text-sm font-bold text-[var(--store-text)]">
+                    {item.quantity}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                    className="grid h-10 w-10 sm:h-9 sm:w-9 place-items-center rounded-lg border border-[var(--store-border)] bg-white text-[var(--store-text)] hover:bg-[var(--store-surface-soft)] active:scale-95"
+                    aria-label="Aumentar quantidade"
+                  >
+                    <Plus className="h-4 w-4" />
                   </button>
                 </div>
-              ),
-            )}
+                <p className="hidden min-w-[5rem] text-right text-sm font-bold text-[var(--store-primary)] sm:block">
+                  {money(item.price * item.quantity)}
+                </p>
+                <button
+                  type="button"
+                  onClick={() => removeItem(item.id)}
+                  className="grid h-10 w-10 sm:h-9 sm:w-9 place-items-center rounded-lg text-[var(--store-text-light)] hover:bg-red-50 hover:text-red-600"
+                  aria-label="Remover item"
+                >
+                  <Trash2 className="h-4 w-4 sm:h-4 sm:w-4" />
+                </button>
+              </div>
+            ))}
 
             <div className="flex justify-end">
               <button

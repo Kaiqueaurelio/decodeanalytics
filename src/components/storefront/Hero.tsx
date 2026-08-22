@@ -24,16 +24,11 @@ export function Hero() {
         />
         <div className="relative grid items-center gap-6 sm:gap-8 md:grid-cols-2">
           <div className="min-w-0">
-            <span
-              className="inline-flex max-w-full items-center gap-2 rounded-full bg-white/15 px-3 py-1 text-[10px] font-extrabold uppercase text-white backdrop-blur sm:text-[11px]"
-              style={{ letterSpacing: "0.08em" }}
-            >
+            <span className="inline-flex max-w-full items-center gap-2 rounded-full bg-white/15 px-3 py-1 text-[10px] font-extrabold uppercase text-white backdrop-blur sm:text-[11px]" style={{ letterSpacing: "0.08em" }}>
               <CheckCircle className="h-3 w-3" /> Alcateia Produções Gráficas · Profissional · 48h
             </span>
             <h1 className="font-display mt-4 text-[2.15rem] leading-[0.98] sm:mt-5 sm:text-6xl md:text-7xl lg:text-8xl">
-              QUALIDADE EM
-              <br />
-              PRODUÇÕES GRÁFICAS
+              QUALIDADE EM<br />PRODUÇÕES GRÁFICAS
             </h1>
             <p className="mt-5 max-w-md text-sm sm:text-base font-medium text-white/85">
               {heroSubtitle}
@@ -98,12 +93,8 @@ export function Hero() {
             <Calculator className="h-4 w-4 sm:h-5 sm:w-5" />
           </span>
           <div className="min-w-0">
-            <p className="text-xs sm:text-sm font-extrabold text-[var(--store-text)]">
-              Orçamento rápido
-            </p>
-            <p className="text-[10px] sm:text-xs text-[var(--store-text-muted)]">
-              Calcule o preço em segundos
-            </p>
+            <p className="text-xs sm:text-sm font-extrabold text-[var(--store-text)]">Orçamento rápido</p>
+            <p className="text-[10px] sm:text-xs text-[var(--store-text-muted)]">Calcule o preço em segundos</p>
           </div>
         </Link>
         <a
@@ -117,12 +108,8 @@ export function Hero() {
             <Zap className="h-4 w-4 sm:h-5 sm:w-5" />
           </span>
           <div className="min-w-0">
-            <p className="text-xs sm:text-sm font-extrabold text-[var(--store-text)]">
-              Criamos sua arte
-            </p>
-            <p className="text-[10px] sm:text-xs text-[var(--store-text-muted)]">
-              Designers prontos pra ajudar
-            </p>
+            <p className="text-xs sm:text-sm font-extrabold text-[var(--store-text)]">Criamos sua arte</p>
+            <p className="text-[10px] sm:text-xs text-[var(--store-text-muted)]">Designers prontos pra ajudar</p>
           </div>
         </a>
         <a
@@ -136,12 +123,8 @@ export function Hero() {
             <Upload className="h-4 w-4 sm:h-5 sm:w-5" />
           </span>
           <div className="min-w-0">
-            <p className="text-xs sm:text-sm font-extrabold text-[var(--store-text)]">
-              Envie sua arte
-            </p>
-            <p className="text-[10px] sm:text-xs text-[var(--store-text-muted)]">
-              PDF, AI, PSD, PNG até 50MB
-            </p>
+            <p className="text-xs sm:text-sm font-extrabold text-[var(--store-text)]">Envie sua arte</p>
+            <p className="text-[10px] sm:text-xs text-[var(--store-text-muted)]">PDF, AI, PSD, PNG até 50MB</p>
           </div>
         </a>
       </div>

@@ -31,9 +31,7 @@ const BADGE_TONE: Record<string, string> = {
 export function ProductCard({ product }: { product: StoreProduct }) {
   const slug = product.slug ?? product.id;
   const showPrices = useShowPrices();
-  const tone = product.badge
-    ? (BADGE_TONE[product.badge] ?? "bg-[var(--store-primary)] text-white")
-    : null;
+  const tone = product.badge ? BADGE_TONE[product.badge] ?? "bg-[var(--store-primary)] text-white" : null;
   const rating = product.rating ? Number(product.rating) : null;
 
   return (
@@ -43,8 +41,8 @@ export function ProductCard({ product }: { product: StoreProduct }) {
         params={{ slug }}
         className="relative block aspect-[4/3] overflow-hidden bg-[var(--store-surface-soft)]"
       >
-        <SmartImage
-          src={product.image_url}
+        <SmartImage 
+          src={product.image_url} 
           alt={product.name}
           fallbackEmoji="🛍️"
           className="brightness-[1.02] contrast-[1.05] saturate-[1.08] transition-transform duration-500 group-hover:scale-110"

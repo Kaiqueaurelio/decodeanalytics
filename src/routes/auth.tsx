@@ -97,12 +97,8 @@ function AuthPage() {
         </div>
         <Tabs defaultValue="login">
           <TabsList className="grid grid-cols-2 w-full mb-4 h-12">
-            <TabsTrigger value="login" className="h-10 text-base">
-              Entrar
-            </TabsTrigger>
-            <TabsTrigger value="signup" className="h-10 text-base">
-              Criar conta
-            </TabsTrigger>
+            <TabsTrigger value="login" className="h-10 text-base">Entrar</TabsTrigger>
+            <TabsTrigger value="signup" className="h-10 text-base">Criar conta</TabsTrigger>
           </TabsList>
           <TabsContent value="login">
             <form onSubmit={handleLogin} className="space-y-3">

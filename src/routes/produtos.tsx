@@ -65,7 +65,9 @@ function ProdutosPage() {
       const catOk = cat === "todos" || p.category === cat;
       const termOk =
         !term ||
-        `${p.name} ${p.category ?? ""} ${p.short_description ?? ""}`.toLowerCase().includes(term);
+        `${p.name} ${p.category ?? ""} ${p.short_description ?? ""}`
+          .toLowerCase()
+          .includes(term);
       return catOk && termOk;
     });
   }, [data, cat, text]);

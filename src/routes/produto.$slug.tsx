@@ -55,10 +55,7 @@ function ProductPage() {
       if (byCol.error) throw byCol.error;
       const p = byCol.data as StoreProduct | null;
       if (!p) return null;
-      return {
-        ...p,
-        image_url: resolveProductImage(p.image_url, p.category, p.slug),
-      } as StoreProduct;
+      return { ...p, image_url: resolveProductImage(p.image_url, p.category, p.slug) } as StoreProduct;
     },
   });
 
@@ -177,11 +174,7 @@ function ProductPage() {
           <aside className="space-y-3">
             <InfoRow icon={Clock} title="Produção rápida" text="Pronto em até 48h úteis" />
             <InfoRow icon={Truck} title="Entrega ou retirada" text="Combine pelo WhatsApp" />
-            <InfoRow
-              icon={ShieldCheck}
-              title="Aprovação garantida"
-              text="Você confirma antes da produção"
-            />
+            <InfoRow icon={ShieldCheck} title="Aprovação garantida" text="Você confirma antes da produção" />
           </aside>
         </div>
 
@@ -269,10 +262,7 @@ function BuyBox({ product }: { product: StoreProduct }) {
 
       <div className="grid gap-3 sm:grid-cols-2">
         <div>
-          <label
-            htmlFor="qty"
-            className="text-xs font-bold uppercase tracking-wide text-[var(--store-text-muted)]"
-          >
+          <label htmlFor="qty" className="text-xs font-bold uppercase tracking-wide text-[var(--store-text-muted)]">
             Quantidade
           </label>
           <input
@@ -295,10 +285,7 @@ function BuyBox({ product }: { product: StoreProduct }) {
       </div>
 
       <div>
-        <label
-          htmlFor="obs"
-          className="text-xs font-bold uppercase tracking-wide text-[var(--store-text-muted)]"
-        >
+        <label htmlFor="obs" className="text-xs font-bold uppercase tracking-wide text-[var(--store-text-muted)]">
           Observações para a equipe
         </label>
         <textarea
