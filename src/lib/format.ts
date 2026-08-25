@@ -100,12 +100,30 @@ export const SERVICE_CATEGORIES = [
 ];
 
 export const PAYMENT_METHODS = [
-  "Dinheiro", "Pix", "Cartão de débito", "Cartão de crédito",
-  "Boleto", "Transferência", "Outro",
+  "Dinheiro",
+  "Pix",
+  "Cartão de débito",
+  "Cartão de crédito",
+  "Boleto",
+  "Transferência",
+  "Outro",
 ];
 
-export const CASH_IN_CATEGORIES = ["Venda de serviço", "Pagamento de OS", "Sinal/Entrada", "Outros"];
+export const CASH_IN_CATEGORIES = [
+  "Venda de serviço",
+  "Pagamento de OS",
+  "Sinal/Entrada",
+  "Outros",
+];
 export const CASH_OUT_CATEGORIES = [
-  "Material", "Aluguel", "Energia", "Internet", "Funcionário", "Fornecedor",
-  "Manutenção", "Equipamento", "Transporte", "Outros",
+  "Material",
+  "Aluguel",
+  "Energia",
+  "Internet",
+  "Funcionário",
+  "Fornecedor",
+  "Manutenção",
+  "Equipamento",
+  "Transporte",
+  "Outros",
 ];

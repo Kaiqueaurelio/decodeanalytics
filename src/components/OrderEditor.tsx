@@ -312,7 +312,9 @@ export function OrderEditor({
                 value={form.deadline ?? ""}
                 onChange={(e) => setForm({ ...form, deadline: e.target.value })}
               />
-              <p className="mt-1 text-xs text-muted-foreground">Você pode definir o prazo para hoje ou para uma data futura.</p>
+              <p className="mt-1 text-xs text-muted-foreground">
+                Você pode definir o prazo para hoje ou para uma data futura.
+              </p>
             </div>
           </div>
           <div className="grid md:grid-cols-2 gap-3">
