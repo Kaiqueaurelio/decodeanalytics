@@ -10,6 +10,9 @@ import { Card } from "@/components/ui/card";
 import { toast } from "sonner";
 import { FileUp, Loader2 } from "lucide-react";
 import { safeFileName } from "@/lib/briefing";
+import { DEFAULT_COMPANY_DOCUMENT } from "@/lib/format";
+
+const DEFAULT_DOCUMENT = DEFAULT_COMPANY_DOCUMENT;
 
 export const Route = createFileRoute("/_authenticated/settings")({ component: Page });
 
@@ -26,7 +29,7 @@ function Page() {
   const [form, setForm] = useState<any>({});
   const [uploadingLogo, setUploadingLogo] = useState(false);
   useEffect(() => {
-    if (data) setForm(data);
+    if (data) setForm({ ...data, document: data.document?.trim() || DEFAULT_DOCUMENT });
   }, [data]);
 
   async function save() {
@@ -37,7 +40,7 @@ function Page() {
         whatsapp: form.whatsapp,
         instagram: form.instagram,
         address: form.address,
-        document: form.document,
+        document: form.document?.trim() || DEFAULT_DOCUMENT,
         logo_url: form.logo_url,
         default_quote_text: form.default_quote_text,
         default_order_text: form.default_order_text,
@@ -127,7 +130,7 @@ function Page() {
           <div>
             <Label>CNPJ</Label>
             <Input
-              value={form.document ?? ""}
+              value={form.document ?? DEFAULT_DOCUMENT}
               onChange={(e) => setForm({ ...form, document: e.target.value })}
             />
           </div>

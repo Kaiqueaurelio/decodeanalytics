@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/select";
 import { Plus, Pencil, Trash2, Search, AlertTriangle, Eye, EyeOff, X, Clock, CalendarClock, CalendarX, Play, CheckCircle2 } from "lucide-react";
 import { toast } from "sonner";
-import { brl, fmtDate, PRODUCTION_STATUS_LABEL, PAYMENT_STATUS_LABEL } from "@/lib/format";
+import { addIsoDays, brl, fmtDate, PRODUCTION_STATUS_LABEL, PAYMENT_STATUS_LABEL, toIsoDate } from "@/lib/format";
 import { OrderEditor } from "@/components/OrderEditor";
 import { OSStatusBadge } from "@/components/OSStatusBadge";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -65,10 +65,8 @@ function OrdersPage() {
   const filtered = useMemo(() => {
     const rows = rawOrders ?? [];
     const term = search.trim().toLowerCase();
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const nextWeek = new Date(today);
-    nextWeek.setDate(nextWeek.getDate() + 7);
+    const todayIso = toIsoDate();
+    const nextWeekIso = addIsoDays(todayIso, 7);
 
     return rows.filter((r: any) => {
       const matchesSearch =
@@ -83,12 +81,12 @@ function OrdersPage() {
 
       let matchesDeadline = true;
       if (deadlineFilter === "hoje") {
-        matchesDeadline = r.deadline === today.toISOString().slice(0, 10);
+        matchesDeadline = r.deadline === todayIso;
       } else if (deadlineFilter === "atrasado") {
         matchesDeadline = isOverdue(r);
       } else if (deadlineFilter === "proximos7") {
-        const d = r.deadline ? new Date(r.deadline) : null;
-        matchesDeadline = !!d && d >= today && d <= nextWeek;
+        matchesDeadline =
+          typeof r.deadline === "string" && r.deadline >= todayIso && r.deadline <= nextWeekIso;
       } else if (deadlineFilter === "no_prazo") {
         // Has a deadline, not overdue, and OS still open
         matchesDeadline =
@@ -211,8 +209,8 @@ function OrdersPage() {
 
   function isOverdue(o: any) {
     return (
-      o.deadline &&
-      new Date(o.deadline) < new Date() &&
+      typeof o.deadline === "string" &&
+      o.deadline < toIsoDate() &&
       o.production_status !== "entregue" &&
       o.production_status !== "cancelado"
     );

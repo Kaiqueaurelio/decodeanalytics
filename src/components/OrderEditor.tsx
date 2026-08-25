@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/dialog";
 import { Trash2, Plus, FileText } from "lucide-react";
 import { toast } from "sonner";
-import { brl, PAYMENT_METHODS, PRODUCTION_STATUS_LABEL } from "@/lib/format";
+import { brl, PAYMENT_METHODS, PRODUCTION_STATUS_LABEL, toIsoDate } from "@/lib/format";
 import { generateOrderPDF } from "@/lib/pdf";
 import { OSStatusBadge } from "@/components/OSStatusBadge";
 
@@ -77,6 +77,7 @@ export function OrderEditor({
     progress: 0,
   });
   const [items, setItems] = useState<Item[]>([]);
+  const minDeadline = toIsoDate();
 
   useEffect(() => {
     if (!open) return;
@@ -307,9 +308,11 @@ export function OrderEditor({
               <Label>Prazo</Label>
               <Input
                 type="date"
+                min={minDeadline}
                 value={form.deadline ?? ""}
                 onChange={(e) => setForm({ ...form, deadline: e.target.value })}
               />
+              <p className="mt-1 text-xs text-muted-foreground">Você pode definir o prazo para hoje ou para uma data futura.</p>
             </div>
           </div>
           <div className="grid md:grid-cols-2 gap-3">

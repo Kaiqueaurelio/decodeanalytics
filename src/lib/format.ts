@@ -1,16 +1,56 @@
-export const brl = (n: number | null | undefined) =>
+export const DEFAULT_COMPANY_DOCUMENT = "58.294.735/0001-55";
+
+export const brl = (n: number | string | null | undefined) =>
   (Number(n) || 0).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+
+/**
+ * Converte uma data local em YYYY-MM-DD sem passar por UTC.
+ * Datas de negócio vindas de inputs type="date" devem permanecer como date-only.
+ */
+export const toIsoDate = (date = new Date()) => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+};
+
+/** Interpreta YYYY-MM-DD no fuso local, sem o deslocamento implícito de new Date(string). */
+export const parseDateOnly = (value: string) => {
+  const [year, month, day] = value.split("-").map(Number);
+  return new Date(year, month - 1, day);
+};
+
+export const addIsoDays = (value: string, days: number) => {
+  const date = parseDateOnly(value);
+  date.setDate(date.getDate() + days);
+  return toIsoDate(date);
+};
 
 export const fmtDate = (d: string | Date | null | undefined) => {
   if (!d) return "—";
-  const date = typeof d === "string" ? new Date(d) : d;
-  return date.toLocaleDateString("pt-BR");
+  if (typeof d === "string") {
+    const value = d.trim();
+    if (!value) return "—";
+    if (/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+      return parseDateOnly(value).toLocaleDateString("pt-BR");
+    }
+    const date = new Date(value);
+    return Number.isNaN(date.getTime()) ? "—" : date.toLocaleDateString("pt-BR");
+  }
+  return Number.isNaN(d.getTime()) ? "—" : d.toLocaleDateString("pt-BR");
 };
 
 export const fmtDateTime = (d: string | Date | null | undefined) => {
   if (!d) return "—";
   const date = typeof d === "string" ? new Date(d) : d;
-  return date.toLocaleString("pt-BR");
+  return Number.isNaN(date.getTime()) ? "—" : date.toLocaleString("pt-BR");
+};
+
+export const fmtCnpj = (value: string | null | undefined) => {
+  const raw = (value ?? "").trim();
+  const digits = raw.replace(/\D/g, "");
+  if (digits.length !== 14) return raw || "—";
+  return `${digits.slice(0, 2)}.${digits.slice(2, 5)}.${digits.slice(5, 8)}/${digits.slice(8, 12)}-${digits.slice(12)}`;
 };
 
 export const PRODUCTION_STATUS_LABEL: Record<string, string> = {
@@ -66,6 +106,6 @@ export const PAYMENT_METHODS = [
 
 export const CASH_IN_CATEGORIES = ["Venda de serviço", "Pagamento de OS", "Sinal/Entrada", "Outros"];
 export const CASH_OUT_CATEGORIES = [
-  "Material","Aluguel","Energia","Internet","Funcionário","Fornecedor",
-  "Manutenção","Equipamento","Transporte","Outros",
+  "Material", "Aluguel", "Energia", "Internet", "Funcionário", "Fornecedor",
+  "Manutenção", "Equipamento", "Transporte", "Outros",
 ];

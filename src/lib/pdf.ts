@@ -1,6 +1,6 @@
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
-import { brl, fmtDate } from "./format";
+import { brl, DEFAULT_COMPANY_DOCUMENT, fmtCnpj, fmtDate } from "./format";
 
 interface Company {
   name: string;
@@ -54,6 +54,7 @@ function header(doc: jsPDF, company: Company, title: string, logoData: string | 
   doc.setFontSize(9);
   doc.setFont("helvetica", "normal");
   const contact = [
+    `CNPJ: ${fmtCnpj(company.document || DEFAULT_COMPANY_DOCUMENT)}`,
     company.whatsapp ? `WhatsApp: ${company.whatsapp}` : null,
     company.instagram ? `Instagram: ${company.instagram}` : null,
   ]
@@ -86,6 +87,7 @@ function footer(doc: jsPDF, company: Company) {
   doc.setFont("helvetica", "normal");
   doc.setFontSize(8);
   const line1 = [
+    `CNPJ ${fmtCnpj(company.document || DEFAULT_COMPANY_DOCUMENT)}`,
     company.whatsapp ? `WhatsApp ${company.whatsapp}` : null,
     company.instagram ? `Instagram ${company.instagram}` : null,
   ]
