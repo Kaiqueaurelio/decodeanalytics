@@ -40,6 +40,13 @@ export const fmtDate = (d: string | Date | null | undefined) => {
   return Number.isNaN(d.getTime()) ? "—" : d.toLocaleDateString("pt-BR");
 };
 
+export const fmtDateOnly = (value: string | null | undefined) => {
+  const raw = value?.trim() ?? "";
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(raw);
+  if (match) return `${match[3]}/${match[2]}/${match[1]}`;
+  return fmtDate(value);
+};
+
 export const fmtDateTime = (d: string | Date | null | undefined) => {
   if (!d) return "—";
   const date = typeof d === "string" ? new Date(d) : d;

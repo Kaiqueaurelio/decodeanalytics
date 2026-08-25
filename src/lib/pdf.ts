@@ -1,6 +1,6 @@
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
-import { brl, DEFAULT_COMPANY_DOCUMENT, fmtCnpj, fmtDate } from "./format";
+import { brl, DEFAULT_COMPANY_DOCUMENT, fmtCnpj, fmtDate, fmtDateOnly } from "./format";
 
 interface Company {
   name: string;
@@ -119,24 +119,25 @@ export async function generateOrderPDF(opts: {
   header(doc, opts.company, `Ordem de Serviço #${opts.order.number}`, logo);
 
   doc.setFontSize(10); doc.setFont("helvetica", "normal"); doc.setTextColor(50);
-  doc.text(`Emissão: ${fmtDate(opts.order.created_at)}`, 14, 52);
-  doc.text(`Prazo de entrega: ${fmtDate(opts.order.deadline)}`, 80, 52);
+  doc.text(`CNPJ: ${fmtCnpj(opts.company.document || DEFAULT_COMPANY_DOCUMENT)}`, 14, 51);
+  doc.text(`Emissão: ${fmtDate(opts.order.created_at)}`, 14, 58);
+  doc.text(`Prazo de entrega: ${fmtDateOnly(opts.order.deadline)}`, 80, 58);
   if (opts.order.urgent) {
     doc.setTextColor(200, 30, 30); doc.setFont("helvetica", "bold");
-    doc.text("URGENTE", 170, 52);
+    doc.text("URGENTE", 170, 58);
     doc.setTextColor(50); doc.setFont("helvetica", "normal");
   }
 
-  doc.setFont("helvetica", "bold"); doc.text("Cliente", 14, 62);
+  doc.setFont("helvetica", "bold"); doc.text("Cliente", 14, 68);
   doc.setFont("helvetica", "normal");
-  doc.text(opts.client.name, 14, 68);
+  doc.text(opts.client.name, 14, 74);
   doc.text(
     [opts.client.document, opts.client.whatsapp, opts.client.email].filter(Boolean).join("  •  "),
-    14, 74,
+    14, 80,
   );
 
   autoTable(doc, {
-    startY: 82,
+    startY: 88,
     head: [["Descrição", "Qtd", "Unit.", "Subtotal"]],
     body: opts.items.map((i) => [i.description, String(i.quantity), brl(i.unit_price), brl(i.subtotal)]),
     headStyles: { fillColor: [34, 38, 70], textColor: 255 },
@@ -176,19 +177,20 @@ export async function generateQuotePDF(opts: {
   const logo = await loadLogo(opts.company.logo_url);
   header(doc, opts.company, `Orçamento #${opts.quote.number}`, logo);
   doc.setFontSize(10); doc.setFont("helvetica", "normal"); doc.setTextColor(50);
-  doc.text(`Data: ${fmtDate(opts.quote.created_at)}`, 14, 52);
-  doc.text(`Validade: ${fmtDate(opts.quote.validity_date)}`, 80, 52);
+  doc.text(`CNPJ: ${fmtCnpj(opts.company.document || DEFAULT_COMPANY_DOCUMENT)}`, 14, 51);
+  doc.text(`Data: ${fmtDate(opts.quote.created_at)}`, 14, 58);
+  doc.text(`Validade: ${fmtDateOnly(opts.quote.validity_date)}`, 80, 58);
 
-  doc.setFont("helvetica", "bold"); doc.text("Cliente", 14, 62);
+  doc.setFont("helvetica", "bold"); doc.text("Cliente", 14, 68);
   doc.setFont("helvetica", "normal");
-  doc.text(opts.client.name, 14, 68);
+  doc.text(opts.client.name, 14, 74);
   doc.text(
     [opts.client.document, opts.client.whatsapp, opts.client.email].filter(Boolean).join("  •  "),
-    14, 74,
+    14, 80,
   );
 
   autoTable(doc, {
-    startY: 82,
+    startY: 88,
     head: [["Descrição", "Qtd", "Unit.", "Subtotal"]],
     body: opts.items.map((i) => [i.description, String(i.quantity), brl(i.unit_price), brl(i.subtotal)]),
     headStyles: { fillColor: [34, 38, 70], textColor: 255 },
