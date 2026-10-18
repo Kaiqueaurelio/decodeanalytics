@@ -25,6 +25,7 @@ import {
 } from "@/components/storefront/ProductCard";
 import { SmartImage } from "@/components/storefront/SmartImage";
 import { resolveProductImage } from "@/components/storefront/productImages";
+import { isOfferedProduct } from "@/components/storefront/useStoreProducts";
 
 export const Route = createFileRoute("/produto/$slug")({
   head: ({ params }) => ({
@@ -54,7 +55,7 @@ function ProductPage() {
         .maybeSingle();
       if (byCol.error) throw byCol.error;
       const p = byCol.data as StoreProduct | null;
-      if (!p) return null;
+      if (!p || !isOfferedProduct(p)) return null;
       return {
         ...p,
         image_url: resolveProductImage(p.image_url, p.category, p.slug),
@@ -76,10 +77,12 @@ function ProductPage() {
         .neq("id", product!.id)
         .limit(4);
       if (error) throw error;
-      return (data ?? []).map((p) => ({
-        ...p,
-        image_url: resolveProductImage(p.image_url, p.category, p.slug),
-      })) as StoreProduct[];
+      return ((data ?? []) as StoreProduct[])
+        .filter(isOfferedProduct)
+        .map((p) => ({
+          ...p,
+          image_url: resolveProductImage(p.image_url, p.category, p.slug),
+        }));
     },
   });
 
