@@ -1,6 +1,6 @@
 import { ExternalLink, ShoppingBag, ArrowUpRight } from "lucide-react";
 
-const CATALOG_URL = "https://wa.me/c/5511939222885";
+const CATALOG_URL = "https://wa.me/c/5511939223885";
 
 export function CategoryCircles() {
   return (
