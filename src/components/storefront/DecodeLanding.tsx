@@ -1,9 +1,7 @@
 import { useState } from "react";
 import { ArrowDown, ArrowRight, Code2, Laptop, MessageCircle, PenTool, Share2, Sparkles, Workflow, Zap, Printer, Palette, Globe, BadgeCheck, Clock3, ShieldCheck, ShoppingBag } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { ProductCard, type StoreProduct } from "@/components/storefront/ProductCard";
-import { CATEGORY_IMAGES, resolveProductImage } from "@/components/storefront/productImages";
+import { CATEGORY_IMAGES } from "@/components/storefront/productImages";
+import { InfiniteProducts } from "@/components/storefront/InfiniteProducts";
 import { useWaLink } from "@/hooks/useCompanyInfo";
 
 const solutions = [
@@ -137,11 +135,6 @@ export function DecodeLanding() {
           {[{ Icon: Clock3, title: "Atendimento direto", text: "Converse com nossa equipe" }, { Icon: BadgeCheck, title: "Qualidade profissional", text: "Atenção aos detalhes" }, { Icon: ShieldCheck, title: "Orçamento transparente", text: "Escopo combinado antes" }, { Icon: Zap, title: "Soluções integradas", text: "Design, gráfica e tecnologia" }].map(({ Icon, title, text }) => <div key={title} className="flex items-start gap-3"><span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-[#22D3EE]/20 bg-[#22D3EE]/10 text-[#22D3EE]"><Icon className="h-5 w-5" /></span><div><h2 className="text-sm font-bold text-white">{title}</h2><p className="mt-1 text-xs leading-5 text-slate-400">{text}</p></div></div>)}
         </div>
       </section>
-      <section aria-labelledby="vitrine-title" className="bg-[#0B1026] px-4 py-14 sm:px-8 lg:px-16">
-        <div className="mx-auto max-w-[1280px]"><div className="flex flex-wrap items-end justify-between gap-4"><div><p className="text-xs font-extrabold uppercase tracking-[.22em] text-[#22D3EE]">Produtos em destaque</p><h2 id="vitrine-title" className="mt-2 text-2xl font-black text-white sm:text-3xl">Os favoritos da Decode</h2><p className="mt-2 max-w-xl text-sm leading-6 text-slate-300">Veja opções do nosso catálogo e solicite um orçamento para o que você precisa.</p></div><a href="/produtos" className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-white/15 px-4 text-sm font-bold text-white hover:border-[#22D3EE]/60">Catálogo completo <ArrowRight className="h-4 w-4 text-[#22D3EE]" /></a></div><FeaturedProducts /></div>
-      </section>
-
-
       <section aria-labelledby="categorias-rapidas" className="bg-[#080C1F] px-4 py-12 sm:px-8 lg:px-16">
         <div className="mx-auto max-w-[1280px]"><div className="flex flex-wrap items-end justify-between gap-4"><div><p className="text-xs font-extrabold uppercase tracking-[.22em] text-[#22D3EE]">Explore por categoria</p><h2 id="categorias-rapidas" className="mt-2 text-2xl font-black text-white sm:text-3xl">Encontre sua solução</h2></div><a href="/produtos" className="text-sm font-bold text-[#22D3EE]">Ver catálogo completo →</a></div>
           <div className="mt-7 flex snap-x gap-4 overflow-x-auto pb-3 [scrollbar-width:thin] [scrollbar-color:#22D3EE_transparent] sm:gap-5">
@@ -149,6 +142,8 @@ export function DecodeLanding() {
           </div>
         </div>
       </section>
+
+      <InfiniteProducts />
 
       <section id="sobre" aria-labelledby="sobre-title" className="scroll-mt-20 border-y border-white/[0.06] bg-[#0A0E1A] px-4 py-20 sm:px-8 lg:px-16 lg:py-28">
         <div className="mx-auto grid max-w-[1280px] gap-10 lg:grid-cols-[.85fr_1.15fr] lg:items-center lg:gap-20">
@@ -227,20 +222,4 @@ export function DecodeLanding() {
       </section>
     </div>
   );
-}
-
-function FeaturedProducts() {
-  const { data = [], isLoading, isError } = useQuery({
-    queryKey: ["store-catalog"],
-    queryFn: async () => {
-      const { data, error } = await supabase.from("services").select("id,name,slug,category,short_description,base_price,image_url,rating,reviews_count,min_quantity,badge,specs,unit").eq("active", true).order("reviews_count", { ascending: false }).limit(4);
-      if (error) throw error;
-      return (data ?? []).map((p) => ({ ...p, image_url: resolveProductImage(p.image_url, p.category, p.slug) })) as StoreProduct[];
-    },
-    staleTime: 60_000,
-  });
-  if (isLoading) return <div className="mt-7 grid grid-cols-2 gap-4 md:grid-cols-4">{[0,1,2,3].map((n) => <div key={n} className="h-64 animate-pulse rounded-2xl border border-white/10 bg-white/5" />)}</div>;
-  if (isError) return <div className="mt-7 rounded-xl border border-white/10 bg-white/[0.03] p-5 text-sm text-slate-300">Não foi possível carregar a vitrine agora. <a href="/produtos" className="font-bold text-[#22D3EE]">Abrir catálogo</a></div>;
-  if (!data.length) return <div className="mt-7 rounded-xl border border-dashed border-white/15 p-6 text-sm text-slate-300"><ShoppingBag className="mb-3 h-7 w-7 text-[#22D3EE]" />Estamos preparando nosso catálogo. Entre em contato para solicitar um orçamento.</div>;
-  return <div className="mt-7 grid grid-cols-2 gap-4 md:grid-cols-4">{data.map((product) => <ProductCard key={product.id} product={product} />)}</div>;
 }

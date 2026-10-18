@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { Loader2, Plus, Star } from "lucide-react";
+import { Plus, Star } from "lucide-react";
 import { useStoreProducts } from "./useStoreProducts";
 import { brl } from "./tokens";
 import type { StoreProduct } from "./ProductCard";
@@ -10,56 +10,39 @@ import { trackCardClick, trackCta, trackInfinitePage } from "@/lib/analytics";
 
 const PAGE = 8;
 
-function shuffle<T>(arr: T[], seed: number) {
-  const a = arr.slice();
-  let s = seed;
-  for (let i = a.length - 1; i > 0; i--) {
-    s = (s * 9301 + 49297) % 233280;
-    const j = Math.floor((s / 233280) * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]];
-  }
-  return a;
-}
-
 export function InfiniteProducts() {
-  const { data, isLoading } = useStoreProducts();
+  const { data, isLoading, isError } = useStoreProducts();
   const all = useMemo(() => data ?? [], [data]);
-  const [pages, setPages] = useState(1);
+  const [visibleCount, setVisibleCount] = useState(PAGE);
   const sentinel = useRef<HTMLDivElement | null>(null);
+  const visible = useMemo(() => all.slice(0, visibleCount), [all, visibleCount]);
+  const loadedPage = Math.ceil(visible.length / PAGE);
+  const hasMore = visible.length < all.length;
 
-  // Reset quando o catálogo carrega
-  useEffect(() => setPages(1), [all.length]);
+  // Começa do início se produtos forem adicionados/removidos em tempo real.
+  useEffect(() => setVisibleCount(PAGE), [all.length]);
 
-  // Analytics: emite um evento por página carregada pelo scroll infinito.
+  // Analytics acompanha a quantidade única de produtos realmente exibida.
   useEffect(() => {
-    if (!all.length) return;
-    trackInfinitePage(pages, Math.min(pages * PAGE, all.length * pages));
-  }, [pages, all.length]);
+    if (!visible.length) return;
+    trackInfinitePage(loadedPage, visible.length);
+  }, [loadedPage, visible.length]);
 
   useEffect(() => {
-    if (!sentinel.current) return;
+    const target = sentinel.current;
+    if (!target || !hasMore) return;
+
     const io = new IntersectionObserver(
       (entries) => {
         if (entries[0]?.isIntersecting) {
-          setPages((p) => p + 1);
+          setVisibleCount((count) => Math.min(count + PAGE, all.length));
         }
       },
       { rootMargin: "600px 0px" },
     );
-    io.observe(sentinel.current);
+    io.observe(target);
     return () => io.disconnect();
-  }, [all.length]);
-
-  // Gera páginas "infinitas" ciclando o catálogo embaralhado
-  const visible = useMemo<StoreProduct[]>(() => {
-    if (!all.length) return [];
-    const out: StoreProduct[] = [];
-    for (let i = 0; i < pages; i++) {
-      const reshuffled = i === 0 ? all : shuffle(all, i * 7919 + 1);
-      out.push(...reshuffled.slice(0, PAGE));
-    }
-    return out;
-  }, [all, pages]);
+  }, [all.length, hasMore]);
 
   if (isLoading) {
     return (
@@ -77,6 +60,18 @@ export function InfiniteProducts() {
     );
   }
 
+  if (isError) {
+    return (
+      <section className="mx-auto w-full max-w-[1280px] px-4 py-12" aria-labelledby="all-products-title">
+        <div className="rounded-2xl border border-white/10 bg-[#0B1026] p-6 text-sm text-slate-300">
+          <h2 id="all-products-title" className="font-display text-2xl font-bold text-white">Todos os produtos</h2>
+          <p className="mt-2">Não foi possível carregar o catálogo agora.</p>
+          <Link to="/produtos" className="mt-3 inline-flex min-h-10 items-center font-bold text-[#22D3EE]">Abrir catálogo completo →</Link>
+        </div>
+      </section>
+    );
+  }
+
   if (!all.length) return null;
 
   return (
@@ -85,13 +80,13 @@ export function InfiniteProducts() {
         <header className="mb-6 flex flex-col items-start justify-between gap-2 sm:flex-row sm:items-end">
           <div>
             <p className="text-[11px] font-extrabold uppercase tracking-[0.22em] text-[var(--store-accent)]">
-              Nosso portfólio completo
+              Catálogo Decode completo
             </p>
             <h2 className="font-display mt-1 text-4xl leading-none text-white sm:text-5xl lg:text-6xl">
-              CONFIRA NOSSA PRODUÇÃO
+              TODOS OS PRODUTOS
             </h2>
             <p className="mt-2 max-w-2xl text-sm text-slate-400">
-              Centenas de produtos personalizados — role à vontade para descobrir mais.
+              {all.length} {all.length === 1 ? "produto ativo" : "produtos ativos"} no catálogo — role para explorar todos.
             </p>
           </div>
           <Link
@@ -122,13 +117,25 @@ export function InfiniteProducts() {
           ))}
         </div>
 
-        <div
-          ref={sentinel}
-          className="mt-10 flex items-center justify-center gap-2 text-sm text-[var(--store-text-muted)]"
-        >
-          <Loader2 className="h-4 w-4 animate-spin text-[#22D3EE]" />
-          Carregando mais produtos…
-        </div>
+        {hasMore ? (
+          <div
+            ref={sentinel}
+            className="mt-10 flex min-h-12 flex-wrap items-center justify-center gap-2 text-sm text-[var(--store-text-muted)]"
+          >
+            <span role="status">Continue rolando ou carregue os próximos produtos.</span>
+            <button
+              type="button"
+              onClick={() => setVisibleCount((count) => Math.min(count + PAGE, all.length))}
+              className="ml-2 rounded-lg border border-white/15 px-3 py-2 text-xs font-bold text-[#22D3EE] transition hover:border-[#22D3EE]/60 hover:bg-white/5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#22D3EE]"
+            >
+              Mostrar mais {Math.min(PAGE, all.length - visible.length)}
+            </button>
+          </div>
+        ) : (
+          <p role="status" className="mt-10 text-center text-sm text-slate-400">
+            Você chegou ao fim do catálogo · {all.length} {all.length === 1 ? "produto" : "produtos"}
+          </p>
+        )}
       </div>
     </section>
   );
