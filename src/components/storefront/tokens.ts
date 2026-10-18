@@ -16,10 +16,10 @@ export const STORE_CATEGORIES = [
   { slug: "Templates Digitais", label: "Templates" },
 ] as const;
 
-export const WHATSAPP_NUMBER = "5511939222885";
+export const WHATSAPP_NUMBER = "5511939223885";
 
 export const STORE_CONTACT = {
-  phone: "+55 11 93922-2885",
+  phone: "+55 11 93922-3885",
   whatsapp: WHATSAPP_NUMBER,
   email: "decoanalytics@outlook.com.br",
   address: "",
