@@ -70,3 +70,24 @@ VALUES
   ('Registro de Hábitos', 'Templates Digitais', 'Template para registrar hábitos.', 35, 'produto', 1, true),
   ('Mapeamento de Metas e Habit Tracker', 'Templates Digitais', 'Template para metas e acompanhamento de hábitos.', 35, 'produto', 1, true),
   ('Planner de Estudos', 'Templates Digitais', 'Template para planejamento de estudos.', 30, 'produto', 1, true);
+
+-- The storefront reads short_description; mirror the catalogue descriptions there too.
+UPDATE public.services
+SET short_description = description
+WHERE name IN (
+  'Encadernação de TCC e Trabalhos Acadêmicos (Capa Mole)', 'Laminação e Plastificação',
+  'Adesivos Personalizados', 'Grandes Tiragens de Cartazes e Panfletos', 'Panfletos e Flyers',
+  'Convites Personalizados', 'Copos Térmicos Personalizados', 'Canecas Personalizadas',
+  'Camisetas Personalizadas', 'Cobertura de Eventos e Festas', 'Pacote Office 365 Personal Plus',
+  'Cartões de Visita Personalizados', 'Edição de Áudio', 'Design para Mídias Sociais Avulso',
+  'Edição de Vídeos', 'Formatação de Android (Pacote)', 'Animamos suas Fotos Antigas',
+  'Remoção de Fundo de Imagens', 'Remoção de Objetos e Pessoas', 'Tratamento de Pele Photoshop',
+  'Restauração de Imagens', 'Trabalhos Acadêmicos', 'Banners Acadêmicos', 'Criação de Sites',
+  'Design para Mídias Sociais Mensal', 'Criação de Identidade Visual', 'Formatação de Android',
+  'Formatação de iOS', 'Formatação de Computadores e Notebooks sem Backup',
+  'Formatação de Computadores e Notebooks com Backup', 'Gestão de Mídias Sociais', 'Criação de Apps',
+  'Caderno de Estudos', 'Planner 2025: Administrando sua Vida', 'Planejamento Social Media',
+  'HackPrompt ChatGPT', 'Planner Book (Template)', 'Game Dash v1.0 (Template)',
+  'Cards - Advanced (Template)', 'Registro de Hábitos', 'Mapeamento de Metas e Habit Tracker',
+  'Planner de Estudos'
+);
