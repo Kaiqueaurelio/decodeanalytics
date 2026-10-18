@@ -199,8 +199,8 @@ function StoreHeader() {
               <div className="flex items-center justify-between border-b border-white/10 bg-[#0B1026] px-6 py-5 text-white">
                 <div className="flex items-center gap-3">
                   <img
-                    src="/brand/decode-logo.png"
-                    alt="Decode Analytics"
+                    src={info.logoUrl || "/brand/decode-logo.png"}
+                    alt={info.name}
                     className="h-10 w-auto brand-logo rounded-md bg-black p-1 object-contain"
                   />
                   <div className="leading-tight">
@@ -380,8 +380,8 @@ function StoreFooter() {
         <div>
           <div className="flex items-center gap-3">
             <img
-              src="/brand/decode-logo.png"
-              alt="Decode Analytics"
+              src={info.logoUrl || "/brand/decode-logo.png"}
+              alt={info.name}
               className="h-16 w-auto brand-logo rounded-md bg-black p-1 object-contain"
             />
             <div>
