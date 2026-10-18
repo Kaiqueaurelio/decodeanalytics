@@ -104,10 +104,10 @@ function ProductPage() {
     return (
       <StoreShell>
         <div className="mx-auto max-w-[1280px] px-4 py-20 text-center">
-          <h1 className="text-2xl font-extrabold text-[var(--store-primary)]">
+          <h1 className="text-2xl font-extrabold text-[#7DD3FC]">
             Produto não encontrado
           </h1>
-          <p className="mt-2 text-sm text-[var(--store-text-muted)]">
+          <p className="mt-2 text-sm text-[#C4C4CC]">
             O link pode ter mudado. Veja todo o catálogo.
           </p>
           <Link
@@ -156,7 +156,7 @@ function ProductPage() {
             </p>
             {product.specs?.length ? (
               <>
-                <h3 className="mt-6 text-sm font-bold uppercase tracking-wide text-[var(--store-accent)]">
+                <h3 className="mt-6 text-sm font-bold uppercase tracking-wide text-[#C4B5FD]">
                   Especificações
                 </h3>
                 <ul className="mt-3 grid gap-2 sm:grid-cols-2">
@@ -256,7 +256,7 @@ function BuyBox({ product }: { product: StoreProduct }) {
       </div>
 
       <div className="rounded-[var(--store-radius-lg)] bg-[var(--store-surface-soft)] p-4">
-        <p className="text-[10px] font-bold uppercase tracking-wide text-[var(--store-text-light)]">
+        <p className="text-[10px] font-bold uppercase tracking-wide text-[#B4B4BE]">
           {showPrices && hasPrice ? "Preço unitário" : "Valor"}
         </p>
         <p className="text-3xl font-extrabold leading-tight text-[var(--store-primary)]">
