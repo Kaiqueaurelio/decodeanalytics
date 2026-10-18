@@ -118,8 +118,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         rel: "stylesheet",
         href: appCss,
       },
-      { rel: "icon", type: "image/png", href: "/brand/decode-logo.svg" },
-      { rel: "icon", type: "image/png", sizes: "192x192", href: "/brand/decode-logo.svg" },
+      { rel: "icon", type: "image/svg+xml", href: "/brand/decode-logo.svg" },
+      { rel: "icon", type: "image/svg+xml", sizes: "any", href: "/brand/decode-logo.svg" },
       { rel: "apple-touch-icon", sizes: "180x180", href: "/brand/decode-logo.svg" },
       { rel: "manifest", href: "/manifest.webmanifest" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -160,6 +160,13 @@ function RootComponent() {
 
   useEffect(() => {
     installAnalytics();
+
+    // Register the app shell worker only in browsers that support PWAs.
+    if ("serviceWorker" in navigator && import.meta.env.PROD) {
+      navigator.serviceWorker.register("/sw.js").catch((error) => {
+        console.error("[PWA] Service worker registration failed", error);
+      });
+    }
   }, []);
 
   return (
