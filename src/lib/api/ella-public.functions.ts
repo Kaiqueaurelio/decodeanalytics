@@ -10,7 +10,7 @@ import { classifyAiError, logAiEvent, newTraceId } from "./ai-logs.server";
 
 const MessageSchema = z.object({
   role: z.enum(["user", "assistant"]),
-  content: z.string(),
+  content: z.string().max(2000),
 });
 
 const InputSchema = z.object({
@@ -58,8 +58,8 @@ export const ellaPublicChat = createServerFn({ method: "POST" })
         description:
           "Consulta o catálogo público de produtos/serviços da gráfica. Filtra por texto (nome ou categoria).",
         inputSchema: z.object({
-          search: z.string().optional(),
-          limit: z.number().min(1).max(15).optional(),
+          search: z.string().max(100).optional(),
+          limit: z.number().int().min(1).max(15).optional(),
         }),
         execute: async ({ search, limit }) => {
           let q = supabase
