@@ -94,7 +94,7 @@ function StoreHeader() {
   const pathname = useRouterState({ select: (state) => state.location.pathname });
   const menuCategories = pathname === "/" ? SOLUTION_CATEGORIES : STORE_CATEGORIES;
   return (
-    <header className="store-sticky-header sticky z-40 border-b border-[var(--store-border)] bg-[var(--store-surface)]/95 backdrop-blur transition-all duration-300">
+    <header className="store-sticky-header sticky z-40 border-b border-[var(--store-border)] bg-[#08080d]/95 backdrop-blur transition-all duration-300">
       <div className="mx-auto flex max-w-[1280px] items-center justify-between gap-3 px-3 py-2 sm:px-4 sm:py-3 md:gap-6 md:py-4">
         <Link
           to="/"
@@ -102,7 +102,7 @@ function StoreHeader() {
           className="flex shrink-0 items-center gap-2 sm:gap-3 transition-transform hover:scale-[1.02]"
         >
           <img
-            src="/brand/decode-logo.png"
+            src="/brand/decode-logo.svg"
             alt="Decode Analytics"
             className="h-10 w-auto brand-logo rounded-md bg-black p-1 object-contain sm:h-12 md:h-14"
           />
@@ -194,7 +194,7 @@ function StoreHeader() {
               <div className="flex items-center justify-between border-b border-[var(--store-border)] px-6 py-5">
                 <div className="flex items-center gap-3">
                   <img
-                    src="/brand/decode-logo.png"
+                    src="/brand/decode-logo.svg"
                     alt="Decode Analytics"
                     className="h-10 w-auto brand-logo rounded-md bg-black p-1 object-contain"
                   />
@@ -349,7 +349,7 @@ function StoreFooter() {
         <div>
           <div className="flex items-center gap-3">
             <img
-              src="/brand/decode-logo.png"
+              src="/brand/decode-logo.svg"
               alt="Decode Analytics"
               className="h-16 w-auto brand-logo rounded-md bg-black p-1 object-contain"
             />

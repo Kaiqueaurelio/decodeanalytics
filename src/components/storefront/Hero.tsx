@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { ArrowRight, Upload, Calculator, Zap, Tag, CheckCircle } from "lucide-react";
+import { ArrowRight, Upload, CheckCircle, ExternalLink } from "lucide-react";
 import { useWaLink, useCompanyInfo } from "@/hooks/useCompanyInfo";
 import { CATEGORY_IMAGES } from "./productImages";
 
@@ -39,15 +39,7 @@ export function Hero() {
               {heroSubtitle}
             </p>
 
-            <div className="mt-6 inline-flex max-w-full items-center gap-2 rounded-lg bg-white/10 px-3 py-2 text-xs font-bold backdrop-blur sm:px-4 sm:text-sm">
-              <Tag className="h-4 w-4 text-[var(--store-secondary)]" />
-              <span className="min-w-0">
-                10% OFF na 1ª compra ·{" "}
-                <span className="rounded bg-[var(--store-secondary)] px-1.5 py-0.5 text-[12px] text-[var(--store-primary-dark)]">
-                  BEMVINDO10
-                </span>
-              </span>
-            </div>
+            <div className="mt-6 inline-flex max-w-full items-center gap-2 rounded-full border border-cyan-300/25 bg-black/25 px-3 py-2 text-xs font-semibold text-white/85 backdrop-blur sm:text-sm"><span className="h-2 w-2 rounded-full bg-cyan-300 shadow-[0_0_12px_#22d3ee]" /> Tecnologia aplicada a resultados reais</div>
 
             <div className="mt-7 flex flex-col gap-2.5 min-[420px]:flex-row min-[420px]:flex-wrap">
               <Link
@@ -57,12 +49,12 @@ export function Hero() {
                 {heroCtaPrimary} <ArrowRight className="h-4 w-4" />
               </Link>
               <a
-                href={waLink("Olá! Quero enviar minha arte para um orçamento.")}
+                href="https://wa.me/c/5511939222885"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex min-h-[52px] items-center justify-center gap-2 rounded-[var(--store-radius-md)] border-2 border-white/70 bg-transparent px-5 py-3 text-sm font-extrabold uppercase tracking-wide text-white transition-colors hover:bg-white hover:text-store-primary sm:px-8"
               >
-                <Upload className="h-4 w-4" /> {heroCtaSecondary}
+                <ExternalLink className="h-4 w-4" /> Ver catálogo no WhatsApp
               </a>
             </div>
           </div>
@@ -71,7 +63,7 @@ export function Hero() {
           <div className="relative hidden md:block">
             <div className="absolute -right-8 -top-8 h-72 w-72 rounded-full bg-white/10 blur-2xl" />
             <div className="relative animate-float">
-              <div className="relative aspect-square overflow-hidden rounded-[var(--store-radius-xl)] border border-white/20 bg-white p-2 shadow-2xl rotate-[-2deg] transition-transform duration-500 hover:rotate-0">
+              <div className="relative aspect-square overflow-hidden rounded-[var(--store-radius-xl)] border border-white/20 bg-[#0b0b12] p-2 shadow-2xl rotate-[-2deg] transition-transform duration-500 hover:rotate-0">
                 <img
                   src={CATEGORY_IMAGES["Dados & Business Intelligence"]}
                   alt="Dados e Business Intelligence"
