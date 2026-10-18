@@ -9,11 +9,42 @@ const SELECT =
 
 const FETCH_PAGE_SIZE = 500;
 
+// Itens que a empresa confirmou que não oferece. Filtrados da vitrine sem
+// apagar registros do banco, para evitar perda de dados ou alterações no admin.
+function isOfferedProduct(p: StoreProduct): boolean {
+  const text = `${p.slug ?? ""} ${p.name ?? ""} ${p.category ?? ""} ${p.short_description ?? ""}`
+    .normalize("NFD")
+    .replace(/[\\u0300-\\u036f]/g, "")
+    .toLowerCase();
+
+  if (/camiseta\\s*silk|silk\\s*(screen|screening)?|polo\\s*bordad|hot\\s*stamping|holografic|banner\\s*backlight/.test(text)) {
+    return false;
+  }
+
+  // Chaveiros só são oferecidos quando forem impressos em 3D.
+  if (/chaveiro|keychain/.test(text) && !/3d|impressao\\s*3d/.test(text)) {
+    return false;
+  }
+
+  return true;
+}
+
+function isComputerService(p: StoreProduct): boolean {
+  const text = `${p.slug ?? ""} ${p.name ?? ""} ${p.category ?? ""}`
+    .normalize("NFD")
+    .replace(/[\\u0300-\\u036f]/g, "")
+    .toLowerCase();
+  return /manutencao de computadores|informatica|suporte tecnico|formatacao|diagnostico de hardware|upgrade ssd|limpeza.*pasta termica/.test(text);
+}
+
 function normalizeProducts(rows: StoreProduct[]): StoreProduct[] {
-  return rows.map((p) => ({
-    ...p,
-    image_url: resolveProductImage(p.image_url, p.category, p.slug),
-  }));
+  return rows
+    .filter(isOfferedProduct)
+    .map((p) => ({
+      ...p,
+      image_url: resolveProductImage(p.image_url, p.category, p.slug),
+    }))
+    .sort((a, b) => Number(isComputerService(b)) - Number(isComputerService(a)));
 }
 
 export function useStoreProducts(limit?: number) {
