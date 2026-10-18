@@ -184,8 +184,9 @@ export function resolveProductImage(
   category: string | null | undefined,
   slug?: string | null,
 ): string | undefined {
-  if (slug && PRODUCT_IMAGES_BY_SLUG[slug]) {
-    return PRODUCT_IMAGES_BY_SLUG[slug];
+  // Prefer the real image stored on the product record over any illustrative fallback.
+  if (imageUrl?.startsWith("http") || imageUrl?.startsWith("data:")) {
+    return imageUrl;
   }
 
   if (imageUrl) {
@@ -195,8 +196,8 @@ export function resolveProductImage(
     }
   }
 
-  if (imageUrl?.startsWith("http")) {
-    return imageUrl;
+  if (slug && PRODUCT_IMAGES_BY_SLUG[slug]) {
+    return PRODUCT_IMAGES_BY_SLUG[slug];
   }
 
   // URLs relativas (inclui `/__l5e/...` do CDN de assets do Lovable).
