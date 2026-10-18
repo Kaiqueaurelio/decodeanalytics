@@ -217,7 +217,9 @@ function BuyBox({ product }: { product: StoreProduct }) {
   const min = product.min_quantity ?? 1;
   const [qty, setQty] = useState(min);
   const [obs, setObs] = useState("");
-  const total = (Number(product.base_price) || 0) * qty;
+  const price = Number(product.base_price ?? 0);
+  const hasPrice = Number.isFinite(price) && price > 0;
+  const total = hasPrice ? price * qty : 0;
   const rating = product.rating ? Number(product.rating) : null;
 
   const message = `Olá! Tenho interesse no produto *${product.name}*. Quantidade: ${qty}${obs ? `. Observações: ${obs}` : ""}.`;
@@ -255,13 +257,13 @@ function BuyBox({ product }: { product: StoreProduct }) {
 
       <div className="rounded-[var(--store-radius-lg)] bg-[var(--store-surface-soft)] p-4">
         <p className="text-[10px] font-bold uppercase tracking-wide text-[var(--store-text-light)]">
-          {showPrices ? "Preço unitário" : "Valor"}
+          {showPrices && hasPrice ? "Preço unitário" : "Valor"}
         </p>
         <p className="text-3xl font-extrabold leading-tight text-[var(--store-primary)]">
-          {showPrices ? brl(product.base_price) : "Sob consulta"}
+          {showPrices && hasPrice ? brl(price) : "Sob consulta"}
         </p>
         <p className="text-xs text-[var(--store-text-muted)]">
-          {showPrices
+          {showPrices && hasPrice
             ? `${product.unit ? `por ${product.unit}` : ""}${product.min_quantity ? ` · mínimo ${product.min_quantity}` : ""}`
             : `Peça seu orçamento no WhatsApp${product.min_quantity ? ` · mínimo ${product.min_quantity}` : ""}`}
         </p>
@@ -286,10 +288,10 @@ function BuyBox({ product }: { product: StoreProduct }) {
         </div>
         <div className="rounded-[var(--store-radius-md)] border border-dashed border-[var(--store-primary-light)]/40 bg-[var(--store-primary-light)]/5 p-3">
           <p className="text-[10px] font-bold uppercase tracking-wide text-[var(--store-text-muted)]">
-            {showPrices ? "Total estimado" : "Orçamento"}
+            {showPrices && hasPrice ? "Total estimado" : "Orçamento"}
           </p>
           <p className="text-xl font-extrabold text-[var(--store-primary)]">
-            {showPrices ? brl(total) : "Sob consulta"}
+            {showPrices && hasPrice ? brl(total) : "Sob consulta"}
           </p>
         </div>
       </div>
