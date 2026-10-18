@@ -5,6 +5,10 @@ import { STORE_CONTACT, WHATSAPP_NUMBER } from "@/components/storefront/tokens";
 export interface CompanyInfo {
   name: string;
   logoUrl: string | null;
+  brandBackground: string;
+  brandPrimary: string;
+  brandSecondary: string;
+  brandAccent: string;
   whatsappDigits: string; // ex: 5511972235342
   whatsappDisplay: string; // ex: +55 11 97223-5342
   instagram: string | null; // ex: @decodeanalytics
@@ -57,6 +61,7 @@ export function useCompanyInfo(): CompanyInfo {
         .from("company_settings")
         .select(`
           name, logo_url, whatsapp, instagram, address, show_prices,
+          brand_background, brand_primary, brand_secondary, brand_accent,
           hero_title, hero_subtitle, hero_cta_primary, hero_cta_secondary,
           bento_kicker, bento_title, bento_description,
           how_it_works_title, contact_title, contact_description
@@ -74,6 +79,10 @@ export function useCompanyInfo(): CompanyInfo {
   return {
     name: data?.name ?? "Decode Analytics",
     logoUrl: data?.logo_url ?? null,
+    brandBackground: data?.brand_background ?? "#0B1026",
+    brandPrimary: data?.brand_primary ?? "#22D3EE",
+    brandSecondary: data?.brand_secondary ?? "#087CF0",
+    brandAccent: data?.brand_accent ?? "#7138F5",
     whatsappDigits: waDigits,
     whatsappDisplay: data?.whatsapp?.trim() || formatBrPhone(waDigits),
     instagram: insta.handle,
