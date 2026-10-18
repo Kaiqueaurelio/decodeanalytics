@@ -163,6 +163,12 @@ function StoreHeader() {
             <User className="h-4 w-4" />
             Entrar
           </Link>
+          <Link
+            to="/orcamento"
+            className="flex items-center gap-1.5 rounded-lg border border-[var(--store-border)] px-3 py-2 text-sm font-semibold text-[var(--store-text)] hover:border-[#22D3EE]/50 hover:text-[#22D3EE]"
+          >
+            Solicitar orçamento
+          </Link>
           <CartButton />
         </nav>
 
@@ -246,6 +252,14 @@ function StoreHeader() {
                     >
                       <User className="h-4 w-4 text-[#22D3EE]" />
                       Entrar na conta
+                    </Link>
+                    <Link
+                      to="/orcamento"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="flex items-center gap-3 px-3 py-3 rounded-lg text-sm font-semibold text-[var(--store-text)] hover:bg-[var(--store-surface-soft)] transition-colors"
+                    >
+                      <MessageCircle className="h-4 w-4 text-[#22D3EE]" />
+                      Solicitar orçamento
                     </Link>
                     <Link
                       to="/carrinho"
