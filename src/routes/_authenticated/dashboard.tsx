@@ -240,6 +240,12 @@ function Dashboard() {
             >
               <Link to="/production">Abrir produção</Link>
             </Button>
+            <Button variant="outline" className="border-white/20 bg-white/5 text-white hover:bg-white/10 hover:text-white" asChild>
+              <Link to="/admin-marca">Editar marca</Link>
+            </Button>
+            <Button variant="outline" className="border-white/20 bg-white/5 text-white hover:bg-white/10 hover:text-white" asChild>
+              <Link to="/admin-produtos">Gerenciar catálogo</Link>
+            </Button>
             <Button
               className="bg-[#e4b52e] text-[#10241e] shadow-lg hover:bg-[#f1c94e]"
               onClick={() => setNewOrderOpen(true)}
