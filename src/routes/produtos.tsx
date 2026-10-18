@@ -86,7 +86,7 @@ function ProdutosPage() {
               value={text}
               onChange={(e) => setText(e.target.value)}
               placeholder="Buscar no catálogo..."
-              className="h-11 w-full rounded-[var(--store-radius-md)] border border-[var(--store-border)] bg-white pl-11 pr-4 text-sm outline-none focus:border-[var(--store-primary-light)] focus:ring-4 focus:ring-[var(--store-primary-light)]/15"
+              className="h-11 w-full rounded-[var(--store-radius-md)] border border-[var(--store-border)] bg-[#111116] pl-11 pr-4 text-sm outline-none focus:border-[var(--store-primary-light)] focus:ring-4 focus:ring-[var(--store-primary-light)]/15"
             />
           </div>
         </div>
@@ -102,7 +102,7 @@ function ProdutosPage() {
                 className={`inline-flex min-h-11 shrink-0 items-center rounded-full border px-4 text-sm font-semibold transition-colors ${
                   active
                     ? "border-[var(--store-primary)] bg-[var(--store-primary)] text-white"
-                    : "border-[var(--store-border)] bg-white text-[var(--store-text-muted)] hover:border-[var(--store-primary-light)]/40 hover:text-[var(--store-primary)]"
+                    : "border-[var(--store-border)] bg-[#111116] text-[var(--store-text-muted)] hover:border-[var(--store-primary-light)]/40 hover:text-[var(--store-primary)]"
                 }`}
               >
                 {c.label}
@@ -124,7 +124,7 @@ function ProdutosPage() {
             ))}
           </ProductGrid>
         ) : (
-          <div className="rounded-[var(--store-radius-lg)] border border-dashed border-[var(--store-border)] bg-white p-12 text-center">
+          <div className="rounded-[var(--store-radius-lg)] border border-dashed border-[var(--store-border)] bg-[#111116] p-12 text-center">
             <p className="text-base font-bold text-[var(--store-text)]">
               Nenhum produto encontrado
             </p>
