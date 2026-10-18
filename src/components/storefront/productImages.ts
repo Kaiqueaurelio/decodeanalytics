@@ -42,6 +42,14 @@ import imgMousepad from "@/assets/products/sub/mousepad.jpg";
  * Mapeamento por slug do produto (mais específico que a categoria).
  */
 const PRODUCT_IMAGES_BY_SLUG: Record<string, string> = {
+  "encadernacao-tcc-capa-mole": imgNotebook,
+  "laminacao-plastificacao": imgLabelTransparent,
+  "adesivos-personalizados-catalogo": imgAdesivos,
+  "grandes-tiragens-cartazes-panfletos": imgPoster,
+  "panfletos-e-flyers-catalogo": imgPanfletos,
+  "convites-personalizados-catalogo": imgWeddingInvite,
+  "copos-termicos-personalizados-catalogo": imgSqueeze,
+  "canecas-personalizadas-catalogo": imgCanecas,
   // Cartões
   "cartao-couche-250g": imgBusinessCard,
   "cartao-visita-couche-300g": imgBusinessCard,
@@ -107,6 +115,11 @@ export const CATEGORY_IMAGES: Record<string, string> = {
   "Plotagem": imgPlotagem,
   "Manutenção de Computadores": imgManutencao,
   "Programação": imgProgramacao,
+  "Encadernação": imgNotebook,
+  "Laminação e Plastificação": imgLabelTransparent,
+  "Cartazes": imgPoster,
+  "Convites": imgWeddingInvite,
+  "Copos Térmicos": imgSqueeze,
   "Social Media": imgSocial,
   "Design Gráfico": imgDesign,
 };
@@ -125,6 +138,11 @@ const CATEGORY_IMAGES_BY_KEY: Record<string, string> = {
   programacao: imgProgramacao,
   "social media": imgSocial,
   "design grafico": imgDesign,
+  encadernacao: imgNotebook,
+  "laminacao e plastificacao": imgLabelTransparent,
+  cartazes: imgPoster,
+  convites: imgWeddingInvite,
+  "copos termicos": imgSqueeze,
 };
 
 const PRODUCT_IMAGES_BY_FILE: Record<string, string> = {
