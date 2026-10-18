@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import type { CSSProperties, ReactNode } from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
 import {
   Search,
@@ -37,7 +37,7 @@ export function StoreShell({ children }: { children: ReactNode }) {
   return (
     <div
       className="min-h-dvh bg-[var(--store-bg)] text-[var(--store-text)]"
-      style={{ fontFamily: "var(--store-font)", "--store-primary": brand.primaryColor, "--store-secondary": brand.secondaryColor, "--store-accent": brand.accentColor } as React.CSSProperties}
+      style={{ fontFamily: "var(--store-font)", "--store-primary": brand.primaryColor, "--store-secondary": brand.secondaryColor, "--store-accent": brand.accentColor } as CSSProperties}
     >
       <TopPromoBar />
       <StoreHeader />
