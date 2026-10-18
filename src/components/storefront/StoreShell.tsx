@@ -293,22 +293,17 @@ function StoreHeader() {
                   Soluções digitais, design e tecnologia pensadas para fazer seu negócio avançar.
                 </p>
                 <div className="flex gap-2">
-                  <a
-                    href={info.instagramUrl ?? "#"}
-                    target={info.instagramUrl ? "_blank" : undefined}
-                    rel={info.instagramUrl ? "noopener noreferrer" : undefined}
-                    aria-label="Instagram"
-                    className="grid h-11 w-11 place-items-center rounded-lg border border-white/10 bg-white/5 text-slate-100 transition-colors hover:bg-white/10 hover:text-cyan-300"
-                  >
-                    <Instagram className="h-4 w-4" />
-                  </a>
-                  <a
-                    href="#"
-                    aria-label="Facebook"
-                    className="grid h-11 w-11 place-items-center rounded-lg bg-white hover:bg-[var(--store-primary)] hover:text-white transition-colors"
-                  >
-                    <Facebook className="h-4 w-4" />
-                  </a>
+                  {info.instagramUrl && (
+                    <a
+                      href={info.instagramUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label="Instagram"
+                      className="grid h-11 w-11 place-items-center rounded-lg border border-white/10 bg-white/5 text-slate-100 transition-colors hover:bg-white/10 hover:text-cyan-300"
+                    >
+                      <Instagram className="h-4 w-4" />
+                    </a>
+                  )}
                 </div>
               </div>
             </SheetContent>
