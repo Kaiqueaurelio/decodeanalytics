@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { ArrowDown, ArrowRight, Code2, Laptop, MessageCircle, PenTool, Share2, Sparkles, Workflow, Zap, Printer, Palette, Globe, BadgeCheck, Clock3, ShieldCheck, ShoppingBag } from "lucide-react";
-import { Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { ProductCard, type StoreProduct } from "@/components/storefront/ProductCard";
