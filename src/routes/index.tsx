@@ -5,17 +5,17 @@ import { StoreShell } from "@/components/storefront/StoreShell";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Decode Analytics — Design & Soluções" },
+      { title: "Decode Analytics — Gráfica, Design & Soluções" },
       {
         name: "description",
         content:
-          "Design, tecnologia, programação e soluções digitais para ajudar seu negócio a avançar.",
+          "Encontre cartões, panfletos, adesivos, canecas, brindes, design gráfico e soluções digitais. Peça seu orçamento personalizado à Decode Analytics.",
       },
-      { property: "og:title", content: "Decode Analytics — Design & Soluções" },
+      { property: "og:title", content: "Decode Analytics — Gráfica, Design & Soluções" },
       {
         property: "og:description",
         content:
-          "Design, tecnologia, programação e soluções digitais para ajudar seu negócio a avançar.",
+          "Encontre cartões, panfletos, adesivos, canecas, brindes, design gráfico e soluções digitais. Peça seu orçamento personalizado à Decode Analytics.",
       },
     ],
   }),
