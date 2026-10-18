@@ -67,26 +67,31 @@ export const STATUS_ENUM = [
 
 const RATE_LIMIT_WINDOW_MS = 60_000;
 const RATE_LIMIT_MAX = 12;
+const RATE_LIMIT_MAX_BUCKETS = 5_000;
 const rateBuckets = new Map<string, number[]>();
 
 export function checkPublicRateLimit(key: string) {
   const now = Date.now();
-  const arr = (rateBuckets.get(key) ?? []).filter((t) => now - t < RATE_LIMIT_WINDOW_MS);
-  if (arr.length >= RATE_LIMIT_MAX) {
-    rateBuckets.set(key, arr);
-    return false;
-  }
-  arr.push(now);
-  rateBuckets.set(key, arr);
+  const bucketKey = key.trim().slice(0, 128) || "unknown";
 
-  if (rateBuckets.size > 5000) {
-    for (const [bucketKey, values] of rateBuckets) {
-      if (!values.length || now - values[values.length - 1] > RATE_LIMIT_WINDOW_MS) {
-        rateBuckets.delete(bucketKey);
+  // Keep attacker-controlled forwarding headers from growing this process-local map forever.
+  if (!rateBuckets.has(bucketKey) && rateBuckets.size >= RATE_LIMIT_MAX_BUCKETS) {
+    for (const [existingKey, values] of rateBuckets) {
+      if (!values.length || now - values[values.length - 1] >= RATE_LIMIT_WINDOW_MS) {
+        rateBuckets.delete(existingKey);
       }
     }
+    if (rateBuckets.size >= RATE_LIMIT_MAX_BUCKETS) return false;
   }
 
+  const arr = (rateBuckets.get(bucketKey) ?? []).filter((t) => now - t < RATE_LIMIT_WINDOW_MS);
+  if (arr.length >= RATE_LIMIT_MAX) {
+    rateBuckets.set(bucketKey, arr);
+    return false;
+  }
+
+  arr.push(now);
+  rateBuckets.set(bucketKey, arr);
   return true;
 }
 
