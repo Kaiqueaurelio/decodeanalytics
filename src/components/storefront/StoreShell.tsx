@@ -18,7 +18,7 @@ import {
 import { STORE_CATEGORIES } from "./tokens";
 
 const SOLUTION_CATEGORIES = STORE_CATEGORIES.filter(({ slug }) =>
-  ["Dados & Business Intelligence", "Desenvolvimento Web", "Automação de Processos", "Consultoria em Tecnologia", "Design & Identidade Visual", "Suporte Técnico", "Marketing Digital"].includes(slug),
+  ["Desenvolvimento Digital", "Suporte Técnico", "Software e Licenças", "Produtos Digitais", "Templates Digitais", "Design e Marketing"].includes(slug),
 );
 import { useCompanyInfo, useWaLink } from "@/hooks/useCompanyInfo";
 import { useCart } from "@/lib/cart-context";
