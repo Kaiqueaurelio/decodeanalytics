@@ -13,6 +13,10 @@ export const STORE_CATEGORIES = [
   { slug: "Banners", label: "Banners" },
   { slug: "Embalagens", label: "Embalagens" },
   { slug: "Plotagem", label: "Plotagem" },
+  { slug: "Manutenção de Computadores", label: "Manutenção de PC" },
+  { slug: "Social Media", label: "Social Media" },
+  { slug: "Design Gráfico", label: "Design Gráfico" },
+  { slug: "Programação", label: "Programação" },
 ] as const;
 
 export const WHATSAPP_NUMBER = "5511939222885";
