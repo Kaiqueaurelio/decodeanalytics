@@ -64,7 +64,8 @@ function ProdutosPage() {
       })) as StoreProduct[]).sort((a, b) => {
         const aTech = technologyFirst.has(a.category ?? "") ? 0 : 1;
         const bTech = technologyFirst.has(b.category ?? "") ? 0 : 1;
-        return aTech - bTech || Number(b.reviews_count ?? 0) - Number(a.reviews_count ?? 0);
+        // Stable ordering: move technology to the top without reshuffling products inside each group.
+        return aTech - bTech;
       });
     },
   });
