@@ -15,6 +15,9 @@ import { Route as AssistenteRouteImport } from './routes/assistente'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as CarrinhoRouteImport } from './routes/carrinho'
 import { Route as ProdutosRouteImport } from './routes/produtos'
+import { Route as OrcamentoRouteImport } from './routes/orcamento'
+import { Route as AuthenticatedBrandRouteImport } from './routes/_authenticated/brand'
+import { Route as AuthenticatedCatalogAdminRouteImport } from './routes/_authenticated/catalog-admin'
 import { Route as AuthenticatedAiLogsRouteImport } from './routes/_authenticated/ai-logs'
 import { Route as AuthenticatedCalculatorRouteImport } from './routes/_authenticated/calculator'
 import { Route as AuthenticatedCashRouteImport } from './routes/_authenticated/cash'
@@ -68,6 +71,7 @@ const ProdutosRoute = ProdutosRouteImport.update({
   path: '/produtos',
   getParentRoute: () => rootRouteImport,
 } as any)
+const OrcamentoRoute = OrcamentoRouteImport.update({ id: '/orcamento', path: '/orcamento', getParentRoute: () => rootRouteImport } as any)
 const AuthenticatedAiLogsRoute = AuthenticatedAiLogsRouteImport.update({
   id: '/ai-logs',
   path: '/ai-logs',
@@ -161,6 +165,8 @@ const AuthenticatedUsersRoute = AuthenticatedUsersRouteImport.update({
   path: '/users',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedBrandRoute = AuthenticatedBrandRouteImport.update({ id: '/brand', path: '/brand', getParentRoute: () => AuthenticatedRouteRoute } as any)
+const AuthenticatedCatalogAdminRoute = AuthenticatedCatalogAdminRouteImport.update({ id: '/catalog-admin', path: '/catalog-admin', getParentRoute: () => AuthenticatedRouteRoute } as any)
 const BriefingTokenRoute = BriefingTokenRouteImport.update({
   id: '/briefing/$token',
   path: '/briefing/$token',
@@ -189,6 +195,9 @@ const ApiPublicAiHealthRoute = ApiPublicAiHealthRouteImport.update({
 } as any)
 
 export interface FileRoutesByFullPath {
+  '/orcamento': typeof OrcamentoRoute
+  '/brand': typeof AuthenticatedBrandRoute
+  '/catalog-admin': typeof AuthenticatedCatalogAdminRoute
   '/': typeof IndexRoute
   '/assistente': typeof AssistenteRoute
   '/auth': typeof AuthRoute
@@ -219,6 +228,9 @@ export interface FileRoutesByFullPath {
   '/api/public/ai-health': typeof ApiPublicAiHealthRoute
 }
 export interface FileRoutesByTo {
+  '/orcamento': typeof OrcamentoRoute
+  '/brand': typeof AuthenticatedBrandRoute
+  '/catalog-admin': typeof AuthenticatedCatalogAdminRoute
   '/': typeof IndexRoute
   '/assistente': typeof AssistenteRoute
   '/auth': typeof AuthRoute
@@ -249,6 +261,9 @@ export interface FileRoutesByTo {
   '/api/public/ai-health': typeof ApiPublicAiHealthRoute
 }
 export interface FileRoutesById {
+  '/orcamento': typeof OrcamentoRoute
+  '/_authenticated/brand': typeof AuthenticatedBrandRoute
+  '/_authenticated/catalog-admin': typeof AuthenticatedCatalogAdminRoute
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
@@ -389,6 +404,10 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/orcamento': { id: '/orcamento'; path: '/orcamento'; fullPath: '/orcamento'; preLoaderRoute: typeof OrcamentoRouteImport; parentRoute: typeof rootRouteImport }
+    '/_authenticated/brand': { id: '/_authenticated/brand'; path: '/brand'; fullPath: '/brand'; preLoaderRoute: typeof AuthenticatedBrandRouteImport; parentRoute: typeof AuthenticatedRouteRoute }
+    '/_authenticated/catalog-admin': { id: '/_authenticated/catalog-admin'; path: '/catalog-admin'; fullPath: '/catalog-admin'; preLoaderRoute: typeof AuthenticatedCatalogAdminRouteImport; parentRoute: typeof AuthenticatedRouteRoute }
+
     '/': {
       id: '/'
       path: '/'
@@ -596,6 +615,8 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedBrandRoute: typeof AuthenticatedBrandRoute
+  AuthenticatedCatalogAdminRoute: typeof AuthenticatedCatalogAdminRoute
   AuthenticatedAiLogsRoute: typeof AuthenticatedAiLogsRoute
   AuthenticatedCalculatorRoute: typeof AuthenticatedCalculatorRoute
   AuthenticatedCashRoute: typeof AuthenticatedCashRoute
@@ -618,6 +639,8 @@ interface AuthenticatedRouteRouteChildren {
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedBrandRoute: AuthenticatedBrandRoute,
+  AuthenticatedCatalogAdminRoute: AuthenticatedCatalogAdminRoute,
   AuthenticatedAiLogsRoute: AuthenticatedAiLogsRoute,
   AuthenticatedCalculatorRoute: AuthenticatedCalculatorRoute,
   AuthenticatedCashRoute: AuthenticatedCashRoute,
@@ -649,6 +672,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   CarrinhoRoute: CarrinhoRoute,
   ProdutosRoute: ProdutosRoute,
+  OrcamentoRoute: OrcamentoRoute,
   BriefingTokenRoute: BriefingTokenRoute,
   ProdutoSlugRoute: ProdutoSlugRoute,
   SitemapXmlRoute: SitemapXmlRoute,
