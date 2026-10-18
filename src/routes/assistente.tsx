@@ -16,13 +16,13 @@ export const Route = createFileRoute("/assistente")({
   component: AssistantePage,
   head: () => ({
     meta: [
-      { title: "Assistente virtual — Alcateia's Produções Gráficas" },
+      { title: "Assistente virtual — Decode Analytics Produções Gráficas" },
       {
         name: "description",
         content:
           "Fale com nosso assistente virtual: ele te ajuda a escolher o produto gráfico ideal (cartão, banner, adesivo, brindes e mais).",
       },
-      { property: "og:title", content: "Assistente virtual — Alcateia's Produções Gráficas" },
+      { property: "og:title", content: "Assistente virtual — Decode Analytics Produções Gráficas" },
       {
         property: "og:description",
         content: "Tire dúvidas sobre impressos, acabamentos, prazos e orçamentos com nosso assistente virtual.",
@@ -53,7 +53,7 @@ function AssistantePage() {
       id: "welcome",
       role: "assistant",
       content:
-        "Oi! 👋 Sou o assistente virtual da Alcateia's. Me conta o que você precisa imprimir e eu te ajudo a escolher a melhor opção — papel, acabamento, quantidade e prazo. 🎨",
+        "Oi! 👋 Sou o assistente virtual da Decode Analytics. Me conta o que você precisa imprimir e eu te ajudo a escolher a melhor opção — papel, acabamento, quantidade e prazo. 🎨",
     },
   ]);
   const [input, setInput] = useState("");
@@ -104,7 +104,7 @@ function AssistantePage() {
               Assistente virtual
             </h1>
             <p className="truncate text-sm text-[var(--store-text-muted)]">
-              Alcateia's Produções Gráficas — te ajuda a escolher o produto ideal
+              Decode Analytics Produções Gráficas — te ajuda a escolher o produto ideal
             </p>
           </div>
         </header>

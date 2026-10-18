@@ -29,11 +29,11 @@ import { resolveProductImage } from "@/components/storefront/productImages";
 export const Route = createFileRoute("/produto/$slug")({
   head: ({ params }) => ({
     meta: [
-      { title: `Produto ${params.slug} — Alcateia's` },
+      { title: `Produto ${params.slug} — Decode Analytics` },
       {
         name: "description",
         content:
-          "Personalize seu produto na Alcateia's: acabamento profissional, prazos rápidos e atendimento humano.",
+          "Personalize seu produto na Decode Analytics: acabamento profissional, prazos rápidos e atendimento humano.",
       },
     ],
   }),

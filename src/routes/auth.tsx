@@ -10,7 +10,7 @@ import { toast } from "sonner";
 import { emitAuthTelemetry, trackInputFocus } from "@/lib/auth-telemetry";
 
 export const Route = createFileRoute("/auth")({
-  head: () => ({ meta: [{ title: "Entrar | Alcateia's Gestão" }] }),
+  head: () => ({ meta: [{ title: "Entrar | Decode Analytics Gestão" }] }),
   component: AuthPage,
 });
 
@@ -88,11 +88,11 @@ function AuthPage() {
       <div className="auth-card w-full max-w-md rounded-2xl border border-border bg-card p-5 shadow-2xl sm:p-8">
         <div className="text-center mb-4 sm:mb-6">
           <img
-            src="/brand/alcateia-logo.png"
-            alt="Alcateia's Produções Gráficas - Criando impacto a cada imagem"
+            src="/brand/decode-logo.png"
+            alt="Decode Analytics Produções Gráficas - Criando impacto a cada imagem"
             className="auth-logo mx-auto mb-3 h-24 w-auto max-w-full object-contain sm:mb-4 sm:h-36 md:h-44"
           />
-          <h1 className="text-xl sm:text-2xl font-bold text-primary">Alcateia's Gestão</h1>
+          <h1 className="text-xl sm:text-2xl font-bold text-primary">Decode Analytics Gestão</h1>
           <p className="text-sm text-muted-foreground">Sistema de gestão da produção gráfica</p>
         </div>
         <Tabs defaultValue="login">

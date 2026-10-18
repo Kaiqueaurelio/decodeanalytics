@@ -9,6 +9,10 @@ import {
   Gift,
   Package,
   Printer,
+  Wrench,
+  Share2,
+  Palette,
+  Code2,
   type LucideIcon,
 } from "lucide-react";
 
@@ -22,6 +26,10 @@ const CATS: { slug: string; label: string; Icon: LucideIcon }[] = [
   { slug: "Brindes", label: "Brindes", Icon: Gift },
   { slug: "Embalagens", label: "Embalagens", Icon: Package },
   { slug: "Plotagem", label: "Plotagem", Icon: Printer },
+  { slug: "Manutenção de Computadores", label: "Manutenção de PC", Icon: Wrench },
+  { slug: "Social Media", label: "Social Media", Icon: Share2 },
+  { slug: "Design Gráfico", label: "Design Gráfico", Icon: Palette },
+  { slug: "Programação", label: "Programação", Icon: Code2 },
 ];
 
 export function CategoryCircles() {

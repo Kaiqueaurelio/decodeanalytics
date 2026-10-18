@@ -40,13 +40,13 @@ import { trackCardClick, trackCta } from "@/lib/analytics";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Alcateia Produções Gráficas — Gráfica online com produtos personalizados" },
+      { title: "Decode Analytics — Gráfica online com produtos personalizados" },
       {
         name: "description",
         content:
           "Cartões de visita, canecas, camisetas, adesivos, banners e brindes personalizados com acabamento profissional. Peça pelo site ou WhatsApp.",
       },
-      { property: "og:title", content: "Alcateia Produções Gráficas — Gráfica online" },
+      { property: "og:title", content: "Decode Analytics — Gráfica online" },
       {
         property: "og:description",
         content: "Produtos personalizados com acabamento profissional. Peça pelo site ou WhatsApp.",
@@ -508,7 +508,7 @@ function TestimonialsSection() {
               Quem já imprimiu com a gente
             </p>
             <h2 className="font-display mt-1 text-4xl leading-none text-white sm:text-5xl">
-              MARCAS QUE CONFIAM NA ALCATEIA'S
+              MARCAS QUE CONFIAM NA DECODE ANALYTICS
             </h2>
           </div>
           <div className="flex items-center gap-1 text-[var(--store-gold)]">
@@ -629,7 +629,7 @@ function _ContactSection() {
       <div className="mx-auto mt-10 max-w-[1280px] px-4">
         <div className="overflow-hidden rounded-[var(--store-radius-lg)] border border-white/10 bg-white/5">
           <iframe
-            title="Localização Alcateia's"
+            title="Localização Decode Analytics"
             src="https://maps.google.com/maps?q=Estrada+do+Cabreúva,703,Vila+Santa+Lúcia,Carapicuíba,SP&t=&z=15&ie=UTF8&iwloc=&output=embed"
             className="h-72 w-full border-0 sm:h-96"
             allowFullScreen

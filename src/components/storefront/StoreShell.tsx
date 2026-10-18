@@ -95,12 +95,12 @@ function StoreHeader() {
       <div className="mx-auto flex max-w-[1280px] items-center justify-between gap-3 px-3 py-2 sm:px-4 sm:py-3 md:gap-6 md:py-4">
         <Link
           to="/"
-          aria-label="Logo Alcateia"
+          aria-label="Logo Decode Analytics"
           className="flex shrink-0 items-center gap-2 sm:gap-3 transition-transform hover:scale-[1.02]"
         >
           <img
-            src="/brand/alcateia-logo.png"
-            alt="Alcateia Produções Gráficas"
+            src="/brand/decode-logo.png"
+            alt="Decode Analytics"
             className="h-10 w-auto sm:h-12 md:h-14 object-contain"
           />
           <div className="leading-tight hidden sm:block">
@@ -108,7 +108,7 @@ function StoreHeader() {
               className="font-display text-lg sm:text-2xl leading-none text-[var(--store-primary)]"
               style={{ letterSpacing: "0.04em" }}
             >
-              ALCATEIA
+              DECODE ANALYTICS
             </div>
             <div className="text-[8px] sm:text-[10px] font-bold uppercase tracking-[0.15em] sm:tracking-[0.2em] text-[var(--store-accent)]">
               Produções Gráficas
@@ -145,7 +145,7 @@ function StoreHeader() {
 
         <nav className="hidden items-center gap-1 md:flex">
           <a
-            href={waLink("Olá! Vim do site da Alcateia Produções Gráficas.")}
+            href={waLink("Olá! Vim do site da Decode Analytics.")}
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium text-[var(--store-text)] hover:bg-[var(--store-surface-soft)]"
@@ -191,13 +191,13 @@ function StoreHeader() {
               <div className="flex items-center justify-between border-b border-[var(--store-border)] px-6 py-5">
                 <div className="flex items-center gap-3">
                   <img
-                    src="/brand/alcateia-logo.png"
-                    alt="Alcateia Produções Gráficas"
+                    src="/brand/decode-logo.png"
+                    alt="Decode Analytics"
                     className="h-10 w-auto object-contain"
                   />
                   <div className="leading-tight">
                     <div className="text-sm font-extrabold text-[var(--store-primary)]">
-                      Alcateia
+                      Decode Analytics
                     </div>
                     <div className="text-[9px] font-bold uppercase tracking-[0.15em] text-[var(--store-accent)]">
                       Produções Gráficas
@@ -260,7 +260,7 @@ function StoreHeader() {
                     Atendimento
                   </h3>
                   <a
-                    href={waLink("Olá! Vim do site da Alcateia Produções Gráficas.")}
+                    href={waLink("Olá! Vim do site da Decode Analytics.")}
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={() => setMobileMenuOpen(false)}
@@ -344,12 +344,12 @@ function StoreFooter() {
         <div>
           <div className="flex items-center gap-3">
             <img
-              src="/brand/alcateia-logo.png"
-              alt="Alcateia Produções Gráficas"
+              src="/brand/decode-logo.png"
+              alt="Decode Analytics"
               className="h-16 w-auto object-contain"
             />
             <div>
-              <div className="text-lg font-extrabold uppercase">Alcateia</div>
+              <div className="text-lg font-extrabold uppercase">Decode Analytics</div>
               <div className="text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--store-secondary)]">
                 Produções Gráficas
               </div>
@@ -480,7 +480,7 @@ function StoreFooter() {
       <div className="border-t border-white/10">
         <div className="mx-auto flex max-w-[1280px] flex-col items-center justify-between gap-2 px-4 py-4 text-xs text-white/50 md:flex-row">
           <p>
-            © {new Date().getFullYear()} Alcateia Produções Gráficas. Todos os direitos reservados.
+            © {new Date().getFullYear()} Decode Analytics. Todos os direitos reservados.
           </p>
           <p>Feito com cuidado para sua marca brilhar.</p>
         </div>

@@ -43,7 +43,7 @@ function NotFoundComponent() {
   );
 }
 
-function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
+function ErrorComponent({ error, reset }: import("@tanstack/react-router").ErrorComponentProps) {
   console.error(error);
   const router = useRouter();
   useEffect(() => {
@@ -90,20 +90,20 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         content:
           "width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content",
       },
-      { title: "Alcateia's Gestão" },
-      { name: "description", content: "Sistema de gestão para a Alcateia's Produções Gráficas" },
-      { name: "author", content: "Alcateia" },
-      { property: "og:title", content: "Alcateia's Gestão" },
+      { title: "Decode Analytics Gestão" },
+      { name: "description", content: "Sistema de gestão para a Decode Analytics Produções Gráficas" },
+      { name: "author", content: "Decode Analytics" },
+      { property: "og:title", content: "Decode Analytics Gestão" },
       {
         property: "og:description",
-        content: "Sistema de gestão para a Alcateia's Produções Gráficas",
+        content: "Sistema de gestão para a Decode Analytics Produções Gráficas",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
-      { name: "twitter:title", content: "Alcateia's Gestão" },
+      { name: "twitter:title", content: "Decode Analytics Gestão" },
       {
         name: "twitter:description",
-        content: "Sistema de gestão para a Alcateia's Produções Gráficas",
+        content: "Sistema de gestão para a Decode Analytics Produções Gráficas",
       },
       { property: "og:image", content: "/brand/app-icon-full.png" },
       { name: "twitter:image", content: "/brand/app-icon-full.png" },
@@ -113,14 +113,14 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       // "default" faz o iOS reservar a área do notch/status bar automaticamente,
       // evitando que o conteúdo do PWA suba pra baixo da barra de status.
       { name: "apple-mobile-web-app-status-bar-style", content: "default" },
-      { name: "apple-mobile-web-app-title", content: "Alcateia's" },
+      { name: "apple-mobile-web-app-title", content: "Decode Analytics" },
     ],
     links: [
       {
         rel: "stylesheet",
         href: appCss,
       },
-      { rel: "icon", href: "/favicon.ico" },
+      { rel: "icon", type: "image/png", href: "/favicon.png" },
       { rel: "icon", type: "image/png", sizes: "192x192", href: "/brand/app-icon-192.png" },
       { rel: "apple-touch-icon", sizes: "180x180", href: "/apple-touch-icon.png" },
       { rel: "manifest", href: "/manifest.webmanifest" },

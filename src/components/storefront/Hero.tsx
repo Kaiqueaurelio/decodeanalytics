@@ -28,7 +28,7 @@ export function Hero() {
               className="inline-flex max-w-full items-center gap-2 rounded-full bg-white/15 px-3 py-1 text-[10px] font-extrabold uppercase text-white backdrop-blur sm:text-[11px]"
               style={{ letterSpacing: "0.08em" }}
             >
-              <CheckCircle className="h-3 w-3" /> Alcateia Produções Gráficas · Profissional · 48h
+              <CheckCircle className="h-3 w-3" /> Decode Analytics · Profissional · 48h
             </span>
             <h1 className="font-display mt-4 text-[2.15rem] leading-[0.98] sm:mt-5 sm:text-6xl md:text-7xl lg:text-8xl">
               QUALIDADE EM

@@ -23,13 +23,13 @@ export const Route = createFileRoute("/produtos")({
   }),
   head: () => ({
     meta: [
-      { title: "Catálogo de produtos personalizados — Alcateia's" },
+      { title: "Catálogo de produtos personalizados — Decode Analytics" },
       {
         name: "description",
         content:
           "Catálogo completo de cartões, canecas, camisetas, banners, adesivos, brindes e mais. Personalize do seu jeito.",
       },
-      { property: "og:title", content: "Catálogo de produtos — Alcateia's" },
+      { property: "og:title", content: "Catálogo de produtos — Decode Analytics" },
     ],
   }),
   component: ProdutosPage,

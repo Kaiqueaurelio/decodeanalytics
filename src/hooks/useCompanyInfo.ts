@@ -7,7 +7,7 @@ export interface CompanyInfo {
   logoUrl: string | null;
   whatsappDigits: string; // ex: 5511972235342
   whatsappDisplay: string; // ex: +55 11 97223-5342
-  instagram: string | null; // ex: @alcateiasproducoesgraficas
+  instagram: string | null; // ex: @decodeanalytics
   instagramUrl: string | null;
   address: string;
   email: string;
@@ -72,7 +72,7 @@ export function useCompanyInfo(): CompanyInfo {
   const insta = normalizeInstagram(data?.instagram);
 
   return {
-    name: data?.name ?? "Alcateia Produções Gráficas",
+    name: data?.name ?? "Decode Analytics",
     logoUrl: data?.logo_url ?? null,
     whatsappDigits: waDigits,
     whatsappDisplay: data?.whatsapp?.trim() || formatBrPhone(waDigits),
@@ -86,14 +86,14 @@ export function useCompanyInfo(): CompanyInfo {
     hours: STORE_CONTACT.hours,
     showPrices: data?.show_prices !== false,
     heroTitle: data?.hero_title ?? "IMPRESSÃO<br />PRODUÇÕES GRÁFICAS",
-    heroSubtitle: data?.hero_subtitle ?? "Cartões, banners, camisetas, canecas, adesivos e brindes feitos com acabamento profissional pela Alcateia — gráfica que uiva por qualidade.",
+    heroSubtitle: data?.hero_subtitle ?? "Cartões, banners, camisetas, canecas, adesivos e brindes feitos com acabamento profissional pela Decode Analytics — soluções em gráfica, tecnologia e marketing digital.",
     heroCtaPrimary: data?.hero_cta_primary ?? "Ver produtos",
     heroCtaSecondary: data?.hero_cta_secondary ?? "Enviar minha arte",
     bentoKicker: data?.bento_kicker ?? "Os favoritos dos IMbatíveis",
     bentoTitle: data?.bento_title ?? "MAIS PEDIDOS DA GRÁFICA",
     bentoDescription: data?.bento_description ?? "Preços direto da nossa produção — atualizados em tempo real pelo painel.",
     howItWorksTitle: data?.how_it_works_title ?? "Do briefing à entrega em poucos passos",
-    contactTitle: data?.contact_title ?? "Fale com a Alcateia",
+    contactTitle: data?.contact_title ?? "Fale com a Decode Analytics",
     contactDescription: data?.contact_description ?? "Tire dúvidas sobre prazos, materiais ou peça um orçamento personalizado pelo nosso canal oficial.",
   };
 }

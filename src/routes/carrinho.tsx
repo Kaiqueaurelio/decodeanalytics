@@ -9,10 +9,10 @@ import { useMemo } from "react";
 export const Route = createFileRoute("/carrinho")({
   head: () => ({
     meta: [
-      { title: "Carrinho — Alcateia's" },
+      { title: "Carrinho — Decode Analytics" },
       {
         name: "description",
-        content: "Revise seus produtos e finalize seu pedido na Alcateia's.",
+        content: "Revise seus produtos e finalize seu pedido na Decode Analytics.",
       },
     ],
   }),

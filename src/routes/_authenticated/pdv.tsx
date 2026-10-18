@@ -107,7 +107,7 @@ td{padding:5px 0;border-bottom:1px dashed #cbd5e1;vertical-align:top}
 .ok{background:#d1fae5;color:#065f46}.bad{background:#fef3c7;color:#92400e}
 @media print{button{display:none}}
 </style></head><body>
-<div class="brand"><strong>Alcateia Produções Gráficas</strong><span class="tag">Fechamento de caixa</span></div>
+<div class="brand"><strong>Decode Analytics</strong><span class="tag">Fechamento de caixa</span></div>
 <h1>Recibo de Fechamento</h1>
 <p class="muted">${date} · Fechado em ${closedAt} · Operador: ${c.operator || "—"} · <span class="badge ${ok ? "ok" : "bad"}">${ok ? "Caixa bate" : "Com diferença"}</span></p>
 
@@ -813,7 +813,7 @@ function PDVPage() {
             A
           </div>
           <div>
-            <h2 className="text-xl font-black tracking-tight text-[#080c16]">PDV Alcateia Produções Gráficas</h2>
+            <h2 className="text-xl font-black tracking-tight text-[#080c16]">PDV Decode Analytics</h2>
             <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-slate-400">
               <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
               Terminal de Vendas Ativo
