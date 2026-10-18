@@ -33,10 +33,11 @@ import {
 } from "@/components/ui/sheet";
 
 export function StoreShell({ children }: { children: ReactNode }) {
+  const brand = useCompanyInfo();
   return (
     <div
       className="min-h-dvh bg-[var(--store-bg)] text-[var(--store-text)]"
-      style={{ fontFamily: "var(--store-font)" }}
+      style={{ fontFamily: "var(--store-font)", "--store-primary": brand.primaryColor, "--store-secondary": brand.secondaryColor, "--store-accent": brand.accentColor } as React.CSSProperties}
     >
       <TopPromoBar />
       <StoreHeader />
@@ -102,8 +103,8 @@ function StoreHeader() {
           className="flex shrink-0 items-center gap-2 sm:gap-3 transition-transform hover:scale-[1.02]"
         >
           <img
-            src="/brand/decode-logo.svg"
-            alt="Decode Analytics"
+            src={info.logoUrl || "/brand/decode-logo.svg"}
+            alt={info.name}
             className="h-10 w-auto brand-logo rounded-md bg-black p-1 object-contain sm:h-12 md:h-14"
           />
           <div className="leading-tight hidden sm:block">
@@ -200,8 +201,8 @@ function StoreHeader() {
               <div className="flex items-center justify-between border-b border-[var(--store-border)] px-6 py-5">
                 <div className="flex items-center gap-3">
                   <img
-                    src="/brand/decode-logo.svg"
-                    alt="Decode Analytics"
+                    src={info.logoUrl || "/brand/decode-logo.svg"}
+                    alt={info.name}
                     className="h-10 w-auto brand-logo rounded-md bg-black p-1 object-contain"
                   />
                   <div className="leading-tight">
