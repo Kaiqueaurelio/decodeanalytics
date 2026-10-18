@@ -219,16 +219,10 @@ function StoreHeader() {
                 {/* Categorias */}
                 <div className="border-b border-[var(--store-border)] px-6 py-4">
                   <h3 className="text-xs font-bold uppercase tracking-wide text-[var(--store-text-muted)] mb-3">
-                    Categorias
+                    {pathname === "/" ? "Soluções" : "Categorias"}
                   </h3>
                   <div className="space-y-2">
-                    <Link
-                      to="/produtos"
-                      onClick={() => setMobileMenuOpen(false)}
-                      className="block rounded-lg bg-[var(--store-primary)] px-3 py-2 text-sm font-bold text-white transition hover:bg-[var(--store-primary-light)]"
-                    >
-                      Ver catálogo completo
-                    </Link>
+                    <Link to="/produtos" onClick={() => setMobileMenuOpen(false)} className="block rounded-lg bg-[var(--store-primary)] px-3 py-2 text-sm font-bold text-white transition hover:bg-[var(--store-primary-light)]">Ver catálogo completo</Link>
                     {menuCategories.map((c) => (
                       <Link
                         key={c.slug}
@@ -340,15 +334,7 @@ function CategoryNav() {
     <nav aria-label="Categorias" className="hidden border-b border-[var(--store-border)] bg-[var(--store-surface)] md:block">
       <div className="mx-auto flex max-w-[1280px] gap-1 overflow-x-auto px-4 py-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         {STORE_CATEGORIES.map((c) => (
-          <Link
-            key={c.slug}
-            to="/produtos"
-            search={{ cat: c.slug }}
-            className="shrink-0 rounded-full px-4 py-2 text-sm font-semibold text-[var(--store-text-muted)] transition-colors hover:bg-[var(--store-surface-soft)] hover:text-[var(--store-primary)]"
-            activeProps={{
-              className: "shrink-0 rounded-full bg-[var(--store-primary)] px-4 py-2 text-sm font-semibold text-white",
-            }}
-          >
+          <Link key={c.slug} to="/produtos" search={{ cat: c.slug }} className="shrink-0 rounded-full px-4 py-2 text-sm font-semibold text-[var(--store-text-muted)] transition-colors hover:bg-[var(--store-surface-soft)] hover:text-[var(--store-primary)]" activeProps={{ className: "shrink-0 rounded-full bg-[var(--store-primary)] px-4 py-2 text-sm font-semibold text-white" }}>
             {c.label}
           </Link>
         ))}
@@ -416,9 +402,7 @@ function StoreFooter() {
               </li>
             ))}
           </ul>
-          <Link to="/produtos" className="mt-3 inline-flex min-h-10 items-center text-xs font-bold text-[var(--store-secondary)] hover:text-white">
-            Ver catálogo completo <span aria-hidden="true">↗</span>
-          </Link>
+          <Link to="/produtos" className="mt-3 inline-flex min-h-10 items-center text-xs font-bold text-[var(--store-secondary)] hover:text-white">Ver catálogo completo <span aria-hidden="true">↗</span></Link>
         </div>
         <div>
           <h3 className="text-sm font-bold uppercase tracking-wide text-[var(--store-secondary)]">

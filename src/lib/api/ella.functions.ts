@@ -88,7 +88,7 @@ function buildServiceDescription(name: string, category: string, custom?: string
     Plotagem: "Impressão técnica ou visual em grande formato para projetos, plantas e comunicação.",
     Brindes: "Item personalizado para ações promocionais, relacionamento com clientes e lembranças de marca.",
   };
-  return descriptions[category] || `${name} personalizado produzido pela Decode Analytics Produções Gráficas.`;
+  return descriptions[category] || `${name} personalizado produzido pela Decode Analytics — Design & Soluções.`;
 }
 
 async function ellaLocalFallback({
