@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from "react";
+import { useState, type FormEvent, type ReactNode } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { ImagePlus, LoaderCircle, Plus } from "lucide-react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -29,4 +29,4 @@ function CatalogAdminPage(){
  <button disabled={busy} className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#087CF0] to-[#7138F5] px-4 font-bold md:col-span-2 disabled:opacity-60">{busy?<LoaderCircle className="h-4 w-4 animate-spin"/>:<Plus className="h-4 w-4"/>} Cadastrar produto</button>{message&&<p role="status" className="text-sm text-cyan-200 md:col-span-2">{message}</p>}</form>
  <section className="overflow-hidden rounded-2xl border border-white/10"><div className="border-b border-white/10 p-4"><h2 className="font-bold">Produtos cadastrados ({products.length})</h2></div><div className="divide-y divide-white/10">{products.map(p=><article key={p.id} className="flex items-center gap-3 p-4"><div className="grid h-14 w-14 shrink-0 place-items-center overflow-hidden rounded-lg bg-white/5">{p.image_url?<img src={p.image_url} alt="" className="h-full w-full object-cover"/>:<ImagePlus className="h-5 w-5 text-slate-500"/>}</div><div className="min-w-0 flex-1"><h3 className="truncate font-semibold">{p.name}</h3><p className="text-xs text-slate-400">{p.category||"Sem categoria"} · R$ {Number(p.base_price||0).toFixed(2).replace(".",",")}</p></div><button type="button" onClick={()=>void toggle(p)} className="rounded-lg border border-white/15 px-3 py-2 text-xs font-bold">{p.active?"Desativar":"Ativar"}</button></article>)}</div></section></Frame>;
 }
-function Frame({children}:{children:React.ReactNode}){return <main className="min-h-screen bg-[#080C1F] px-4 py-8 text-white sm:px-8"><div className="mx-auto max-w-6xl">{children}</div></main>}
+function Frame({children}:{children:ReactNode}){return <main className="min-h-screen bg-[#080C1F] px-4 py-8 text-white sm:px-8"><div className="mx-auto max-w-6xl">{children}</div></main>}
