@@ -83,8 +83,6 @@ const PRODUCT_IMAGES_BY_SLUG: Record<string, string> = {
   "camiseta-sublimada": imgHoodie,
   "caneca-plastico": imgCanecas,
   "caneca-porcelana": imgMagicMug,
-  "cartao-pvc": imgIdBadge,
-  "convite-casamento": imgWeddingInvite,
   "fachada-acm": imgBannerBacklight,
   "lona-front-light": imgBanners,
   "panfleto-a4": imgPanfletos,
