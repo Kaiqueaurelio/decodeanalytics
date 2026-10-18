@@ -33,10 +33,11 @@ import {
 } from "@/components/ui/sheet";
 
 export function StoreShell({ children }: { children: ReactNode }) {
+  const info = useCompanyInfo();
   return (
     <div
       className="storefront-dark min-h-dvh bg-[var(--store-bg)] text-slate-100"
-      style={{ fontFamily: "var(--store-font)" }}
+      style={{ fontFamily: "var(--store-font)", "--store-bg": info.brandBackground, "--store-primary": info.brandSecondary, "--store-primary-light": info.brandPrimary, "--store-secondary": info.brandPrimary, "--store-accent": info.brandAccent } as React.CSSProperties}
     >
       <TopPromoBar />
       <StoreHeader />
@@ -105,8 +106,8 @@ function StoreHeader() {
           className="flex shrink-0 items-center gap-2 sm:gap-3 transition-transform hover:scale-[1.02]"
         >
           <img
-            src="/brand/decode-logo.png"
-            alt="Decode Analytics"
+            src={info.logoUrl || "/brand/decode-logo.png"}
+            alt={info.name}
             className="h-10 w-auto brand-logo rounded-md bg-black p-1 object-contain sm:h-12 md:h-14"
           />
           <div className="leading-tight hidden sm:block">
@@ -114,7 +115,7 @@ function StoreHeader() {
               className="font-display text-lg sm:text-2xl leading-none text-[#22D3EE]"
               style={{ letterSpacing: "0.04em" }}
             >
-              DECODE ANALYTICS
+              {info.name.toUpperCase()}
             </div>
             <div className="text-[8px] sm:text-[10px] font-bold uppercase tracking-[0.15em] sm:tracking-[0.2em] text-[#A78BFA]">
               Design & Soluções
@@ -166,6 +167,7 @@ function StoreHeader() {
             <User className="h-4 w-4" />
             Entrar
           </Link>
+          <Link to="/orcamento" className="rounded-lg border border-[#22D3EE]/30 px-3 py-2 text-sm font-bold text-[#22D3EE] hover:bg-[#22D3EE]/10">Orçamento</Link>
           <CartButton />
         </nav>
 
@@ -223,6 +225,7 @@ function StoreHeader() {
                   </h3>
                   <div className="space-y-2">
                     <Link to="/produtos" onClick={() => setMobileMenuOpen(false)} className="block rounded-lg bg-[var(--store-primary)] px-3 py-2 text-sm font-bold text-white transition hover:bg-[var(--store-primary-light)]">Ver catálogo completo</Link>
+                    <Link to="/orcamento" onClick={() => setMobileMenuOpen(false)} className="block rounded-lg border border-[#22D3EE]/30 px-3 py-2 text-sm font-bold text-[#22D3EE] transition hover:bg-white/10">Solicitar orçamento</Link>
                     {menuCategories.map((c) => (
                       <Link
                         key={c.slug}
