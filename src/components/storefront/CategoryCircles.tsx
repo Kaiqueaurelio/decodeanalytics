@@ -1,11 +1,11 @@
 import { Link } from "@tanstack/react-router";
 import {
-  ChartNoAxesCombined,
+  BarChart3,
   Code2,
   Workflow,
   Lightbulb,
   Palette,
-  Headset,
+  Headphones,
   Megaphone,
   type LucideIcon,
 } from "lucide-react";
