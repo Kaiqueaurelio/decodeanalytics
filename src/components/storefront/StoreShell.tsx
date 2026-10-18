@@ -196,7 +196,7 @@ function StoreHeader() {
             </SheetTrigger>
             <SheetContent
               side="left"
-              className="w-[85%] sm:w-80 bg-[#0b0b10] text-white p-0 flex flex-col [&>button.absolute]:hidden"
+              className="!w-[85%] sm:!w-80 !bg-[#0B1026] !text-white p-0 flex flex-col [&>button.absolute]:hidden"
             >
               <div className="flex items-center justify-between border-b border-[var(--store-border)] px-6 py-5">
                 <div className="flex items-center gap-3">
@@ -207,9 +207,9 @@ function StoreHeader() {
                   />
                   <div className="leading-tight">
                     <div className="text-sm font-extrabold text-[#22D3EE]">
-                      Decode Analytics
+                      {info.name}
                     </div>
-                    <div className="text-[9px] font-bold uppercase tracking-[0.15em] text-[var(--store-accent)]">
+                    <div className="text-[9px] font-bold uppercase tracking-[0.15em] text-[#A78BFA]">
                       Design & Soluções
                     </div>
                   </div>
@@ -222,7 +222,7 @@ function StoreHeader() {
               <nav className="flex-1 overflow-y-auto py-2">
                 {/* Categorias */}
                 <div className="border-b border-[var(--store-border)] px-6 py-4">
-                  <h3 className="text-xs font-bold uppercase tracking-wide text-[var(--store-text-muted)] mb-3">
+                  <h3 className="text-xs font-bold uppercase tracking-wide text-slate-300 mb-3">
                     {pathname === "/" ? "Soluções" : "Categorias"}
                   </h3>
                   <div className="space-y-2">
@@ -233,7 +233,7 @@ function StoreHeader() {
                         to="/produtos"
                         search={{ cat: c.slug }}
                         onClick={() => setMobileMenuOpen(false)}
-                        className="block px-3 py-2 rounded-lg text-sm font-medium text-[var(--store-text)] hover:bg-[var(--store-surface-soft)] transition-colors"
+                        className="block px-3 py-2 rounded-lg text-sm font-medium !text-slate-100 hover:bg-white/10 transition-colors"
                       >
                         {c.label}
                       </Link>
@@ -242,14 +242,14 @@ function StoreHeader() {
                 </div>
 
                 <div className="border-b border-[var(--store-border)] px-6 py-4">
-                  <h3 className="text-[10px] font-bold uppercase tracking-widest text-[var(--store-text-muted)] mb-3">
+                  <h3 className="text-[10px] font-bold uppercase tracking-widest text-slate-300 mb-3">
                     Minha Conta
                   </h3>
                   <div className="space-y-2">
                     <Link
                       to="/auth"
                       onClick={() => setMobileMenuOpen(false)}
-                      className="flex items-center gap-3 px-3 py-3 rounded-lg text-sm font-medium text-[var(--store-text)] hover:bg-[var(--store-surface-soft)] transition-colors"
+                      className="flex items-center gap-3 px-3 py-3 rounded-lg text-sm font-medium !text-slate-100 hover:bg-white/10 transition-colors"
                     >
                       <User className="h-4 w-4 text-[#22D3EE]" />
                       Entrar na conta
@@ -257,7 +257,7 @@ function StoreHeader() {
                     <Link
                       to="/orcamento"
                       onClick={() => setMobileMenuOpen(false)}
-                      className="flex items-center gap-3 px-3 py-3 rounded-lg text-sm font-semibold text-[var(--store-text)] hover:bg-[var(--store-surface-soft)] transition-colors"
+                      className="flex items-center gap-3 px-3 py-3 rounded-lg text-sm font-semibold !text-slate-100 hover:bg-white/10 transition-colors"
                     >
                       <MessageCircle className="h-4 w-4 text-[#22D3EE]" />
                       Solicitar orçamento
@@ -298,7 +298,7 @@ function StoreHeader() {
 
               {/* Footer do menu */}
               <div className="border-t border-[var(--store-border)] px-6 py-4 bg-[var(--store-surface-soft)]">
-                <p className="text-xs text-[var(--store-text-muted)] leading-relaxed mb-3">
+                <p className="text-xs text-slate-300 leading-relaxed mb-3">
                   Soluções digitais, design e tecnologia pensadas para fazer seu negócio avançar.
                 </p>
                 <div className="flex gap-2">
