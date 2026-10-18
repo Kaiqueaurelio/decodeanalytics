@@ -46,7 +46,7 @@ export function DecodeLanding() {
   const waLink = useWaLink();
 
   return (
-    <div className="overflow-hidden bg-[#080C1F] text-[#F8FAFC]">
+    <div className="overflow-hidden bg-[#050505] text-[#F8FAFC]">
       <section className="relative isolate mx-auto min-h-[620px] max-w-[1440px] px-4 pb-16 pt-14 sm:px-8 sm:pt-20 lg:flex lg:min-h-[690px] lg:items-center lg:px-16">
         <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
           <div className="absolute -right-28 top-8 h-[28rem] w-[28rem] rounded-full bg-[#087CF0]/20 blur-[110px]" />
