@@ -3,7 +3,7 @@ import { ArrowDown, ArrowRight, Code2, Laptop, MessageCircle, PenTool, Share2, S
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { ProductCard, type StoreProduct } from "@/components/storefront/ProductCard";
-import { resolveProductImage } from "@/components/storefront/productImages";
+import { CATEGORY_IMAGES, resolveProductImage } from "@/components/storefront/productImages";
 import { useWaLink } from "@/hooks/useCompanyInfo";
 
 const solutions = [
@@ -97,22 +97,24 @@ export function DecodeLanding() {
               </div>
               <div className="grid grid-cols-2 gap-3 py-5 sm:gap-4">
                 {[
-                  { title: "Cartões e panfletos", subtitle: "Sua marca em destaque", Icon: Printer, color: "#22D3EE" },
-                  { title: "Canecas e brindes", subtitle: "Presentes personalizados", Icon: ShoppingBag, color: "#087CF0" },
-                  { title: "Design gráfico", subtitle: "Arte com identidade", Icon: Palette, color: "#9C7BFF" },
-                  { title: "Sites e tecnologia", subtitle: "Soluções para crescer", Icon: Globe, color: "#22D3EE" },
-                ].map(({ title, subtitle, Icon, color }) => (
+                  { title: "Cartões e impressos", subtitle: "Sua marca em destaque", category: "Cartões", Icon: Printer, color: "#22D3EE" },
+                  { title: "Canecas e brindes", subtitle: "Presentes personalizados", category: "Brindes", Icon: ShoppingBag, color: "#087CF0" },
+                  { title: "Design gráfico", subtitle: "Arte com identidade", category: "Design Gráfico", Icon: Palette, color: "#9C7BFF" },
+                  { title: "Sites e tecnologia", subtitle: "Soluções para crescer", category: "Programação", Icon: Globe, color: "#22D3EE" },
+                ].map(({ title, subtitle, category, Icon, color }) => (
                   <a
                     key={title}
-                    href="/produtos"
-                    className="group flex min-h-36 flex-col justify-between rounded-2xl border border-white/10 bg-white/[0.04] p-4 transition duration-300 hover:-translate-y-1 hover:border-[#22D3EE]/50 hover:bg-white/[0.07] sm:min-h-40 sm:p-5"
+                    href={`/produtos?cat=${encodeURIComponent(category)}`}
+                    className="group relative isolate flex min-h-36 flex-col justify-between overflow-hidden rounded-2xl border border-white/10 bg-[#080C1F] p-4 transition duration-300 hover:-translate-y-1 hover:border-[#22D3EE]/50 sm:min-h-40 sm:p-5"
                   >
-                    <span className="grid h-11 w-11 place-items-center rounded-xl border border-white/10 bg-[#080C1F]" style={{ color }}>
+                    <img src={CATEGORY_IMAGES[category]} alt="" aria-hidden="true" loading="lazy" className="absolute inset-0 -z-20 h-full w-full object-cover opacity-45 transition duration-500 group-hover:scale-105 group-hover:opacity-60" />
+                    <span aria-hidden="true" className="absolute inset-0 -z-10 bg-gradient-to-t from-[#05070D] via-[#0B1026]/65 to-[#0B1026]/20" />
+                    <span className="grid h-10 w-10 place-items-center rounded-xl border border-white/15 bg-[#080C1F]/80 backdrop-blur" style={{ color }}>
                       <Icon aria-hidden="true" className="h-5 w-5" />
                     </span>
                     <span>
                       <span className="block text-sm font-extrabold text-white">{title}</span>
-                      <span className="mt-1 block text-[11px] leading-4 text-slate-400">{subtitle}</span>
+                      <span className="mt-1 block text-[11px] leading-4 text-slate-200">{subtitle}</span>
                     </span>
                   </a>
                 ))}
@@ -135,16 +137,17 @@ export function DecodeLanding() {
           {[{ Icon: Clock3, title: "Atendimento direto", text: "Converse com nossa equipe" }, { Icon: BadgeCheck, title: "Qualidade profissional", text: "Atenção aos detalhes" }, { Icon: ShieldCheck, title: "Orçamento transparente", text: "Escopo combinado antes" }, { Icon: Zap, title: "Soluções integradas", text: "Design, gráfica e tecnologia" }].map(({ Icon, title, text }) => <div key={title} className="flex items-start gap-3"><span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-[#22D3EE]/20 bg-[#22D3EE]/10 text-[#22D3EE]"><Icon className="h-5 w-5" /></span><div><h2 className="text-sm font-bold text-white">{title}</h2><p className="mt-1 text-xs leading-5 text-slate-400">{text}</p></div></div>)}
         </div>
       </section>
+      <section aria-labelledby="vitrine-title" className="bg-[#0B1026] px-4 py-14 sm:px-8 lg:px-16">
+        <div className="mx-auto max-w-[1280px]"><div className="flex flex-wrap items-end justify-between gap-4"><div><p className="text-xs font-extrabold uppercase tracking-[.22em] text-[#22D3EE]">Produtos em destaque</p><h2 id="vitrine-title" className="mt-2 text-2xl font-black text-white sm:text-3xl">Os favoritos da Decode</h2><p className="mt-2 max-w-xl text-sm leading-6 text-slate-300">Veja opções do nosso catálogo e solicite um orçamento para o que você precisa.</p></div><a href="/produtos" className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-white/15 px-4 text-sm font-bold text-white hover:border-[#22D3EE]/60">Catálogo completo <ArrowRight className="h-4 w-4 text-[#22D3EE]" /></a></div><FeaturedProducts /></div>
+      </section>
+
+
       <section aria-labelledby="categorias-rapidas" className="bg-[#080C1F] px-4 py-12 sm:px-8 lg:px-16">
         <div className="mx-auto max-w-[1280px]"><div className="flex flex-wrap items-end justify-between gap-4"><div><p className="text-xs font-extrabold uppercase tracking-[.22em] text-[#22D3EE]">Explore por categoria</p><h2 id="categorias-rapidas" className="mt-2 text-2xl font-black text-white sm:text-3xl">Encontre sua solução</h2></div><a href="/produtos" className="text-sm font-bold text-[#22D3EE]">Ver catálogo completo →</a></div>
           <div className="mt-7 flex snap-x gap-4 overflow-x-auto pb-3 [scrollbar-width:thin] [scrollbar-color:#22D3EE_transparent] sm:gap-5">
             {[{ title: "Gráfica rápida", category: "Cartões", Icon: Printer, color: "#22D3EE" }, { title: "Informática & TI", category: "Manutenção de Computadores", Icon: Laptop, color: "#087CF0" }, { title: "Social Media", category: "Social Media", Icon: Share2, color: "#7138F5" }, { title: "Design & marcas", category: "Design Gráfico", Icon: Palette, color: "#22D3EE" }, { title: "Sites & sistemas", category: "Programação", Icon: Globe, color: "#087CF0" }].map(({ title, category, Icon, color }) => <a key={title} href={`/produtos?cat=${encodeURIComponent(category)}`} className="group flex min-h-36 min-w-[142px] snap-start flex-col items-center justify-center rounded-2xl border border-white/10 bg-white/[0.03] p-4 text-center transition hover:-translate-y-1 hover:border-[#22D3EE]/50 sm:min-w-[170px]"><span className="grid h-14 w-14 place-items-center rounded-full border-2 bg-[#0B1026]" style={{ borderColor: color, color }}><Icon className="h-6 w-6" /></span><span className="mt-3 text-sm font-bold text-white">{title}</span><span className="mt-1 text-[11px] text-slate-400">Explorar catálogo</span></a>)}
           </div>
         </div>
-      </section>
-
-      <section aria-labelledby="vitrine-title" className="bg-[#0B1026] px-4 py-14 sm:px-8 lg:px-16">
-        <div className="mx-auto max-w-[1280px]"><div className="flex flex-wrap items-end justify-between gap-4"><div><p className="text-xs font-extrabold uppercase tracking-[.22em] text-[#22D3EE]">Vitrine Decode</p><h2 id="vitrine-title" className="mt-2 text-2xl font-black text-white sm:text-3xl">Produtos e soluções em destaque</h2><p className="mt-2 max-w-xl text-sm leading-6 text-slate-300">Veja opções do nosso catálogo e solicite um orçamento para o que você precisa.</p></div><a href="/produtos" className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-white/15 px-4 text-sm font-bold text-white hover:border-[#22D3EE]/60">Catálogo completo <ArrowRight className="h-4 w-4 text-[#22D3EE]" /></a></div><FeaturedProducts /></div>
       </section>
 
       <section id="sobre" aria-labelledby="sobre-title" className="scroll-mt-20 border-y border-white/[0.06] bg-[#0A0E1A] px-4 py-20 sm:px-8 lg:px-16 lg:py-28">
