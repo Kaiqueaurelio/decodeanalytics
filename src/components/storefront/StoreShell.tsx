@@ -11,7 +11,6 @@ import {
   Mail,
   MapPin,
   Instagram,
-  Facebook,
   X,
   CheckCircle,
 } from "lucide-react";
@@ -433,13 +432,6 @@ function StoreFooter() {
             >
               <Instagram className="h-4 w-4" />
             </a>
-            <a
-              href="#"
-              aria-label="Facebook"
-              className="grid h-11 w-11 place-items-center rounded-lg bg-white/10 transition-colors hover:bg-white/20"
-            >
-              <Facebook className="h-4 w-4" />
-            </a>
           </div>
         </div>
         <div>
@@ -527,18 +519,22 @@ function StoreFooter() {
             </li>
             <li>
               <a
-                href="#"
+                href={waLink("Olá! Gostaria de tirar uma dúvida sobre a política de privacidade da Decode Analytics.")}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="inline-flex min-h-11 items-center transition-colors hover:text-white"
               >
-                Política de privacidade
+                Dúvidas sobre privacidade
               </a>
             </li>
             <li>
               <a
-                href="#"
+                href={waLink("Olá! Gostaria de informações sobre trocas, devoluções ou cancelamento de pedido.")}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="inline-flex min-h-11 items-center transition-colors hover:text-white"
               >
-                Trocas e devoluções
+                Trocas, devoluções e cancelamentos
               </a>
             </li>
           </ul>
