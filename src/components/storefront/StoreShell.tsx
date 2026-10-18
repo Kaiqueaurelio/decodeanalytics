@@ -112,7 +112,7 @@ function StoreHeader() {
               className="font-display text-lg sm:text-2xl leading-none text-[#22D3EE]"
               style={{ letterSpacing: "0.04em" }}
             >
-              DECODE ANALYTICS
+              {info.name.toLocaleUpperCase("pt-BR")}
             </div>
             <div className="text-[8px] sm:text-[10px] font-bold uppercase tracking-[0.15em] sm:tracking-[0.2em] text-[var(--store-accent)]">
               Design & Soluções
@@ -197,8 +197,9 @@ function StoreHeader() {
             <SheetContent
               side="left"
               className="!w-[85%] sm:!w-80 !bg-[#0B1026] !text-white p-0 flex flex-col [&>button.absolute]:hidden"
+              style={{ backgroundColor: "#0B1026", color: "#F8FAFC", opacity: 1, zIndex: 60 }}
             >
-              <div className="flex items-center justify-between border-b border-[var(--store-border)] px-6 py-5">
+              <div className="flex items-center justify-between border-b border-white/10 bg-[#0B1026] px-6 py-5 text-white">
                 <div className="flex items-center gap-3">
                   <img
                     src={info.logoUrl || "/brand/decode-logo.svg"}
@@ -219,9 +220,9 @@ function StoreHeader() {
                 </SheetClose>
               </div>
 
-              <nav className="flex-1 overflow-y-auto py-2">
+              <nav className="flex-1 overflow-y-auto bg-[#0B1026] py-2 text-white" style={{ color: "#F8FAFC", backgroundColor: "#0B1026" }}>
                 {/* Categorias */}
-                <div className="border-b border-[var(--store-border)] px-6 py-4">
+                <div className="border-b border-white/10 bg-[#0B1026] px-6 py-4 text-white">
                   <h3 className="text-xs font-bold uppercase tracking-wide text-slate-300 mb-3">
                     {pathname === "/" ? "Soluções" : "Categorias"}
                   </h3>
@@ -233,7 +234,7 @@ function StoreHeader() {
                         to="/produtos"
                         search={{ cat: c.slug }}
                         onClick={() => setMobileMenuOpen(false)}
-                        className="block px-3 py-2 rounded-lg text-sm font-medium !text-slate-100 hover:bg-white/10 transition-colors"
+                        className="block rounded-lg px-3 py-2 text-sm font-medium text-slate-100 hover:bg-white/10 transition-colors" style={{ color: "#F1F5F9" }}
                       >
                         {c.label}
                       </Link>
@@ -249,7 +250,7 @@ function StoreHeader() {
                     <Link
                       to="/auth"
                       onClick={() => setMobileMenuOpen(false)}
-                      className="flex items-center gap-3 px-3 py-3 rounded-lg text-sm font-medium !text-slate-100 hover:bg-white/10 transition-colors"
+                      className="flex items-center gap-3 rounded-lg px-3 py-3 text-sm font-medium text-slate-100 hover:bg-white/10 transition-colors" style={{ color: "#F1F5F9" }}
                     >
                       <User className="h-4 w-4 text-[#22D3EE]" />
                       Entrar na conta
@@ -257,7 +258,7 @@ function StoreHeader() {
                     <Link
                       to="/orcamento"
                       onClick={() => setMobileMenuOpen(false)}
-                      className="flex items-center gap-3 px-3 py-3 rounded-lg text-sm font-semibold !text-slate-100 hover:bg-white/10 transition-colors"
+                      className="flex items-center gap-3 rounded-lg px-3 py-3 text-sm font-semibold text-slate-100 hover:bg-white/10 transition-colors" style={{ color: "#F1F5F9" }}
                     >
                       <MessageCircle className="h-4 w-4 text-[#22D3EE]" />
                       Solicitar orçamento
@@ -274,7 +275,7 @@ function StoreHeader() {
                   </div>
                 </div>
 
-                <div className="px-6 py-4">
+                <div className="bg-[#0B1026] px-6 py-4 text-white">
                   <h3 className="text-[10px] font-bold uppercase tracking-widest text-[var(--store-text-muted)] mb-3">
                     Atendimento
                   </h3>
