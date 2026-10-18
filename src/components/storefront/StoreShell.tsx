@@ -22,7 +22,7 @@ const SOLUTION_CATEGORIES = STORE_CATEGORIES.filter(({ slug }) =>
 );
 import { useCompanyInfo, useWaLink } from "@/hooks/useCompanyInfo";
 import { useCart } from "@/lib/cart-context";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Sheet,
   SheetTrigger,
@@ -343,6 +343,31 @@ function CategoryNav() {
   );
 }
 
+function BusinessStatus() {
+  const [open, setOpen] = useState<boolean | null>(null);
+  useEffect(() => {
+    const update = () => {
+      const parts = new Intl.DateTimeFormat("en-US", {
+        timeZone: "America/Sao_Paulo",
+        weekday: "long",
+        hour: "2-digit",
+        minute: "2-digit",
+        hourCycle: "h23",
+      }).formatToParts(new Date());
+      const values = Object.fromEntries(parts.map((part) => [part.type, part.value]));
+      const day = values.weekday;
+      const minute = Number(values.hour) * 60 + Number(values.minute);
+      const start = day === "Saturday" ? 9 * 60 : day === "Sunday" ? 24 * 60 : 8 * 60;
+      const end = day === "Saturday" ? 16 * 60 : day === "Sunday" ? 0 : 22 * 60;
+      setOpen(day !== "Sunday" && minute >= start && minute < end);
+    };
+    update();
+    const timer = window.setInterval(update, 60_000);
+    return () => window.clearInterval(timer);
+  }, []);
+  return <div className="mb-2 flex items-center gap-2 text-xs font-bold"><span className={`h-2 w-2 rounded-full ${open ? "bg-emerald-400" : "bg-slate-400"}`} /><span className={open ? "text-emerald-300" : "text-slate-300"}>{open === null ? "Horário de atendimento" : open ? "Aberto agora" : "Fechado agora"}</span><span className="font-normal text-white/50">· horário de Brasília</span></div>;
+}
+
 function StoreFooter() {
   const info = useCompanyInfo();
   const waLink = useWaLink();
@@ -423,6 +448,7 @@ function StoreFooter() {
             <li className="flex items-start gap-2">
               <Phone className="mt-0.5 h-4 w-4 shrink-0" />
               <div>
+                <BusinessStatus />
                 {info.hours.map((h) => (
                   <div key={h.day}>
                     <strong className="text-white/90">{h.day}:</strong> {h.time}
