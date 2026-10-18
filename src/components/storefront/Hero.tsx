@@ -28,12 +28,12 @@ export function Hero() {
               className="inline-flex max-w-full items-center gap-2 rounded-full bg-white/15 px-3 py-1 text-[10px] font-extrabold uppercase text-white backdrop-blur sm:text-[11px]"
               style={{ letterSpacing: "0.08em" }}
             >
-              <CheckCircle className="h-3 w-3" /> Gráfica · TI · Social Media · Programação
+              <CheckCircle className="h-3 w-3" /> Dados · Tecnologia · Automação · Design
             </span>
             <h1 className="font-display mt-4 text-[2.15rem] leading-[0.98] sm:mt-5 sm:text-6xl md:text-7xl lg:text-8xl">
-              DESIGN, TECNOLOGIA
+              DADOS, TECNOLOGIA
               <br />
-              & PRODUÇÕES
+              & RESULTADOS
             </h1>
             <p className="mt-5 max-w-md text-sm sm:text-base font-medium text-white/85">
               {heroSubtitle}
@@ -107,7 +107,7 @@ export function Hero() {
           </div>
         </Link>
         <a
-          href={waLink("Olá! Quero contratar a criação de uma arte.")}
+          href={waLink("Olá! Quero conhecer as soluções da Decode Analytics.")}
           target="_blank"
           rel="noopener noreferrer"
           className="group flex items-center gap-2 rounded-[var(--store-radius-lg)] border border-[var(--store-border)] bg-white p-3 sm:gap-3 sm:p-4 shadow-[var(--store-shadow-sm)] transition-all hover:-translate-y-1 hover:shadow-[var(--store-shadow-md)] animate-fade-in"

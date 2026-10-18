@@ -1,35 +1,23 @@
 import { Link } from "@tanstack/react-router";
 import {
-  Contact,
-  FileText,
-  Tags,
-  Flag,
-  Shirt,
-  Coffee,
-  Gift,
-  Package,
-  Printer,
-  Wrench,
-  Share2,
-  Palette,
+  ChartNoAxesCombined,
   Code2,
+  Workflow,
+  Lightbulb,
+  Palette,
+  Headset,
+  Megaphone,
   type LucideIcon,
 } from "lucide-react";
 
 const CATS: { slug: string; label: string; Icon: LucideIcon }[] = [
-  { slug: "Cartões", label: "Cartão de Visita", Icon: Contact },
-  { slug: "Panfletos", label: "Folhetos & Panfletos", Icon: FileText },
-  { slug: "Adesivos", label: "Adesivos & Etiquetas", Icon: Tags },
-  { slug: "Banners", label: "Banners & Faixas", Icon: Flag },
-  { slug: "Camisetas", label: "Camisetas DTF", Icon: Shirt },
-  { slug: "Canecas", label: "Canecas", Icon: Coffee },
-  { slug: "Brindes", label: "Brindes", Icon: Gift },
-  { slug: "Embalagens", label: "Embalagens", Icon: Package },
-  { slug: "Plotagem", label: "Plotagem", Icon: Printer },
-  { slug: "Manutenção de Computadores", label: "Manutenção de PC", Icon: Wrench },
-  { slug: "Social Media", label: "Social Media", Icon: Share2 },
-  { slug: "Design Gráfico", label: "Design Gráfico", Icon: Palette },
-  { slug: "Programação", label: "Programação", Icon: Code2 },
+  { slug: "Dados & Business Intelligence", label: "Dados & BI", Icon: ChartNoAxesCombined },
+  { slug: "Desenvolvimento Web", label: "Desenvolvimento Web", Icon: Code2 },
+  { slug: "Automação de Processos", label: "Automação", Icon: Workflow },
+  { slug: "Consultoria em Tecnologia", label: "Consultoria em TI", Icon: Lightbulb },
+  { slug: "Design & Identidade Visual", label: "Design & Identidade", Icon: Palette },
+  { slug: "Suporte Técnico", label: "Suporte Técnico", Icon: Headset },
+  { slug: "Marketing Digital", label: "Marketing Digital", Icon: Megaphone },
 ];
 
 export function CategoryCircles() {

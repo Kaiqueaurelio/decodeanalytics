@@ -1,29 +1,17 @@
 {
-  "name": "Decode Analytics — Design & Soluções",
-  "short_name": "Decode Analytics",
-  "description": "Design, tecnologia, programação e soluções digitais para negócios.",
+  "name": "Decode Analytics",
+  "short_name": "Decode",
+  "description": "Soluções em dados, tecnologia, automação e desenvolvimento digital.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
-  "background_color": "#080C1F",
-  "theme_color": "#0B1026",
+  "background_color": "#0b1220",
+  "theme_color": "#1d4ed8",
   "lang": "pt-BR",
   "icons": [
     {
-      "src": "/brand/app-icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "/brand/app-icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "/brand/app-icon-full.png",
-      "sizes": "1024x1024",
+      "src": "/brand/decode-logo.png",
+      "sizes": "any",
       "type": "image/png",
       "purpose": "any"
     }

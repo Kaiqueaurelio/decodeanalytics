@@ -18,7 +18,7 @@ import {
 import { STORE_CATEGORIES } from "./tokens";
 
 const SOLUTION_CATEGORIES = STORE_CATEGORIES.filter(({ slug }) =>
-  ["Manutenção de Computadores", "Social Media", "Design Gráfico", "Programação"].includes(slug),
+  ["Dados & Business Intelligence", "Desenvolvimento Web", "Automação de Processos", "Consultoria em Tecnologia", "Design & Identidade Visual", "Suporte Técnico", "Marketing Digital"].includes(slug),
 );
 import { useCompanyInfo, useWaLink } from "@/hooks/useCompanyInfo";
 import { useCart } from "@/lib/cart-context";
@@ -79,10 +79,7 @@ function TopPromoBar() {
       <div className="mx-auto flex min-h-9 max-w-[1280px] items-center justify-center gap-1 px-3 py-1.5 text-center text-[11px] font-semibold leading-tight sm:min-h-10 sm:gap-2 sm:px-4 sm:py-2 sm:text-[13px] md:text-sm">
         <Tag className="h-4 w-4 shrink-0" aria-hidden="true" />
         <span className="min-w-0 break-words">
-          Ganhe <strong>10% OFF</strong> na sua primeira compra — cupom{" "}
-          <strong className="inline-block rounded-md bg-[var(--store-primary)] px-2 py-0.5 text-[var(--store-secondary)]">
-            BEMVINDO10
-          </strong>
+          Soluções digitais, dados e tecnologia para impulsionar seu negócio
         </span>
       </div>
     </div>
@@ -151,7 +148,7 @@ function StoreHeader() {
 
         <nav className="hidden items-center gap-1 md:flex">
           <a
-            href={waLink("Olá! Vim do site da Decode Analytics.")}
+            href={waLink("Olá! Vim do site da Decode Analytics e gostaria de conhecer as soluções.")}
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium text-[var(--store-text)] hover:bg-[var(--store-surface-soft)]"

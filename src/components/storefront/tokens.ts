@@ -1,22 +1,13 @@
-// Shared utility tokens for storefront components. Keep all visual values
-// driven by CSS variables defined in src/styles.css so the admin theme
-// stays untouched.
-
+// Shared tokens for the Decode Analytics service catalogue.
 export const STORE_CATEGORIES = [
-  { slug: "todos", label: "Todos os produtos" },
-  { slug: "Cartões", label: "Cartões de visita" },
-  { slug: "Panfletos", label: "Panfletos" },
-  { slug: "Adesivos", label: "Adesivos" },
-  { slug: "Canecas", label: "Canecas" },
-  { slug: "Camisetas", label: "Camisetas" },
-  { slug: "Brindes", label: "Brindes" },
-  { slug: "Banners", label: "Banners" },
-  { slug: "Embalagens", label: "Embalagens" },
-  { slug: "Plotagem", label: "Plotagem" },
-  { slug: "Manutenção de Computadores", label: "Manutenção de PC" },
-  { slug: "Social Media", label: "Social Media" },
-  { slug: "Design Gráfico", label: "Design Gráfico" },
-  { slug: "Programação", label: "Programação" },
+  { slug: "todos", label: "Todas as soluções" },
+  { slug: "Dados & Business Intelligence", label: "Dados & BI" },
+  { slug: "Desenvolvimento Web", label: "Desenvolvimento Web" },
+  { slug: "Automação de Processos", label: "Automação" },
+  { slug: "Consultoria em Tecnologia", label: "Consultoria em TI" },
+  { slug: "Design & Identidade Visual", label: "Design & Identidade" },
+  { slug: "Suporte Técnico", label: "Suporte Técnico" },
+  { slug: "Marketing Digital", label: "Marketing Digital" },
 ] as const;
 
 export const WHATSAPP_NUMBER = "5511939222885";
@@ -24,16 +15,11 @@ export const WHATSAPP_NUMBER = "5511939222885";
 export const STORE_CONTACT = {
   phone: "+55 11 93922-2885",
   whatsapp: WHATSAPP_NUMBER,
-  email: "contato@decodeanalytics.com.br",
-  address: "Estrada do Cabreúva, 703 — Vila Santa Lúcia",
-  city: "Carapicuíba — SP, CEP 06321-001",
-  hours: [
-    { day: "Segunda a Sexta", time: "09:00 – 18:00" },
-    { day: "Sábado", time: "09:00 – 13:00" },
-    { day: "Domingo", time: "Fechado" },
-  ],
-  mapsUrl:
-    "https://www.google.com/maps/search/?api=1&query=Estrada+do+Cabre%C3%BAva+703+Vila+Santa+L%C3%BAcia+Carapicu%C3%ADba+SP",
+  email: "decoanalytics@outlook.com.br",
+  address: "",
+  city: "",
+  hours: [] as { day: string; time: string }[],
+  mapsUrl: "https://www.google.com/maps/search/?api=1&query=Decode+Analytics",
 };
 
 export function waLink(message: string) {

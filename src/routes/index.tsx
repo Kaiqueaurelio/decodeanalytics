@@ -5,7 +5,7 @@ import { StoreShell } from "@/components/storefront/StoreShell";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Decode Analytics — Design & Soluções" },
+      { title: "Decode Analytics — Dados, tecnologia e soluções digitais" },
       {
         name: "description",
         content:
