@@ -115,8 +115,8 @@ export function DecodeLanding() {
       </section>
       <section aria-labelledby="categorias-rapidas" className="bg-[#080C1F] px-4 py-12 sm:px-8 lg:px-16">
         <div className="mx-auto max-w-[1280px]"><div className="flex flex-wrap items-end justify-between gap-4"><div><p className="text-xs font-extrabold uppercase tracking-[.22em] text-[#22D3EE]">Explore por categoria</p><h2 id="categorias-rapidas" className="mt-2 text-2xl font-black text-white sm:text-3xl">Encontre sua solução</h2></div><a href="/produtos" className="text-sm font-bold text-[#22D3EE]">Ver catálogo completo →</a></div>
-          <div className="mt-7 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
-            {[{ title: "Gráfica rápida", category: "Cartões", Icon: Printer, color: "#22D3EE" }, { title: "Informática & TI", category: "Manutenção de Computadores", Icon: Laptop, color: "#087CF0" }, { title: "Social Media", category: "Social Media", Icon: Share2, color: "#7138F5" }, { title: "Design & marcas", category: "Design Gráfico", Icon: Palette, color: "#22D3EE" }, { title: "Sites & sistemas", category: "Programação", Icon: Globe, color: "#087CF0" }].map(({ title, category, Icon, color }) => <a key={title} href={`/produtos?cat=${encodeURIComponent(category)}`} className="group flex min-h-36 flex-col items-center justify-center rounded-2xl border border-white/10 bg-white/[0.03] p-4 text-center transition hover:-translate-y-1 hover:border-[#22D3EE]/50"><span className="grid h-14 w-14 place-items-center rounded-full border-2 bg-[#0B1026]" style={{ borderColor: color, color }}><Icon className="h-6 w-6" /></span><span className="mt-3 text-sm font-bold text-white">{title}</span><span className="mt-1 text-[11px] text-slate-400">Explorar catálogo</span></a>)}
+          <div className="mt-7 flex snap-x gap-4 overflow-x-auto pb-3 [scrollbar-width:thin] [scrollbar-color:#22D3EE_transparent] sm:gap-5">
+            {[{ title: "Gráfica rápida", category: "Cartões", Icon: Printer, color: "#22D3EE" }, { title: "Informática & TI", category: "Manutenção de Computadores", Icon: Laptop, color: "#087CF0" }, { title: "Social Media", category: "Social Media", Icon: Share2, color: "#7138F5" }, { title: "Design & marcas", category: "Design Gráfico", Icon: Palette, color: "#22D3EE" }, { title: "Sites & sistemas", category: "Programação", Icon: Globe, color: "#087CF0" }].map(({ title, category, Icon, color }) => <a key={title} href={`/produtos?cat=${encodeURIComponent(category)}`} className="group flex min-h-36 min-w-[142px] snap-start flex-col items-center justify-center rounded-2xl border border-white/10 bg-white/[0.03] p-4 text-center transition hover:-translate-y-1 hover:border-[#22D3EE]/50 sm:min-w-[170px]"><span className="grid h-14 w-14 place-items-center rounded-full border-2 bg-[#0B1026]" style={{ borderColor: color, color }}><Icon className="h-6 w-6" /></span><span className="mt-3 text-sm font-bold text-white">{title}</span><span className="mt-1 text-[11px] text-slate-400">Explorar catálogo</span></a>)}
           </div>
         </div>
       </section>
@@ -170,11 +170,12 @@ export function DecodeLanding() {
       <section id="como-funciona" aria-labelledby="processo-title" className="scroll-mt-20 border-y border-white/[0.06] bg-[#0A0E1A] px-4 py-20 sm:px-8 lg:px-16 lg:py-24">
         <div className="mx-auto grid max-w-[1280px] gap-12 lg:grid-cols-[.8fr_1.2fr] lg:items-center">
           <div><p className="mb-3 text-xs font-extrabold uppercase tracking-[.24em] text-[#7138F5]">Como trabalhamos</p><h2 id="processo-title" className="font-display text-4xl font-bold leading-tight sm:text-5xl">Do primeiro papo ao resultado.</h2><p className="mt-5 max-w-md text-sm leading-7 text-slate-400">Do pedido à aprovação, produção e entrega: você sabe o que acontece em cada etapa.</p></div>
-          <div className="grid gap-3 sm:grid-cols-3">
+          <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
             {[
-              { n: "01", title: "Conte sua ideia", text: "Entendemos seus objetivos e desafios.", Icon: MessageCircle },
-              { n: "02", title: "Desenhamos o caminho", text: "Definimos prioridades e próximos passos.", Icon: PenTool },
-              { n: "03", title: "Tiramos do plano", text: "Colocamos a solução em prática com você.", Icon: Workflow },
+              { n: "01", title: "Escolha ou solicite", text: "Selecione um produto ou conte o que precisa.", Icon: MessageCircle },
+              { n: "02", title: "Envio e aprovação", text: "Alinhamos detalhes, arte, escopo e prazo.", Icon: PenTool },
+              { n: "03", title: "Produção ou execução", text: "Nossa equipe realiza o trabalho combinado.", Icon: Workflow },
+              { n: "04", title: "Entrega e acesso", text: "Receba seu material ou acesse seu projeto online.", Icon: ArrowRight },
             ].map(({ n, title, text, Icon }) => <article key={n} className="rounded-2xl border border-white/10 bg-[#101626] p-5 transition hover:-translate-y-1 hover:border-[#087CF0]/40 hover:shadow-lg"><span className="flex items-center justify-between"><span className="font-mono text-xs font-bold tracking-widest text-[#22D3EE]">{n}</span><Icon aria-hidden="true" className="h-5 w-5 text-[#9C7BFF]" /></span><h3 className="mt-8 text-base font-extrabold text-white">{title}</h3><p className="mt-2 text-sm leading-6 text-slate-300">{text}</p></article>)}
           </div>
         </div>
