@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { ArrowRight, Upload, CheckCircle, ExternalLink } from "lucide-react";
 import { useWaLink, useCompanyInfo } from "@/hooks/useCompanyInfo";
-import { CATEGORY_IMAGES } from "./productImages";
+
 
 export function Hero() {
   const waLink = useWaLink();
@@ -59,21 +59,23 @@ export function Hero() {
             </div>
           </div>
 
-          {/* Right column: product hero photo */}
-          <div className="relative hidden md:block">
-            <div className="absolute -right-8 -top-8 h-72 w-72 rounded-full bg-white/10 blur-2xl" />
-            <div className="relative animate-float">
-              <div className="relative aspect-square overflow-hidden rounded-[var(--store-radius-xl)] border border-white/20 bg-[#0b0b12] p-2 shadow-2xl rotate-[-2deg] transition-transform duration-500 hover:rotate-0">
-                <img
-                  src={CATEGORY_IMAGES["Dados & Business Intelligence"]}
-                  alt="Dados e Business Intelligence"
-                  className="h-full w-full rounded-[var(--store-radius-lg)] object-cover brightness-[1.02] contrast-[1.05] saturate-[1.1]"
-                  loading="eager"
-                />
+          {/* Decorative technology panel — no unrelated stock product photo */}
+          <div className="relative hidden min-h-[300px] items-center justify-center md:flex">
+            <div className="absolute h-64 w-64 rounded-full bg-violet-600/20 blur-3xl" />
+            <div className="relative w-full max-w-md rounded-2xl border border-cyan-300/20 bg-[#08080d]/80 p-6 shadow-2xl shadow-cyan-950/30 backdrop-blur">
+              <div className="flex items-center gap-2 border-b border-white/10 pb-4">
+                <span className="h-2.5 w-2.5 rounded-full bg-rose-400" />
+                <span className="h-2.5 w-2.5 rounded-full bg-amber-300" />
+                <span className="h-2.5 w-2.5 rounded-full bg-emerald-300" />
+                <span className="ml-2 font-mono text-xs text-zinc-500">decode://solucoes</span>
               </div>
-              <span className="pointer-events-none absolute -top-3 left-2 z-10 inline-flex items-center gap-1 rounded-full bg-store-secondary px-3 py-1 text-xs font-extrabold uppercase text-store-primary-dark shadow-md">
-                <CheckCircle className="h-3 w-3" /> Acabamento premium
-              </span>
+              <div className="space-y-3 py-6 font-mono text-sm">
+                <p className="text-zinc-500">// tecnologia com propósito</p>
+                <p className="text-cyan-300"><span className="text-violet-400">const</span> ideia = desafio;</p>
+                <p className="text-zinc-300">transformar(ideia);</p>
+                <div className="mt-5 h-1.5 overflow-hidden rounded-full bg-white/10"><div className="h-full w-3/4 rounded-full bg-gradient-to-r from-violet-500 to-cyan-300" /></div>
+                <p className="pt-2 text-xs text-zinc-500">DESIGN · DADOS · SOLUÇÕES</p>
+              </div>
             </div>
           </div>
         </div>
