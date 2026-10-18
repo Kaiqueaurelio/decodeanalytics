@@ -95,6 +95,7 @@ function StoreHeader() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const info = useCompanyInfo();
   const waLink = useWaLink();
+  const { count } = useCart();
   const pathname = useRouterState({ select: (state) => state.location.pathname });
   const menuCategories = pathname === "/" ? SOLUTION_CATEGORIES : STORE_CATEGORIES;
   return (
@@ -178,7 +179,7 @@ function StoreHeader() {
           >
             <ShoppingCart className="h-5 w-5 text-[var(--store-primary)]" />
             <span className="absolute -right-1 -top-1 rounded-full bg-[var(--store-secondary)] px-1.5 text-[9px] font-extrabold text-[var(--store-primary-dark)] shadow-sm">
-              {useCart().count}
+              {count}
             </span>
           </Link>
 
