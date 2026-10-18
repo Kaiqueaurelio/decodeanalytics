@@ -236,7 +236,7 @@ export function AppShell({ children }: { children: ReactNode }) {
               {!collapsed && (
                 <div className="flex flex-col leading-none animate-in fade-in duration-500">
                   <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[#dee2ec]">
-                    Alcateia
+                    Decode Analytics
                   </span>
                   <span className="mt-0.5 text-[8px] font-bold uppercase tracking-[0.1em] text-[#7d84ab]">
                     Produções Gráficas
@@ -472,7 +472,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                 </h1>
                 <div className="hidden items-center gap-2 text-[10px] font-medium text-slate-500 uppercase tracking-wider md:flex">
                   <span className="h-1 w-1 rounded-full bg-slate-300" />
-                  Alcateia Produções Gráficas
+                  Decode Analytics
                 </div>
               </div>
             </div>

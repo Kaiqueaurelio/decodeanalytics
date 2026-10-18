@@ -64,7 +64,7 @@ function ServicesPage() {
     ]);
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Produtos");
-    XLSX.writeFile(wb, "modelo-produtos-alcateia.xlsx");
+    XLSX.writeFile(wb, "modelo-produtos-servicos.xlsx");
   }
 
   function exportCurrent() {
@@ -82,7 +82,7 @@ function ServicesPage() {
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Produtos");
     const stamp = new Date().toISOString().slice(0, 10);
-    XLSX.writeFile(wb, `produtos-alcateia-${stamp}.xlsx`);
+    XLSX.writeFile(wb, `produtos-servicos-${stamp}.xlsx`);
     toast.success(`${rows.length} produto(s) exportado(s)`);
   }
 

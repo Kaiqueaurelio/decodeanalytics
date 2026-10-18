@@ -136,7 +136,7 @@ function PublicBriefing() {
         <Card className="p-8 text-center">
           <XCircle className="mx-auto h-10 w-10 text-destructive" />
           <h1 className="mt-3 text-xl font-bold">Link indisponível</h1>
-          <p className="mt-2 text-sm text-muted-foreground">Solicite um novo link à Alcateia's.</p>
+          <p className="mt-2 text-sm text-muted-foreground">Solicite um novo link à Decode Analytics.</p>
         </Card>
       </PublicShell>
     );
@@ -439,7 +439,7 @@ function PublicShell({ children }: { children: React.ReactNode }) {
         <div className="mb-6 flex justify-center">
           <img
             src="/brand/alcateia-logo.png"
-            alt="Alcateia's"
+            alt="Decode Analytics"
             className="h-28 w-auto object-contain"
           />
         </div>

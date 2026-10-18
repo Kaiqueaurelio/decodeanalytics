@@ -15,12 +15,12 @@ export const STORE_CATEGORIES = [
   { slug: "Plotagem", label: "Plotagem" },
 ] as const;
 
-export const WHATSAPP_NUMBER = "5511972235342";
+export const WHATSAPP_NUMBER = "5511939222885";
 
 export const STORE_CONTACT = {
-  phone: "+55 11 97223-5342",
+  phone: "+55 11 93922-2885",
   whatsapp: WHATSAPP_NUMBER,
-  email: "contato@alcateiaproducoesgraficas.com.br",
+  email: "contato@decodeanalytics.com.br",
   address: "Estrada do Cabreúva, 703 — Vila Santa Lúcia",
   city: "Carapicuíba — SP, CEP 06321-001",
   hours: [
