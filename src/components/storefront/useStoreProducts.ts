@@ -14,15 +14,15 @@ const FETCH_PAGE_SIZE = 500;
 function isOfferedProduct(p: StoreProduct): boolean {
   const text = `${p.slug ?? ""} ${p.name ?? ""} ${p.category ?? ""} ${p.short_description ?? ""}`
     .normalize("NFD")
-    .replace(/[\\u0300-\\u036f]/g, "")
+    .replace(/[\u0300-\u036f]/g, "")
     .toLowerCase();
 
-  if (/camiseta\\s*silk|silk\\s*(screen|screening)?|polo\\s*bordad|hot\\s*stamping|holografic|banner\\s*backlight/.test(text)) {
+  if (/camiseta\s*silk|silk\s*(screen|screening)?|polo\s*bordad|hot\s*stamping|holografic|banner\s*backlight/.test(text)) {
     return false;
   }
 
   // Chaveiros só são oferecidos quando forem impressos em 3D.
-  if (/chaveiro|keychain/.test(text) && !/3d|impressao\\s*3d/.test(text)) {
+  if (/chaveiro|keychain/.test(text) && !/3d|impressao\s*3d/.test(text)) {
     return false;
   }
 
