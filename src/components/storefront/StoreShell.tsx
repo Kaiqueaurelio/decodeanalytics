@@ -315,6 +315,34 @@ function StoreHeader() {
           </Sheet>
         </div>
       </div>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          window.location.href = `/produtos?q=${encodeURIComponent(q)}`;
+        }}
+        className="border-t border-white/10 px-3 py-3 md:hidden"
+        role="search"
+      >
+        <label htmlFor="store-search-mobile" className="sr-only">
+          Buscar produtos e serviços
+        </label>
+        <div className="relative mx-auto flex max-w-[1280px] items-center">
+          <Search aria-hidden="true" className="pointer-events-none absolute left-3 h-4 w-4 text-slate-500" />
+          <input
+            id="store-search-mobile"
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+            placeholder="Buscar produtos e serviços"
+            className="h-11 w-full rounded-xl border border-white/15 bg-white pl-10 pr-24 text-base text-slate-900 outline-none placeholder:text-slate-500 focus:border-[#22D3EE] focus:ring-4 focus:ring-[#22D3EE]/20"
+          />
+          <button
+            type="submit"
+            className="absolute right-1 inline-flex h-9 items-center justify-center rounded-lg bg-[#087CF0] px-4 text-xs font-extrabold text-white transition hover:bg-[#075BB5] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#22D3EE]"
+          >
+            Buscar
+          </button>
+        </div>
+      </form>
     </header>
   );
 }
