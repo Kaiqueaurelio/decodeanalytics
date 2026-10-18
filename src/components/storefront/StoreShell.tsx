@@ -428,17 +428,19 @@ function StoreFooter() {
           <p className="mt-4 text-sm leading-relaxed text-white/70">
             Tecnologia, design e presença digital para ajudar sua marca a crescer.
           </p>
-          <div className="mt-4 flex gap-2">
-            <a
-              href={info.instagramUrl ?? "#"}
-              target={info.instagramUrl ? "_blank" : undefined}
-              rel={info.instagramUrl ? "noopener noreferrer" : undefined}
-              aria-label="Instagram"
-              className="grid h-11 w-11 place-items-center rounded-lg bg-white/10 transition-colors hover:bg-white/20"
-            >
-              <Instagram className="h-4 w-4" />
-            </a>
-          </div>
+          {info.instagramUrl && (
+            <div className="mt-4 flex gap-2">
+              <a
+                href={info.instagramUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Instagram"
+                className="grid h-11 w-11 place-items-center rounded-lg bg-white/10 transition-colors hover:bg-white/20"
+              >
+                <Instagram className="h-4 w-4" />
+              </a>
+            </div>
+          )}
         </div>
         <div>
           <h3 className="text-sm font-bold uppercase tracking-wide text-[var(--store-secondary)]">
