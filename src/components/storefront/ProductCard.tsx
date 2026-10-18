@@ -60,16 +60,16 @@ export function ProductCard({ product }: { product: StoreProduct }) {
         )}
       </Link>
       <div className="flex flex-1 flex-col p-4">
-        <p className="text-[11px] font-bold uppercase tracking-wide text-[var(--store-accent)]">
+        <p className="text-[11px] font-bold uppercase tracking-wide text-[#C4B5FD]">
           {product.category ?? "Personalizado"}
         </p>
         <h3 className="mt-1 line-clamp-2 text-[15px] font-bold leading-snug text-[var(--store-text)]">
-          <Link to="/produto/$slug" params={{ slug }} className="hover:text-[var(--store-primary)]">
+          <Link to="/produto/$slug" params={{ slug }} className="hover:text-[#7DD3FC]">
             {product.name}
           </Link>
         </h3>
         {rating != null && (
-          <div className="mt-1.5 flex items-center gap-1 text-xs text-[var(--store-text-muted)]">
+          <div className="mt-1.5 flex items-center gap-1 text-xs text-[#C4C4CC]">
             <Star className="h-3.5 w-3.5 fill-[var(--store-secondary)] text-[var(--store-secondary)]" />
             <span className="font-semibold text-[var(--store-text)]">{rating.toFixed(1)}</span>
             <span>({product.reviews_count ?? 0})</span>
@@ -87,17 +87,17 @@ export function ProductCard({ product }: { product: StoreProduct }) {
                 <p className="text-[10px] uppercase tracking-wide text-[var(--store-text-light)]">
                   Preço no catálogo
                 </p>
-                <p className="text-xl font-extrabold leading-tight text-[var(--store-primary)]">
+                <p className="text-xl font-extrabold leading-tight text-[#7DD3FC]">
                   {brl(price)}
                 </p>
               </>
             ) : (
-              <p className="text-base font-extrabold leading-tight text-[var(--store-primary)]">
+              <p className="text-base font-extrabold leading-tight text-[#7DD3FC]">
                 Sob consulta
               </p>
             )}
             {product.min_quantity ? (
-              <p className="text-[11px] text-[var(--store-text-muted)]">
+              <p className="text-[11px] text-[#C4C4CC]">
                 a partir de {product.min_quantity} {product.unit ?? "un"}
               </p>
             ) : null}
