@@ -90,7 +90,7 @@ function AuthPage() {
           <img
             src="/brand/decode-logo.png"
             alt="Decode Analytics — Design & Soluções"
-            className="auth-logo mx-auto mb-3 h-24 w-auto max-w-full object-contain sm:mb-4 sm:h-36 md:h-44"
+            className="brand-logo auth-logo mx-auto mb-3 h-24 w-auto max-w-full rounded-xl bg-black p-2 object-contain sm:mb-4 sm:h-36 md:h-44"
           />
           <h1 className="text-xl sm:text-2xl font-bold text-primary">Decode Analytics Gestão</h1>
           <p className="text-sm text-muted-foreground">Design & soluções digitais para o seu negócio</p>
