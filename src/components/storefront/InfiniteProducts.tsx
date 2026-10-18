@@ -87,16 +87,16 @@ export function InfiniteProducts() {
             <p className="text-[11px] font-extrabold uppercase tracking-[0.22em] text-[var(--store-accent)]">
               Nosso portfólio completo
             </p>
-            <h2 className="font-display mt-1 text-4xl leading-none text-[var(--store-primary)] sm:text-5xl lg:text-6xl">
+            <h2 className="font-display mt-1 text-4xl leading-none text-white sm:text-5xl lg:text-6xl">
               CONFIRA NOSSA PRODUÇÃO
             </h2>
-            <p className="mt-2 max-w-2xl text-sm text-[var(--store-text-muted)]">
+            <p className="mt-2 max-w-2xl text-sm text-slate-400">
               Centenas de produtos personalizados — role à vontade para descobrir mais.
             </p>
           </div>
           <Link
             to="/produtos"
-            className="inline-flex min-h-11 items-center gap-1 text-xs font-extrabold uppercase tracking-[0.18em] text-[var(--store-primary)] transition-colors hover:text-[var(--store-accent)]"
+            className="inline-flex min-h-11 items-center gap-1 text-xs font-extrabold uppercase tracking-[0.18em] text-[#22D3EE] transition-colors hover:text-white"
             onClick={() =>
               trackCta({
                 cta_id: "infinite_view_all",
@@ -126,7 +126,7 @@ export function InfiniteProducts() {
           ref={sentinel}
           className="mt-10 flex items-center justify-center gap-2 text-sm text-[var(--store-text-muted)]"
         >
-          <Loader2 className="h-4 w-4 animate-spin text-[var(--store-primary)]" />
+          <Loader2 className="h-4 w-4 animate-spin text-[#22D3EE]" />
           Carregando mais produtos…
         </div>
       </div>
@@ -150,7 +150,7 @@ function FeedCard({
     <Link
       to="/produto/$slug"
       params={{ slug }}
-      className="store-bento-card group flex flex-col overflow-hidden bg-white p-3 text-[var(--store-ink)] animate-fade-in"
+      className="store-bento-card group flex flex-col overflow-hidden rounded-2xl border border-white/10 bg-[#0B1026] p-3 text-[#F8FAFC] shadow-[0_14px_36px_rgba(0,0,0,.18)] animate-fade-in hover:border-[#22D3EE]/35 hover:shadow-[0_18px_42px_rgba(8,124,240,.12)]"
       style={{ animationDelay: `${(index % PAGE) * 50}ms`, animationFillMode: "both" }}
       onClick={() =>
         trackCardClick({
@@ -165,14 +165,14 @@ function FeedCard({
         })
       }
     >
-      <div className="relative mb-3 aspect-square overflow-hidden rounded-[var(--store-radius-md)] bg-slate-100">
+      <div className="relative mb-3 aspect-square overflow-hidden rounded-[var(--store-radius-md)] bg-white/5">
         <SmartImage 
           src={product.image_url} 
           alt={product.name}
           className="brightness-[1.02] contrast-[1.05] saturate-[1.08] transition-transform duration-500 group-hover:scale-110"
         />
         {product.badge && (
-          <span className="absolute left-2 top-2 rounded-sm bg-[var(--store-ink)] px-2 py-0.5 text-[9px] font-extrabold uppercase tracking-wider text-[var(--store-gold)]">
+          <span className="absolute left-2 top-2 rounded-sm bg-[#22D3EE] px-2 py-0.5 text-[9px] font-extrabold uppercase tracking-wider text-[#0B1026]">
             {product.badge}
           </span>
         )}
@@ -188,7 +188,7 @@ function FeedCard({
           {rating != null && (
             <div className="flex items-center gap-1 text-[var(--store-gold)]">
               <Star className="h-3 w-3 fill-current" />
-              <span className="text-[11px] font-bold text-[var(--store-ink)]">
+              <span className="text-[11px] font-bold text-white">
                 {rating.toFixed(1)}
               </span>
             </div>
@@ -199,7 +199,7 @@ function FeedCard({
             <p className="font-display text-base leading-none">Sob consulta</p>
           )}
         </div>
-        <span className="grid h-9 w-9 shrink-0 place-items-center rounded-[var(--store-radius-sm)] bg-[var(--store-ink)] text-white transition-colors group-hover:bg-[var(--store-gold)] group-hover:text-[var(--store-ink)]">
+        <span className="grid h-9 w-9 shrink-0 place-items-center rounded-[var(--store-radius-sm)] bg-gradient-to-br from-[#087CF0] to-[#7138F5] text-white transition-all group-hover:from-[#22D3EE] group-hover:to-[#087CF0] group-hover:text-[#0B1026]">
           <Plus className="h-4 w-4" />
         </span>
       </div>
