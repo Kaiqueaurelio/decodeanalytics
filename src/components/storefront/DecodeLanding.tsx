@@ -92,7 +92,7 @@ export function DecodeLanding() {
                 <span className="font-mono text-[10px] tracking-widest text-slate-500">DESIGN × TECHNOLOGY</span>
               </div>
               <div className="grid min-h-[330px] place-items-center py-7">
-                <img src="/brand/decode-logo.png" alt="Decode Analytics — Design & Soluções" className="h-auto max-h-[330px] w-full max-w-[390px] object-contain" />
+                <img src="/brand/decode-logo.png" alt="Decode Analytics — Design & Soluções" className="brand-logo h-auto max-h-[330px] w-full max-w-[390px] object-contain" />
               </div>
               <div className="flex items-center justify-between border-t border-white/10 pt-4">
                 <span className="text-xs text-slate-400">Criatividade com propósito.</span>
