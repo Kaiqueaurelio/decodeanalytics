@@ -276,6 +276,16 @@ export const ellaChat = createServerFn({ method: "POST" })
     const supabase = context.supabase;
     const userId = context.userId;
 
+    const staffRoles = ["administrador", "atendente", "producao", "financeiro"];
+    const { data: assignedRoles, error: rolesError } = await supabase
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", userId);
+    if (rolesError) throw new Error("Não foi possível verificar suas permissões.");
+    if (!assignedRoles?.some(({ role }) => staffRoles.includes(role))) {
+      throw new Error("Acesso não liberado para esta conta.");
+    }
+
     if (!key) {
       const fallback = await ellaLocalFallback({
         message: data.message,

@@ -44,12 +44,24 @@ function AuthPage() {
     e.preventDefault();
     emitAuthTelemetry("auth_submit_attempt", { form: "login" });
     setLoading(true);
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    setLoading(false);
+    const { data: authData, error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) {
+      setLoading(false);
       emitAuthTelemetry("auth_submit_error", { form: "login", errorMessage: error.message });
       return toast.error(error.message);
     }
+
+    const { data: assignedRoles, error: rolesError } = await supabase
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", authData.user.id);
+    if (rolesError || !assignedRoles?.some(({ role }) => role !== "aguardando_aprovacao")) {
+      await supabase.auth.signOut();
+      setLoading(false);
+      return toast.info("O acesso à equipe ainda aguarda aprovação de um administrador.");
+    }
+
+    setLoading(false);
     toast.success("Bem-vindo!");
     nav({ to: "/dashboard" });
   }
@@ -58,7 +70,7 @@ function AuthPage() {
     e.preventDefault();
     emitAuthTelemetry("auth_submit_attempt", { form: "signup" });
     setLoading(true);
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: { data: { full_name: fullName }, emailRedirectTo: window.location.origin },
@@ -68,7 +80,8 @@ function AuthPage() {
       emitAuthTelemetry("auth_submit_error", { form: "signup", errorMessage: error.message });
       return toast.error(error.message);
     }
-    toast.success("Conta criada! Faça login.");
+    if (data.session) await supabase.auth.signOut();
+    toast.success("Cadastro criado. Entre para verificar as permissões da sua conta.");
   }
 
   async function handleReset() {
@@ -250,7 +263,7 @@ function AuthPage() {
                 {loading ? "Criando..." : "Criar conta"}
               </Button>
               <p className="text-xs text-muted-foreground text-center mt-2">
-                A primeira conta criada vira administrador automaticamente.
+                O acesso às áreas internas depende das permissões liberadas para a conta.
               </p>
             </form>
           </TabsContent>
