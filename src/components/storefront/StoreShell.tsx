@@ -80,7 +80,7 @@ function TopPromoBar() {
       <div className="mx-auto flex min-h-9 max-w-[1280px] items-center justify-center gap-1 px-3 py-1.5 text-center text-[11px] font-semibold leading-tight sm:min-h-10 sm:gap-2 sm:px-4 sm:py-2 sm:text-[13px] md:text-sm">
         <Tag className="h-4 w-4 shrink-0" aria-hidden="true" />
         <span className="min-w-0 break-words">
-          Ganhe <strong>10% OFF</strong> na sua primeira compra — cupom{" "}
+          Código de boas-vindas:{" "}
           <strong className="inline-block rounded-md bg-[var(--store-primary)] px-2 py-0.5 text-[var(--store-secondary)]">
             BEMVINDO10
           </strong>
@@ -205,7 +205,7 @@ function StoreHeader() {
                   />
                   <div className="leading-tight">
                     <div className="text-sm font-extrabold text-cyan-300">
-                      Decode Analytics
+                      {info.name}
                     </div>
                     <div className="text-[9px] font-bold uppercase tracking-[0.15em] text-violet-300">
                       Design & Soluções
@@ -256,9 +256,9 @@ function StoreHeader() {
                     <Link
                       to="/carrinho"
                       onClick={() => setMobileMenuOpen(false)}
-                      className="flex items-center gap-3 px-3 py-3 rounded-lg text-sm font-medium text-[var(--store-text)] hover:bg-[var(--store-surface-soft)] transition-colors"
+                      className="flex items-center gap-3 rounded-lg px-3 py-3 text-sm font-medium text-slate-100 transition-colors hover:bg-white/10"
                     >
-                      <ShoppingCart className="h-4 w-4 text-[var(--store-primary)]" />
+                      <ShoppingCart className="h-4 w-4 text-cyan-300" />
                       Carrinho
                       <CartCountBadge />
                     </Link>
@@ -298,7 +298,7 @@ function StoreHeader() {
                     target={info.instagramUrl ? "_blank" : undefined}
                     rel={info.instagramUrl ? "noopener noreferrer" : undefined}
                     aria-label="Instagram"
-                    className="grid h-11 w-11 place-items-center rounded-lg bg-white hover:bg-[var(--store-primary)] hover:text-white transition-colors"
+                    className="grid h-11 w-11 place-items-center rounded-lg border border-white/10 bg-white/5 text-slate-100 transition-colors hover:bg-white/10 hover:text-cyan-300"
                   >
                     <Instagram className="h-4 w-4" />
                   </a>
