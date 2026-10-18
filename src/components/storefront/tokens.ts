@@ -25,7 +25,15 @@ export const STORE_CONTACT = {
   email: "decoanalytics@outlook.com.br",
   address: "",
   city: "",
-  hours: [] as { day: string; time: string }[],
+  hours: [
+    { day: "Domingo", time: "Fechada" },
+    { day: "Segunda-feira", time: "08:00 - 22:00" },
+    { day: "Terça-feira", time: "08:00 - 22:00" },
+    { day: "Quarta-feira", time: "08:00 - 22:00" },
+    { day: "Quinta-feira", time: "08:00 - 22:00" },
+    { day: "Sexta-feira", time: "08:00 - 22:00" },
+    { day: "Sábado", time: "09:00 - 16:00" },
+  ],
   mapsUrl: "https://www.google.com/maps/search/?api=1&query=Decode+Analytics",
 };
 
