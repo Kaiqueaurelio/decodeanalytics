@@ -1,5 +1,10 @@
 import { useState } from "react";
-import { ArrowDown, ArrowRight, Code2, Laptop, MessageCircle, PenTool, Share2, Sparkles, Workflow, Zap } from "lucide-react";
+import { ArrowDown, ArrowRight, Code2, Laptop, MessageCircle, PenTool, Share2, Sparkles, Workflow, Zap, Printer, Palette, Globe, BadgeCheck, Clock3, ShieldCheck, ShoppingBag } from "lucide-react";
+import { Link } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { ProductCard, type StoreProduct } from "@/components/storefront/ProductCard";
+import { resolveProductImage } from "@/components/storefront/productImages";
 import { useWaLink } from "@/hooks/useCompanyInfo";
 
 const solutions = [
@@ -104,6 +109,19 @@ export function DecodeLanding() {
         </div>
       </section>
 
+            <section aria-label="Vantagens Decode Analytics" className="border-y border-white/10 bg-[#0B1026] px-4 py-7 sm:px-8 lg:px-16">
+        <div className="mx-auto grid max-w-[1280px] grid-cols-2 gap-5 md:grid-cols-4">
+          {[{ Icon: Clock3, title: "Atendimento direto", text: "Converse com nossa equipe" }, { Icon: BadgeCheck, title: "Qualidade profissional", text: "Atenção aos detalhes" }, { Icon: ShieldCheck, title: "Orçamento transparente", text: "Escopo combinado antes" }, { Icon: Zap, title: "Soluções integradas", text: "Design, gráfica e tecnologia" }].map(({ Icon, title, text }) => <div key={title} className="flex items-start gap-3"><span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-[#22D3EE]/20 bg-[#22D3EE]/10 text-[#22D3EE]"><Icon className="h-5 w-5" /></span><div><h2 className="text-sm font-bold text-white">{title}</h2><p className="mt-1 text-xs leading-5 text-slate-400">{text}</p></div></div>)}
+        </div>
+      </section>
+      <section aria-labelledby="categorias-rapidas" className="bg-[#080C1F] px-4 py-12 sm:px-8 lg:px-16">
+        <div className="mx-auto max-w-[1280px]"><div className="flex flex-wrap items-end justify-between gap-4"><div><p className="text-xs font-extrabold uppercase tracking-[.22em] text-[#22D3EE]">Explore por categoria</p><h2 id="categorias-rapidas" className="mt-2 text-2xl font-black text-white sm:text-3xl">Encontre sua solução</h2></div><a href="/produtos" className="text-sm font-bold text-[#22D3EE]">Ver catálogo completo →</a></div>
+          <div className="mt-7 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+            {[{ title: "Gráfica rápida", category: "Cartões", Icon: Printer, color: "#22D3EE" }, { title: "Informática & TI", category: "Manutenção de Computadores", Icon: Laptop, color: "#087CF0" }, { title: "Social Media", category: "Social Media", Icon: Share2, color: "#7138F5" }, { title: "Design & marcas", category: "Design Gráfico", Icon: Palette, color: "#22D3EE" }, { title: "Sites & sistemas", category: "Programação", Icon: Globe, color: "#087CF0" }].map(({ title, category, Icon, color }) => <a key={title} href={`/produtos?cat=${encodeURIComponent(category)}`} className="group flex min-h-36 flex-col items-center justify-center rounded-2xl border border-white/10 bg-white/[0.03] p-4 text-center transition hover:-translate-y-1 hover:border-[#22D3EE]/50"><span className="grid h-14 w-14 place-items-center rounded-full border-2 bg-[#0B1026]" style={{ borderColor: color, color }}><Icon className="h-6 w-6" /></span><span className="mt-3 text-sm font-bold text-white">{title}</span><span className="mt-1 text-[11px] text-slate-400">Explorar catálogo</span></a>)}
+          </div>
+        </div>
+      </section>
+
       <section id="sobre" aria-labelledby="sobre-title" className="scroll-mt-20 border-y border-white/[0.06] bg-[#0A0E1A] px-4 py-20 sm:px-8 lg:px-16 lg:py-28">
         <div className="mx-auto grid max-w-[1280px] gap-10 lg:grid-cols-[.85fr_1.15fr] lg:items-center lg:gap-20">
           <div>
@@ -163,6 +181,10 @@ export function DecodeLanding() {
         </div>
       </section>
 
+      <section aria-labelledby="vitrine-title" className="bg-[#0B1026] px-4 py-14 sm:px-8 lg:px-16">
+        <div className="mx-auto max-w-[1280px]"><div className="flex flex-wrap items-end justify-between gap-4"><div><p className="text-xs font-extrabold uppercase tracking-[.22em] text-[#22D3EE]">Vitrine Decode</p><h2 id="vitrine-title" className="mt-2 text-2xl font-black text-white sm:text-3xl">Produtos e soluções em destaque</h2><p className="mt-2 max-w-xl text-sm leading-6 text-slate-300">Veja opções do nosso catálogo e solicite um orçamento para o que você precisa.</p></div><a href="/produtos" className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-white/15 px-4 text-sm font-bold text-white hover:border-[#22D3EE]/60">Catálogo completo <ArrowRight className="h-4 w-4 text-[#22D3EE]" /></a></div><FeaturedProducts /></div>
+      </section>
+      
       <section aria-labelledby="catalogo-title" className="bg-[#05070D] px-4 py-16 sm:px-8 lg:px-16 lg:py-20">
         <div className="mx-auto flex max-w-[1280px] flex-col items-start justify-between gap-6 rounded-[1.75rem] border border-white/10 bg-gradient-to-r from-[#0D1424] via-[#10152A] to-[#171333] p-7 sm:p-10 md:flex-row md:items-center">
           <div><p className="mb-3 text-xs font-extrabold uppercase tracking-[.24em] text-[#22D3EE]">Conheça também</p><h2 id="catalogo-title" className="font-display text-3xl font-bold leading-tight sm:text-4xl">Produtos para levar suas ideias adiante.</h2><p className="mt-3 max-w-2xl text-sm leading-6 text-slate-300">Explore o catálogo disponível e encontre opções para o que você está planejando.</p></div>
@@ -178,4 +200,20 @@ export function DecodeLanding() {
       </section>
     </div>
   );
+}
+
+function FeaturedProducts() {
+  const { data = [], isLoading, isError } = useQuery({
+    queryKey: ["store-catalog"],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("services").select("id,name,slug,category,short_description,base_price,image_url,rating,reviews_count,min_quantity,badge,specs,unit").eq("active", true).order("reviews_count", { ascending: false }).limit(4);
+      if (error) throw error;
+      return (data ?? []).map((p) => ({ ...p, image_url: resolveProductImage(p.image_url, p.category, p.slug) })) as StoreProduct[];
+    },
+    staleTime: 60_000,
+  });
+  if (isLoading) return <div className="mt-7 grid grid-cols-2 gap-4 md:grid-cols-4">{[0,1,2,3].map((n) => <div key={n} className="h-64 animate-pulse rounded-2xl border border-white/10 bg-white/5" />)}</div>;
+  if (isError) return <div className="mt-7 rounded-xl border border-white/10 bg-white/[0.03] p-5 text-sm text-slate-300">Não foi possível carregar a vitrine agora. <a href="/produtos" className="font-bold text-[#22D3EE]">Abrir catálogo</a></div>;
+  if (!data.length) return <div className="mt-7 rounded-xl border border-dashed border-white/15 p-6 text-sm text-slate-300"><ShoppingBag className="mb-3 h-7 w-7 text-[#22D3EE]" />Estamos preparando nosso catálogo. Entre em contato para solicitar um orçamento.</div>;
+  return <div className="mt-7 grid grid-cols-2 gap-4 md:grid-cols-4">{data.map((product) => <ProductCard key={product.id} product={product} />)}</div>;
 }
