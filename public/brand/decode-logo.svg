@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 900" role="img" aria-labelledby="title desc">
+<title id="title">Decode Analytics — Design &amp; Soluções</title>
+<desc id="desc">Símbolo de três anéis entrelaçados em degradê azul, violeta e ciano, com código no centro e o nome Decode Analytics.</desc>
+<defs>
+ <linearGradient id="ring" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#00f5e9"/><stop offset=".42" stop-color="#00c9ff"/><stop offset=".72" stop-color="#6827ff"/><stop offset="1" stop-color="#00f5e9"/></linearGradient>
+ <linearGradient id="cyan" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#00f5e9"/><stop offset="1" stop-color="#00bff8"/></linearGradient>
+ <filter id="glow"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+</defs>
+<rect width="1000" height="900" fill="#050508"/>
+<g fill="none" stroke="url(#ring)" stroke-width="48" stroke-linecap="butt" filter="url(#glow)">
+ <path d="M360 285 A155 155 0 1 1 445 350"/>
+ <path d="M280 430 A155 155 0 1 1 280 260"/>
+ <path d="M535 360 A155 155 0 1 1 520 520"/>
+</g>
+<g fill="none" stroke="url(#cyan)" stroke-width="13" stroke-linejoin="round"><path d="M405 360 L350 400 L405 440 M475 360 L530 400 L475 440 M452 345 L430 455 M500 365 L525 340 L548 362 L523 385"/></g>
+<text x="500" y="665" text-anchor="middle" font-family="Montserrat,Arial,sans-serif" font-size="118" font-weight="900" letter-spacing="2" fill="#f7f7f8" stroke="#222" stroke-width="2">DECODE</text>
+<text x="500" y="775" text-anchor="middle" font-family="Montserrat,Arial,sans-serif" font-size="103" font-weight="900" letter-spacing="-2" fill="url(#cyan)">ANALYTICS</text>
+<path d="M85 810 H215 M785 810 H915" stroke="#702bff" stroke-width="8"/>
+<text x="500" y="845" text-anchor="middle" font-family="Montserrat,Arial,sans-serif" font-size="34" font-weight="700" letter-spacing="2" fill="#f7f7f8">DESIGN &amp; SOLUÇÕES</text>
+</svg>

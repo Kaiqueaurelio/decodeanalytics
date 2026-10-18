@@ -21,7 +21,7 @@ import { SafeAreaDebug } from "@/components/SafeAreaDebug";
 function NotFoundComponent() {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-[#080c16] px-4 text-white">
-      <div className="mb-8 rounded-2xl bg-black p-1 shadow-2xl"><img src="/brand/decode-logo.png" alt="Decode Analytics" className="brand-logo h-16 w-16 rounded-xl bg-black object-contain p-1" /></div>
+      <div className="mb-8 rounded-2xl bg-black p-1 shadow-2xl"><img src="/brand/decode-logo.svg" alt="Decode Analytics" className="brand-logo h-16 w-16 rounded-xl bg-black object-contain p-1" /></div>
       <div className="max-w-md text-center">
         <h1 className="text-6xl font-black tracking-tighter text-white">404</h1>
         <h2 className="mt-4 text-2xl font-bold text-white/90">Página não encontrada</h2>
@@ -103,8 +103,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         name: "twitter:description",
         content: "Sistema de gestão para a Decode Analytics — Design & Soluções",
       },
-      { property: "og:image", content: "/brand/decode-logo.png" },
-      { name: "twitter:image", content: "/brand/decode-logo.png" },
+      { property: "og:image", content: "/brand/decode-logo.svg" },
+      { name: "twitter:image", content: "/brand/decode-logo.svg" },
       { name: "theme-color", content: "#0B1026" },
       { name: "apple-mobile-web-app-capable", content: "yes" },
       { name: "mobile-web-app-capable", content: "yes" },
@@ -118,9 +118,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         rel: "stylesheet",
         href: appCss,
       },
-      { rel: "icon", type: "image/png", href: "/brand/decode-logo.png" },
-      { rel: "icon", type: "image/png", sizes: "192x192", href: "/brand/decode-logo.png" },
-      { rel: "apple-touch-icon", sizes: "180x180", href: "/brand/decode-logo.png" },
+      { rel: "icon", type: "image/png", href: "/brand/decode-logo.svg" },
+      { rel: "icon", type: "image/png", sizes: "192x192", href: "/brand/decode-logo.svg" },
+      { rel: "apple-touch-icon", sizes: "180x180", href: "/brand/decode-logo.svg" },
       { rel: "manifest", href: "/manifest.webmanifest" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
