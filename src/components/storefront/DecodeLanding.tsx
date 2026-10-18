@@ -86,23 +86,45 @@ export function DecodeLanding() {
           </div>
 
           <div className="relative mx-auto w-full max-w-[510px]">
-            <div aria-hidden="true" className="absolute -inset-5 rounded-[2rem] bg-gradient-to-br from-[#087CF0]/30 via-transparent to-[#7138F5]/30 blur-2xl" />
-            <div className="relative overflow-hidden rounded-[1.75rem] border border-white/10 bg-[#05070D] p-5 shadow-2xl sm:p-7">
+            <div aria-hidden="true" className="absolute -inset-5 rounded-[2rem] bg-gradient-to-br from-[#087CF0]/25 via-transparent to-[#7138F5]/25 blur-2xl" />
+            <div className="relative overflow-hidden rounded-[1.75rem] border border-white/10 bg-[#0B1026] p-5 shadow-2xl sm:p-7">
               <div className="flex items-center justify-between border-b border-white/10 pb-4">
-                <div className="flex items-center gap-2 text-xs font-semibold text-slate-300"><span aria-hidden="true" className="h-2 w-2 rounded-full bg-[#22D3EE] shadow-[0_0_12px_#22D3EE]" /> Ideias em movimento</div>
-                <span className="font-mono text-[10px] tracking-widest text-slate-500">DECODE ANALYTICS</span>
+                <div className="flex items-center gap-2 text-xs font-semibold text-slate-200">
+                  <Sparkles aria-hidden="true" className="h-4 w-4 text-[#22D3EE]" />
+                  Sua ideia vira realidade
+                </div>
+                <span className="font-mono text-[10px] tracking-widest text-slate-400">DECODE ANALYTICS</span>
               </div>
-              <div className="grid min-h-[330px] place-items-center py-7">
-                <img src="/brand/decode-logo.png" alt="Decode Analytics — Design & Soluções" className="brand-logo h-auto max-h-[330px] w-full max-w-[390px] object-contain" />
+              <div className="grid grid-cols-2 gap-3 py-5 sm:gap-4">
+                {[
+                  { title: "Cartões e panfletos", subtitle: "Sua marca em destaque", Icon: Printer, color: "#22D3EE" },
+                  { title: "Canecas e brindes", subtitle: "Presentes personalizados", Icon: ShoppingBag, color: "#087CF0" },
+                  { title: "Design gráfico", subtitle: "Arte com identidade", Icon: Palette, color: "#9C7BFF" },
+                  { title: "Sites e tecnologia", subtitle: "Soluções para crescer", Icon: Globe, color: "#22D3EE" },
+                ].map(({ title, subtitle, Icon, color }) => (
+                  <a
+                    key={title}
+                    href="/produtos"
+                    className="group flex min-h-36 flex-col justify-between rounded-2xl border border-white/10 bg-white/[0.04] p-4 transition duration-300 hover:-translate-y-1 hover:border-[#22D3EE]/50 hover:bg-white/[0.07] sm:min-h-40 sm:p-5"
+                  >
+                    <span className="grid h-11 w-11 place-items-center rounded-xl border border-white/10 bg-[#080C1F]" style={{ color }}>
+                      <Icon aria-hidden="true" className="h-5 w-5" />
+                    </span>
+                    <span>
+                      <span className="block text-sm font-extrabold text-white">{title}</span>
+                      <span className="mt-1 block text-[11px] leading-4 text-slate-400">{subtitle}</span>
+                    </span>
+                  </a>
+                ))}
               </div>
-              <div className="flex items-center justify-between border-t border-white/10 pt-4">
-                <span className="text-xs text-slate-400">Criatividade com propósito.</span>
-                <div aria-hidden="true" className="flex gap-1.5"><span className="h-1.5 w-7 rounded-full bg-[#087CF0]" /><span className="h-1.5 w-4 rounded-full bg-[#22D3EE]" /><span className="h-1.5 w-3 rounded-full bg-[#7138F5]" /></div>
+              <a href="/produtos" className="flex min-h-12 items-center justify-between gap-3 rounded-xl bg-gradient-to-r from-[#075BB5] to-[#6532C6] px-4 text-sm font-extrabold text-white transition hover:brightness-110">
+                Explore nosso catálogo
+                <ArrowRight aria-hidden="true" className="h-4 w-4" />
+              </a>
+              <div className="mt-4 flex items-center justify-between border-t border-white/10 pt-4 text-xs text-slate-400">
+                <span>Gráfica, design e tecnologia</span>
+                <span className="inline-flex items-center gap-1.5"><span aria-hidden="true" className="h-2 w-2 rounded-full bg-[#22D3EE]" />Feito para sua marca</span>
               </div>
-            </div>
-            <div className="absolute -bottom-5 -left-5 hidden items-center gap-3 rounded-2xl border border-white/10 bg-[#10162E] px-4 py-3 shadow-xl sm:flex">
-              <span className="grid h-10 w-10 place-items-center rounded-xl bg-gradient-to-br from-[#075BB5] to-[#6532C6]"><Workflow aria-hidden="true" className="h-5 w-5" /></span>
-              <span><span className="block text-xs font-bold">Uma equipe, várias soluções</span><span className="mt-1 block text-[10px] text-slate-400">Tecnologia + criatividade</span></span>
             </div>
           </div>
         </div>
