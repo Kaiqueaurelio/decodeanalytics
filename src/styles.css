@@ -793,13 +793,13 @@ a[href*="lovable.dev"][target="_blank"] {
 
 @layer utilities {
   /* Cores de marca são claras o bastante para não desaparecer no fundo escuro. */
-  .text-\\[var\\(--store-primary\\)\\] { color: #60A5FA !important; }
-  .text-\\[var\\(--store-primary-light\\)\\] { color: #7DD3FC !important; }
-  .text-\\[var\\(--store-accent\\)\\] { color: #C4B5FD !important; }
-  .text-\\[var\\(--store-text-muted\\)\\] { color: #C4C4CC !important; }
-  .text-\\[var\\(--store-text-light\\)\\] { color: #B4B4BE !important; }
+  [class~="text-[var(--store-primary)]"] { color: #60A5FA !important; }
+  [class~="text-[var(--store-primary-light)]"] { color: #7DD3FC !important; }
+  [class~="text-[var(--store-accent)]"] { color: #C4B5FD !important; }
+  [class~="text-[var(--store-text-muted)]"] { color: #C4C4CC !important; }
+  [class~="text-[var(--store-text-light)]"] { color: #B4B4BE !important; }
   .bg-white { background-color: #111116 !important; }
-  .bg-white\\/95 { background-color: rgb(17 17 22 / 95%) !important; }
+  [class~="bg-white/95"] { background-color: rgb(17 17 22 / 95%) !important; }
   .bg-gray-50, .bg-slate-50 { background-color: #0B0B10 !important; }
   .bg-gray-100, .bg-slate-100 { background-color: #191920 !important; }
   .text-black, .text-gray-900, .text-slate-900 { color: #F5F5F7 !important; }
