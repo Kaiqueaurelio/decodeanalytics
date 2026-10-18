@@ -1,13 +1,19 @@
 // Shared tokens for the Decode Analytics service catalogue.
 export const STORE_CATEGORIES = [
-  { slug: "todos", label: "Todas as soluções" },
-  { slug: "Dados & Business Intelligence", label: "Dados & BI" },
-  { slug: "Desenvolvimento Web", label: "Desenvolvimento Web" },
-  { slug: "Automação de Processos", label: "Automação" },
-  { slug: "Consultoria em Tecnologia", label: "Consultoria em TI" },
-  { slug: "Design & Identidade Visual", label: "Design & Identidade" },
-  { slug: "Suporte Técnico", label: "Suporte Técnico" },
-  { slug: "Marketing Digital", label: "Marketing Digital" },
+  { slug: "todos", label: "Todos os itens" },
+  { slug: "Impressão e Acabamentos", label: "Impressão e acabamentos" },
+  { slug: "Impressão e Personalização", label: "Impressão e personalizados" },
+  { slug: "Personalizados", label: "Canecas, copos e camisetas" },
+  { slug: "Foto e Vídeo", label: "Foto e vídeo" },
+  { slug: "Produção Digital", label: "Produção digital" },
+  { slug: "Imagem e Restauração", label: "Imagem e restauração" },
+  { slug: "Serviços Acadêmicos", label: "Acadêmico" },
+  { slug: "Desenvolvimento Digital", label: "Sites e aplicativos" },
+  { slug: "Design e Marketing", label: "Design e marketing" },
+  { slug: "Suporte Técnico", label: "Suporte técnico" },
+  { slug: "Software e Licenças", label: "Software e licenças" },
+  { slug: "Produtos Digitais", label: "Produtos digitais" },
+  { slug: "Templates Digitais", label: "Templates" },
 ] as const;
 
 export const WHATSAPP_NUMBER = "5511939222885";
