@@ -108,7 +108,7 @@ function StoreHeader() {
           />
           <div className="leading-tight hidden sm:block">
             <div
-              className="font-display text-lg sm:text-2xl leading-none text-[var(--store-primary)]"
+              className="font-display text-lg sm:text-2xl leading-none text-[#22D3EE]"
               style={{ letterSpacing: "0.04em" }}
             >
               DECODE ANALYTICS
@@ -136,7 +136,7 @@ function StoreHeader() {
             value={q}
             onChange={(e) => setQ(e.target.value)}
             placeholder="O que você está procurando?"
-            className="h-10 w-full min-w-0 rounded-[var(--store-radius-lg)] border border-[var(--store-border)] bg-white pl-10 pr-20 text-base sm:h-11 sm:pl-12 sm:pr-28 outline-none transition-all placeholder:text-[var(--store-text-light)] focus:border-[var(--store-primary-light)] focus:ring-4 focus:ring-[var(--store-primary-light)]/15"
+            className="h-10 w-full min-w-0 rounded-[var(--store-radius-lg)] border border-[var(--store-border)] bg-[#111116] text-white pl-10 pr-20 text-base sm:h-11 sm:pl-12 sm:pr-28 outline-none transition-all placeholder:text-[var(--store-text-light)] focus:border-[var(--store-primary-light)] focus:ring-4 focus:ring-[var(--store-primary-light)]/15"
           />
           <button
             type="submit"
@@ -169,9 +169,9 @@ function StoreHeader() {
         <div className="flex items-center gap-2">
           <Link
             to="/carrinho"
-            className="relative flex h-10 w-10 items-center justify-center rounded-lg border border-[var(--store-border)] bg-white md:hidden hover:bg-[var(--store-surface-soft)]"
+            className="relative flex h-10 w-10 items-center justify-center rounded-lg border border-[var(--store-border)] bg-[#111116] md:hidden hover:bg-[var(--store-surface-soft)]"
           >
-            <ShoppingCart className="h-5 w-5 text-[var(--store-primary)]" />
+            <ShoppingCart className="h-5 w-5 text-[#22D3EE]" />
             <span className="absolute -right-1 -top-1 rounded-full bg-[var(--store-secondary)] px-1.5 text-[9px] font-extrabold text-[var(--store-primary-dark)] shadow-sm">
               {useCart().count}
             </span>
@@ -182,14 +182,14 @@ function StoreHeader() {
               <button
                 type="button"
                 aria-label="Menu"
-                className="grid h-10 w-10 shrink-0 place-items-center rounded-lg border border-[var(--store-border)] bg-white md:hidden transition-colors hover:bg-[var(--store-surface-soft)]"
+                className="grid h-10 w-10 shrink-0 place-items-center rounded-lg border border-[var(--store-border)] bg-[#111116] md:hidden transition-colors hover:bg-[var(--store-surface-soft)]"
               >
-                <Menu className="h-5 w-5 text-[var(--store-primary)]" />
+                <Menu className="h-5 w-5 text-[#22D3EE]" />
               </button>
             </SheetTrigger>
             <SheetContent
               side="left"
-              className="w-[85%] sm:w-80 bg-white p-0 flex flex-col [&>button.absolute]:hidden"
+              className="w-[85%] sm:w-80 bg-[#0b0b10] text-white p-0 flex flex-col [&>button.absolute]:hidden"
             >
               <div className="flex items-center justify-between border-b border-[var(--store-border)] px-6 py-5">
                 <div className="flex items-center gap-3">
@@ -199,7 +199,7 @@ function StoreHeader() {
                     className="h-10 w-auto brand-logo rounded-md bg-black p-1 object-contain"
                   />
                   <div className="leading-tight">
-                    <div className="text-sm font-extrabold text-[var(--store-primary)]">
+                    <div className="text-sm font-extrabold text-[#22D3EE]">
                       Decode Analytics
                     </div>
                     <div className="text-[9px] font-bold uppercase tracking-[0.15em] text-[var(--store-accent)]">
@@ -244,7 +244,7 @@ function StoreHeader() {
                       onClick={() => setMobileMenuOpen(false)}
                       className="flex items-center gap-3 px-3 py-3 rounded-lg text-sm font-medium text-[var(--store-text)] hover:bg-[var(--store-surface-soft)] transition-colors"
                     >
-                      <User className="h-4 w-4 text-[var(--store-primary)]" />
+                      <User className="h-4 w-4 text-[#22D3EE]" />
                       Entrar na conta
                     </Link>
                     <Link
@@ -252,7 +252,7 @@ function StoreHeader() {
                       onClick={() => setMobileMenuOpen(false)}
                       className="flex items-center gap-3 px-3 py-3 rounded-lg text-sm font-medium text-[var(--store-text)] hover:bg-[var(--store-surface-soft)] transition-colors"
                     >
-                      <ShoppingCart className="h-4 w-4 text-[var(--store-primary)]" />
+                      <ShoppingCart className="h-4 w-4 text-[#22D3EE]" />
                       Carrinho
                       <CartCountBadge />
                     </Link>
@@ -292,14 +292,14 @@ function StoreHeader() {
                     target={info.instagramUrl ? "_blank" : undefined}
                     rel={info.instagramUrl ? "noopener noreferrer" : undefined}
                     aria-label="Instagram"
-                    className="grid h-11 w-11 place-items-center rounded-lg bg-white hover:bg-[var(--store-primary)] hover:text-white transition-colors"
+                    className="grid h-11 w-11 place-items-center rounded-lg bg-[#111116] hover:bg-[var(--store-primary)] hover:text-white transition-colors"
                   >
                     <Instagram className="h-4 w-4" />
                   </a>
                   <a
                     href="#"
                     aria-label="Facebook"
-                    className="grid h-11 w-11 place-items-center rounded-lg bg-white hover:bg-[var(--store-primary)] hover:text-white transition-colors"
+                    className="grid h-11 w-11 place-items-center rounded-lg bg-[#111116] hover:bg-[var(--store-primary)] hover:text-white transition-colors"
                   >
                     <Facebook className="h-4 w-4" />
                   </a>
@@ -319,10 +319,10 @@ function CategoryNav() {
     return (
       <nav aria-label="Navegação principal" className="hidden border-b border-white/10 bg-[#080C1F] md:block">
         <div className="mx-auto flex max-w-[1280px] items-center gap-2 px-4 py-2">
-          <a href="#solucoes" className="rounded-full px-4 py-2 text-sm font-semibold text-slate-300 transition hover:bg-white/10 hover:text-white">Soluções</a>
-          <a href="#como-funciona" className="rounded-full px-4 py-2 text-sm font-semibold text-slate-300 transition hover:bg-white/10 hover:text-white">Como funciona</a>
-          <Link to="/produtos" className="rounded-full px-4 py-2 text-sm font-semibold text-slate-300 transition hover:bg-white/10 hover:text-white">Catálogo</Link>
-          <a href="#contato" className="ml-auto rounded-full px-4 py-2 text-sm font-semibold text-[#22D3EE] transition hover:bg-white/10">Fale com a Decode <span aria-hidden="true">↗</span></a>
+          <a href="#solucoes" className="rounded-full px-4 py-2 text-sm font-semibold text-slate-300 transition hover:bg-[#191920]/10 hover:text-white">Soluções</a>
+          <a href="#como-funciona" className="rounded-full px-4 py-2 text-sm font-semibold text-slate-300 transition hover:bg-[#191920]/10 hover:text-white">Como funciona</a>
+          <Link to="/produtos" className="rounded-full px-4 py-2 text-sm font-semibold text-slate-300 transition hover:bg-[#191920]/10 hover:text-white">Catálogo</Link>
+          <a href="#contato" className="ml-auto rounded-full px-4 py-2 text-sm font-semibold text-[#22D3EE] transition hover:bg-[#191920]/10">Fale com a Decode <span aria-hidden="true">↗</span></a>
         </div>
       </nav>
     );
@@ -331,7 +331,7 @@ function CategoryNav() {
     <nav aria-label="Categorias" className="hidden border-b border-[var(--store-border)] bg-[var(--store-surface)] md:block">
       <div className="mx-auto flex max-w-[1280px] gap-1 overflow-x-auto px-4 py-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         {STORE_CATEGORIES.map((c) => (
-          <Link key={c.slug} to="/produtos" search={{ cat: c.slug }} className="shrink-0 rounded-full px-4 py-2 text-sm font-semibold text-[var(--store-text-muted)] transition-colors hover:bg-[var(--store-surface-soft)] hover:text-[var(--store-primary)]" activeProps={{ className: "shrink-0 rounded-full bg-[var(--store-primary)] px-4 py-2 text-sm font-semibold text-white" }}>
+          <Link key={c.slug} to="/produtos" search={{ cat: c.slug }} className="shrink-0 rounded-full px-4 py-2 text-sm font-semibold text-[var(--store-text-muted)] transition-colors hover:bg-[var(--store-surface-soft)] hover:text-[#22D3EE]" activeProps={{ className: "shrink-0 rounded-full bg-[var(--store-primary)] px-4 py-2 text-sm font-semibold text-white" }}>
             {c.label}
           </Link>
         ))}
@@ -369,14 +369,14 @@ function StoreFooter() {
               target={info.instagramUrl ? "_blank" : undefined}
               rel={info.instagramUrl ? "noopener noreferrer" : undefined}
               aria-label="Instagram"
-              className="grid h-11 w-11 place-items-center rounded-lg bg-white/10 transition-colors hover:bg-white/20"
+              className="grid h-11 w-11 place-items-center rounded-lg bg-[#111116]/10 transition-colors hover:bg-[#191920]/20"
             >
               <Instagram className="h-4 w-4" />
             </a>
             <a
               href="#"
               aria-label="Facebook"
-              className="grid h-11 w-11 place-items-center rounded-lg bg-white/10 transition-colors hover:bg-white/20"
+              className="grid h-11 w-11 place-items-center rounded-lg bg-[#111116]/10 transition-colors hover:bg-[#191920]/20"
             >
               <Facebook className="h-4 w-4" />
             </a>
