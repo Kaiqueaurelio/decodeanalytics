@@ -207,7 +207,7 @@ export function AppShell({ children }: { children: ReactNode }) {
     <div className="min-h-screen overflow-x-hidden bg-background">
       <aside
         className={cn(
-          "fixed inset-y-0 left-0 z-40 flex flex-col overflow-hidden border-r border-[#535d7d]/20 bg-[#0c1e35] text-[#7d84ab] transition-[width,transform] duration-500 ease-[cubic-bezier(0.4,0,0.2,1)]",
+          "fixed inset-y-0 left-0 z-40 flex flex-col overflow-hidden border-r border-[#293451]/20 bg-[#0B1026] text-[#AAB6D1] transition-[width,transform] duration-500 ease-[cubic-bezier(0.4,0,0.2,1)]",
           collapsed ? "w-72 md:w-20" : "w-72 md:w-60",
           open ? "translate-x-0" : "-translate-x-full md:translate-x-0",
         )}
@@ -225,20 +225,20 @@ export function AppShell({ children }: { children: ReactNode }) {
                 collapsed ? "justify-center" : "gap-2.5",
               )}
             >
-              <div
+              <img
+                src="/brand/decode-logo.png"
+                alt="Decode Analytics"
                 className={cn(
-                  "flex shrink-0 items-center justify-center rounded-lg bg-[#ff8100] font-black text-white shadow-md shadow-[#ff8100]/20 transition-all duration-300",
-                  collapsed ? "h-11 w-11 text-base" : "h-8 w-8 text-xs",
+                  "brand-logo shrink-0 rounded-md bg-black p-1 object-contain transition-all duration-300",
+                  collapsed ? "h-11 w-11" : "h-8 w-auto max-w-28",
                 )}
-              >
-                A
-              </div>
+              />
               {!collapsed && (
                 <div className="flex flex-col leading-none animate-in fade-in duration-500">
-                  <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[#dee2ec]">
+                  <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[#F8FAFC]">
                     Decode Analytics
                   </span>
-                  <span className="mt-0.5 text-[8px] font-bold uppercase tracking-[0.1em] text-[#7d84ab]">
+                  <span className="mt-0.5 text-[8px] font-bold uppercase tracking-[0.1em] text-[#AAB6D1]">
                     Design & Soluções
                   </span>
                 </div>
@@ -247,7 +247,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             {!collapsed && (
               <button
                 onClick={() => setOpen(false)}
-                className="grid h-8 w-8 place-items-center rounded-lg bg-[#0b1a2c] text-[#7d84ab] hover:bg-[#0b1a2c]/80 hover:text-[#dee2ec] md:hidden"
+                className="grid h-8 w-8 place-items-center rounded-lg bg-[#080C1F] text-[#AAB6D1] hover:bg-[#080C1F]/80 hover:text-[#F8FAFC] md:hidden"
               >
                 <X className="h-4 w-4" />
               </button>
@@ -262,14 +262,14 @@ export function AppShell({ children }: { children: ReactNode }) {
           >
             <div
               className={cn(
-                "group relative flex h-10 items-center rounded-lg bg-[#0b1a2c] transition-all focus-within:bg-[#0b1a2c]/80 border border-[#535d7d]/30",
+                "group relative flex h-10 items-center rounded-lg bg-[#080C1F] transition-all focus-within:bg-[#080C1F]/80 border border-[#293451]/30",
                 collapsed ? "w-11 justify-center px-0" : "w-full px-3",
               )}
               title={collapsed ? "Buscar" : undefined}
             >
               <Search
                 className={cn(
-                  "h-4 w-4 shrink-0 text-[#7d84ab]/50 group-focus-within:text-[#dee2ec] transition-colors",
+                  "h-4 w-4 shrink-0 text-[#AAB6D1]/50 group-focus-within:text-[#F8FAFC] transition-colors",
                 )}
               />
               <input
@@ -280,12 +280,12 @@ export function AppShell({ children }: { children: ReactNode }) {
                 onFocus={() => setSearchFocused(true)}
                 onBlur={() => setTimeout(() => setSearchFocused(false), 200)}
                 className={cn(
-                  "ml-2 flex-1 bg-transparent text-xs text-white placeholder:text-[#7d84ab] focus:outline-hidden",
+                  "ml-2 flex-1 bg-transparent text-xs text-white placeholder:text-[#AAB6D1] focus:outline-hidden",
                   collapsed && "hidden",
                 )}
               />
               {searchFocused && results.length > 0 && !collapsed && (
-                <div className="absolute top-full right-0 left-0 z-50 mt-2 max-h-60 overflow-y-auto rounded-xl border border-[#535d7d]/30 bg-[#0b1a2c] p-1 shadow-2xl backdrop-blur-xl">
+                <div className="absolute top-full right-0 left-0 z-50 mt-2 max-h-60 overflow-y-auto rounded-xl border border-[#293451]/30 bg-[#080C1F] p-1 shadow-2xl backdrop-blur-xl">
                   {results.map((item) => (
                     <Link
                       key={item.to}
@@ -294,7 +294,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                         setSearch("");
                         setOpen(false);
                       }}
-                      className="flex items-center gap-3 rounded-lg px-3 py-2 text-xs text-[#7d84ab] hover:bg-[#0c1e35] hover:text-[#dee2ec] transition-colors"
+                      className="flex items-center gap-3 rounded-lg px-3 py-2 text-xs text-[#AAB6D1] hover:bg-[#0B1026] hover:text-[#F8FAFC] transition-colors"
                     >
                       <item.icon className="h-3.5 w-3.5 shrink-0" />
                       <div className="min-w-0">
@@ -315,7 +315,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             return (
               <div key={section} className={cn("flex flex-col", collapsed && "items-center")}>
                 {!collapsed && (
-                  <p className="mb-2 px-3 text-[10px] font-black uppercase tracking-[0.2em] text-[#dee2ec]/90">
+                  <p className="mb-2 px-3 text-[10px] font-black uppercase tracking-[0.2em] text-[#F8FAFC]/90">
                     {section}
                   </p>
                 )}
@@ -333,8 +333,8 @@ export function AppShell({ children }: { children: ReactNode }) {
                         className={cn(
                           "group relative flex items-center rounded-xl transition-all duration-300",
                           active
-                            ? "bg-[#0b1a2c] text-white font-bold shadow-lg shadow-black/30 border border-[#535d7d]/30"
-                            : "text-[#dee2ec] hover:bg-[#0b1a2c]/50 hover:text-white",
+                            ? "bg-[#080C1F] text-white font-bold shadow-lg shadow-black/30 border border-[#293451]/30"
+                            : "text-[#F8FAFC] hover:bg-[#080C1F]/50 hover:text-white",
                           collapsed
                             ? "h-11 w-11 justify-center px-0"
                             : "h-auto w-full px-3 py-3 gap-3 justify-start",
@@ -345,7 +345,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                             "shrink-0 transition-transform duration-300",
                             active
                               ? "text-white scale-110"
-                              : "text-[#7d84ab] group-hover:text-[#dee2ec]",
+                              : "text-[#AAB6D1] group-hover:text-[#F8FAFC]",
                             collapsed ? "h-5 w-5" : "h-5 w-5",
                           )}
                         />
@@ -366,7 +366,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                           </>
                         )}
                         {active && collapsed && (
-                          <div className="absolute -right-0.5 top-1/2 -translate-y-1/2 w-1 h-3 rounded-l-full bg-[#ff8100] shadow-[0_0_8px_rgba(255,129,0,0.5)]" />
+                          <div className="absolute -right-0.5 top-1/2 -translate-y-1/2 w-1 h-3 rounded-l-full bg-[#087CF0] shadow-[0_0_8px_rgba(255,129,0,0.5)]" />
                         )}
                       </Link>
                     );
@@ -379,21 +379,21 @@ export function AppShell({ children }: { children: ReactNode }) {
 
         <div
           className={cn(
-            "mt-auto border-t border-[#535d7d]/20 bg-[#0b1a2c]/50 p-3 flex flex-col",
+            "mt-auto border-t border-[#293451]/20 bg-[#080C1F]/50 p-3 flex flex-col",
             collapsed && "items-center",
           )}
         >
           <div className={cn("mb-4 w-full", collapsed && "flex justify-center")}>
             <div
               className={cn(
-                "flex items-center rounded-xl bg-[#0b1a2c] ring-1 ring-[#535d7d]/20 transition-all duration-300",
+                "flex items-center rounded-xl bg-[#080C1F] ring-1 ring-[#293451]/20 transition-all duration-300",
                 collapsed ? "h-12 w-12 justify-center" : "gap-3 p-2 w-full",
               )}
               title={collapsed ? (isAdmin ? "Administrador" : "Usuário") : undefined}
             >
               <div
                 className={cn(
-                  "flex shrink-0 items-center justify-center rounded-lg bg-[#ff8100]/20 text-[10px] font-black text-[#ff8100] transition-all duration-300",
+                  "flex shrink-0 items-center justify-center rounded-lg bg-[#087CF0]/20 text-[10px] font-black text-[#087CF0] transition-all duration-300",
                   collapsed ? "h-10 w-10" : "h-8 w-8",
                 )}
               >
@@ -401,10 +401,10 @@ export function AppShell({ children }: { children: ReactNode }) {
               </div>
               {!collapsed && (
                 <div className="flex flex-col min-w-0 animate-in fade-in duration-500">
-                  <span className="text-[10px] font-bold text-[#dee2ec] truncate uppercase tracking-wider">
+                  <span className="text-[10px] font-bold text-[#F8FAFC] truncate uppercase tracking-wider">
                     {user?.email?.split("@")[0]}
                   </span>
-                  <span className="text-[9px] font-medium text-[#7d84ab] uppercase tracking-tighter">
+                  <span className="text-[9px] font-medium text-[#AAB6D1] uppercase tracking-tighter">
                     {isAdmin ? "Administrador" : ROLE_LABEL[roles[0]] || "Usuário"}
                   </span>
                 </div>
@@ -422,7 +422,7 @@ export function AppShell({ children }: { children: ReactNode }) {
               })
             }
             className={cn(
-              "group flex items-center rounded-xl text-xs text-[#dee2ec] transition-all hover:bg-[#0b1a2c] hover:text-white",
+              "group flex items-center rounded-xl text-xs text-[#F8FAFC] transition-all hover:bg-[#080C1F] hover:text-white",
               collapsed ? "h-11 w-11 justify-center mx-auto" : "w-full gap-3 px-3 py-2.5",
             )}
             title={collapsed ? "Expandir menu" : undefined}
@@ -490,7 +490,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                     {isAdmin ? "Administrador" : ROLE_LABEL[roles[0]] || "Usuário"}
                   </p>
                 </div>
-                <div className="grid h-9 w-9 place-items-center rounded-xl bg-[#0c1e35] text-sm font-bold text-white shadow-lg shadow-[#0c1e35]/10">
+                <div className="grid h-9 w-9 place-items-center rounded-xl bg-[#0B1026] text-sm font-bold text-white shadow-lg shadow-[#0B1026]/10">
                   {userInitial}
                 </div>
               </div>

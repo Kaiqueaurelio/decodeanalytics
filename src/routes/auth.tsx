@@ -83,17 +83,17 @@ function AuthPage() {
   return (
     <div
       className="auth-screen min-h-screen-dvh flex items-center justify-center overflow-x-hidden p-3 safe-pt safe-pb sm:p-4"
-      style={{ background: "linear-gradient(135deg, #031c18, #074531 58%, #d9a83f)" }}
+      style={{ background: "linear-gradient(135deg, #0B1026 0%, #10275A 58%, #087CF0 100%)" }}
     >
       <div className="auth-card w-full max-w-md rounded-2xl border border-border bg-card p-5 shadow-2xl sm:p-8">
         <div className="text-center mb-4 sm:mb-6">
           <img
             src="/brand/decode-logo.png"
-            alt="Decode Analytics — Design & Soluções - Criando impacto a cada imagem"
-            className="auth-logo mx-auto mb-3 h-24 w-auto max-w-full object-contain sm:mb-4 sm:h-36 md:h-44"
+            alt="Decode Analytics — Design & Soluções"
+            className="brand-logo auth-logo mx-auto mb-3 h-24 w-auto max-w-full rounded-xl bg-black p-2 object-contain sm:mb-4 sm:h-36 md:h-44"
           />
           <h1 className="text-xl sm:text-2xl font-bold text-primary">Decode Analytics Gestão</h1>
-          <p className="text-sm text-muted-foreground">Sistema de gestão da produção gráfica</p>
+          <p className="text-sm text-muted-foreground">Design & soluções digitais para o seu negócio</p>
         </div>
         <Tabs defaultValue="login">
           <TabsList className="grid grid-cols-2 w-full mb-4 h-12">
