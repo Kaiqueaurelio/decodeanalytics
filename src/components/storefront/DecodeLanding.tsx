@@ -121,6 +121,10 @@ export function DecodeLanding() {
         </div>
       </section>
 
+      <section aria-labelledby="vitrine-title" className="bg-[#0B1026] px-4 py-14 sm:px-8 lg:px-16">
+        <div className="mx-auto max-w-[1280px]"><div className="flex flex-wrap items-end justify-between gap-4"><div><p className="text-xs font-extrabold uppercase tracking-[.22em] text-[#22D3EE]">Vitrine Decode</p><h2 id="vitrine-title" className="mt-2 text-2xl font-black text-white sm:text-3xl">Produtos e soluções em destaque</h2><p className="mt-2 max-w-xl text-sm leading-6 text-slate-300">Veja opções do nosso catálogo e solicite um orçamento para o que você precisa.</p></div><a href="/produtos" className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-white/15 px-4 text-sm font-bold text-white hover:border-[#22D3EE]/60">Catálogo completo <ArrowRight className="h-4 w-4 text-[#22D3EE]" /></a></div><FeaturedProducts /></div>
+      </section>
+
       <section id="sobre" aria-labelledby="sobre-title" className="scroll-mt-20 border-y border-white/[0.06] bg-[#0A0E1A] px-4 py-20 sm:px-8 lg:px-16 lg:py-28">
         <div className="mx-auto grid max-w-[1280px] gap-10 lg:grid-cols-[.85fr_1.15fr] lg:items-center lg:gap-20">
           <div>
@@ -181,9 +185,7 @@ export function DecodeLanding() {
         </div>
       </section>
 
-      <section aria-labelledby="vitrine-title" className="bg-[#0B1026] px-4 py-14 sm:px-8 lg:px-16">
-        <div className="mx-auto max-w-[1280px]"><div className="flex flex-wrap items-end justify-between gap-4"><div><p className="text-xs font-extrabold uppercase tracking-[.22em] text-[#22D3EE]">Vitrine Decode</p><h2 id="vitrine-title" className="mt-2 text-2xl font-black text-white sm:text-3xl">Produtos e soluções em destaque</h2><p className="mt-2 max-w-xl text-sm leading-6 text-slate-300">Veja opções do nosso catálogo e solicite um orçamento para o que você precisa.</p></div><a href="/produtos" className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-white/15 px-4 text-sm font-bold text-white hover:border-[#22D3EE]/60">Catálogo completo <ArrowRight className="h-4 w-4 text-[#22D3EE]" /></a></div><FeaturedProducts /></div>
-      </section>
+
       
       <section aria-labelledby="catalogo-title" className="bg-[#05070D] px-4 py-16 sm:px-8 lg:px-16 lg:py-20">
         <div className="mx-auto flex max-w-[1280px] flex-col items-start justify-between gap-6 rounded-[1.75rem] border border-white/10 bg-gradient-to-r from-[#0D1424] via-[#10152A] to-[#171333] p-7 sm:p-10 md:flex-row md:items-center">
