@@ -25,6 +25,9 @@ export interface CompanyInfo {
   howItWorksTitle: string;
   contactTitle: string;
   contactDescription: string;
+  primaryColor: string;
+  secondaryColor: string;
+  accentColor: string;
 }
 
 function digitsOnly(v?: string | null) {
@@ -53,10 +56,9 @@ export function useCompanyInfo(): CompanyInfo {
   const { data } = useQuery({
     queryKey: ["company_settings", "public"],
     queryFn: async () => {
-      const { data } = await supabase
-        .from("company_settings")
+      const { data } = await (supabase.from("company_settings") as any)
         .select(`
-          name, logo_url, whatsapp, instagram, address, show_prices,
+          name, logo_url, whatsapp, instagram, address, show_prices, primary_color, secondary_color, accent_color,
           hero_title, hero_subtitle, hero_cta_primary, hero_cta_secondary,
           bento_kicker, bento_title, bento_description,
           how_it_works_title, contact_title, contact_description
@@ -95,6 +97,9 @@ export function useCompanyInfo(): CompanyInfo {
     howItWorksTitle: data?.how_it_works_title ?? "Da necessidade à solução",
     contactTitle: data?.contact_title ?? "Fale com a Decode Analytics",
     contactDescription: data?.contact_description ?? "Conte sobre seu desafio e vamos conversar sobre a solução mais adequada para o seu negócio.",
+    primaryColor: data?.primary_color ?? "#2563EB",
+    secondaryColor: data?.secondary_color ?? "#7C3AED",
+    accentColor: data?.accent_color ?? "#38BDF8",
   };
 }
 
