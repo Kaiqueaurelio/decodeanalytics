@@ -17,6 +17,8 @@ function AdminMarcaPage() {
   const qc = useQueryClient();
   const [form, setForm] = useState({ name: "Decode Analytics", logo_url: "", whatsapp: "", address: "", instagram: "", primary_color: "#2563EB", secondary_color: "#7C3AED", accent_color: "#38BDF8" });
   const [notice, setNotice] = useState("");
+  const [logoFile, setLogoFile] = useState<File | null>(null);
+  const [saving, setSaving] = useState(false);
   const { data, isLoading } = useQuery({
     queryKey: ["admin-brand-settings"],
     enabled: !!user && isAdmin,
@@ -47,16 +49,33 @@ function AdminMarcaPage() {
   async function save(e: FormEvent) {
     e.preventDefault();
     setNotice("");
-    if (!data?.id) { setNotice("Não foi encontrado um registro de configuração da empresa. Crie esse registro antes de salvar."); return; }
-    const { error } = await (supabase.from("company_settings") as any).update({
-      name: form.name.trim(), logo_url: form.logo_url.trim() || null, whatsapp: form.whatsapp.trim(),
-      address: form.address.trim() || null, instagram: form.instagram.trim() || null,
-      primary_color: form.primary_color, secondary_color: form.secondary_color, accent_color: form.accent_color,
-    }).eq("id", data.id);
-    if (error) { setNotice("Não foi possível salvar. Confirme se a migração de identidade visual foi aplicada e se você tem permissão administrativa."); return; }
-    await qc.invalidateQueries({ queryKey: ["admin-brand-settings"] });
-    await qc.invalidateQueries({ queryKey: ["company_settings"] });
-    setNotice("Marca atualizada com sucesso.");
+    setSaving(true);
+    if (!data?.id) { setSaving(false); { setNotice("Não foi encontrado um registro de configuração da empresa. Crie esse registro antes de salvar."); return; }
+    try {
+      let logoUrl = form.logo_url.trim() || null;
+      if (logoFile) {
+        const safeName = logoFile.name.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-zA-Z0-9._-]/g, "-");
+        const path = `brand/${Date.now()}-${safeName}`;
+        const { error: uploadError } = await supabase.storage.from("catalog-images").upload(path, logoFile, { upsert: false, contentType: logoFile.type });
+        if (uploadError) throw new Error("Não foi possível enviar o logotipo. Confirme se a migração e as permissões de imagens estão ativas.");
+        logoUrl = supabase.storage.from("catalog-images").getPublicUrl(path).data.publicUrl;
+      }
+      const { error } = await (supabase.from("company_settings") as any).update({
+        name: form.name.trim(), logo_url: logoUrl, whatsapp: form.whatsapp.trim(),
+        address: form.address.trim() || null, instagram: form.instagram.trim() || null,
+        primary_color: form.primary_color, secondary_color: form.secondary_color, accent_color: form.accent_color,
+      }).eq("id", data.id);
+      if (error) throw new Error("Não foi possível salvar. Confirme se a migração de identidade visual foi aplicada e se você tem permissão administrativa.");
+      await qc.invalidateQueries({ queryKey: ["admin-brand-settings"] });
+      await qc.invalidateQueries({ queryKey: ["company_settings"] });
+      setForm((f) => ({ ...f, logo_url: logoUrl ?? "" }));
+      setLogoFile(null);
+      setNotice("Marca atualizada com sucesso.");
+    } catch (err) {
+      setNotice(err instanceof Error ? err.message : "Não foi possível salvar as configurações.");
+    } finally {
+      setSaving(false);
+    }
   }
 
   function field(key: keyof typeof form, label: string, placeholder = "") {
@@ -69,10 +88,10 @@ function AdminMarcaPage() {
       <div className="mt-6 flex items-start gap-4"><div className="rounded-2xl bg-sky-400/10 p-3 text-sky-300"><ShieldCheck className="h-7 w-7" /></div><div><p className="text-xs font-bold uppercase tracking-[.2em] text-sky-300">Painel administrativo</p><h1 className="mt-1 text-3xl font-black">Marca e identidade visual</h1><p className="mt-2 text-sm text-white/60">Atualize os dados institucionais sem alterar arquivos de código.</p></div></div>
       <form onSubmit={save} className="mt-8 space-y-6 rounded-2xl border border-white/10 bg-[#0D1325] p-5 sm:p-8">
         <div className="grid gap-5 sm:grid-cols-2">{field("name", "Nome da marca", "Decode Analytics")}{field("whatsapp", "WhatsApp", "+55 11 99999-9999")}{field("instagram", "Instagram", "@decode.analytics")}{field("address", "Endereço", "Rua, número, bairro, cidade/UF")}</div>
-        <div><label className="block text-sm font-semibold text-white">URL do logotipo<input value={form.logo_url} onChange={(e) => setForm((f) => ({ ...f, logo_url: e.target.value }))} placeholder="https://... ou caminho público do logo" className="mt-2 h-11 w-full rounded-xl border border-white/10 bg-[#111827] px-3 font-normal text-white outline-none focus:border-sky-400" /></label><p className="mt-1.5 flex items-center gap-1.5 text-xs text-white/45"><ImagePlus className="h-3.5 w-3.5" /> Use uma URL pública para que o logotipo apareça no site.</p>{form.logo_url && <img src={form.logo_url} alt="Prévia do logotipo" className="mt-3 h-20 max-w-48 rounded-lg bg-white/5 object-contain p-2" onError={(e) => { e.currentTarget.style.display = "none"; }} />}</div>
+        <div><label className="block text-sm font-semibold text-white">Enviar arquivo do logotipo<input type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml" onChange={(e) => setLogoFile(e.target.files?.[0] ?? null)} className="mt-2 block min-h-11 w-full rounded-xl border border-white/10 bg-[#111827] p-2 text-xs font-normal file:mr-3 file:rounded-lg file:border-0 file:bg-sky-400 file:px-3 file:py-2 file:font-bold file:text-slate-950" /></label>{logoFile && <p className="mt-1 text-xs text-emerald-300">{logoFile.name}</p>}<label className="mt-4 block text-sm font-semibold text-white">Ou URL pública do logotipo<input value={form.logo_url} onChange={(e) => setForm((f) => ({ ...f, logo_url: e.target.value }))} placeholder="https://... ou caminho público do logo" className="mt-2 h-11 w-full rounded-xl border border-white/10 bg-[#111827] px-3 font-normal text-white outline-none focus:border-sky-400" /></label><p className="mt-1.5 flex items-center gap-1.5 text-xs text-white/45"><ImagePlus className="h-3.5 w-3.5" /> Envie um arquivo ou informe uma URL pública.</p>{form.logo_url && <img src={form.logo_url} alt="Prévia do logotipo" className="mt-3 h-20 max-w-48 rounded-lg bg-white/5 object-contain p-2" onError={(e) => { e.currentTarget.style.display = "none"; }} />}</div>
         <div><h2 className="text-lg font-bold">Paleta da marca</h2><p className="mt-1 text-xs text-white/50">Escolha as cores para a identidade visual do site.</p><div className="mt-4 grid gap-4 sm:grid-cols-3">{([["primary_color","Cor principal"],["secondary_color","Cor secundária"],["accent_color","Cor de destaque"]] as const).map(([key,label]) => <label key={key} className="flex items-center gap-3 rounded-xl border border-white/10 p-3 text-sm font-semibold"><input type="color" value={form[key]} onChange={(e) => setForm((f) => ({ ...f, [key]: e.target.value }))} className="h-10 w-12 cursor-pointer rounded border-0 bg-transparent" /><span>{label}<span className="block text-xs font-normal text-white/50">{form[key]}</span></span></label>)}</div></div>
         {notice && <p role="status" className={`rounded-xl p-3 text-sm ${notice.includes("sucesso") ? "bg-emerald-400/10 text-emerald-300" : "bg-amber-400/10 text-amber-200"}`}>{notice}</p>}
-        <button type="submit" className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-sky-400 px-5 text-sm font-extrabold text-slate-950 hover:bg-sky-300"><Save className="h-4 w-4" /> Salvar identidade</button>
+        <button type="submit" disabled={saving} className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-sky-400 px-5 text-sm font-extrabold text-slate-950 hover:bg-sky-300 disabled:opacity-50"><Save className="h-4 w-4" /> {saving ? "Salvando…" : "Salvar identidade"}</button>
       </form>
       <p className="mt-4 text-xs leading-5 text-white/40">A gravação das cores exige a migração de banco incluída neste commit. O acesso à tela é limitado ao perfil Administrador; as políticas do banco também precisam permitir a atualização.</p>
     </div>
