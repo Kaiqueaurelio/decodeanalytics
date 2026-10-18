@@ -50,7 +50,7 @@ function AdminMarcaPage() {
     e.preventDefault();
     setNotice("");
     setSaving(true);
-    if (!data?.id) { setSaving(false); { setNotice("Não foi encontrado um registro de configuração da empresa. Crie esse registro antes de salvar."); return; }
+    if (!data?.id) { setSaving(false); setNotice("Não foi encontrado um registro de configuração da empresa. Crie esse registro antes de salvar."); return; }
     try {
       let logoUrl = form.logo_url.trim() || null;
       if (logoFile) {
