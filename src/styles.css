@@ -807,3 +807,48 @@ a[href*="lovable.dev"][target="_blank"] {
   .text-gray-700, .text-slate-700 { color: #D4D4D8 !important; }
   .text-gray-600, .text-slate-600 { color: #C4C4CC !important; }
 }
+
+
+/* Auditoria global de contraste: storefront e painel autenticado em dark mode */
+@layer utilities {
+  [class~="bg-white/80"],
+  [class~="bg-white/90"],
+  [class~="bg-white/70"] {
+    background-color: rgb(17 17 22 / 96%) !important;
+  }
+
+  .bg-slate-200,
+  .bg-gray-200 {
+    background-color: #27272A !important;
+  }
+
+  .border-slate-200,
+  .border-gray-200,
+  .border-slate-300,
+  .border-gray-300 {
+    border-color: #3F3F46 !important;
+  }
+
+  .text-slate-500,
+  .text-gray-500 {
+    color: #B4B4BE !important;
+  }
+
+  .text-slate-400,
+  .text-gray-400 {
+    color: #C4C4CC !important;
+  }
+
+  [class~="text-white/50"],
+  [class~="text-white/40"],
+  [class~="text-white/30"],
+  [class~="text-white/20"] {
+    color: #B4B4BE !important;
+  }
+
+  [class~="text-black/50"],
+  [class~="text-black/40"],
+  [class~="text-black/30"] {
+    color: #52525B !important;
+  }
+}
