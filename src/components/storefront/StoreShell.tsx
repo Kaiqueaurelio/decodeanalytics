@@ -284,7 +284,7 @@ function StoreHeader() {
               {/* Footer do menu */}
               <div className="border-t border-[var(--store-border)] px-6 py-4 bg-[var(--store-surface-soft)]">
                 <p className="text-xs text-[var(--store-text-muted)] leading-relaxed mb-3">
-                  Produtos personalizados com acabamento profissional para sua marca brilhar.
+                  Soluções digitais, design e tecnologia pensadas para fazer seu negócio avançar.
                 </p>
                 <div className="flex gap-2">
                   <a
