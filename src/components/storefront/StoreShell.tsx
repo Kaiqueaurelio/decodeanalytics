@@ -96,7 +96,7 @@ function StoreHeader() {
   const waLink = useWaLink();
   const { count } = useCart();
   const pathname = useRouterState({ select: (state) => state.location.pathname });
-  const menuCategories = pathname === "/" ? SOLUTION_CATEGORIES : STORE_CATEGORIES;
+  const menuCategories = pathname === "/" ? STORE_CATEGORIES.filter(({ slug }) => !["Manutenção de Computadores", "Social Media", "Design Gráfico", "Programação"].includes(slug)) : STORE_CATEGORIES;
   return (
     <header className="store-sticky-header sticky z-40 border-b border-[var(--store-border)] bg-[var(--store-surface)]/95 backdrop-blur transition-all duration-300">
       <div className="mx-auto flex max-w-[1280px] items-center justify-between gap-3 px-3 py-2 sm:px-4 sm:py-3 md:gap-6 md:py-4">
@@ -345,13 +345,24 @@ function StoreHeader() {
 function CategoryNav() {
   const pathname = useRouterState({ select: (state) => state.location.pathname });
   if (pathname === "/") {
+    const storefrontCategories = STORE_CATEGORIES.filter(
+      ({ slug }) => !["Manutenção de Computadores", "Social Media", "Design Gráfico", "Programação"].includes(slug),
+    );
     return (
-      <nav aria-label="Navegação principal" className="hidden border-b border-white/10 bg-[#080C1F] md:block">
-        <div className="mx-auto flex max-w-[1280px] items-center gap-2 px-4 py-2">
-          <a href="#solucoes" className="rounded-full px-4 py-2 text-sm font-semibold text-slate-300 transition hover:bg-white/10 hover:text-white">Soluções</a>
-          <a href="#como-funciona" className="rounded-full px-4 py-2 text-sm font-semibold text-slate-300 transition hover:bg-white/10 hover:text-white">Como funciona</a>
-          <Link to="/produtos" className="rounded-full px-4 py-2 text-sm font-semibold text-slate-300 transition hover:bg-white/10 hover:text-white">Catálogo</Link>
-          <a href="#contato" className="ml-auto rounded-full px-4 py-2 text-sm font-semibold text-[#22D3EE] transition hover:bg-white/10">Fale com a Decode <span aria-hidden="true">↗</span></a>
+      <nav aria-label="Categorias de produtos" className="hidden border-b border-white/10 bg-[#080C1F] md:block">
+        <div className="mx-auto flex max-w-[1280px] items-center gap-1 overflow-x-auto px-4 py-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          <Link to="/produtos" className="shrink-0 rounded-full bg-[#087CF0] px-4 py-2 text-sm font-bold text-white transition hover:bg-[#075BB5]">Todos os produtos</Link>
+          {storefrontCategories.slice(0, 8).map((category) => (
+            <Link
+              key={category.slug}
+              to="/produtos"
+              search={{ cat: category.slug }}
+              className="shrink-0 rounded-full px-3 py-2 text-sm font-semibold text-slate-300 transition hover:bg-white/10 hover:text-white"
+            >
+              {category.label}
+            </Link>
+          ))}
+          <a href="#contato" className="ml-auto shrink-0 rounded-full px-4 py-2 text-sm font-semibold text-[#22D3EE] transition hover:bg-white/10">Atendimento <span aria-hidden="true">↗</span></a>
         </div>
       </nav>
     );
