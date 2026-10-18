@@ -33,17 +33,12 @@ import imgBannerBacklight from "@/assets/products/sub/banner-backlight.jpg";
 import imgPoster from "@/assets/products/sub/poster.jpg";
 import imgSqueeze from "@/assets/products/sub/squeeze.jpg";
 import imgMousepad from "@/assets/products/sub/mousepad.jpg";
+import imgManutencao from "@/assets/products/manutencao.jpg";
+import imgDesign from "@/assets/products/design.jpg";
+import imgProgramacao from "@/assets/products/programacao.jpg";
+import imgSocial from "@/assets/products/socialmedia.jpg";
 
-/* Editorial service photos from Unsplash, used under the Unsplash License. */
-const imgManutencao =
-  "https://images.unsplash.com/photo-1768633647910-7e6fb53e5b0f?auto=format&fit=crop&w=1200&q=85";
-const imgDesign =
-  "https://images.unsplash.com/photo-1791197738079-d25b54cd42dc?auto=format&fit=crop&w=1200&q=85";
-const imgProgramacao =
-  "https://images.unsplash.com/photo-1753998943918-dd2dfc4ee6ed?auto=format&fit=crop&w=1200&q=85";
-const imgSocial =
-  "https://images.unsplash.com/photo-1784729553958-4f8d4412b0c0?auto=format&fit=crop&w=1200&q=85";
-
+// Fotos locais da própria biblioteca do catálogo: carregam sem depender de terceiros.
 /**
  * Mapeamento por slug do produto (mais específico que a categoria).
  */
@@ -56,12 +51,16 @@ const PRODUCT_IMAGES_BY_SLUG: Record<string, string> = {
   "convites-personalizados-catalogo": imgWeddingInvite,
   "copos-termicos-personalizados-catalogo": imgSqueeze,
   "canecas-personalizadas-catalogo": imgCanecas,
+  "social-media": imgSocial,
+  "design-grafico": imgDesign,
+  "programacao": imgProgramacao,
+  "manutencao-de-computadores": imgManutencao,
   // Cartões
   "cartao-couche-250g": imgBusinessCard,
   "cartao-visita-couche-300g": imgBusinessCard,
   "cartao-visita-laminado-fosco": imgBusinessCard,
   "cartao-verniz-localizado": imgBusinessCard,
-  "cartao-kraft": imgKraftBag,
+  "cartao-kraft": imgBusinessCard,
   "cartao-pvc": imgIdBadge,
   "convite-casamento": imgWeddingInvite,
   "cracha": imgIdBadge,
@@ -141,6 +140,7 @@ const CATEGORY_IMAGES_BY_KEY: Record<string, string> = {
   panfletos: imgPanfletos,
   plotagem: imgPlotagem,
   "manutencao de computadores": imgManutencao,
+  "manutenção de computadores": imgManutencao,
   programacao: imgProgramacao,
   "social media": imgSocial,
   "design grafico": imgDesign,

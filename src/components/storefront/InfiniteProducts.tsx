@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo } from "react";
 import { Link } from "@tanstack/react-router";
 import { Plus, Star } from "lucide-react";
 import { useStoreProducts } from "./useStoreProducts";
@@ -13,36 +13,11 @@ const PAGE = 8;
 export function InfiniteProducts() {
   const { data, isLoading, isError } = useStoreProducts();
   const all = useMemo(() => data ?? [], [data]);
-  const [visibleCount, setVisibleCount] = useState(PAGE);
-  const sentinel = useRef<HTMLDivElement | null>(null);
-  const visible = useMemo(() => all.slice(0, visibleCount), [all, visibleCount]);
-  const loadedPage = Math.ceil(visible.length / PAGE);
-  const hasMore = visible.length < all.length;
 
-  // Começa do início se produtos forem adicionados/removidos em tempo real.
-  useEffect(() => setVisibleCount(PAGE), [all.length]);
-
-  // Analytics acompanha a quantidade única de produtos realmente exibida.
+  // Registra o catálogo inteiro disponível na landing page.
   useEffect(() => {
-    if (!visible.length) return;
-    trackInfinitePage(loadedPage, visible.length);
-  }, [loadedPage, visible.length]);
-
-  useEffect(() => {
-    const target = sentinel.current;
-    if (!target || !hasMore) return;
-
-    const io = new IntersectionObserver(
-      (entries) => {
-        if (entries[0]?.isIntersecting) {
-          setVisibleCount((count) => Math.min(count + PAGE, all.length));
-        }
-      },
-      { rootMargin: "600px 0px" },
-    );
-    io.observe(target);
-    return () => io.disconnect();
-  }, [all.length, hasMore]);
+    if (all.length) trackInfinitePage(Math.ceil(all.length / PAGE), all.length);
+  }, [all.length]);
 
   if (isLoading) {
     return (
@@ -107,7 +82,7 @@ export function InfiniteProducts() {
         </header>
 
         <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-4">
-          {visible.map((p, idx) => (
+          {all.map((p, idx) => (
             <FeedCard
               key={`${p.id}-${idx}`}
               product={p}
@@ -117,25 +92,9 @@ export function InfiniteProducts() {
           ))}
         </div>
 
-        {hasMore ? (
-          <div
-            ref={sentinel}
-            className="mt-10 flex min-h-12 flex-wrap items-center justify-center gap-2 text-sm text-[var(--store-text-muted)]"
-          >
-            <span role="status">Continue rolando ou carregue os próximos produtos.</span>
-            <button
-              type="button"
-              onClick={() => setVisibleCount((count) => Math.min(count + PAGE, all.length))}
-              className="ml-2 rounded-lg border border-white/15 px-3 py-2 text-xs font-bold text-[#22D3EE] transition hover:border-[#22D3EE]/60 hover:bg-white/5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#22D3EE]"
-            >
-              Mostrar mais {Math.min(PAGE, all.length - visible.length)}
-            </button>
-          </div>
-        ) : (
-          <p role="status" className="mt-10 text-center text-sm text-slate-400">
-            Você chegou ao fim do catálogo · {all.length} {all.length === 1 ? "produto" : "produtos"}
-          </p>
-        )}
+        <p role="status" className="mt-10 text-center text-sm text-slate-400">
+          Catálogo completo · {all.length} {all.length === 1 ? "produto" : "produtos"}
+        </p>
       </div>
     </section>
   );
