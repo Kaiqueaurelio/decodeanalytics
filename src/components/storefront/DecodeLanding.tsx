@@ -1,4 +1,9 @@
-import { ArrowDown, ArrowRight, ArrowUpRight, Code2, Database, Laptop, MessageCircle, PenTool, Smartphone, Sparkles, Workflow, Zap, Layers3, ShieldCheck, Compass } from "lucide-react";
+import { ArrowDown, ArrowRight, ArrowUpRight, Code2, Database, Laptop, MessageCircle, PenTool, Smartphone, Sparkles, Workflow, Zap, Layers3, ShieldCheck, Compass, Printer, Palette, Globe, BadgeCheck, Clock3, ShoppingBag } from "lucide-react";
+import { Link } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { resolveProductImage } from "@/components/storefront/productImages";
+import { brl, STORE_CATEGORIES } from "@/components/storefront/tokens";
 import { useWaLink } from "@/hooks/useCompanyInfo";
 
 const technology = [
@@ -27,6 +32,26 @@ export function DecodeLanding() {
 
   return (
     <div className="overflow-hidden bg-[#080C1F] text-[#F8FAFC]">
+      <section aria-label="Vantagens Decode Analytics" className="border-y border-white/10 bg-[#0B1026] px-4 py-6 sm:px-8">
+        <div className="mx-auto grid max-w-[1280px] grid-cols-2 gap-5 md:grid-cols-4">
+          {[{ Icon: Clock3, title: "Atendimento direto", text: "Converse com nossa equipe" }, { Icon: BadgeCheck, title: "Qualidade profissional", text: "Atenção aos detalhes" }, { Icon: Zap, title: "Soluções integradas", text: "Design, impressão e TI" }, { Icon: ShieldCheck, title: "Orçamento transparente", text: "Escopo combinado antes" }].map(({ Icon, title, text }) => <div key={title} className="flex items-start gap-3">
+            <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-[#22D3EE]/20 bg-[#22D3EE]/10 text-[#22D3EE]"><Icon className="h-5 w-5" /></span>
+            <div><h2 className="text-sm font-bold text-white">{title}</h2><p className="mt-1 text-xs leading-5 text-slate-400">{text}</p></div>
+          </div>)}
+        </div>
+      </section>
+      <section className="bg-[#080C1F] px-4 py-12 sm:px-8 sm:py-16">
+        <div className="mx-auto max-w-[1280px]">
+          <div className="flex flex-wrap items-end justify-between gap-4"><div><p className="text-xs font-bold uppercase tracking-[.22em] text-[#22D3EE]">Explore por categoria</p><h2 className="mt-2 text-2xl font-black text-white sm:text-3xl">Encontre sua solução</h2></div><Link to="/produtos" className="text-sm font-bold text-[#22D3EE]">Ver todas →</Link></div>
+          <div className="mt-7 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+            {[{ title: "Gráfica rápida", category: "Impressão e Acabamentos", Icon: Printer, color: "#22D3EE" }, { title: "Informática & TI", category: "Suporte Técnico", Icon: Laptop, color: "#087CF0" }, { title: "Social media", category: "Design e Marketing", Icon: Layers3, color: "#7138F5" }, { title: "Design & marcas", category: "Design e Marketing", Icon: Palette, color: "#22D3EE" }, { title: "Sites & sistemas", category: "Desenvolvimento Digital", Icon: Globe, color: "#087CF0" }].map(({ title, category, Icon, color }) => <Link key={title} to="/produtos" search={{ cat: category }} className="group flex min-h-36 flex-col items-center justify-center rounded-2xl border border-white/10 bg-white/[0.03] p-4 text-center transition hover:-translate-y-1 hover:border-[#22D3EE]/50">
+              <span className="grid h-14 w-14 place-items-center rounded-full border-2 bg-[#0B1026] text-[#22D3EE]" style={{ borderColor: color, color }}><Icon className="h-6 w-6" /></span><span className="mt-3 text-sm font-bold text-white">{title}</span><span className="mt-1 text-[11px] text-slate-400">Explorar catálogo</span>
+            </Link>)}
+          </div>
+        </div>
+      </section>
+      <FeaturedCatalog />
+
       <section className="relative isolate px-4 pb-16 pt-14 sm:px-8 sm:pb-20 sm:pt-20 lg:px-16 lg:pb-24 lg:pt-24">
         <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
           <div className="absolute -right-28 top-8 h-[28rem] w-[28rem] rounded-full bg-[#087CF0]/20 blur-[110px]" />
@@ -159,4 +184,11 @@ export function DecodeLanding() {
       </section>
     </div>
   );
+}
+
+function FeaturedCatalog() {
+  const { data = [], isLoading } = useQuery({ queryKey: ["homepage-featured-catalog"], queryFn: async () => { const { data, error } = await supabase.from("services").select("id,name,slug,category,short_description,base_price,image_url,reviews_count,active").eq("active", true).order("reviews_count", { ascending: false }).limit(8); if (error) throw error; return (data ?? []).map((p: any) => ({ ...p, image_url: resolveProductImage(p.image_url, p.category, p.slug) })); }, staleTime: 60_000 });
+  return <section className="bg-[#0B1026] px-4 py-14 sm:px-8"><div className="mx-auto max-w-[1280px]"><div className="flex flex-wrap items-end justify-between gap-4"><div><p className="text-xs font-bold uppercase tracking-[.22em] text-[#22D3EE]">Vitrine Decode</p><h2 className="mt-2 text-2xl font-black text-white sm:text-3xl">Produtos e soluções em destaque</h2><p className="mt-2 text-sm text-slate-400">Explore o catálogo e solicite um orçamento para seu projeto.</p></div><Link to="/produtos" className="text-sm font-bold text-[#22D3EE]">Catálogo completo →</Link></div>
+    {isLoading ? <div className="mt-7 grid grid-cols-2 gap-4 md:grid-cols-4">{[0,1,2,3].map(i => <div key={i} className="h-64 animate-pulse rounded-2xl bg-white/5" />)}</div> : data.length ? <div className="mt-7 grid grid-cols-2 gap-4 md:grid-cols-4">{data.map((p: any) => <article key={p.id} className="overflow-hidden rounded-2xl border border-white/10 bg-[#080C1F] transition hover:border-[#22D3EE]/40"><Link to="/produtos" search={{ q: p.name }} className="block"><div className="relative aspect-[4/3] overflow-hidden bg-white/5">{p.image_url ? <img src={p.image_url} alt={p.name} loading="lazy" className="h-full w-full object-cover" /> : <div className="grid h-full place-items-center"><ShoppingBag className="h-9 w-9 text-[#22D3EE]" /></div>}<span className="absolute left-3 top-3 rounded-full bg-[#080C1F]/90 px-2 py-1 text-[10px] font-bold text-[#22D3EE]">{p.category || "Solução"}</span></div><div className="p-4"><h3 className="line-clamp-2 min-h-10 text-sm font-bold text-white">{p.name}</h3><p className="mt-2 line-clamp-2 min-h-9 text-xs text-slate-400">{p.short_description || "Consulte detalhes e opções disponíveis."}</p><p className="mt-3 text-xs font-semibold text-slate-300">{Number(p.base_price || 0) > 0 ? brl(Number(p.base_price)) : "Preço sob consulta"}</p></div></Link><div className="px-4 pb-4"><Link to="/orcamento" className="flex min-h-10 items-center justify-center rounded-lg bg-gradient-to-r from-[#087CF0] to-[#7138F5] px-3 text-xs font-extrabold text-white">Solicitar orçamento</Link></div></article>)}</div> : <div className="mt-7 rounded-2xl border border-dashed border-white/15 p-8 text-center"><ShoppingBag className="mx-auto h-8 w-8 text-[#22D3EE]" /><p className="mt-3 text-sm font-semibold text-white">Cadastre produtos para exibi-los nesta vitrine.</p><Link to="/admin-produtos" className="mt-4 inline-flex min-h-10 items-center rounded-lg bg-[#087CF0] px-4 text-sm font-bold text-white">Cadastrar produtos</Link></div>}
+  </div></section>;
 }
