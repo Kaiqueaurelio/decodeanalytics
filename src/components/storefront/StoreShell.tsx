@@ -105,7 +105,7 @@ function StoreHeader() {
           <img
             src="/brand/decode-logo.png"
             alt="Decode Analytics"
-            className="h-10 w-auto rounded-md bg-black p-1 object-contain sm:h-12 md:h-14"
+            className="h-10 w-auto brand-logo rounded-md bg-black p-1 object-contain sm:h-12 md:h-14"
           />
           <div className="leading-tight hidden sm:block">
             <div
@@ -197,7 +197,7 @@ function StoreHeader() {
                   <img
                     src="/brand/decode-logo.png"
                     alt="Decode Analytics"
-                    className="h-10 w-auto rounded-md bg-black p-1 object-contain"
+                    className="h-10 w-auto brand-logo rounded-md bg-black p-1 object-contain"
                   />
                   <div className="leading-tight">
                     <div className="text-sm font-extrabold text-[var(--store-primary)]">
@@ -359,7 +359,7 @@ function StoreFooter() {
             <img
               src="/brand/decode-logo.png"
               alt="Decode Analytics"
-              className="h-16 w-auto rounded-md bg-black p-1 object-contain"
+              className="h-16 w-auto brand-logo rounded-md bg-black p-1 object-contain"
             />
             <div>
               <div className="text-lg font-extrabold uppercase">Decode Analytics</div>
