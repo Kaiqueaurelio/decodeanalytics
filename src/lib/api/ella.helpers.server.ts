@@ -81,7 +81,11 @@ export function checkPublicRateLimit(key: string) {
         rateBuckets.delete(existingKey);
       }
     }
-    if (rateBuckets.size >= RATE_LIMIT_MAX_BUCKETS) return false;
+    // Keep the cache bounded without rejecting every new visitor when it is full.
+    if (rateBuckets.size >= RATE_LIMIT_MAX_BUCKETS) {
+      const oldestKey = rateBuckets.keys().next().value;
+      if (oldestKey) rateBuckets.delete(oldestKey);
+    }
   }
 
   const arr = (rateBuckets.get(bucketKey) ?? []).filter((t) => now - t < RATE_LIMIT_WINDOW_MS);
@@ -91,6 +95,7 @@ export function checkPublicRateLimit(key: string) {
   }
 
   arr.push(now);
+  rateBuckets.delete(bucketKey);
   rateBuckets.set(bucketKey, arr);
   return true;
 }
