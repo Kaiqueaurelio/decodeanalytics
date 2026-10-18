@@ -25,7 +25,7 @@ import {
   Settings,
 } from "lucide-react";
 import { StoreShell } from "@/components/storefront/StoreShell";
-import { Hero } from "@/components/storefront/Hero";
+import { DecodeLanding } from "@/components/storefront/DecodeLanding";
 import { SectionHeader, type StoreProduct } from "@/components/storefront/ProductCard";
 import { SmartImage } from "@/components/storefront/SmartImage";
 import { STORE_CATEGORIES, brl } from "@/components/storefront/tokens";
@@ -40,16 +40,16 @@ import { trackCardClick, trackCta } from "@/lib/analytics";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Decode Analytics — Gráfica online com produtos personalizados" },
+      { title: "Decode Analytics — Design & Soluções" },
       {
         name: "description",
         content:
-          "Cartões de visita, canecas, camisetas, adesivos, banners e brindes personalizados com acabamento profissional. Peça pelo site ou WhatsApp.",
+          "Design, tecnologia, programação e soluções digitais para ajudar seu negócio a avançar.",
       },
-      { property: "og:title", content: "Decode Analytics — Gráfica online" },
+      { property: "og:title", content: "Decode Analytics — Design & Soluções" },
       {
         property: "og:description",
-        content: "Produtos personalizados com acabamento profissional. Peça pelo site ou WhatsApp.",
+        content: "Design, tecnologia, programação e soluções digitais para ajudar seu negócio a avançar.",
       },
     ],
   }),
@@ -59,31 +59,7 @@ export const Route = createFileRoute("/")({
 function HomePage() {
   return (
     <StoreShell>
-      <Hero />
-      <CategoryCircles />
-      <LightBand>
-        <Reveal variant="up">
-          <FeaturedBento />
-        </Reveal>
-      </LightBand>
-      <Reveal variant="up">
-        <CategoriesSection />
-      </Reveal>
-      <Reveal variant="up">
-        <InfiniteProducts />
-      </Reveal>
-      <Reveal variant="up">
-        <TestimonialsSection />
-      </Reveal>
-      <Reveal variant="up">
-        <HowItWorks />
-      </Reveal>
-      <Reveal variant="up">
-        <ArtTipsSection />
-      </Reveal>
-      <Reveal variant="up">
-        <ContactSection />
-      </Reveal>
+      <DecodeLanding />
     </StoreShell>
   );
 }
