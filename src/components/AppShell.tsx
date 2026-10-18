@@ -229,7 +229,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                 src="/brand/decode-logo.png"
                 alt="Decode Analytics"
                 className={cn(
-                  "shrink-0 object-contain transition-all duration-300",
+                  "brand-logo shrink-0 rounded-md bg-black p-1 object-contain transition-all duration-300",
                   collapsed ? "h-11 w-11" : "h-8 w-auto max-w-28",
                 )}
               />
