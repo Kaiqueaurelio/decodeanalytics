@@ -29,13 +29,17 @@ export const WHATSAPP_NUMBER = "5511939222885";
 export const STORE_CONTACT = {
   phone: "+55 11 93922-2885",
   whatsapp: WHATSAPP_NUMBER,
-  email: "contato@decodeanalytics.com.br",
+  email: "decoanalytics@outlook.com.br",
   address: "Estrada do Cabreúva, 703 — Vila Santa Lúcia",
   city: "Carapicuíba — SP, CEP 06321-001",
   hours: [
-    { day: "Segunda a Sexta", time: "09:00 – 18:00" },
-    { day: "Sábado", time: "09:00 – 13:00" },
     { day: "Domingo", time: "Fechado" },
+    { day: "Segunda-feira", time: "08:00 – 22:00" },
+    { day: "Terça-feira", time: "08:00 – 22:00" },
+    { day: "Quarta-feira", time: "08:00 – 22:00" },
+    { day: "Quinta-feira", time: "08:00 – 22:00" },
+    { day: "Sexta-feira", time: "08:00 – 22:00" },
+    { day: "Sábado", time: "09:00 – 16:00" },
   ],
   mapsUrl:
     "https://www.google.com/maps/search/?api=1&query=Estrada+do+Cabre%C3%BAva+703+Vila+Santa+L%C3%BAcia+Carapicu%C3%ADba+SP",
