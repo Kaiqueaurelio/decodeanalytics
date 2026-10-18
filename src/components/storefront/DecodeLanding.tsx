@@ -95,10 +95,10 @@ export function DecodeLanding() {
               </div>
               <div className="grid grid-cols-2 gap-3 py-5 sm:gap-4">
                 {[
-                  { title: "Cartões e impressos", subtitle: "Sua marca em destaque", category: "Cartões", Icon: Printer, color: "#22D3EE" },
-                  { title: "Canecas e brindes", subtitle: "Presentes personalizados", category: "Brindes", Icon: ShoppingBag, color: "#087CF0" },
+                  { title: "Informática & TI", subtitle: "Manutenção e suporte para computadores", category: "Manutenção de Computadores", Icon: Laptop, color: "#22D3EE" },
+                  { title: "Sites e tecnologia", subtitle: "Soluções digitais sob medida", category: "Programação", Icon: Globe, color: "#087CF0" },
                   { title: "Design gráfico", subtitle: "Arte com identidade", category: "Design Gráfico", Icon: Palette, color: "#9C7BFF" },
-                  { title: "Sites e tecnologia", subtitle: "Soluções para crescer", category: "Programação", Icon: Globe, color: "#22D3EE" },
+                  { title: "Gráfica e impressos", subtitle: "Materiais para sua marca", category: "Cartões", Icon: Printer, color: "#22D3EE" },
                 ].map(({ title, subtitle, category, Icon, color }) => (
                   <a
                     key={title}
@@ -138,7 +138,7 @@ export function DecodeLanding() {
       <section aria-labelledby="categorias-rapidas" className="bg-[#080C1F] px-4 py-12 sm:px-8 lg:px-16">
         <div className="mx-auto max-w-[1280px]"><div className="flex flex-wrap items-end justify-between gap-4"><div><p className="text-xs font-extrabold uppercase tracking-[.22em] text-[#22D3EE]">Explore por categoria</p><h2 id="categorias-rapidas" className="mt-2 text-2xl font-black text-white sm:text-3xl">Encontre sua solução</h2></div><a href="/produtos" className="text-sm font-bold text-[#22D3EE]">Ver catálogo completo →</a></div>
           <div className="mt-7 flex snap-x gap-4 overflow-x-auto pb-3 [scrollbar-width:thin] [scrollbar-color:#22D3EE_transparent] sm:gap-5">
-            {[{ title: "Gráfica rápida", category: "Cartões", Icon: Printer, color: "#22D3EE" }, { title: "Informática & TI", category: "Manutenção de Computadores", Icon: Laptop, color: "#087CF0" }, { title: "Social Media", category: "Social Media", Icon: Share2, color: "#7138F5" }, { title: "Design & marcas", category: "Design Gráfico", Icon: Palette, color: "#22D3EE" }, { title: "Sites & sistemas", category: "Programação", Icon: Globe, color: "#087CF0" }].map(({ title, category, Icon, color }) => <a key={title} href={`/produtos?cat=${encodeURIComponent(category)}`} className="group flex min-h-36 min-w-[142px] snap-start flex-col items-center justify-center rounded-2xl border border-white/10 bg-white/[0.03] p-4 text-center transition hover:-translate-y-1 hover:border-[#22D3EE]/50 sm:min-w-[170px]"><span className="grid h-14 w-14 place-items-center rounded-full border-2 bg-[#0B1026]" style={{ borderColor: color, color }}><Icon className="h-6 w-6" /></span><span className="mt-3 text-sm font-bold text-white">{title}</span><span className="mt-1 text-[11px] text-slate-400">Explorar catálogo</span></a>)}
+            {[{ title: "Informática & TI", category: "Manutenção de Computadores", Icon: Laptop, color: "#087CF0" }, { title: "Sites & sistemas", category: "Programação", Icon: Globe, color: "#22D3EE" }, { title: "Gráfica rápida", category: "Cartões", Icon: Printer, color: "#22D3EE" }, { title: "Social Media", category: "Social Media", Icon: Share2, color: "#7138F5" }, { title: "Design & marcas", category: "Design Gráfico", Icon: Palette, color: "#22D3EE" }].map(({ title, category, Icon, color }) => <a key={title} href={`/produtos?cat=${encodeURIComponent(category)}`} className="group flex min-h-36 min-w-[142px] snap-start flex-col items-center justify-center rounded-2xl border border-white/10 bg-white/[0.03] p-4 text-center transition hover:-translate-y-1 hover:border-[#22D3EE]/50 sm:min-w-[170px]"><span className="grid h-14 w-14 place-items-center rounded-full border-2 bg-[#0B1026]" style={{ borderColor: color, color }}><Icon className="h-6 w-6" /></span><span className="mt-3 text-sm font-bold text-white">{title}</span><span className="mt-1 text-[11px] text-slate-400">Explorar catálogo</span></a>)}
           </div>
         </div>
       </section>
