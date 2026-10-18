@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { Link } from "@tanstack/react-router";
+import { Link, useRouterState } from "@tanstack/react-router";
 import {
   Search,
   ShoppingCart,
@@ -16,6 +16,10 @@ import {
   CheckCircle,
 } from "lucide-react";
 import { STORE_CATEGORIES } from "./tokens";
+
+const SOLUTION_CATEGORIES = STORE_CATEGORIES.filter(({ slug }) =>
+  ["Manutenção de Computadores", "Social Media", "Design Gráfico", "Programação"].includes(slug),
+);
 import { useCompanyInfo, useWaLink } from "@/hooks/useCompanyInfo";
 import { useCart } from "@/lib/cart-context";
 import { useState } from "react";
@@ -101,7 +105,7 @@ function StoreHeader() {
           <img
             src="/brand/decode-logo.png"
             alt="Decode Analytics"
-            className="h-10 w-auto sm:h-12 md:h-14 object-contain"
+            className="h-10 w-auto rounded-md bg-black p-1 object-contain sm:h-12 md:h-14"
           />
           <div className="leading-tight hidden sm:block">
             <div
@@ -193,7 +197,7 @@ function StoreHeader() {
                   <img
                     src="/brand/decode-logo.png"
                     alt="Decode Analytics"
-                    className="h-10 w-auto object-contain"
+                    className="h-10 w-auto rounded-md bg-black p-1 object-contain"
                   />
                   <div className="leading-tight">
                     <div className="text-sm font-extrabold text-[var(--store-primary)]">
@@ -216,7 +220,7 @@ function StoreHeader() {
                     Categorias
                   </h3>
                   <div className="space-y-2">
-                    {STORE_CATEGORIES.map((c) => (
+                    {SOLUTION_CATEGORIES.map((c) => (
                       <Link
                         key={c.slug}
                         to="/produtos"
@@ -310,11 +314,21 @@ function StoreHeader() {
 }
 
 function CategoryNav() {
+  const pathname = useRouterState({ select: (state) => state.location.pathname });
+  if (pathname === "/") {
+    return (
+      <nav aria-label="Navegação principal" className="hidden border-b border-white/10 bg-[#080C1F] md:block">
+        <div className="mx-auto flex max-w-[1280px] items-center gap-2 px-4 py-2">
+          <a href="#solucoes" className="rounded-full px-4 py-2 text-sm font-semibold text-slate-300 transition hover:bg-white/10 hover:text-white">Soluções</a>
+          <a href="#como-funciona" className="rounded-full px-4 py-2 text-sm font-semibold text-slate-300 transition hover:bg-white/10 hover:text-white">Como funciona</a>
+          <Link to="/produtos" className="rounded-full px-4 py-2 text-sm font-semibold text-slate-300 transition hover:bg-white/10 hover:text-white">Catálogo</Link>
+          <a href="#contato" className="ml-auto rounded-full px-4 py-2 text-sm font-semibold text-[#22D3EE] transition hover:bg-white/10">Fale com a Decode <span aria-hidden="true">↗</span></a>
+        </div>
+      </nav>
+    );
+  }
   return (
-    <nav
-      aria-label="Categorias"
-      className="hidden border-b border-[var(--store-border)] bg-[var(--store-surface)] md:block"
-    >
+    <nav aria-label="Categorias" className="hidden border-b border-[var(--store-border)] bg-[var(--store-surface)] md:block">
       <div className="mx-auto flex max-w-[1280px] gap-1 overflow-x-auto px-4 py-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         {STORE_CATEGORIES.map((c) => (
           <Link
@@ -323,8 +337,7 @@ function CategoryNav() {
             search={{ cat: c.slug }}
             className="shrink-0 rounded-full px-4 py-2 text-sm font-semibold text-[var(--store-text-muted)] transition-colors hover:bg-[var(--store-surface-soft)] hover:text-[var(--store-primary)]"
             activeProps={{
-              className:
-                "shrink-0 rounded-full bg-[var(--store-primary)] px-4 py-2 text-sm font-semibold text-white",
+              className: "shrink-0 rounded-full bg-[var(--store-primary)] px-4 py-2 text-sm font-semibold text-white",
             }}
           >
             {c.label}
@@ -346,7 +359,7 @@ function StoreFooter() {
             <img
               src="/brand/decode-logo.png"
               alt="Decode Analytics"
-              className="h-16 w-auto object-contain"
+              className="h-16 w-auto rounded-md bg-black p-1 object-contain"
             />
             <div>
               <div className="text-lg font-extrabold uppercase">Decode Analytics</div>
@@ -356,7 +369,7 @@ function StoreFooter() {
             </div>
           </div>
           <p className="mt-4 text-sm leading-relaxed text-white/70">
-            Produtos personalizados com acabamento profissional para a sua marca aparecer mais.
+            Tecnologia, design e presença digital para ajudar sua marca a crescer.
           </p>
           <div className="mt-4 flex gap-2">
             <a
@@ -379,10 +392,10 @@ function StoreFooter() {
         </div>
         <div>
           <h3 className="text-sm font-bold uppercase tracking-wide text-[var(--store-secondary)]">
-            Produtos
+            Soluções
           </h3>
           <ul className="mt-2 text-sm text-white/70">
-            {STORE_CATEGORIES.slice(1, 6).map((c) => (
+            {SOLUTION_CATEGORIES.map((c) => (
               <li key={c.slug}>
                 <Link
                   to="/produtos"
