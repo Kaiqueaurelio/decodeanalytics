@@ -1,4 +1,4 @@
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent, type ReactNode } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { LoaderCircle, Palette, Save, Upload } from "lucide-react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -7,7 +7,7 @@ import { useAuth } from "@/lib/auth";
 
 export const Route = createFileRoute("/_authenticated/brand")({ component: BrandSettingsPage });
 type Brand = { id?: string; name: string; logo_url: string; whatsapp: string; address: string; brand_background: string; brand_primary: string; brand_secondary: string; brand_accent: string };
-const defaults: Brand = { name: "Decode Analytics", logo_url: "/brand/decode-logo.png", whatsapp: "551193922885", address: "Estrada do Cabreúva, 703 — Vila Santa Lúcia, Carapicuíba — SP, CEP 06321-001", brand_background: "#0B1026", brand_primary: "#22D3EE", brand_secondary: "#087CF0", brand_accent: "#7138F5" };
+const defaults: Brand = { name: "Decode Analytics", logo_url: "/brand/decode-logo.png", whatsapp: "5511939222885", address: "Estrada do Cabreúva, 703 — Vila Santa Lúcia, Carapicuíba — SP, CEP 06321-001", brand_background: "#0B1026", brand_primary: "#22D3EE", brand_secondary: "#087CF0", brand_accent: "#7138F5" };
 const colors: {key: keyof Pick<Brand,"brand_background"|"brand_primary"|"brand_secondary"|"brand_accent">;label:string}[] = [
  {key:"brand_background",label:"Azul petróleo / fundo"},{key:"brand_primary",label:"Ciano"},{key:"brand_secondary",label:"Azul elétrico"},{key:"brand_accent",label:"Roxo"}
 ];
@@ -33,4 +33,4 @@ function BrandSettingsPage() {
  <button disabled={saving} className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-gradient-to-r from-[#087CF0] to-[#7138F5] px-5 font-bold disabled:opacity-60">{saving?<LoaderCircle className="h-4 w-4 animate-spin"/>:<Save className="h-4 w-4"/>} Salvar marca</button>{notice&&<p role="status" className="text-sm text-cyan-200">{notice}</p>}</section>
  <section className="space-y-5 rounded-2xl border border-white/10 bg-white/[.04] p-5"><div className="flex items-center gap-2"><Palette className="h-5 w-5 text-cyan-300"/><h2 className="text-lg font-bold">Paleta de cores</h2></div>{colors.map(({key,label})=><label key={key} className="flex items-center gap-3 text-sm font-semibold"><input type="color" value={form[key]} onChange={e=>update(key,e.target.value)} className="h-12 w-14 cursor-pointer rounded-lg border border-white/20 bg-transparent p-1"/><span className="flex-1">{label}<span className="mt-1 block font-mono text-xs text-slate-400">{form[key]}</span></span></label>)}<div className="rounded-xl p-5" style={{background:form.brand_background,color:"#fff"}}><p className="text-xs font-bold uppercase tracking-widest" style={{color:form.brand_primary}}>Prévia da identidade</p><p className="mt-2 text-xl font-black">{form.name||"Sua marca"}</p><div className="mt-4 flex gap-2"><span className="rounded-lg px-3 py-2 text-xs font-bold" style={{background:form.brand_secondary}}>Ação principal</span><span className="rounded-lg px-3 py-2 text-xs font-bold" style={{background:form.brand_accent}}>Destaque</span></div></div></section></form></Frame>;
 }
-function Frame({children}:{children:React.ReactNode}){return <main className="min-h-screen bg-[#080C1F] px-4 py-8 text-white sm:px-8"><div className="mx-auto max-w-6xl">{children}</div></main>}
+function Frame({children}:{children:ReactNode}){return <main className="min-h-screen bg-[#080C1F] px-4 py-8 text-white sm:px-8"><div className="mx-auto max-w-6xl">{children}</div></main>}
