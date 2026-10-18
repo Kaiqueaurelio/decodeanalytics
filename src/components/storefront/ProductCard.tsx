@@ -39,7 +39,7 @@ export function ProductCard({ product }: { product: StoreProduct }) {
   const hasPrice = Number.isFinite(price) && price > 0;
 
   return (
-    <article className="group flex flex-col overflow-hidden rounded-[var(--store-radius-lg)] border border-[var(--store-border)] bg-white shadow-[var(--store-shadow-sm)] transition-all duration-200 hover:-translate-y-1 hover:border-[var(--store-primary-light)]/40 hover:shadow-[var(--store-shadow-md)]">
+    <article className="group flex flex-col overflow-hidden rounded-[var(--store-radius-lg)] border border-[var(--store-border)] bg-[#111116] shadow-[var(--store-shadow-sm)] transition-all duration-200 hover:-translate-y-1 hover:border-[var(--store-primary-light)]/40 hover:shadow-[var(--store-shadow-md)]">
       <Link
         to="/produto/$slug"
         params={{ slug }}
@@ -121,7 +121,7 @@ export function ProductGrid({ children }: { children: React.ReactNode }) {
 
 export function ProductCardSkeleton() {
   return (
-    <div className="animate-pulse overflow-hidden rounded-[var(--store-radius-lg)] border border-[var(--store-border)] bg-white">
+    <div className="animate-pulse overflow-hidden rounded-[var(--store-radius-lg)] border border-[var(--store-border)] bg-[#111116]">
       <div className="aspect-[4/3] bg-[var(--store-surface-soft)]" />
       <div className="space-y-3 p-4">
         <div className="h-3 w-2/3 rounded bg-[var(--store-border)]" />
