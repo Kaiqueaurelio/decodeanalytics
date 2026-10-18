@@ -21,9 +21,7 @@ import { SafeAreaDebug } from "@/components/SafeAreaDebug";
 function NotFoundComponent() {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-[#080c16] px-4 text-white">
-      <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-brand-yellow font-black text-[#080c16] shadow-2xl shadow-brand-yellow/20 text-2xl mb-8">
-        A
-      </div>
+      <div className="mb-8 rounded-2xl bg-black p-1 shadow-2xl"><img src="/brand/decode-logo.png" alt="Decode Analytics" className="brand-logo h-16 w-16 rounded-xl bg-black object-contain p-1" /></div>
       <div className="max-w-md text-center">
         <h1 className="text-6xl font-black tracking-tighter text-white">404</h1>
         <h2 className="mt-4 text-2xl font-bold text-white/90">Página não encontrada</h2>
@@ -91,19 +89,19 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           "width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content",
       },
       { title: "Decode Analytics Gestão" },
-      { name: "description", content: "Sistema de gestão para a Decode Analytics Produções Gráficas" },
+      { name: "description", content: "Soluções digitais para a Decode Analytics — Design & Soluções" },
       { name: "author", content: "Decode Analytics" },
       { property: "og:title", content: "Decode Analytics Gestão" },
       {
         property: "og:description",
-        content: "Sistema de gestão para a Decode Analytics Produções Gráficas",
+        content: "Soluções digitais para a Decode Analytics — Design & Soluções",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:title", content: "Decode Analytics Gestão" },
       {
         name: "twitter:description",
-        content: "Sistema de gestão para a Decode Analytics Produções Gráficas",
+        content: "Soluções digitais para a Decode Analytics — Design & Soluções",
       },
       { property: "og:image", content: "/brand/app-icon-full.png" },
       { name: "twitter:image", content: "/brand/app-icon-full.png" },
