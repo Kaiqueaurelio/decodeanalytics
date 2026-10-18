@@ -15,6 +15,9 @@ import { Route as AssistenteRouteImport } from './routes/assistente'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as CarrinhoRouteImport } from './routes/carrinho'
 import { Route as ProdutosRouteImport } from './routes/produtos'
+import { Route as AdminMarcaRouteImport } from './routes/admin-marca'
+import { Route as AdminProdutosRouteImport } from './routes/admin-produtos'
+import { Route as OrcamentoRouteImport } from './routes/orcamento'
 import { Route as AuthenticatedAiLogsRouteImport } from './routes/_authenticated/ai-logs'
 import { Route as AuthenticatedCalculatorRouteImport } from './routes/_authenticated/calculator'
 import { Route as AuthenticatedCashRouteImport } from './routes/_authenticated/cash'
@@ -66,6 +69,21 @@ const CarrinhoRoute = CarrinhoRouteImport.update({
 const ProdutosRoute = ProdutosRouteImport.update({
   id: '/produtos',
   path: '/produtos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminMarcaRoute = AdminMarcaRouteImport.update({
+  id: '/admin-marca',
+  path: '/admin-marca',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminProdutosRoute = AdminProdutosRouteImport.update({
+  id: '/admin-produtos',
+  path: '/admin-produtos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OrcamentoRoute = OrcamentoRouteImport.update({
+  id: '/orcamento',
+  path: '/orcamento',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedAiLogsRoute = AuthenticatedAiLogsRouteImport.update({
@@ -194,6 +212,9 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/carrinho': typeof CarrinhoRoute
   '/produtos': typeof ProdutosRoute
+  '/admin-marca': typeof AdminMarcaRoute
+  '/admin-produtos': typeof AdminProdutosRoute
+  '/orcamento': typeof OrcamentoRoute
   '/ai-logs': typeof AuthenticatedAiLogsRoute
   '/calculator': typeof AuthenticatedCalculatorRoute
   '/cash': typeof AuthenticatedCashRoute
@@ -224,6 +245,9 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/carrinho': typeof CarrinhoRoute
   '/produtos': typeof ProdutosRoute
+  '/admin-marca': typeof AdminMarcaRoute
+  '/admin-produtos': typeof AdminProdutosRoute
+  '/orcamento': typeof OrcamentoRoute
   '/ai-logs': typeof AuthenticatedAiLogsRoute
   '/calculator': typeof AuthenticatedCalculatorRoute
   '/cash': typeof AuthenticatedCashRoute
@@ -256,6 +280,9 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/carrinho': typeof CarrinhoRoute
   '/produtos': typeof ProdutosRoute
+  '/admin-marca': typeof AdminMarcaRoute
+  '/admin-produtos': typeof AdminProdutosRoute
+  '/orcamento': typeof OrcamentoRoute
   '/_authenticated/ai-logs': typeof AuthenticatedAiLogsRoute
   '/_authenticated/calculator': typeof AuthenticatedCalculatorRoute
   '/_authenticated/cash': typeof AuthenticatedCashRoute
@@ -381,6 +408,9 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   CarrinhoRoute: typeof CarrinhoRoute
   ProdutosRoute: typeof ProdutosRoute
+  AdminMarcaRoute: typeof AdminMarcaRoute
+  AdminProdutosRoute: typeof AdminProdutosRoute
+  OrcamentoRoute: typeof OrcamentoRoute
   BriefingTokenRoute: typeof BriefingTokenRoute
   ProdutoSlugRoute: typeof ProdutoSlugRoute
   SitemapXmlRoute: typeof SitemapXmlRoute
@@ -649,6 +679,9 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   CarrinhoRoute: CarrinhoRoute,
   ProdutosRoute: ProdutosRoute,
+  AdminMarcaRoute: AdminMarcaRoute,
+  AdminProdutosRoute: AdminProdutosRoute,
+  OrcamentoRoute: OrcamentoRoute,
   BriefingTokenRoute: BriefingTokenRoute,
   ProdutoSlugRoute: ProdutoSlugRoute,
   SitemapXmlRoute: SitemapXmlRoute,
