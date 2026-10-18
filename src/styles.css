@@ -135,9 +135,9 @@
   --sidebar-ring: oklch(0.63 0.2 255);
 
   /* Storefront design system tokens */
-  --store-primary: #0B1026;
+  --store-primary: #087CF0;
   --store-primary-light: #087CF0;
-  --store-primary-dark: #0B1026;
+  --store-primary-dark: #050508;
   --store-secondary: #22D3EE;
   --store-secondary-dark: #087CF0;
   --store-accent: #7138F5;
@@ -153,9 +153,9 @@
   --store-text-light: #71717a;
   --store-border: #292932;
   --store-border-strong: #3f3f46;
-  --store-shadow-sm: 0 2px 8px rgba(15, 23, 42, 0.06);
-  --store-shadow-md: 0 8px 24px rgba(15, 23, 42, 0.1);
-  --store-shadow-lg: 0 16px 40px rgba(15, 23, 42, 0.14);
+  --store-shadow-sm: 0 2px 12px rgba(0, 0, 0, 0.25);
+  --store-shadow-md: 0 8px 28px rgba(0, 0, 0, 0.35);
+  --store-shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.4);
   --store-radius-sm: 6px;
   --store-radius-md: 10px;
   --store-radius-lg: 16px;
@@ -733,4 +733,13 @@
 [id^="lovable-badge"],
 a[href*="lovable.dev"][target="_blank"] {
   display: none !important;
+}
+
+
+/* Decode Analytics: dark-first interface across the public site */
+@layer base {
+  :root { color-scheme: dark; }
+  body { background: #050508; color: #f5f5f7; background-image: radial-gradient(circle at 85% 0%, rgba(8,124,240,.10), transparent 30rem), linear-gradient(180deg, #08080d, #050508 55%); }
+  input, textarea, select { color: #f5f5f7; }
+  input::placeholder, textarea::placeholder { color: #71717a; }
 }
