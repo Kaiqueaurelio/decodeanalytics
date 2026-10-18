@@ -204,16 +204,16 @@ function StoreHeader() {
                     className="h-10 w-auto brand-logo rounded-md bg-black p-1 object-contain"
                   />
                   <div className="leading-tight">
-                    <div className="text-sm font-extrabold text-[var(--store-primary)]">
+                    <div className="text-sm font-extrabold text-cyan-300">
                       Decode Analytics
                     </div>
-                    <div className="text-[9px] font-bold uppercase tracking-[0.15em] text-[var(--store-accent)]">
+                    <div className="text-[9px] font-bold uppercase tracking-[0.15em] text-violet-300">
                       Design & Soluções
                     </div>
                   </div>
                 </div>
-                <SheetClose className="rounded-lg p-1 hover:bg-[var(--store-surface-soft)]">
-                  <X className="h-5 w-5 text-[var(--store-text)]" />
+                <SheetClose className="rounded-lg p-2 text-slate-100 hover:bg-white/10">
+                  <X className="h-5 w-5 text-slate-100" />
                 </SheetClose>
               </div>
 
@@ -240,15 +240,15 @@ function StoreHeader() {
                   </div>
                 </div>
 
-                <div className="border-b border-[var(--store-border)] px-6 py-4">
-                  <h3 className="text-[10px] font-bold uppercase tracking-widest text-[var(--store-text-muted)] mb-3">
+                <div className="border-b border-white/10 bg-[#0B1026] px-6 py-4 text-slate-100">
+                  <h3 className="mb-3 text-[10px] font-bold uppercase tracking-widest text-slate-300">
                     Minha Conta
                   </h3>
                   <div className="space-y-2">
                     <Link
                       to="/auth"
                       onClick={() => setMobileMenuOpen(false)}
-                      className="flex items-center gap-3 px-3 py-3 rounded-lg text-sm font-medium text-[var(--store-text)] hover:bg-[var(--store-surface-soft)] transition-colors"
+                      className="flex items-center gap-3 rounded-lg px-3 py-3 text-sm font-medium text-slate-100 transition-colors hover:bg-white/10"
                     >
                       <User className="h-4 w-4 text-[var(--store-primary)]" />
                       Entrar na conta
@@ -266,7 +266,7 @@ function StoreHeader() {
                 </div>
 
                 <div className="bg-[#0B1026] px-6 py-4 text-white">
-                  <h3 className="text-[10px] font-bold uppercase tracking-widest text-[var(--store-text-muted)] mb-3">
+                  <h3 className="mb-3 text-[10px] font-bold uppercase tracking-widest text-slate-300">
                     Atendimento
                   </h3>
                   <a
@@ -274,12 +274,12 @@ function StoreHeader() {
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center gap-3 px-3 py-3 rounded-lg text-sm font-medium text-[var(--store-text)] hover:bg-[var(--store-surface-soft)] transition-colors bg-[var(--store-secondary)]/10"
+                    className="flex items-center gap-3 rounded-lg bg-white/5 px-3 py-3 text-sm font-medium text-slate-100 transition-colors hover:bg-white/10"
                   >
                     <MessageCircle className="h-4 w-4 text-[var(--store-success)]" />
                     <div>
-                      <div className="font-semibold text-[var(--store-success)]">WhatsApp</div>
-                      <div className="text-xs text-[var(--store-text-muted)]">
+                      <div className="font-semibold text-emerald-300">WhatsApp</div>
+                      <div className="text-xs text-slate-300">
                         {info.whatsappDisplay}
                       </div>
                     </div>
@@ -288,8 +288,8 @@ function StoreHeader() {
               </nav>
 
               {/* Footer do menu */}
-              <div className="border-t border-[var(--store-border)] px-6 py-4 bg-[var(--store-surface-soft)]">
-                <p className="text-xs text-[var(--store-text-muted)] leading-relaxed mb-3">
+              <div className="border-t border-white/10 bg-[#080C1F] px-6 py-4 text-slate-100">
+                <p className="text-xs text-slate-300 leading-relaxed mb-3">
                   Soluções digitais, design e tecnologia pensadas para fazer seu negócio avançar.
                 </p>
                 <div className="flex gap-2">
