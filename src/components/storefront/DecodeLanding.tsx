@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ArrowDown, ArrowRight, Code2, Laptop, MessageCircle, PenTool, Share2, Sparkles, Workflow, Zap, Printer, Palette, Globe, BadgeCheck, Clock3, ShieldCheck } from "lucide-react";
+import { ArrowDown, ArrowRight, Code2, Laptop, MessageCircle, PenTool, Share2, Sparkles, Workflow, Zap, Printer, Palette, Globe, BadgeCheck, Clock3, ShieldCheck, ShoppingBag } from "lucide-react";
 import { CATEGORY_IMAGES } from "@/components/storefront/productImages";
 import { InfiniteProducts } from "@/components/storefront/InfiniteProducts";
 import { useWaLink } from "@/hooks/useCompanyInfo";
