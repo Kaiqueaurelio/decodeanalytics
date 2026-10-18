@@ -51,10 +51,21 @@ function ProdutosPage() {
         .eq("active", true)
         .order("reviews_count", { ascending: false });
       if (error) throw error;
-      return (data ?? []).map((p) => ({
+      const technologyFirst = new Set([
+        "Desenvolvimento Digital",
+        "Suporte Técnico",
+        "Software e Licenças",
+        "Produtos Digitais",
+        "Templates Digitais",
+      ]);
+      return ((data ?? []).map((p) => ({
         ...p,
         image_url: resolveProductImage(p.image_url, p.category, p.slug),
-      })) as StoreProduct[];
+      })) as StoreProduct[]).sort((a, b) => {
+        const aTech = technologyFirst.has(a.category ?? "") ? 0 : 1;
+        const bTech = technologyFirst.has(b.category ?? "") ? 0 : 1;
+        return aTech - bTech || Number(b.reviews_count ?? 0) - Number(a.reviews_count ?? 0);
+      });
     },
   });
 
