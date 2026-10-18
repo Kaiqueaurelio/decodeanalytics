@@ -6,8 +6,8 @@ const technology = [
   { title: "Criação de aplicativos", description: "Aplicações digitais alinhadas ao seu projeto, às pessoas que vão usar e aos seus objetivos.", Icon: Smartphone, query: "Criação de Apps", tag: "MOBILE" },
   { title: "Suporte para computadores", description: "Formatação com ou sem backup para computadores e notebooks.", Icon: Laptop, query: "Formatação de Computadores", tag: "SUPORTE" },
   { title: "Formatação Android e iOS", description: "Serviços de sistema para celulares, com escopo combinado antes do atendimento.", Icon: ShieldCheck, query: "Formatação de Android", tag: "MOBILE CARE" },
-  { title: "Dados e inteligência", description: "Organização de dados e visão de negócio para transformar informação em decisões melhores.", Icon: Database, query: "Dados", tag: "DATA" },
-  { title: "Automação de processos", description: "Fluxos digitais para reduzir tarefas repetitivas e tornar o trabalho mais simples.", Icon: Workflow, query: "Automação", tag: "WORKFLOW" },
+  { title: "Office 365", description: "Licença de produtividade apresentada no catálogo. Consulte disponibilidade e condições.", Icon: Database, query: "Office 365", tag: "SOFTWARE" },
+  { title: "Produtos digitais e templates", description: "Planners, materiais de estudo e templates digitais para organizar projetos e rotinas.", Icon: Workflow, query: "Template", tag: "DIGITAL" },
 ];
 
 const creative = [
