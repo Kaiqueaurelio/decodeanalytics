@@ -94,6 +94,8 @@ function StoreHeader() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const info = useCompanyInfo();
   const waLink = useWaLink();
+  const pathname = useRouterState({ select: (state) => state.location.pathname });
+  const menuCategories = pathname === "/" ? SOLUTION_CATEGORIES : STORE_CATEGORIES;
   return (
     <header className="store-sticky-header sticky z-40 border-b border-[var(--store-border)] bg-[var(--store-surface)]/95 backdrop-blur transition-all duration-300">
       <div className="mx-auto flex max-w-[1280px] items-center justify-between gap-3 px-3 py-2 sm:px-4 sm:py-3 md:gap-6 md:py-4">
@@ -220,7 +222,14 @@ function StoreHeader() {
                     Categorias
                   </h3>
                   <div className="space-y-2">
-                    {SOLUTION_CATEGORIES.map((c) => (
+                    <Link
+                      to="/produtos"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="block rounded-lg bg-[var(--store-primary)] px-3 py-2 text-sm font-bold text-white transition hover:bg-[var(--store-primary-light)]"
+                    >
+                      Ver catálogo completo
+                    </Link>
+                    {menuCategories.map((c) => (
                       <Link
                         key={c.slug}
                         to="/produtos"
@@ -407,6 +416,9 @@ function StoreFooter() {
               </li>
             ))}
           </ul>
+          <Link to="/produtos" className="mt-3 inline-flex min-h-10 items-center text-xs font-bold text-[var(--store-secondary)] hover:text-white">
+            Ver catálogo completo <span aria-hidden="true">↗</span>
+          </Link>
         </div>
         <div>
           <h3 className="text-sm font-bold uppercase tracking-wide text-[var(--store-secondary)]">
