@@ -369,7 +369,7 @@ function StoreFooter() {
               className="h-16 w-auto brand-logo rounded-md bg-black p-1 object-contain"
             />
             <div>
-              <div className="text-lg font-extrabold uppercase">Decode Analytics</div>
+              <div className="text-lg font-extrabold uppercase">{info.name}</div>
               <div className="text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--store-secondary)]">
                 Design & Soluções
               </div>
