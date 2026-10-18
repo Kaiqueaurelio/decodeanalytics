@@ -3,7 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { resolveProductImage } from "@/components/storefront/productImages";
-import { brl, STORE_CATEGORIES } from "@/components/storefront/tokens";
+import { brl } from "@/components/storefront/tokens";
 import { useWaLink } from "@/hooks/useCompanyInfo";
 
 const technology = [
