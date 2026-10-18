@@ -19,8 +19,10 @@ function AuthPage() {
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [fullName, setFullName] = useState("");
   const [showPwd, setShowPwd] = useState(false);
+  const [isRecovery, setIsRecovery] = useState(false);
   const loginPasswordRef = useRef<HTMLInputElement>(null);
   const signupEmailRef = useRef<HTMLInputElement>(null);
   const signupPasswordRef = useRef<HTMLInputElement>(null);
@@ -29,9 +31,42 @@ function AuthPage() {
   const signupNameId = useId();
   const signupEmailId = useId();
   const signupPwdId = useId();
+  const recoveryPwdId = useId();
+  const recoveryConfirmPwdId = useId();
 
   useEffect(() => {
     emitAuthTelemetry("auth_page_view");
+
+    const hashParams = new URLSearchParams(window.location.hash.slice(1));
+    const queryParams = new URLSearchParams(window.location.search);
+    const recoveryLink =
+      hashParams.get("type") === "recovery" ||
+      queryParams.get("type") === "recovery" ||
+      queryParams.has("code");
+
+    if (recoveryLink) {
+      setIsRecovery(true);
+      void supabase.auth.getSession().then(({ data }) => {
+        if (data.session?.user.email) setEmail(data.session.user.email);
+      });
+    }
+
+    const errorDescription =
+      hashParams.get("error_description") ?? queryParams.get("error_description");
+    if (errorDescription) {
+      toast.error("Este link de recuperação expirou ou não é válido. Solicite outro.");
+    }
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === "PASSWORD_RECOVERY") {
+        setIsRecovery(true);
+        if (session?.user.email) setEmail(session.user.email);
+      }
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
 
   const loginEmailTrack = trackInputFocus("login-email");
@@ -93,6 +128,25 @@ function AuthPage() {
     toast.success("Link de recuperação enviado.");
   }
 
+  async function handlePasswordUpdate(e: React.FormEvent) {
+    e.preventDefault();
+    if (password !== confirmPassword) {
+      return toast.error("As senhas não coincidem.");
+    }
+
+    setLoading(true);
+    const { error } = await supabase.auth.updateUser({ password });
+    setLoading(false);
+    if (error) return toast.error(error.message);
+
+    await supabase.auth.signOut();
+    setIsRecovery(false);
+    setPassword("");
+    setConfirmPassword("");
+    window.history.replaceState({}, document.title, window.location.pathname);
+    toast.success("Senha redefinida. Entre com sua nova senha.");
+  }
+
   return (
     <div
       className="auth-screen min-h-screen-dvh flex items-center justify-center overflow-x-hidden p-3 safe-pt safe-pb sm:p-4"
@@ -108,7 +162,7 @@ function AuthPage() {
           <h1 className="text-xl sm:text-2xl font-bold text-primary">Decode Analytics Gestão</h1>
           <p className="text-sm text-muted-foreground">Design & soluções digitais para o seu negócio</p>
         </div>
-        <Tabs defaultValue="login">
+        <Tabs defaultValue="login" className={isRecovery ? "hidden" : undefined}>
           <TabsList className="grid grid-cols-2 w-full mb-4 h-12">
             <TabsTrigger value="login" className="h-10 text-base">
               Entrar
@@ -268,6 +322,53 @@ function AuthPage() {
             </form>
           </TabsContent>
         </Tabs>
+        {isRecovery && (
+          <form onSubmit={handlePasswordUpdate} className="space-y-4">
+            <div>
+              <h2 className="text-lg font-bold text-foreground">Criar nova senha</h2>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Defina uma senha nova para sua conta.
+              </p>
+            </div>
+            <div>
+              <Label htmlFor={recoveryPwdId}>Nova senha</Label>
+              <Input
+                id={recoveryPwdId}
+                name="new-password"
+                type={showPwd ? "text" : "password"}
+                autoComplete="new-password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                minLength={6}
+                required
+              />
+            </div>
+            <div>
+              <Label htmlFor={recoveryConfirmPwdId}>Confirme a nova senha</Label>
+              <Input
+                id={recoveryConfirmPwdId}
+                name="confirm-new-password"
+                type={showPwd ? "text" : "password"}
+                autoComplete="new-password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                minLength={6}
+                required
+              />
+            </div>
+            <button
+              type="button"
+              onClick={() => setShowPwd((visible) => !visible)}
+              aria-label={showPwd ? "Ocultar senha" : "Mostrar senha"}
+              className="min-h-11 text-sm text-muted-foreground hover:text-primary"
+            >
+              {showPwd ? "Ocultar senhas" : "Mostrar senhas"}
+            </button>
+            <Button type="submit" disabled={loading} className="w-full min-h-12 text-base">
+              {loading ? "Salvando..." : "Salvar nova senha"}
+            </Button>
+          </form>
+        )}
       </div>
     </div>
   );
