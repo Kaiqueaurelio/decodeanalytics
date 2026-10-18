@@ -7,6 +7,10 @@ import imgCartoes from "@/assets/products/cartoes.jpg";
 import imgEmbalagens from "@/assets/products/embalagens.jpg";
 import imgPanfletos from "@/assets/products/panfletos.jpg";
 import imgPlotagem from "@/assets/products/plotagem.jpg";
+import imgManutencao from "@/assets/products/manutencao.jpg";
+import imgProgramacao from "@/assets/products/programacao.jpg";
+import imgSocial from "@/assets/products/socialmedia.jpg";
+import imgDesign from "@/assets/products/design.jpg";
 
 // Imagens específicas por subcategoria/produto
 import imgBusinessCard from "@/assets/products/sub/business-card.jpg";
@@ -101,6 +105,10 @@ export const CATEGORY_IMAGES: Record<string, string> = {
   "Brindes": imgBrindes,
   "Embalagens": imgEmbalagens,
   "Plotagem": imgPlotagem,
+  "Manutenção de Computadores": imgManutencao,
+  "Programação": imgProgramacao,
+  "Social Media": imgSocial,
+  "Design Gráfico": imgDesign,
 };
 
 const CATEGORY_IMAGES_BY_KEY: Record<string, string> = {
@@ -113,6 +121,10 @@ const CATEGORY_IMAGES_BY_KEY: Record<string, string> = {
   embalagens: imgEmbalagens,
   panfletos: imgPanfletos,
   plotagem: imgPlotagem,
+  "manutencao de computadores": imgManutencao,
+  programacao: imgProgramacao,
+  "social media": imgSocial,
+  "design grafico": imgDesign,
 };
 
 const PRODUCT_IMAGES_BY_FILE: Record<string, string> = {
