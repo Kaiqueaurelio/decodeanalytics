@@ -1,12 +1,12 @@
 {
-  "name": "Decode Analytics Produções Gráficas",
+  "name": "Decode Analytics — Design & Soluções",
   "short_name": "Decode Analytics",
-  "description": "Gráfica online: cartões, canecas, camisetas, adesivos, banners e brindes personalizados.",
+  "description": "Design, tecnologia, programação e soluções digitais para negócios.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
-  "background_color": "#0f172a",
-  "theme_color": "#172554",
+  "background_color": "#080C1F",
+  "theme_color": "#0B1026",
   "lang": "pt-BR",
   "icons": [
     {
