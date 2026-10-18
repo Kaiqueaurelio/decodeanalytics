@@ -239,7 +239,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                     Decode Analytics
                   </span>
                   <span className="mt-0.5 text-[8px] font-bold uppercase tracking-[0.1em] text-[#7d84ab]">
-                    Produções Gráficas
+                    Design & Soluções
                   </span>
                 </div>
               )}

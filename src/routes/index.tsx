@@ -40,13 +40,13 @@ import { trackCardClick, trackCta } from "@/lib/analytics";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Decode Analytics — Gráfica online com produtos personalizados" },
+      { title: "Decode Analytics — Design, tecnologia e produções gráficas" },
       {
         name: "description",
         content:
           "Cartões de visita, canecas, camisetas, adesivos, banners e brindes personalizados com acabamento profissional. Peça pelo site ou WhatsApp.",
       },
-      { property: "og:title", content: "Decode Analytics — Gráfica online" },
+      { property: "og:title", content: "Decode Analytics — Design & Soluções" },
       {
         property: "og:description",
         content: "Produtos personalizados com acabamento profissional. Peça pelo site ou WhatsApp.",

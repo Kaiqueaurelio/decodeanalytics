@@ -111,7 +111,7 @@ function StoreHeader() {
               DECODE ANALYTICS
             </div>
             <div className="text-[8px] sm:text-[10px] font-bold uppercase tracking-[0.15em] sm:tracking-[0.2em] text-[var(--store-accent)]">
-              Produções Gráficas
+              Design & Soluções
             </div>
           </div>
         </Link>
@@ -200,7 +200,7 @@ function StoreHeader() {
                       Decode Analytics
                     </div>
                     <div className="text-[9px] font-bold uppercase tracking-[0.15em] text-[var(--store-accent)]">
-                      Produções Gráficas
+                      Design & Soluções
                     </div>
                   </div>
                 </div>
@@ -351,7 +351,7 @@ function StoreFooter() {
             <div>
               <div className="text-lg font-extrabold uppercase">Decode Analytics</div>
               <div className="text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--store-secondary)]">
-                Produções Gráficas
+                Design & Soluções
               </div>
             </div>
           </div>
