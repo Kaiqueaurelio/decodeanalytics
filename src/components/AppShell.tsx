@@ -178,7 +178,7 @@ export function AppShell({ children }: { children: ReactNode }) {
   const [open, setOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(() => {
     if (typeof window === "undefined") return false;
-    const saved = localStorage.getItem("alcateia_sidebar_collapsed");
+    const saved = localStorage.getItem("decode_sidebar_collapsed");
     return saved ? saved === "1" : false;
   });
   const [search, setSearch] = useState("");

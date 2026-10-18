@@ -76,7 +76,7 @@ function ProdutosPage() {
         <SectionHeader
           kicker="Catálogo"
           title={cat === "todos" ? "Todos os produtos" : cat}
-          description="Personalize seu produto e receba o orçamento em minutos."
+          description="Serviços, produtos digitais e soluções que aparecem no nosso catálogo oficial. Quando o preço não estiver publicado, solicite um orçamento pelo WhatsApp."
         />
 
         <div className="mb-6 grid gap-3 sm:grid-cols-[1fr_auto]">

@@ -69,7 +69,7 @@ export function useCompanyInfo(): CompanyInfo {
   });
 
   const waDigits = digitsOnly(data?.whatsapp) || WHATSAPP_NUMBER;
-  const insta = normalizeInstagram(data?.instagram);
+  const insta = normalizeInstagram(data?.instagram ?? "decode.analytics");
 
   return {
     name: data?.name ?? "Decode Analytics",
@@ -78,23 +78,23 @@ export function useCompanyInfo(): CompanyInfo {
     whatsappDisplay: data?.whatsapp?.trim() || formatBrPhone(waDigits),
     instagram: insta.handle,
     instagramUrl: insta.url,
-    address: data?.address ?? `${STORE_CONTACT.address}, ${STORE_CONTACT.city}`,
+    address: data?.address?.trim() || "",
     email: STORE_CONTACT.email,
-    mapsUrl: data?.address
+    mapsUrl: data?.address?.trim()
       ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(data.address)}`
       : STORE_CONTACT.mapsUrl,
     hours: STORE_CONTACT.hours,
     showPrices: data?.show_prices !== false,
-    heroTitle: data?.hero_title ?? "IMPRESSÃO<br />PRODUÇÕES GRÁFICAS",
-    heroSubtitle: data?.hero_subtitle ?? "Cartões, banners, camisetas, canecas, adesivos e brindes feitos com acabamento profissional pela Decode Analytics — soluções em gráfica, tecnologia e marketing digital.",
-    heroCtaPrimary: data?.hero_cta_primary ?? "Ver produtos",
-    heroCtaSecondary: data?.hero_cta_secondary ?? "Enviar minha arte",
-    bentoKicker: data?.bento_kicker ?? "Os favoritos dos IMbatíveis",
-    bentoTitle: data?.bento_title ?? "MAIS PEDIDOS DA GRÁFICA",
-    bentoDescription: data?.bento_description ?? "Preços direto da nossa produção — atualizados em tempo real pelo painel.",
-    howItWorksTitle: data?.how_it_works_title ?? "Do briefing à entrega em poucos passos",
+    heroTitle: data?.hero_title ?? "DADOS<br />QUE GERAM IMPACTO",
+    heroSubtitle: data?.hero_subtitle ?? "Transformamos dados, tecnologia e processos em soluções digitais práticas para negócios que querem evoluir.",
+    heroCtaPrimary: data?.hero_cta_primary ?? "Conheça as soluções",
+    heroCtaSecondary: data?.hero_cta_secondary ?? "Fale com um especialista",
+    bentoKicker: data?.bento_kicker ?? "Soluções Decode",
+    bentoTitle: data?.bento_title ?? "TECNOLOGIA PARA CRESCER",
+    bentoDescription: data?.bento_description ?? "Serviços digitais sob medida para transformar dados e processos em resultados.",
+    howItWorksTitle: data?.how_it_works_title ?? "Da necessidade à solução",
     contactTitle: data?.contact_title ?? "Fale com a Decode Analytics",
-    contactDescription: data?.contact_description ?? "Tire dúvidas sobre prazos, materiais ou peça um orçamento personalizado pelo nosso canal oficial.",
+    contactDescription: data?.contact_description ?? "Conte sobre seu desafio e vamos conversar sobre a solução mais adequada para o seu negócio.",
   };
 }
 

@@ -10,9 +10,8 @@ import { Card } from "@/components/ui/card";
 import { toast } from "sonner";
 import { FileUp, Loader2 } from "lucide-react";
 import { safeFileName } from "@/lib/briefing";
-import { DEFAULT_COMPANY_DOCUMENT } from "@/lib/format";
 
-const DEFAULT_DOCUMENT = DEFAULT_COMPANY_DOCUMENT;
+const DEFAULT_DOCUMENT = "";
 
 export const Route = createFileRoute("/_authenticated/settings")({ component: Page });
 
@@ -128,7 +127,7 @@ function Page() {
             />
           </div>
           <div>
-            <Label>CNPJ</Label>
+            <Label>Documento fiscal (opcional)</Label>
             <Input
               value={form.document ?? DEFAULT_DOCUMENT}
               onChange={(e) => setForm({ ...form, document: e.target.value })}

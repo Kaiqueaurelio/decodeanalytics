@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
-import { ArrowRight, Upload, Calculator, Zap, Tag, CheckCircle } from "lucide-react";
+import { ArrowRight, Upload, CheckCircle, ExternalLink } from "lucide-react";
 import { useWaLink, useCompanyInfo } from "@/hooks/useCompanyInfo";
-import { CATEGORY_IMAGES } from "./productImages";
+
 
 export function Hero() {
   const waLink = useWaLink();
@@ -28,26 +28,18 @@ export function Hero() {
               className="inline-flex max-w-full items-center gap-2 rounded-full bg-white/15 px-3 py-1 text-[10px] font-extrabold uppercase text-white backdrop-blur sm:text-[11px]"
               style={{ letterSpacing: "0.08em" }}
             >
-              <CheckCircle className="h-3 w-3" /> Gráfica · TI · Social Media · Programação
+              <CheckCircle className="h-3 w-3" /> Dados · Tecnologia · Automação · Design
             </span>
             <h1 className="font-display mt-4 text-[2.15rem] leading-[0.98] sm:mt-5 sm:text-6xl md:text-7xl lg:text-8xl">
-              DESIGN, TECNOLOGIA
+              DADOS, TECNOLOGIA
               <br />
-              & PRODUÇÕES
+              & RESULTADOS
             </h1>
             <p className="mt-5 max-w-md text-sm sm:text-base font-medium text-white/85">
               {heroSubtitle}
             </p>
 
-            <div className="mt-6 inline-flex max-w-full items-center gap-2 rounded-lg bg-white/10 px-3 py-2 text-xs font-bold backdrop-blur sm:px-4 sm:text-sm">
-              <Tag className="h-4 w-4 text-[var(--store-secondary)]" />
-              <span className="min-w-0">
-                10% OFF na 1ª compra ·{" "}
-                <span className="rounded bg-[var(--store-secondary)] px-1.5 py-0.5 text-[12px] text-[var(--store-primary-dark)]">
-                  BEMVINDO10
-                </span>
-              </span>
-            </div>
+            <div className="mt-6 inline-flex max-w-full items-center gap-2 rounded-full border border-cyan-300/25 bg-black/25 px-3 py-2 text-xs font-semibold text-white/85 backdrop-blur sm:text-sm"><span className="h-2 w-2 rounded-full bg-cyan-300 shadow-[0_0_12px_#22d3ee]" /> Tecnologia aplicada a resultados reais</div>
 
             <div className="mt-7 flex flex-col gap-2.5 min-[420px]:flex-row min-[420px]:flex-wrap">
               <Link
@@ -57,31 +49,33 @@ export function Hero() {
                 {heroCtaPrimary} <ArrowRight className="h-4 w-4" />
               </Link>
               <a
-                href={waLink("Olá! Quero enviar minha arte para um orçamento.")}
+                href="https://wa.me/c/5511939222885"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex min-h-[52px] items-center justify-center gap-2 rounded-[var(--store-radius-md)] border-2 border-white/70 bg-transparent px-5 py-3 text-sm font-extrabold uppercase tracking-wide text-white transition-colors hover:bg-white hover:text-store-primary sm:px-8"
               >
-                <Upload className="h-4 w-4" /> {heroCtaSecondary}
+                <ExternalLink className="h-4 w-4" /> Ver catálogo no WhatsApp
               </a>
             </div>
           </div>
 
-          {/* Right column: product hero photo */}
-          <div className="relative hidden md:block">
-            <div className="absolute -right-8 -top-8 h-72 w-72 rounded-full bg-white/10 blur-2xl" />
-            <div className="relative animate-float">
-              <div className="relative aspect-square overflow-hidden rounded-[var(--store-radius-xl)] border border-white/20 bg-white p-2 shadow-2xl rotate-[-2deg] transition-transform duration-500 hover:rotate-0">
-                <img
-                  src={CATEGORY_IMAGES["Cartões"]}
-                  alt="Cartões de Visita Premium"
-                  className="h-full w-full rounded-[var(--store-radius-lg)] object-cover brightness-[1.02] contrast-[1.05] saturate-[1.1]"
-                  loading="eager"
-                />
+          {/* Decorative technology panel — no unrelated stock product photo */}
+          <div className="relative hidden min-h-[300px] items-center justify-center md:flex">
+            <div className="absolute h-64 w-64 rounded-full bg-violet-600/20 blur-3xl" />
+            <div className="relative w-full max-w-md rounded-2xl border border-cyan-300/20 bg-[#08080d]/80 p-6 shadow-2xl shadow-cyan-950/30 backdrop-blur">
+              <div className="flex items-center gap-2 border-b border-white/10 pb-4">
+                <span className="h-2.5 w-2.5 rounded-full bg-rose-400" />
+                <span className="h-2.5 w-2.5 rounded-full bg-amber-300" />
+                <span className="h-2.5 w-2.5 rounded-full bg-emerald-300" />
+                <span className="ml-2 font-mono text-xs text-zinc-500">decode://solucoes</span>
               </div>
-              <span className="pointer-events-none absolute -top-3 left-2 z-10 inline-flex items-center gap-1 rounded-full bg-store-secondary px-3 py-1 text-xs font-extrabold uppercase text-store-primary-dark shadow-md">
-                <CheckCircle className="h-3 w-3" /> Acabamento premium
-              </span>
+              <div className="space-y-3 py-6 font-mono text-sm">
+                <p className="text-zinc-500">// tecnologia com propósito</p>
+                <p className="text-cyan-300"><span className="text-violet-400">const</span> ideia = desafio;</p>
+                <p className="text-zinc-300">transformar(ideia);</p>
+                <div className="mt-5 h-1.5 overflow-hidden rounded-full bg-white/10"><div className="h-full w-3/4 rounded-full bg-gradient-to-r from-violet-500 to-cyan-300" /></div>
+                <p className="pt-2 text-xs text-zinc-500">DESIGN · DADOS · SOLUÇÕES</p>
+              </div>
             </div>
           </div>
         </div>
@@ -107,7 +101,7 @@ export function Hero() {
           </div>
         </Link>
         <a
-          href={waLink("Olá! Quero contratar a criação de uma arte.")}
+          href={waLink("Olá! Quero conhecer as soluções da Decode Analytics.")}
           target="_blank"
           rel="noopener noreferrer"
           className="group flex items-center gap-2 rounded-[var(--store-radius-lg)] border border-[var(--store-border)] bg-white p-3 sm:gap-3 sm:p-4 shadow-[var(--store-shadow-sm)] transition-all hover:-translate-y-1 hover:shadow-[var(--store-shadow-md)] animate-fade-in"

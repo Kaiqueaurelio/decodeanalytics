@@ -1,4 +1,4 @@
-export const DEFAULT_COMPANY_DOCUMENT = "58.294.735/0001-55";
+export const DEFAULT_COMPANY_DOCUMENT = "";
 
 export const brl = (n: number | string | null | undefined) =>
   (Number(n) || 0).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });

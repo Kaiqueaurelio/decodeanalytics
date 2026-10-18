@@ -35,6 +35,8 @@ export function ProductCard({ product }: { product: StoreProduct }) {
     ? (BADGE_TONE[product.badge] ?? "bg-[var(--store-primary)] text-white")
     : null;
   const rating = product.rating ? Number(product.rating) : null;
+  const price = Number(product.base_price ?? 0);
+  const hasPrice = Number.isFinite(price) && price > 0;
 
   return (
     <article className="group flex flex-col overflow-hidden rounded-[var(--store-radius-lg)] border border-[var(--store-border)] bg-white shadow-[var(--store-shadow-sm)] transition-all duration-200 hover:-translate-y-1 hover:border-[var(--store-primary-light)]/40 hover:shadow-[var(--store-shadow-md)]">
@@ -80,13 +82,13 @@ export function ProductCard({ product }: { product: StoreProduct }) {
         )}
         <div className="mt-3 flex items-end justify-between gap-2">
           <div>
-            {showPrices ? (
+            {showPrices && hasPrice ? (
               <>
                 <p className="text-[10px] uppercase tracking-wide text-[var(--store-text-light)]">
-                  A partir de
+                  Preço no catálogo
                 </p>
                 <p className="text-xl font-extrabold leading-tight text-[var(--store-primary)]">
-                  {brl(product.base_price)}
+                  {brl(price)}
                 </p>
               </>
             ) : (
@@ -104,33 +106,28 @@ export function ProductCard({ product }: { product: StoreProduct }) {
         <Link
           to="/produto/$slug"
           params={{ slug }}
-          className="mt-4 inline-flex h-10 items-center justify-center rounded-[var(--store-radius-md)] bg-[var(--store-primary)] text-sm font-bold text-white transition-colors hover:bg-[var(--store-primary-light)]"
+          className="mt-4 inline-flex h-10 items-center justify-center rounded-[var(--store-radius-md)] bg-[var(--store-primary)] text-sm font-bold text-white transition-opacity hover:opacity-90"
         >
-          Ver produto
+          Ver detalhes
         </Link>
       </div>
     </article>
   );
 }
 
-export function ProductCardSkeleton() {
-  return (
-    <div className="overflow-hidden rounded-[var(--store-radius-lg)] border border-[var(--store-border)] bg-white">
-      <div className="aspect-[4/3] animate-pulse bg-[var(--store-surface-soft)]" />
-      <div className="space-y-2 p-4">
-        <div className="h-3 w-16 animate-pulse rounded bg-[var(--store-surface-soft)]" />
-        <div className="h-4 w-full animate-pulse rounded bg-[var(--store-surface-soft)]" />
-        <div className="h-4 w-2/3 animate-pulse rounded bg-[var(--store-surface-soft)]" />
-        <div className="mt-4 h-10 animate-pulse rounded bg-[var(--store-surface-soft)]" />
-      </div>
-    </div>
-  );
+export function ProductGrid({ children }: { children: React.ReactNode }) {
+  return <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">{children}</div>;
 }
 
-export function ProductGrid({ children }: { children: React.ReactNode }) {
+export function ProductCardSkeleton() {
   return (
-    <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-      {children}
+    <div className="animate-pulse overflow-hidden rounded-[var(--store-radius-lg)] border border-[var(--store-border)] bg-white">
+      <div className="aspect-[4/3] bg-[var(--store-surface-soft)]" />
+      <div className="space-y-3 p-4">
+        <div className="h-3 w-2/3 rounded bg-[var(--store-border)]" />
+        <div className="h-4 w-full rounded bg-[var(--store-border)]" />
+        <div className="h-4 w-1/2 rounded bg-[var(--store-border)]" />
+      </div>
     </div>
   );
 }
@@ -139,29 +136,16 @@ export function SectionHeader({
   kicker,
   title,
   description,
-  action,
 }: {
-  kicker?: string;
+  kicker: string;
   title: string;
-  description?: string;
-  action?: React.ReactNode;
+  description: string;
 }) {
   return (
-    <header className="mb-6 flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-end">
-      <div className="min-w-0">
-        {kicker && (
-          <p className="text-[11px] font-extrabold uppercase tracking-[0.18em] text-[var(--store-accent)]">
-            {kicker}
-          </p>
-        )}
-        <h2 className="mt-1 text-2xl font-extrabold tracking-tight text-[var(--store-primary)] sm:text-3xl md:text-4xl">
-          {title}
-        </h2>
-        {description && (
-          <p className="mt-1 max-w-2xl text-sm text-[var(--store-text-muted)]">{description}</p>
-        )}
-      </div>
-      {action}
-    </header>
+    <div className="mb-8">
+      <p className="text-xs font-bold uppercase tracking-[0.18em] text-[var(--store-accent)]">{kicker}</p>
+      <h1 className="mt-2 text-3xl font-black tracking-tight text-[var(--store-text)] sm:text-4xl">{title}</h1>
+      <p className="mt-3 max-w-2xl text-sm leading-6 text-[var(--store-text-muted)]">{description}</p>
+    </div>
   );
 }
