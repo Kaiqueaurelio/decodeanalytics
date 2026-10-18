@@ -28,3 +28,16 @@ $$;
 ```
 
 Depois desse passo, administradores podem liberar cadastros pendentes na área **Usuários e permissões**. Não habilite administração automática para a primeira pessoa que se cadastrar.
+
+## Revisar contas existentes
+
+A migração não altera os papéis de contas já cadastradas. Antes de liberar a versão, confira quais contas têm acesso operacional:
+
+```sql
+SELECT u.email, ur.role, ur.created_at
+  FROM auth.users AS u
+  JOIN public.user_roles AS ur ON ur.user_id = u.id
+ ORDER BY ur.created_at, u.email;
+```
+
+Remova manualmente qualquer papel de atendente ou outro acesso operacional que não pertença a uma pessoa autorizada. Contas pendentes não acessam os dados internos.
