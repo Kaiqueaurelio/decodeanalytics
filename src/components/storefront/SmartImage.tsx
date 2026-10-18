@@ -11,7 +11,7 @@ export function SmartImage({
   alt, 
   className, 
   fallbackEmoji = "📦", 
-  fallbackClass = "bg-slate-100",
+  fallbackClass = "bg-[#191920]",
   onLoad,
   onError,
   ...props 
