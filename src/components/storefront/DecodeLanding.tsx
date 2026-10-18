@@ -169,7 +169,7 @@ export function DecodeLanding() {
 
       <section id="como-funciona" aria-labelledby="processo-title" className="scroll-mt-20 border-y border-white/[0.06] bg-[#0A0E1A] px-4 py-20 sm:px-8 lg:px-16 lg:py-24">
         <div className="mx-auto grid max-w-[1280px] gap-12 lg:grid-cols-[.8fr_1.2fr] lg:items-center">
-          <div><p className="mb-3 text-xs font-extrabold uppercase tracking-[.24em] text-[#7138F5]">Como trabalhamos</p><h2 id="processo-title" className="font-display text-4xl font-bold leading-tight sm:text-5xl">Do primeiro papo ao resultado.</h2><p className="mt-5 max-w-md text-sm leading-7 text-slate-400">A gente entende o seu momento, constrói a solução junto com você e acompanha cada etapa.</p></div>
+          <div><p className="mb-3 text-xs font-extrabold uppercase tracking-[.24em] text-[#7138F5]">Como trabalhamos</p><h2 id="processo-title" className="font-display text-4xl font-bold leading-tight sm:text-5xl">Do primeiro papo ao resultado.</h2><p className="mt-5 max-w-md text-sm leading-7 text-slate-400">Do pedido à aprovação, produção e entrega: você sabe o que acontece em cada etapa.</p></div>
           <div className="grid gap-3 sm:grid-cols-3">
             {[
               { n: "01", title: "Conte sua ideia", text: "Entendemos seus objetivos e desafios.", Icon: MessageCircle },
