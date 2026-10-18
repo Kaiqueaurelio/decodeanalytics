@@ -428,7 +428,8 @@ function StoreFooter() {
               </div>
             </li>
             <li className="flex items-start gap-2">
-              <Mail className="mt-0.5 h-4 w-4 shrink-0" /> {info.email}
+              <Mail className="mt-0.5 h-4 w-4 shrink-0" />
+              <a href={`mailto:${info.email}`} className="transition-colors hover:text-white">{info.email}</a>
             </li>
             <li className="flex items-center gap-2">
               <MapPin className="h-4 w-4 shrink-0" />
