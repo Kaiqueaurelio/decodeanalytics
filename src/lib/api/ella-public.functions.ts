@@ -56,7 +56,7 @@ export const ellaPublicChat = createServerFn({ method: "POST" })
     const tools = {
       list_products: tool({
         description:
-          "Consulta o catálogo público de produtos/serviços da gráfica. Filtra por texto (nome ou categoria).",
+          "Consulta o catálogo público de produtos e serviços Decode. Filtra por texto (nome ou categoria).",
         inputSchema: z.object({
           search: z.string().max(100).optional(),
           limit: z.number().int().min(1).max(15).optional(),
@@ -97,7 +97,7 @@ export const ellaPublicChat = createServerFn({ method: "POST" })
       .limit(40);
     const kbBlock =
       kb && kb.length
-        ? `\n\nBase de conhecimento da gráfica (fonte da verdade):\n${(kb as any[])
+        ? `\n\nBase de conhecimento da Decode (fonte da verdade):\n${(kb as any[])
             .map((k) => `• ${k.title}: ${k.content}`)
             .join("\n")}`
         : "";
@@ -127,7 +127,7 @@ export const ellaPublicChat = createServerFn({ method: "POST" })
       return {
         response:
           result.text ||
-          "Posso te ajudar a escolher um produto — me conta o que você precisa imprimir 😉",
+          "Posso ajudar a encontrar um produto ou serviço — me conte o que você está buscando 🙂",
         trace_id: traceId,
       };
     } catch (err: any) {

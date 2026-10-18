@@ -14,13 +14,14 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as AssistenteRouteImport } from './routes/assistente'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as CarrinhoRouteImport } from './routes/carrinho'
-import { Route as ProdutosRouteImport } from './routes/produtos'
 import { Route as OrcamentoRouteImport } from './routes/orcamento'
-import { Route as AuthenticatedBrandRouteImport } from './routes/_authenticated/brand'
-import { Route as AuthenticatedCatalogAdminRouteImport } from './routes/_authenticated/catalog-admin'
+import { Route as ProdutosRouteImport } from './routes/produtos'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as AuthenticatedAiLogsRouteImport } from './routes/_authenticated/ai-logs'
+import { Route as AuthenticatedBrandRouteImport } from './routes/_authenticated/brand'
 import { Route as AuthenticatedCalculatorRouteImport } from './routes/_authenticated/calculator'
 import { Route as AuthenticatedCashRouteImport } from './routes/_authenticated/cash'
+import { Route as AuthenticatedCatalogAdminRouteImport } from './routes/_authenticated/catalog-admin'
 import { Route as AuthenticatedClientsRouteImport } from './routes/_authenticated/clients'
 import { Route as AuthenticatedClosuresRouteImport } from './routes/_authenticated/closures'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
@@ -38,7 +39,6 @@ import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedUsersRouteImport } from './routes/_authenticated/users'
 import { Route as BriefingTokenRouteImport } from './routes/briefing.$token'
 import { Route as ProdutoSlugRouteImport } from './routes/produto.$slug'
-import { Route as SitemapXmlRouteImport } from './routes/sitemap.xml'
 import { Route as AuthenticatedSandboxRunIdRouteImport } from './routes/_authenticated/sandbox-run.$id'
 import { Route as ApiPublicAiHealthRouteImport } from './routes/api/public/ai-health'
 
@@ -66,15 +66,29 @@ const CarrinhoRoute = CarrinhoRouteImport.update({
   path: '/carrinho',
   getParentRoute: () => rootRouteImport,
 } as any)
+const OrcamentoRoute = OrcamentoRouteImport.update({
+  id: '/orcamento',
+  path: '/orcamento',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProdutosRoute = ProdutosRouteImport.update({
   id: '/produtos',
   path: '/produtos',
   getParentRoute: () => rootRouteImport,
 } as any)
-const OrcamentoRoute = OrcamentoRouteImport.update({ id: '/orcamento', path: '/orcamento', getParentRoute: () => rootRouteImport } as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedAiLogsRoute = AuthenticatedAiLogsRouteImport.update({
   id: '/ai-logs',
   path: '/ai-logs',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedBrandRoute = AuthenticatedBrandRouteImport.update({
+  id: '/brand',
+  path: '/brand',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedCalculatorRoute = AuthenticatedCalculatorRouteImport.update({
@@ -87,6 +101,12 @@ const AuthenticatedCashRoute = AuthenticatedCashRouteImport.update({
   path: '/cash',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedCatalogAdminRoute =
+  AuthenticatedCatalogAdminRouteImport.update({
+    id: '/catalog-admin',
+    path: '/catalog-admin',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedClientsRoute = AuthenticatedClientsRouteImport.update({
   id: '/clients',
   path: '/clients',
@@ -165,8 +185,6 @@ const AuthenticatedUsersRoute = AuthenticatedUsersRouteImport.update({
   path: '/users',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedBrandRoute = AuthenticatedBrandRouteImport.update({ id: '/brand', path: '/brand', getParentRoute: () => AuthenticatedRouteRoute } as any)
-const AuthenticatedCatalogAdminRoute = AuthenticatedCatalogAdminRouteImport.update({ id: '/catalog-admin', path: '/catalog-admin', getParentRoute: () => AuthenticatedRouteRoute } as any)
 const BriefingTokenRoute = BriefingTokenRouteImport.update({
   id: '/briefing/$token',
   path: '/briefing/$token',
@@ -175,11 +193,6 @@ const BriefingTokenRoute = BriefingTokenRouteImport.update({
 const ProdutoSlugRoute = ProdutoSlugRouteImport.update({
   id: '/produto/$slug',
   path: '/produto/$slug',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SitemapXmlRoute = SitemapXmlRouteImport.update({
-  id: '/sitemap/xml',
-  path: '/sitemap/xml',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedSandboxRunIdRoute =
@@ -195,17 +208,18 @@ const ApiPublicAiHealthRoute = ApiPublicAiHealthRouteImport.update({
 } as any)
 
 export interface FileRoutesByFullPath {
-  '/orcamento': typeof OrcamentoRoute
-  '/brand': typeof AuthenticatedBrandRoute
-  '/catalog-admin': typeof AuthenticatedCatalogAdminRoute
   '/': typeof IndexRoute
   '/assistente': typeof AssistenteRoute
   '/auth': typeof AuthRoute
   '/carrinho': typeof CarrinhoRoute
+  '/orcamento': typeof OrcamentoRoute
   '/produtos': typeof ProdutosRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/ai-logs': typeof AuthenticatedAiLogsRoute
+  '/brand': typeof AuthenticatedBrandRoute
   '/calculator': typeof AuthenticatedCalculatorRoute
   '/cash': typeof AuthenticatedCashRoute
+  '/catalog-admin': typeof AuthenticatedCatalogAdminRoute
   '/clients': typeof AuthenticatedClientsRoute
   '/closures': typeof AuthenticatedClosuresRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
@@ -223,22 +237,22 @@ export interface FileRoutesByFullPath {
   '/users': typeof AuthenticatedUsersRoute
   '/briefing/$token': typeof BriefingTokenRoute
   '/produto/$slug': typeof ProdutoSlugRoute
-  '/sitemap/xml': typeof SitemapXmlRoute
   '/sandbox-run/$id': typeof AuthenticatedSandboxRunIdRoute
   '/api/public/ai-health': typeof ApiPublicAiHealthRoute
 }
 export interface FileRoutesByTo {
-  '/orcamento': typeof OrcamentoRoute
-  '/brand': typeof AuthenticatedBrandRoute
-  '/catalog-admin': typeof AuthenticatedCatalogAdminRoute
   '/': typeof IndexRoute
   '/assistente': typeof AssistenteRoute
   '/auth': typeof AuthRoute
   '/carrinho': typeof CarrinhoRoute
+  '/orcamento': typeof OrcamentoRoute
   '/produtos': typeof ProdutosRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/ai-logs': typeof AuthenticatedAiLogsRoute
+  '/brand': typeof AuthenticatedBrandRoute
   '/calculator': typeof AuthenticatedCalculatorRoute
   '/cash': typeof AuthenticatedCashRoute
+  '/catalog-admin': typeof AuthenticatedCatalogAdminRoute
   '/clients': typeof AuthenticatedClientsRoute
   '/closures': typeof AuthenticatedClosuresRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
@@ -256,24 +270,24 @@ export interface FileRoutesByTo {
   '/users': typeof AuthenticatedUsersRoute
   '/briefing/$token': typeof BriefingTokenRoute
   '/produto/$slug': typeof ProdutoSlugRoute
-  '/sitemap/xml': typeof SitemapXmlRoute
   '/sandbox-run/$id': typeof AuthenticatedSandboxRunIdRoute
   '/api/public/ai-health': typeof ApiPublicAiHealthRoute
 }
 export interface FileRoutesById {
-  '/orcamento': typeof OrcamentoRoute
-  '/_authenticated/brand': typeof AuthenticatedBrandRoute
-  '/_authenticated/catalog-admin': typeof AuthenticatedCatalogAdminRoute
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/assistente': typeof AssistenteRoute
   '/auth': typeof AuthRoute
   '/carrinho': typeof CarrinhoRoute
+  '/orcamento': typeof OrcamentoRoute
   '/produtos': typeof ProdutosRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/_authenticated/ai-logs': typeof AuthenticatedAiLogsRoute
+  '/_authenticated/brand': typeof AuthenticatedBrandRoute
   '/_authenticated/calculator': typeof AuthenticatedCalculatorRoute
   '/_authenticated/cash': typeof AuthenticatedCashRoute
+  '/_authenticated/catalog-admin': typeof AuthenticatedCatalogAdminRoute
   '/_authenticated/clients': typeof AuthenticatedClientsRoute
   '/_authenticated/closures': typeof AuthenticatedClosuresRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
@@ -291,7 +305,6 @@ export interface FileRoutesById {
   '/_authenticated/users': typeof AuthenticatedUsersRoute
   '/briefing/$token': typeof BriefingTokenRoute
   '/produto/$slug': typeof ProdutoSlugRoute
-  '/sitemap/xml': typeof SitemapXmlRoute
   '/_authenticated/sandbox-run/$id': typeof AuthenticatedSandboxRunIdRoute
   '/api/public/ai-health': typeof ApiPublicAiHealthRoute
 }
@@ -302,10 +315,14 @@ export interface FileRouteTypes {
     | '/assistente'
     | '/auth'
     | '/carrinho'
+    | '/orcamento'
     | '/produtos'
+    | '/sitemap.xml'
     | '/ai-logs'
+    | '/brand'
     | '/calculator'
     | '/cash'
+    | '/catalog-admin'
     | '/clients'
     | '/closures'
     | '/dashboard'
@@ -323,7 +340,6 @@ export interface FileRouteTypes {
     | '/users'
     | '/briefing/$token'
     | '/produto/$slug'
-    | '/sitemap/xml'
     | '/sandbox-run/$id'
     | '/api/public/ai-health'
   fileRoutesByTo: FileRoutesByTo
@@ -332,10 +348,14 @@ export interface FileRouteTypes {
     | '/assistente'
     | '/auth'
     | '/carrinho'
+    | '/orcamento'
     | '/produtos'
+    | '/sitemap.xml'
     | '/ai-logs'
+    | '/brand'
     | '/calculator'
     | '/cash'
+    | '/catalog-admin'
     | '/clients'
     | '/closures'
     | '/dashboard'
@@ -353,7 +373,6 @@ export interface FileRouteTypes {
     | '/users'
     | '/briefing/$token'
     | '/produto/$slug'
-    | '/sitemap/xml'
     | '/sandbox-run/$id'
     | '/api/public/ai-health'
   id:
@@ -363,10 +382,14 @@ export interface FileRouteTypes {
     | '/assistente'
     | '/auth'
     | '/carrinho'
+    | '/orcamento'
     | '/produtos'
+    | '/sitemap.xml'
     | '/_authenticated/ai-logs'
+    | '/_authenticated/brand'
     | '/_authenticated/calculator'
     | '/_authenticated/cash'
+    | '/_authenticated/catalog-admin'
     | '/_authenticated/clients'
     | '/_authenticated/closures'
     | '/_authenticated/dashboard'
@@ -384,7 +407,6 @@ export interface FileRouteTypes {
     | '/_authenticated/users'
     | '/briefing/$token'
     | '/produto/$slug'
-    | '/sitemap/xml'
     | '/_authenticated/sandbox-run/$id'
     | '/api/public/ai-health'
   fileRoutesById: FileRoutesById
@@ -395,19 +417,16 @@ export interface RootRouteChildren {
   AssistenteRoute: typeof AssistenteRoute
   AuthRoute: typeof AuthRoute
   CarrinhoRoute: typeof CarrinhoRoute
+  OrcamentoRoute: typeof OrcamentoRoute
   ProdutosRoute: typeof ProdutosRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   BriefingTokenRoute: typeof BriefingTokenRoute
   ProdutoSlugRoute: typeof ProdutoSlugRoute
-  SitemapXmlRoute: typeof SitemapXmlRoute
   ApiPublicAiHealthRoute: typeof ApiPublicAiHealthRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/orcamento': { id: '/orcamento'; path: '/orcamento'; fullPath: '/orcamento'; preLoaderRoute: typeof OrcamentoRouteImport; parentRoute: typeof rootRouteImport }
-    '/_authenticated/brand': { id: '/_authenticated/brand'; path: '/brand'; fullPath: '/brand'; preLoaderRoute: typeof AuthenticatedBrandRouteImport; parentRoute: typeof AuthenticatedRouteRoute }
-    '/_authenticated/catalog-admin': { id: '/_authenticated/catalog-admin'; path: '/catalog-admin'; fullPath: '/catalog-admin'; preLoaderRoute: typeof AuthenticatedCatalogAdminRouteImport; parentRoute: typeof AuthenticatedRouteRoute }
-
     '/': {
       id: '/'
       path: '/'
@@ -443,6 +462,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CarrinhoRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/orcamento': {
+      id: '/orcamento'
+      path: '/orcamento'
+      fullPath: '/orcamento'
+      preLoaderRoute: typeof OrcamentoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/produtos': {
       id: '/produtos'
       path: '/produtos'
@@ -450,11 +476,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProdutosRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/ai-logs': {
       id: '/_authenticated/ai-logs'
       path: '/ai-logs'
       fullPath: '/ai-logs'
       preLoaderRoute: typeof AuthenticatedAiLogsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/brand': {
+      id: '/_authenticated/brand'
+      path: '/brand'
+      fullPath: '/brand'
+      preLoaderRoute: typeof AuthenticatedBrandRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/calculator': {
@@ -469,6 +509,13 @@ declare module '@tanstack/react-router' {
       path: '/cash'
       fullPath: '/cash'
       preLoaderRoute: typeof AuthenticatedCashRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/catalog-admin': {
+      id: '/_authenticated/catalog-admin'
+      path: '/catalog-admin'
+      fullPath: '/catalog-admin'
+      preLoaderRoute: typeof AuthenticatedCatalogAdminRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/clients': {
@@ -590,13 +637,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProdutoSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/sitemap/xml': {
-      id: '/sitemap/xml'
-      path: '/sitemap/xml'
-      fullPath: '/sitemap/xml'
-      preLoaderRoute: typeof SitemapXmlRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/_authenticated/sandbox-run/$id': {
       id: '/_authenticated/sandbox-run/$id'
       path: '/sandbox-run/$id'
@@ -615,11 +655,11 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedRouteRouteChildren {
-  AuthenticatedBrandRoute: typeof AuthenticatedBrandRoute
-  AuthenticatedCatalogAdminRoute: typeof AuthenticatedCatalogAdminRoute
   AuthenticatedAiLogsRoute: typeof AuthenticatedAiLogsRoute
+  AuthenticatedBrandRoute: typeof AuthenticatedBrandRoute
   AuthenticatedCalculatorRoute: typeof AuthenticatedCalculatorRoute
   AuthenticatedCashRoute: typeof AuthenticatedCashRoute
+  AuthenticatedCatalogAdminRoute: typeof AuthenticatedCatalogAdminRoute
   AuthenticatedClientsRoute: typeof AuthenticatedClientsRoute
   AuthenticatedClosuresRoute: typeof AuthenticatedClosuresRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
@@ -639,11 +679,11 @@ interface AuthenticatedRouteRouteChildren {
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
-  AuthenticatedBrandRoute: AuthenticatedBrandRoute,
-  AuthenticatedCatalogAdminRoute: AuthenticatedCatalogAdminRoute,
   AuthenticatedAiLogsRoute: AuthenticatedAiLogsRoute,
+  AuthenticatedBrandRoute: AuthenticatedBrandRoute,
   AuthenticatedCalculatorRoute: AuthenticatedCalculatorRoute,
   AuthenticatedCashRoute: AuthenticatedCashRoute,
+  AuthenticatedCatalogAdminRoute: AuthenticatedCatalogAdminRoute,
   AuthenticatedClientsRoute: AuthenticatedClientsRoute,
   AuthenticatedClosuresRoute: AuthenticatedClosuresRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
@@ -671,11 +711,11 @@ const rootRouteChildren: RootRouteChildren = {
   AssistenteRoute: AssistenteRoute,
   AuthRoute: AuthRoute,
   CarrinhoRoute: CarrinhoRoute,
-  ProdutosRoute: ProdutosRoute,
   OrcamentoRoute: OrcamentoRoute,
+  ProdutosRoute: ProdutosRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
   BriefingTokenRoute: BriefingTokenRoute,
   ProdutoSlugRoute: ProdutoSlugRoute,
-  SitemapXmlRoute: SitemapXmlRoute,
   ApiPublicAiHealthRoute: ApiPublicAiHealthRoute,
 }
 export const routeTree = rootRouteImport

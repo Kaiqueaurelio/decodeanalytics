@@ -20,12 +20,12 @@ export const Route = createFileRoute("/assistente")({
       {
         name: "description",
         content:
-          "Fale com nosso assistente virtual: ele te ajuda a escolher o produto gráfico ideal (cartão, banner, adesivo, brindes e mais).",
+          "Tire dúvidas sobre produtos gráficos, design, manutenção de computadores, social media e programação com nosso assistente virtual.",
       },
       { property: "og:title", content: "Assistente virtual — Decode Analytics — Design & Soluções" },
       {
         property: "og:description",
-        content: "Tire dúvidas sobre impressos, acabamentos, prazos e orçamentos com nosso assistente virtual.",
+        content: "Tire dúvidas sobre nossos produtos gráficos e serviços de design, tecnologia e presença digital.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -53,7 +53,7 @@ function AssistantePage() {
       id: "welcome",
       role: "assistant",
       content:
-        "Oi! 👋 Sou o assistente virtual da Decode Analytics. Me conta o que você precisa imprimir e eu te ajudo a escolher a melhor opção — papel, acabamento, quantidade e prazo. 🎨",
+        "Oi! 👋 Sou o assistente virtual da Decode Analytics. Posso ajudar com produtos gráficos, design, manutenção de computadores, social media e programação. O que você está buscando?",
     },
   ]);
   const [input, setInput] = useState("");

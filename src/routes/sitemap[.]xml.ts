@@ -1,7 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-const BASE_URL = "https://alcateiaproducoesgraficas.lovable.app";
-
 interface SitemapEntry {
   path: string;
   lastmod?: string;
@@ -9,10 +7,11 @@ interface SitemapEntry {
   priority?: string;
 }
 
-export const Route = createFileRoute("/sitemap/xml")({
+export const Route = createFileRoute("/sitemap.xml")({
   server: {
     handlers: {
-      GET: async () => {
+      GET: async ({ request }) => {
+        const baseUrl = (process.env.PUBLIC_SITE_URL || new URL(request.url).origin).replace(/\/+$/, "");
         const entries: SitemapEntry[] = [
           { path: "/", changefreq: "weekly", priority: "1.0" },
           { path: "/produtos", changefreq: "daily", priority: "0.9" },
@@ -21,7 +20,7 @@ export const Route = createFileRoute("/sitemap/xml")({
         const urls = entries.map((e) =>
           [
             `  <url>`,
-            `    <loc>${BASE_URL}${e.path}</loc>`,
+            `    <loc>${baseUrl}${e.path}</loc>`,
             e.lastmod ? `    <lastmod>${e.lastmod}</lastmod>` : null,
             e.changefreq ? `    <changefreq>${e.changefreq}</changefreq>` : null,
             e.priority ? `    <priority>${e.priority}</priority>` : null,

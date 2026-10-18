@@ -1,6 +1,6 @@
-# Alcateia Print Hub
+# Decode Analytics — Design & Soluções
 
-Crie um sistema web completo e funcional para gestão de gráfica chamado Alcateia Gestão.
+Aplicação web da Decode Analytics para apresentar produtos e serviços, receber pedidos de orçamento e apoiar a operação da equipe.
 
 
 
@@ -700,15 +700,15 @@ Criar tela de configurações com:
 
 
 
-Dados iniciais da empresa:
+Dados da empresa:
 
-Nome: Alcateia's Produções Gráficas
+Nome: Decode Analytics — Design & Soluções
 
-WhatsApp: (11) 97223-5342
+WhatsApp: +55 11 93922-2885
 
-Instagram: @alcateiasproducoesgraficas
+Instagram: configurado nas definições da empresa
 
-Endereço: Galeria Vila Marcondes
+Endereço: Estrada do Cabreúva, 703 — Vila Santa Lúcia, Carapicuíba — SP, CEP 06321-001
 
 
 
@@ -852,7 +852,7 @@ O sistema deve ser entregue funcional, com banco Supabase configurado, tabelas c
 
 This project was built with [Lovable](https://lovable.dev).
 
-**Live app**: https://alcateiaproducoesgraficas.lovable.app
+**Production URL**: use the domain configured for the current deployment.
 
 ## Build with Lovable
 

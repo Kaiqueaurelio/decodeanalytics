@@ -53,8 +53,45 @@ const PRODUCT_IMAGES_BY_SLUG: Record<string, string> = {
   "canecas-personalizadas-catalogo": imgCanecas,
   "social-media": imgSocial,
   "design-grafico": imgDesign,
-  "programacao": imgProgramacao,
+  programacao: imgProgramacao,
   "manutencao-de-computadores": imgManutencao,
+  // Serviços e entregas digitais
+  "apresentacoes-catalogos": imgDesign,
+  "automacoes-integracoes": imgProgramacao,
+  "identidade-visual": imgDesign,
+  "sites-landing-pages": imgProgramacao,
+  "design-pecas": imgDesign,
+  "diagnostico-hardware": imgManutencao,
+  "formatacao-otimizacao": imgManutencao,
+  "edicao-reels": imgSocial,
+  "gestao-redes-sociais": imgSocial,
+  "impressao-3d": imgProgramacao,
+  "limpeza-pasta-termica": imgManutencao,
+  "loja-virtual": imgProgramacao,
+  "pacote-artes-feed-stories": imgSocial,
+  "sistemas-sob-medida": imgProgramacao,
+  "trafego-pago": imgSocial,
+  "upgrade-ssd-ram": imgManutencao,
+  // Produtos sem imagem própria no catálogo: use foto específica disponível.
+  "adesivacao-vitrine-veiculo": imgFloorSticker,
+  "adesivo-vinil": imgHoloSticker,
+  "banner-lona-440g": imgBanners,
+  "banner-vinil-280g": imgBannerBacklight,
+  "camiseta-dtf": imgCamisetas,
+  "camiseta-personalizada": imgCamisetas,
+  "camiseta-silk": imgPolo,
+  "camiseta-sublimada": imgHoodie,
+  "caneca-plastico": imgCanecas,
+  "caneca-porcelana": imgMagicMug,
+  "cartao-pvc": imgIdBadge,
+  "convite-casamento": imgWeddingInvite,
+  "fachada-acm": imgBannerBacklight,
+  "lona-front-light": imgBanners,
+  "panfleto-a4": imgPanfletos,
+  "panfleto-a5-couche-115g": imgBrochure,
+  "panfleto-a6": imgPoster,
+  "plotagem-a0-color": imgPlotagem,
+  "plotagem-a3-colorida": imgPlotagem,
   // Cartões
   "cartao-couche-250g": imgBusinessCard,
   "cartao-visita-couche-300g": imgBusinessCard,
@@ -63,7 +100,7 @@ const PRODUCT_IMAGES_BY_SLUG: Record<string, string> = {
   "cartao-kraft": imgBusinessCard,
   "cartao-pvc": imgIdBadge,
   "convite-casamento": imgWeddingInvite,
-  "cracha": imgIdBadge,
+  cracha: imgIdBadge,
   "talao-pedido": imgNotebook,
   // Camisetas
   "polo-bordada": imgPolo,
@@ -72,8 +109,8 @@ const PRODUCT_IMAGES_BY_SLUG: Record<string, string> = {
   "caneca-magica": imgMagicMug,
   // Brindes
   "bone-bordado": imgCap,
-  "ecobag": imgEcobag,
-  "avental": imgEcobag,
+  ecobag: imgEcobag,
+  avental: imgEcobag,
   "caderno-a5": imgNotebook,
   "bloco-anotacoes": imgNotebook,
   "calendario-mesa": imgCalendar,
@@ -109,21 +146,21 @@ const PRODUCT_IMAGES_BY_SLUG: Record<string, string> = {
  * Importadas estaticamente para o Vite processar como base64 ou arquivos otimizados.
  */
 export const CATEGORY_IMAGES: Record<string, string> = {
-  "Cartões": imgCartoes,
-  "Panfletos": imgPanfletos,
-  "Adesivos": imgAdesivos,
-  "Banners": imgBanners,
-  "Camisetas": imgCamisetas,
-  "Canecas": imgCanecas,
-  "Brindes": imgBrindes,
-  "Embalagens": imgEmbalagens,
-  "Plotagem": imgPlotagem,
+  Cartões: imgCartoes,
+  Panfletos: imgPanfletos,
+  Adesivos: imgAdesivos,
+  Banners: imgBanners,
+  Camisetas: imgCamisetas,
+  Canecas: imgCanecas,
+  Brindes: imgBrindes,
+  Embalagens: imgEmbalagens,
+  Plotagem: imgPlotagem,
   "Manutenção de Computadores": imgManutencao,
-  "Programação": imgProgramacao,
-  "Encadernação": imgNotebook,
+  Programação: imgProgramacao,
+  Encadernação: imgNotebook,
   "Laminação e Plastificação": imgLabelTransparent,
-  "Cartazes": imgPoster,
-  "Convites": imgWeddingInvite,
+  Cartazes: imgPoster,
+  Convites: imgWeddingInvite,
   "Copos Térmicos": imgSqueeze,
   "Social Media": imgSocial,
   "Design Gráfico": imgDesign,
@@ -184,9 +221,15 @@ export function resolveProductImage(
   category: string | null | undefined,
   slug?: string | null,
 ): string | undefined {
-  // Prefer the real image stored on the product record over any illustrative fallback.
+  // Catalog records often repeat one category cover. Prefer a product-specific
+  // local image first, then keep a genuinely custom image supplied by the user.
+  if (slug && PRODUCT_IMAGES_BY_SLUG[slug]) {
+    return PRODUCT_IMAGES_BY_SLUG[slug];
+  }
+
   if (imageUrl?.startsWith("http") || imageUrl?.startsWith("data:")) {
-    return imageUrl;
+    const localProductImage = getImageFromFileName(imageUrl);
+    return localProductImage ?? imageUrl;
   }
 
   if (imageUrl) {
@@ -194,10 +237,6 @@ export function resolveProductImage(
     if (localProductImage) {
       return localProductImage;
     }
-  }
-
-  if (slug && PRODUCT_IMAGES_BY_SLUG[slug]) {
-    return PRODUCT_IMAGES_BY_SLUG[slug];
   }
 
   // URLs relativas (inclui `/__l5e/...` do CDN de assets do Lovable).
