@@ -438,7 +438,7 @@ function PublicShell({ children }: { children: React.ReactNode }) {
       <div className="mx-auto max-w-6xl">
         <div className="mb-6 flex justify-center">
           <img
-            src="/brand/alcateia-logo.png"
+            src="/brand/decode-logo.png"
             alt="Decode Analytics"
             className="h-28 w-auto object-contain"
           />

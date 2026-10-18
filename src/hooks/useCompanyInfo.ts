@@ -86,7 +86,7 @@ export function useCompanyInfo(): CompanyInfo {
     hours: STORE_CONTACT.hours,
     showPrices: data?.show_prices !== false,
     heroTitle: data?.hero_title ?? "IMPRESSÃO<br />PRODUÇÕES GRÁFICAS",
-    heroSubtitle: data?.hero_subtitle ?? "Cartões, banners, camisetas, canecas, adesivos e brindes feitos com acabamento profissional pela Decode Analytics — gráfica que uiva por qualidade.",
+    heroSubtitle: data?.hero_subtitle ?? "Cartões, banners, camisetas, canecas, adesivos e brindes feitos com acabamento profissional pela Decode Analytics — soluções em gráfica, tecnologia e marketing digital.",
     heroCtaPrimary: data?.hero_cta_primary ?? "Ver produtos",
     heroCtaSecondary: data?.hero_cta_secondary ?? "Enviar minha arte",
     bentoKicker: data?.bento_kicker ?? "Os favoritos dos IMbatíveis",

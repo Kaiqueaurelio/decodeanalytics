@@ -88,7 +88,7 @@ function AuthPage() {
       <div className="auth-card w-full max-w-md rounded-2xl border border-border bg-card p-5 shadow-2xl sm:p-8">
         <div className="text-center mb-4 sm:mb-6">
           <img
-            src="/brand/alcateia-logo.png"
+            src="/brand/decode-logo.png"
             alt="Decode Analytics Produções Gráficas - Criando impacto a cada imagem"
             className="auth-logo mx-auto mb-3 h-24 w-auto max-w-full object-contain sm:mb-4 sm:h-36 md:h-44"
           />

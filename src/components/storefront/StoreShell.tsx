@@ -99,7 +99,7 @@ function StoreHeader() {
           className="flex shrink-0 items-center gap-2 sm:gap-3 transition-transform hover:scale-[1.02]"
         >
           <img
-            src="/brand/alcateia-logo.png"
+            src="/brand/decode-logo.png"
             alt="Decode Analytics"
             className="h-10 w-auto sm:h-12 md:h-14 object-contain"
           />
@@ -191,7 +191,7 @@ function StoreHeader() {
               <div className="flex items-center justify-between border-b border-[var(--store-border)] px-6 py-5">
                 <div className="flex items-center gap-3">
                   <img
-                    src="/brand/alcateia-logo.png"
+                    src="/brand/decode-logo.png"
                     alt="Decode Analytics"
                     className="h-10 w-auto object-contain"
                   />
@@ -344,7 +344,7 @@ function StoreFooter() {
         <div>
           <div className="flex items-center gap-3">
             <img
-              src="/brand/alcateia-logo.png"
+              src="/brand/decode-logo.png"
               alt="Decode Analytics"
               className="h-16 w-auto object-contain"
             />
