@@ -35,7 +35,7 @@ import {
 export function StoreShell({ children }: { children: ReactNode }) {
   return (
     <div
-      className="min-h-dvh bg-[var(--store-bg)] text-[var(--store-text)]"
+      className="storefront-dark min-h-dvh bg-[var(--store-bg)] text-[var(--store-text)]"
       style={{ fontFamily: "var(--store-font)" }}
     >
       <TopPromoBar />

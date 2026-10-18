@@ -734,3 +734,48 @@
 a[href*="lovable.dev"][target="_blank"] {
   display: none !important;
 }
+
+
+/* Decode storefront dark appearance. White utility surfaces in existing
+   catalog components are remapped here so routes share one readable theme. */
+.storefront-dark {
+  --store-bg: #050505;
+  --store-surface: #0B1026;
+  --store-surface-soft: #111A38;
+  --store-text: #F8FAFC;
+  --store-text-muted: #CBD5E1;
+  --store-text-light: #94a3b8;
+  --store-border: rgba(248, 250, 252, 0.14);
+  --store-border-strong: rgba(248, 250, 252, 0.24);
+  background-color: var(--store-bg);
+  color: var(--store-text);
+}
+.storefront-dark [class~="bg-white"],
+.storefront-dark [class~="bg-white/60"],
+.storefront-dark [class~="bg-white/50"],
+.storefront-dark [class~="bg-[#F8FAFC]"] {
+  background-color: #0B1026 !important;
+}
+.storefront-dark [class~="text-[#0B1026]"] {
+  color: #F8FAFC !important;
+}
+.storefront-dark [class~="text-slate-600"],
+.storefront-dark [class~="text-slate-500"],
+.storefront-dark [class~="text-slate-400"],
+.storefront-dark [class~="text-gray-600"],
+.storefront-dark [class~="text-gray-500"] {
+  color: #CBD5E1 !important;
+}
+.storefront-dark [class~="border-slate-200"],
+.storefront-dark [class~="border-gray-200"] {
+  border-color: rgba(248, 250, 252, 0.14) !important;
+}
+.storefront-dark input,
+.storefront-dark textarea,
+.storefront-dark select {
+  color: #F8FAFC;
+}
+.storefront-dark input::placeholder,
+.storefront-dark textarea::placeholder {
+  color: #94a3b8;
+}
