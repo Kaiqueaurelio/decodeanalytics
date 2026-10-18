@@ -2,7 +2,7 @@
 -- Existing clients, quotes, orders, cash entries and receivables are intentionally preserved.
 UPDATE public.company_settings
 SET name = 'Decode Analytics',
-    whatsapp = '11939222885',
+    whatsapp = '11939223885',
     instagram = 'decode.analytics',
     address = NULL,
     document = NULL,
