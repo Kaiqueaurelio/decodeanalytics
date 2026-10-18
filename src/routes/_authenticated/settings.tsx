@@ -10,7 +10,6 @@ import { Card } from "@/components/ui/card";
 import { toast } from "sonner";
 import { FileUp, Loader2 } from "lucide-react";
 import { safeFileName } from "@/lib/briefing";
-import { DEFAULT_COMPANY_DOCUMENT } from "@/lib/format";
 
 const DEFAULT_DOCUMENT = "";
 

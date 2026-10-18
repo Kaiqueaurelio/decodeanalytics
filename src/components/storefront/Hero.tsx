@@ -73,8 +73,8 @@ export function Hero() {
             <div className="relative animate-float">
               <div className="relative aspect-square overflow-hidden rounded-[var(--store-radius-xl)] border border-white/20 bg-white p-2 shadow-2xl rotate-[-2deg] transition-transform duration-500 hover:rotate-0">
                 <img
-                  src={CATEGORY_IMAGES["Cartões"]}
-                  alt="Cartões de Visita Premium"
+                  src={CATEGORY_IMAGES["Dados & Business Intelligence"]}
+                  alt="Dados e Business Intelligence"
                   className="h-full w-full rounded-[var(--store-radius-lg)] object-cover brightness-[1.02] contrast-[1.05] saturate-[1.1]"
                   loading="eager"
                 />
