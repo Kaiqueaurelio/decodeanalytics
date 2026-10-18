@@ -89,7 +89,7 @@ function AuthPage() {
         <div className="text-center mb-4 sm:mb-6">
           <img
             src="/brand/decode-logo.png"
-            alt="Decode Analytics Produções Gráficas - Criando impacto a cada imagem"
+            alt="Decode Analytics — Design & Soluções - Criando impacto a cada imagem"
             className="auth-logo mx-auto mb-3 h-24 w-auto max-w-full object-contain sm:mb-4 sm:h-36 md:h-44"
           />
           <h1 className="text-xl sm:text-2xl font-bold text-primary">Decode Analytics Gestão</h1>
