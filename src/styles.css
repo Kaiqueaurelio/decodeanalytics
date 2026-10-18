@@ -779,3 +779,102 @@ a[href*="lovable.dev"][target="_blank"] {
 .storefront-dark textarea::placeholder {
   color: #94a3b8;
 }
+
+
+/* Contrast and interaction refinements for the dark storefront. */
+.storefront-dark [class~="bg-white/95"],
+.storefront-dark [class~="bg-white/90"],
+.storefront-dark [class~="bg-white/80"],
+.storefront-dark [class~="bg-white/70"],
+.storefront-dark [class~="bg-white/60"],
+.storefront-dark [class~="bg-white/50"],
+.storefront-dark [class~="bg-white/40"],
+.storefront-dark [class~="bg-white/30"],
+.storefront-dark [class~="bg-white/20"],
+.storefront-dark [class~="bg-slate-50"],
+.storefront-dark [class~="bg-gray-50"],
+.storefront-dark [class~="bg-gray-100"] {
+  background-color: #0B1026 !important;
+}
+.storefront-dark [class~="bg-white/95"] { background-color: rgb(11 16 38 / 97%) !important; }
+.storefront-dark [class~="bg-white/90"] { background-color: rgb(11 16 38 / 94%) !important; }
+.storefront-dark [class~="bg-white/80"] { background-color: rgb(11 16 38 / 90%) !important; }
+.storefront-dark [class~="bg-white/70"] { background-color: rgb(11 16 38 / 86%) !important; }
+.storefront-dark [class~="bg-white/60"] { background-color: rgb(11 16 38 / 82%) !important; }
+.storefront-dark [class~="bg-white/50"] { background-color: rgb(11 16 38 / 78%) !important; }
+.storefront-dark [class~="bg-white/40"] { background-color: rgb(11 16 38 / 74%) !important; }
+.storefront-dark [class~="bg-white/30"] { background-color: rgb(11 16 38 / 70%) !important; }
+.storefront-dark [class~="bg-white/20"] { background-color: rgb(11 16 38 / 66%) !important; }
+
+.storefront-dark [class~="text-[var(--store-primary)]"],
+.storefront-dark [class~="text-[#087CF0]"] {
+  color: #70B8FF !important;
+}
+.storefront-dark [class~="text-[var(--store-accent)]"],
+.storefront-dark [class~="text-[#7138F5]"] {
+  color: #C4B5FD !important;
+}
+.storefront-dark [class~="text-slate-900"],
+.storefront-dark [class~="text-slate-800"],
+.storefront-dark [class~="text-slate-700"],
+.storefront-dark [class~="text-slate-600"],
+.storefront-dark [class~="text-slate-500"],
+.storefront-dark [class~="text-slate-400"],
+.storefront-dark [class~="text-gray-900"],
+.storefront-dark [class~="text-gray-800"],
+.storefront-dark [class~="text-gray-700"],
+.storefront-dark [class~="text-gray-600"],
+.storefront-dark [class~="text-gray-500"],
+.storefront-dark [class~="text-gray-400"] {
+  color: #CBD5E1 !important;
+}
+.storefront-dark [class~="bg-[var(--store-primary)]"] {
+  background-color: #075BB5 !important;
+  color: #F8FAFC !important;
+}
+.storefront-dark [class~="hover:bg-[var(--store-primary-light)]"]:hover {
+  background-color: #064A91 !important;
+}
+.storefront-dark [class~="hover:text-[var(--store-primary)]"]:hover {
+  color: #70B8FF !important;
+}
+.storefront-dark [class~="focus:border-[var(--store-primary-light)]"]:focus,
+.storefront-dark [class~="focus-visible:outline-[#087CF0]"]:focus-visible {
+  border-color: #67E8F9 !important;
+  outline-color: #67E8F9 !important;
+}
+.storefront-dark [class~="border-slate-300"],
+.storefront-dark [class~="border-gray-300"] {
+  border-color: rgba(248, 250, 252, 0.24) !important;
+}
+.storefront-dark input,
+.storefront-dark textarea,
+.storefront-dark select {
+  background-color: #111A38;
+  border-color: rgba(248, 250, 252, 0.24);
+  caret-color: #67E8F9;
+}
+.storefront-dark input::placeholder,
+.storefront-dark textarea::placeholder {
+  color: #CBD5E1;
+  opacity: 1;
+}
+.storefront-dark :focus-visible {
+  outline: 2px solid #67E8F9;
+  outline-offset: 3px;
+}
+.storefront-dark :disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .storefront-dark *,
+  .storefront-dark *::before,
+  .storefront-dark *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

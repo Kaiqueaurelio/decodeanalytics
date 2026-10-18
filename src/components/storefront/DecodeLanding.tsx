@@ -37,7 +37,7 @@ const solutions = [
     short: "Soluções digitais feitas para você.",
     detail: "Sites, ferramentas e automações planejadas para simplificar processos e abrir novas possibilidades para sua empresa.",
     Icon: Code2,
-    color: "from-[#087CF0] to-[#7138F5]",
+    color: "from-[#075BB5] to-[#6532C6]",
   },
 ];
 
@@ -70,7 +70,7 @@ export function DecodeLanding() {
               Tecnologia, criatividade e estratégia trabalhando juntas para levar sua marca e seu negócio mais longe.
             </p>
             <div className="mt-9 flex flex-col gap-3 sm:flex-row">
-              <a href={waLink("Olá! Quero conversar sobre uma solução para o meu negócio.")} target="_blank" rel="noopener noreferrer" className="group inline-flex min-h-14 items-center justify-center gap-3 rounded-xl bg-gradient-to-r from-[#087CF0] to-[#7138F5] px-6 text-sm font-bold text-white shadow-[0_12px_36px_rgba(8,124,240,.28)] transition duration-300 hover:-translate-y-0.5 hover:shadow-[0_16px_42px_rgba(113,56,245,.34)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#22D3EE]">
+              <a href={waLink("Olá! Quero conversar sobre uma solução para o meu negócio.")} target="_blank" rel="noopener noreferrer" className="group inline-flex min-h-14 items-center justify-center gap-3 rounded-xl bg-gradient-to-r from-[#075BB5] to-[#6532C6] px-6 text-sm font-bold text-white shadow-[0_12px_36px_rgba(8,124,240,.28)] transition duration-300 hover:-translate-y-0.5 hover:shadow-[0_16px_42px_rgba(113,56,245,.34)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#22D3EE]">
                 Vamos conversar <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
               </a>
               <a href="#solucoes" className="inline-flex min-h-14 items-center justify-center gap-2 rounded-xl border border-white/15 bg-white/[0.04] px-6 text-sm font-semibold text-white transition hover:border-[#22D3EE]/60 hover:bg-white/[0.08] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#22D3EE]">
@@ -100,7 +100,7 @@ export function DecodeLanding() {
               </div>
             </div>
             <div className="absolute -bottom-5 -left-5 hidden items-center gap-3 rounded-2xl border border-white/10 bg-[#10162E] px-4 py-3 shadow-xl sm:flex">
-              <span className="grid h-10 w-10 place-items-center rounded-xl bg-gradient-to-br from-[#087CF0] to-[#7138F5]"><Workflow className="h-5 w-5" /></span>
+              <span className="grid h-10 w-10 place-items-center rounded-xl bg-gradient-to-br from-[#075BB5] to-[#6532C6]"><Workflow className="h-5 w-5" /></span>
               <span><span className="block text-xs font-bold">Uma equipe, várias soluções</span><span className="mt-1 block text-[10px] text-slate-400">Tecnologia + criatividade</span></span>
             </div>
           </div>
@@ -155,7 +155,7 @@ export function DecodeLanding() {
       <section id="contato" className="scroll-mt-20 px-4 py-16 sm:px-8 lg:px-16 lg:py-24">
         <div className="mx-auto flex max-w-[1280px] flex-col items-start justify-between gap-8 rounded-[1.75rem] border border-white/10 bg-gradient-to-br from-[#10162E] via-[#111A38] to-[#21154A] p-7 sm:p-10 md:flex-row md:items-center lg:p-14">
           <div><p className="mb-3 text-xs font-extrabold uppercase tracking-[.24em] text-[#22D3EE]">Vamos construir juntos</p><h2 className="font-display max-w-2xl text-3xl font-bold leading-tight sm:text-4xl">Seu próximo passo começa com uma conversa.</h2><p className="mt-4 max-w-xl text-sm leading-6 text-slate-300">Conte o que você precisa. Vamos encontrar a solução certa para o seu momento.</p></div>
-          <a href={waLink("Olá! Quero conversar sobre os serviços da Decode Analytics.")} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-14 shrink-0 items-center justify-center gap-3 rounded-xl bg-gradient-to-r from-[#087CF0] to-[#7138F5] px-6 text-sm font-extrabold text-white shadow-lg transition hover:-translate-y-0.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#22D3EE]">Fale com a Decode <MessageCircle className="h-4 w-4" /></a>
+          <a href={waLink("Olá! Quero conversar sobre os serviços da Decode Analytics.")} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-14 shrink-0 items-center justify-center gap-3 rounded-xl bg-gradient-to-r from-[#075BB5] to-[#6532C6] px-6 text-sm font-extrabold text-white shadow-lg transition hover:-translate-y-0.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#22D3EE]">Fale com a Decode <MessageCircle className="h-4 w-4" /></a>
         </div>
       </section>
     </div>
