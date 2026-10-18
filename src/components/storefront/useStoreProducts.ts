@@ -34,7 +34,8 @@ export function isComputerService(p: StoreProduct): boolean {
   const text = `${p.slug ?? ""} ${p.name ?? ""} ${p.category ?? ""}`
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
-    .toLowerCase();
+    .toLowerCase()
+    .replace(/[-_]+/g, " ");
   return /manutencao de computadores|informatica|suporte tecnico|formatacao|diagnostico de hardware|upgrade ssd|limpeza.*pasta termica/.test(text);
 }
 
