@@ -25,12 +25,12 @@ export const STORE_CATEGORIES = [
 ] as const;
 
 function categoryKey(value: string) {
-  return value.normalize("NFD").replace(/[\\u0300-\\u036f]/g, "").trim().replace(/\\s+/g, " ").toLocaleLowerCase("pt-BR");
+  return value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim().replace(/\s+/g, " ").toLocaleLowerCase("pt-BR");
 }
 
 /** Canonicalize known categories while preserving custom category names. */
 export function normalizeStoreCategory(value: string) {
-  const clean = value.trim().replace(/\\s+/g, " ");
+  const clean = value.trim().replace(/\s+/g, " ");
   const key = categoryKey(clean);
   const known = STORE_CATEGORIES.find((category) =>
     category.slug !== "todos" &&
