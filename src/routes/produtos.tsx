@@ -1,8 +1,6 @@
 import { createFileRoute, Link, useSearch } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import { Search as SearchIcon } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
 import { StoreShell } from "@/components/storefront/StoreShell";
 import {
   ProductCard,
@@ -12,8 +10,7 @@ import {
   type StoreProduct,
 } from "@/components/storefront/ProductCard";
 import { STORE_CATEGORIES } from "@/components/storefront/tokens";
-import { resolveProductImage } from "@/components/storefront/productImages";
-import { isComputerService, isOfferedProduct } from "@/components/storefront/useStoreProducts";
+import { useStoreProducts } from "@/components/storefront/useStoreProducts";
 
 type Search = { cat?: string; q?: string };
 
@@ -41,26 +38,8 @@ function ProdutosPage() {
   const [text, setText] = useState(search.q ?? "");
   const cat = search.cat ?? "todos";
 
-  const { data, isLoading } = useQuery({
-    queryKey: ["store-catalog"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("services")
-        .select(
-          "id,name,slug,category,short_description,base_price,image_url,rating,reviews_count,min_quantity,badge,specs,unit",
-        )
-        .eq("active", true)
-        .order("reviews_count", { ascending: false });
-      if (error) throw error;
-      return ((data ?? []) as StoreProduct[])
-        .filter(isOfferedProduct)
-        .map((p) => ({
-          ...p,
-          image_url: resolveProductImage(p.image_url, p.category, p.slug),
-        }))
-        .sort((a, b) => Number(isComputerService(b)) - Number(isComputerService(a)));
-    },
-  });
+  // Reutiliza a consulta paginada e atualizada em tempo real usada na landing page.
+  const { data, isLoading, isError } = useStoreProducts();
 
   const filtered = useMemo(() => {
     const list = data ?? [];
@@ -121,6 +100,10 @@ function ProdutosPage() {
               <ProductCardSkeleton key={i} />
             ))}
           </ProductGrid>
+        ) : isError ? (
+          <div role="alert" className="rounded-[var(--store-radius-lg)] border border-amber-300/30 bg-amber-50 p-8 text-center text-sm text-amber-900">
+            Não foi possível carregar o catálogo. Verifique sua conexão e tente novamente.
+          </div>
         ) : filtered.length ? (
           <ProductGrid>
             {filtered.map((p) => (
