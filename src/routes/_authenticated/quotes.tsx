@@ -195,7 +195,15 @@ function QuoteEditor({ open, onOpenChange, id, onSaved }: { open: boolean; onOpe
       qid = res.data.id;
     }
 
-    // Insert first: if this fails, do not delete the existing items.
+    // Read the old item IDs first. Insert new rows before deleting old ones so an
+    // insert failure never destroys the current quote details.
+    let oldItemIds: string[] = [];
+    if (id) {
+      const { data: oldItems, error: readError } = await supabase.from("quote_items").select("id").eq("quote_id", qid);
+      if (readError) return toast.error(`Não foi possível preparar a atualização dos itens: ${readError.message}`);
+      oldItemIds = (oldItems ?? []).map((item) => item.id);
+    }
+
     const { error: insertError } = await supabase.from("quote_items").insert(items.map((i) => ({
       quote_id: qid!,
       description: i.description.trim(),
@@ -206,15 +214,13 @@ function QuoteEditor({ open, onOpenChange, id, onSaved }: { open: boolean; onOpe
     })));
     if (insertError) return toast.error(`O orçamento foi salvo, mas os itens não foram atualizados: ${insertError.message}`);
 
-    if (id) {
-      const { error: deleteError } = await supabase.from("quote_items").delete().eq("quote_id", qid).not("id", "in", `(${items.map((item) => item.id).filter(Boolean).join(",")})`);
-      // Existing items are replaced below only when the database returned stable item IDs.
-      // If IDs are not present in the editor, leave old rows untouched rather than risk data loss.
+    if (oldItemIds.length) {
+      const { error: deleteError } = await supabase.from("quote_items").delete().in("id", oldItemIds);
       if (deleteError) {
-        return toast.error("Os novos itens foram adicionados, mas os antigos precisam ser revisados. Nenhum item foi removido automaticamente.");
+        return toast.error("Os novos itens foram adicionados, mas não foi possível remover os anteriores. Revise este orçamento antes de continuar.");
       }
     }
-    toast.success("Orçamento salvo. Confira os itens se estiver editando um orçamento existente.");
+    toast.success("Orçamento salvo.");
     onOpenChange(false);
     onSaved();
   }
