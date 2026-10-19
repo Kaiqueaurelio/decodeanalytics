@@ -14,7 +14,7 @@ type Notification = {
 };
 
 export function NotificationsBell() {
-  const { data } = useQuery({
+  const { data, isError, refetch } = useQuery({
     queryKey: ["notifications-bell"],
     queryFn: async () => {
       const [ordersRes, receivablesRes] = await Promise.all([
@@ -30,6 +30,8 @@ export function NotificationsBell() {
           .order("due_date", { ascending: true })
           .limit(50),
       ]);
+      if (ordersRes.error) throw ordersRes.error;
+      if (receivablesRes.error) throw receivablesRes.error;
       return {
         orders: (ordersRes.data ?? []) as any[],
         receivables: (receivablesRes.data ?? []) as any[],
@@ -93,7 +95,7 @@ export function NotificationsBell() {
       <PopoverTrigger asChild>
         <button
           type="button"
-          className="relative hidden rounded-xl border border-border bg-white p-2.5 text-brand-blue shadow-sm transition-colors hover:bg-muted sm:block"
+          className="relative inline-flex min-h-11 min-w-11 items-center justify-center rounded-xl border border-border bg-white p-2.5 text-brand-blue shadow-sm transition-colors hover:bg-muted"
           aria-label="Notificações"
         >
           <Bell className="h-5 w-5" />
@@ -108,11 +110,16 @@ export function NotificationsBell() {
         <div className="border-b border-border px-4 py-3">
           <p className="text-sm font-black">Notificações</p>
           <p className="text-xs text-muted-foreground">
-            {count > 0 ? `${count} alerta${count > 1 ? "s" : ""}` : "Nenhum alerta no momento"}
+            {isError ? "Não foi possível carregar os alertas" : count > 0 ? `${count} alerta${count > 1 ? "s" : ""}` : "Nenhum alerta no momento"}
           </p>
         </div>
         <div className="max-h-80 overflow-y-auto">
-          {notifications.length === 0 ? (
+          {isError ? (
+            <div className="px-4 py-6 text-center text-sm text-muted-foreground">
+              <p>Não conseguimos consultar as ordens e os recebíveis.</p>
+              <button type="button" onClick={() => void refetch()} className="mt-3 inline-flex min-h-11 items-center rounded-lg border border-border px-3 font-semibold text-foreground hover:bg-muted">Tentar novamente</button>
+            </div>
+          ) : notifications.length === 0 ? (
             <div className="px-4 py-6 text-center text-sm text-muted-foreground">
               Tudo em dia por aqui. 🎉
             </div>
