@@ -22,28 +22,90 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const { data: sub } = supabase.auth.onAuthStateChange((_event, s) => {
-      setSession(s);
-      if (s?.user) {
-        // defer to avoid deadlock
-        setTimeout(() => loadRoles(s.user.id), 0);
-      } else {
+    let active = true;
+    let roleRequest = 0;
+    let deferredLoad: ReturnType<typeof setTimeout> | undefined;
+
+    async function loadRoles(userId: string) {
+      const requestId = ++roleRequest;
+      setLoading(true);
+
+      try {
+        const { data, error } = await supabase
+          .from("user_roles")
+          .select("role")
+          .eq("user_id", userId);
+
+        // Ignore stale responses if the account changed while the query was running.
+        if (!active || requestId !== roleRequest) return;
+
+        if (error) {
+          console.error("[Auth] Não foi possível carregar os papéis do usuário.", error);
+          setRoles([]);
+          return;
+        }
+
+        setRoles((data ?? []).map((row) => row.role as AppRole));
+      } catch (error) {
+        if (!active || requestId !== roleRequest) return;
+        console.error("[Auth] Falha inesperada ao carregar os papéis do usuário.", error);
         setRoles([]);
+      } finally {
+        if (active && requestId === roleRequest) setLoading(false);
+      }
+    }
+
+    const { data: sub } = supabase.auth.onAuthStateChange((_event, nextSession) => {
+      setSession(nextSession);
+      // Never retain the previous account's permissions while a new session loads.
+      setRoles([]);
+      if (deferredLoad) clearTimeout(deferredLoad);
+
+      if (nextSession?.user) {
+        deferredLoad = setTimeout(() => {
+          void loadRoles(nextSession.user.id);
+        }, 0);
+      } else {
+        // Invalidate any pending role query from the previous session.
+        roleRequest += 1;
+        setLoading(false);
       }
     });
-    supabase.auth.getSession().then(({ data }) => {
-      setSession(data.session);
-      if (data.session?.user) loadRoles(data.session.user.id).finally(() => setLoading(false));
-      else setLoading(false);
-    });
-    return () => sub.subscription.unsubscribe();
-  }, []);
 
-  async function loadRoles(userId: string) {
-    const { data } = await supabase.from("user_roles").select("role").eq("user_id", userId);
-    const userRoles = (data?.map((r) => r.role as AppRole)) ?? [];
-    setRoles(userRoles);
-  }
+    void supabase.auth.getSession()
+      .then(({ data, error }) => {
+        if (!active) return;
+        if (error) {
+          console.error("[Auth] Não foi possível recuperar a sessão.", error);
+          setSession(null);
+          setRoles([]);
+          setLoading(false);
+          return;
+        }
+
+        setSession(data.session);
+        if (data.session?.user) {
+          void loadRoles(data.session.user.id);
+        } else {
+          setRoles([]);
+          setLoading(false);
+        }
+      })
+      .catch((error: unknown) => {
+        if (!active) return;
+        console.error("[Auth] Falha inesperada ao recuperar a sessão.", error);
+        setSession(null);
+        setRoles([]);
+        setLoading(false);
+      });
+
+    return () => {
+      active = false;
+      roleRequest += 1;
+      if (deferredLoad) clearTimeout(deferredLoad);
+      sub.subscription.unsubscribe();
+    };
+  }, []);
 
   const value: AuthCtx = {
     user: session?.user ?? null,
@@ -51,7 +113,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     roles,
     loading,
     signOut: async () => {
-      await supabase.auth.signOut();
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
     },
     hasRole: (...r) => r.some((x) => roles.includes(x)),
     isAdmin: roles.includes("administrador"),
