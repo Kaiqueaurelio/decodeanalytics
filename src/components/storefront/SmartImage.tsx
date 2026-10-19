@@ -4,6 +4,7 @@ import { Image as ImageIcon } from "lucide-react";
 interface SmartImageProps extends Omit<React.ImgHTMLAttributes<HTMLImageElement>, "src"> {
   src?: string | null;
   fallbackClass?: string;
+  fallbackSrc?: string | null;
 }
 
 export function SmartImage({
@@ -11,18 +12,21 @@ export function SmartImage({
   alt,
   className,
   fallbackClass = "bg-gradient-to-br from-[#10162E] via-[#0B1026] to-[#050505]",
+  fallbackSrc,
   onLoad,
   onError,
   ...props
 }: SmartImageProps) {
   const imgRef = useRef<HTMLImageElement>(null);
   const [error, setError] = useState(false);
+  const [fallbackAttempted, setFallbackAttempted] = useState(false);
   const [loading, setLoading] = useState(Boolean(src));
 
   useEffect(() => {
     setError(false);
+    setFallbackAttempted(false);
     setLoading(Boolean(src));
-  }, [src]);
+  }, [src, fallbackSrc]);
 
   useEffect(() => {
     const img = imgRef.current;
@@ -34,9 +38,9 @@ export function SmartImage({
       setLoading(false);
       setError(true);
     }
-  }, [src]);
+  }, [src, fallbackSrc, fallbackAttempted]);
 
-  if (error || !src) {
+  if (error || (!src && !fallbackSrc)) {
     return (
       <div
         role="img"
@@ -66,7 +70,7 @@ export function SmartImage({
       )}
       <img
         ref={imgRef}
-        src={src}
+        src={fallbackAttempted ? (fallbackSrc ?? src) : src}
         alt={alt}
         className={`h-full w-full object-cover transition-opacity duration-300 ${loading ? "opacity-0" : "opacity-100"}`}
         onLoad={(event) => {
@@ -75,7 +79,12 @@ export function SmartImage({
         }}
         onError={(event) => {
           setLoading(false);
-          setError(true);
+          if (fallbackSrc && !fallbackAttempted && src !== fallbackSrc) {
+            setFallbackAttempted(true);
+            setLoading(true);
+          } else {
+            setError(true);
+          }
           onError?.(event);
         }}
         {...props}
