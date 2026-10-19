@@ -31,6 +31,7 @@ import { Route as AuthenticatedEllaTrainingRouteImport } from './routes/_authent
 import { Route as AuthenticatedInventoryRouteImport } from './routes/_authenticated/inventory'
 import { Route as AuthenticatedOrdersRouteImport } from './routes/_authenticated/orders'
 import { Route as AuthenticatedPdvRouteImport } from './routes/_authenticated/pdv'
+import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
 import { Route as AuthenticatedProductionRouteImport } from './routes/_authenticated/production'
 import { Route as AuthenticatedQuotesRouteImport } from './routes/_authenticated/quotes'
 import { Route as AuthenticatedReceivablesRouteImport } from './routes/_authenticated/receivables'
@@ -149,6 +150,11 @@ const AuthenticatedOrdersRoute = AuthenticatedOrdersRouteImport.update({
   path: '/orders',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedProfileRoute = AuthenticatedProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedPdvRoute = AuthenticatedPdvRouteImport.update({
   id: '/pdv',
   path: '/pdv',
@@ -229,6 +235,7 @@ export interface FileRoutesByFullPath {
   '/inventory': typeof AuthenticatedInventoryRoute
   '/orders': typeof AuthenticatedOrdersRoute
   '/pdv': typeof AuthenticatedPdvRoute
+  '/profile': typeof AuthenticatedProfileRoute
   '/production': typeof AuthenticatedProductionRoute
   '/quotes': typeof AuthenticatedQuotesRoute
   '/receivables': typeof AuthenticatedReceivablesRoute
@@ -297,6 +304,7 @@ export interface FileRoutesById {
   '/_authenticated/inventory': typeof AuthenticatedInventoryRoute
   '/_authenticated/orders': typeof AuthenticatedOrdersRoute
   '/_authenticated/pdv': typeof AuthenticatedPdvRoute
+  '/_authenticated/profile': typeof AuthenticatedProfileRoute
   '/_authenticated/production': typeof AuthenticatedProductionRoute
   '/_authenticated/quotes': typeof AuthenticatedQuotesRoute
   '/_authenticated/receivables': typeof AuthenticatedReceivablesRoute
@@ -669,6 +677,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedInventoryRoute: typeof AuthenticatedInventoryRoute
   AuthenticatedOrdersRoute: typeof AuthenticatedOrdersRoute
   AuthenticatedPdvRoute: typeof AuthenticatedPdvRoute
+  AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
   AuthenticatedProductionRoute: typeof AuthenticatedProductionRoute
   AuthenticatedQuotesRoute: typeof AuthenticatedQuotesRoute
   AuthenticatedReceivablesRoute: typeof AuthenticatedReceivablesRoute
