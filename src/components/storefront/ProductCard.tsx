@@ -3,6 +3,7 @@ import { Star } from "lucide-react";
 import { brl } from "./tokens";
 import { SmartImage } from "./SmartImage";
 import { useShowPrices } from "@/hooks/useCompanyInfo";
+import { resolveProductImage } from "./productImages";
 
 export type StoreProduct = {
   id: string;
@@ -45,6 +46,7 @@ export function ProductCard({ product }: { product: StoreProduct }) {
       >
         <SmartImage
           src={product.image_url}
+          fallbackSrc={resolveProductImage(null, product.category, product.slug ?? product.id)}
           alt={product.name}
           className="brightness-[1.02] contrast-[1.05] saturate-[1.08] transition-transform duration-500 group-hover:scale-110"
         />
