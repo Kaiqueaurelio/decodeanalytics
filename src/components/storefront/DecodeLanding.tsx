@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { ArrowDown, ArrowRight, Code2, Laptop, MessageCircle, PenTool, Share2, Sparkles, Workflow, Zap, Printer, Palette, Globe, BadgeCheck, Clock3, ShieldCheck, ShoppingBag } from "lucide-react";
+import { useEffect, useState } from "react";
+import { ArrowDown, ArrowRight, Code2, Laptop, MessageCircle, PenTool, Share2, Sparkles, Workflow, Zap, Printer, Palette, Globe, BadgeCheck, Clock3, ShieldCheck, ShoppingBag, Download, X } from "lucide-react";
 import { CATEGORY_IMAGES } from "@/components/storefront/productImages";
 import { InfiniteProducts } from "@/components/storefront/InfiniteProducts";
 import { useWaLink } from "@/hooks/useCompanyInfo";
@@ -45,7 +45,50 @@ const solutions = [
 
 export function DecodeLanding() {
   const [active, setActive] = useState(solutions[0]);
+  const [installPrompt, setInstallPrompt] = useState<((() => Promise<void>) | null)>(null);
+  const [installHelp, setInstallHelp] = useState(false);
+  const [isInstalled, setIsInstalled] = useState(false);
   const waLink = useWaLink();
+
+  useEffect(() => {
+    const standalone = window.matchMedia("(display-mode: standalone)").matches ||
+      Boolean((navigator as Navigator & { standalone?: boolean }).standalone);
+    setIsInstalled(standalone);
+
+    const handleBeforeInstallPrompt = (event: Event) => {
+      event.preventDefault();
+      const promptEvent = event as Event & {
+        prompt: () => Promise<void>;
+        userChoice: Promise<{ outcome: "accepted" | "dismissed"; platform: string }>;
+      };
+      setInstallPrompt(async () => {
+        await promptEvent.prompt();
+        const choice = await promptEvent.userChoice;
+        if (choice.outcome === "accepted") setInstallHelp(false);
+        setInstallPrompt(null);
+      });
+    };
+    const handleInstalled = () => {
+      setIsInstalled(true);
+      setInstallPrompt(null);
+      setInstallHelp(false);
+    };
+
+    window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
+    window.addEventListener("appinstalled", handleInstalled);
+    return () => {
+      window.removeEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
+      window.removeEventListener("appinstalled", handleInstalled);
+    };
+  }, []);
+
+  const handleInstallClick = async () => {
+    if (installPrompt) {
+      await installPrompt();
+      return;
+    }
+    setInstallHelp(true);
+  };
 
   return (
     <div className="overflow-hidden bg-[#05070D] text-[#F8FAFC]">
@@ -68,14 +111,29 @@ export function DecodeLanding() {
             <p className="mt-7 max-w-xl text-base leading-7 text-slate-300 sm:text-lg sm:leading-8">
               Explore serviços e produtos, compare as opções disponíveis e peça um orçamento sob medida — com tecnologia, design e atendimento próximo em um só lugar.
             </p>
-            <div className="mt-9 flex flex-col gap-3 sm:flex-row">
+            <div className="mt-9 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
               <a href="/orcamento" className="group inline-flex min-h-14 items-center justify-center gap-3 rounded-xl bg-gradient-to-r from-[#075BB5] to-[#6532C6] px-6 text-sm font-bold text-white shadow-[0_12px_36px_rgba(8,124,240,.28)] transition duration-300 hover:-translate-y-0.5 hover:shadow-[0_16px_42px_rgba(113,56,245,.34)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#22D3EE]">
                 Pedir orçamento <ArrowRight aria-hidden="true" className="h-4 w-4 transition-transform group-hover:translate-x-1" />
               </a>
               <a href="/produtos" className="inline-flex min-h-14 items-center justify-center gap-2 rounded-xl border border-white/15 bg-white/[0.04] px-6 text-sm font-semibold text-white transition hover:border-[#22D3EE]/60 hover:bg-white/[0.08] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#22D3EE]">
                 Explorar catálogo <ArrowDown aria-hidden="true" className="h-4 w-4 text-[#22D3EE]" />
               </a>
+              {!isInstalled && (
+                <button type="button" onClick={handleInstallClick} className="inline-flex min-h-14 items-center justify-center gap-2 rounded-xl border border-[#22D3EE]/50 bg-[#22D3EE]/10 px-6 text-sm font-extrabold text-[#67E8F9] transition hover:border-[#22D3EE] hover:bg-[#22D3EE]/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#22D3EE]">
+                  <Download aria-hidden="true" className="h-4 w-4" /> Instalar aplicativo
+                </button>
+              )}
             </div>
+            {installHelp && !isInstalled && (
+              <div role="status" className="relative mt-4 max-w-xl rounded-2xl border border-[#22D3EE]/30 bg-[#0B1026] p-4 pr-10 text-sm leading-6 text-slate-200">
+                <button type="button" aria-label="Fechar instruções de instalação" onClick={() => setInstallHelp(false)} className="absolute right-2 top-2 rounded-lg p-2 text-slate-400 hover:text-white">
+                  <X aria-hidden="true" className="h-4 w-4" />
+                </button>
+                <p className="font-bold text-white">Instale a Decode Analytics no seu celular</p>
+                <p className="mt-1">No iPhone: toque em <strong>Compartilhar</strong> no Safari e escolha <strong>Adicionar à Tela de Início</strong>.</p>
+                <p className="mt-1">No Android: abra o menu do navegador e toque em <strong>Instalar app</strong> ou <strong>Adicionar à tela inicial</strong>.</p>
+              </div>
+            )}
             <div className="mt-10 flex flex-wrap gap-x-7 gap-y-3 text-xs font-medium text-slate-400">
               <span className="inline-flex items-center gap-2"><span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-[#22D3EE]" />Atendimento próximo</span>
               <span className="inline-flex items-center gap-2"><span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-[#087CF0]" />Soluções sob medida</span>
