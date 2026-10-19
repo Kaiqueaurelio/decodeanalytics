@@ -3,26 +3,23 @@ import { createClient } from '@supabase/supabase-js';
 import type { Database } from './types';
 import { brokeredPreviewStorage } from './previewAuthStorage';
 
+// Public project URL and anon/publishable key are safe for browser use.
+// Environment variables override these defaults in each deployment.
+const DEFAULT_SUPABASE_URL = 'https://eicaveaosfqkssmrwujw.supabase.co';
+const DEFAULT_SUPABASE_PUBLISHABLE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVpY2F2ZWFvc2Zxa3NzbXJ3dWp3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQyNDU3NjgsImV4cCI6MjA3OTgyMTc2OH0.OwwIRIcDPU9F_7uuDniWYO1x6jEZLpPv6Gov6M4aR6A';
+
 function createSupabaseClient() {
   // Use import.meta.env for client-side (Vite build-time replacement)
-  // Fall back to process.env for SSR (server-side rendering)
-  // `process` does not exist in browsers. Guard the server fallback so a missing
-  // VITE_* value produces the intended configuration error instead of a
-  // ReferenceError that crashes the storefront during client rendering.
+  // Fall back to process.env for SSR (server-side rendering).
   const serverEnv = typeof process !== "undefined" ? process.env : undefined;
-  const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || serverEnv?.SUPABASE_URL;
+  const SUPABASE_URL =
+    import.meta.env.VITE_SUPABASE_URL ||
+    serverEnv?.SUPABASE_URL ||
+    DEFAULT_SUPABASE_URL;
   const SUPABASE_PUBLISHABLE_KEY =
-    import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || serverEnv?.SUPABASE_PUBLISHABLE_KEY;
-
-  if (!SUPABASE_URL || !SUPABASE_PUBLISHABLE_KEY) {
-    const missing = [
-      ...(!SUPABASE_URL ? ['SUPABASE_URL'] : []),
-      ...(!SUPABASE_PUBLISHABLE_KEY ? ['SUPABASE_PUBLISHABLE_KEY'] : []),
-    ];
-    const message = `Missing Supabase environment variable(s): ${missing.join(', ')}. Connect Supabase in Lovable Cloud.`;
-    console.error(`[Supabase] ${message}`);
-    throw new Error(message);
-  }
+    import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY ||
+    serverEnv?.SUPABASE_PUBLISHABLE_KEY ||
+    DEFAULT_SUPABASE_PUBLISHABLE_KEY;
 
   return createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
     auth: {
@@ -43,4 +40,3 @@ export const supabase = new Proxy({} as ReturnType<typeof createSupabaseClient>,
     return Reflect.get(_supabase, prop, receiver);
   },
 });
-
