@@ -4,7 +4,7 @@ import { ImagePlus, LoaderCircle, Plus, Pencil, X } from "lucide-react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
-import { STORE_CATEGORIES } from "@/components/storefront/tokens";
+import { STORE_CATEGORIES, normalizeStoreCategory } from "@/components/storefront/tokens";
 
 export const Route = createFileRoute("/_authenticated/catalog-admin")({ component: CatalogAdminPage });
 type Product = {id:string;name:string;category:string|null;base_price:number|string;short_description:string|null;image_url:string|null;active:boolean;slug:string|null};
@@ -16,7 +16,7 @@ function CatalogAdminPage(){
  if(authLoading||isLoading)return <Frame><p>Carregando catálogo…</p></Frame>;
  if(!isAdmin)return <Frame><h1 className="text-xl font-bold">Acesso restrito</h1><p className="mt-2 text-slate-300">Esta tela exige a função de administrador.</p></Frame>;
  async function save(e:FormEvent){e.preventDefault();setMessage("");
- const name=form.name.trim(),category=form.category.trim(),description=form.short_description.trim(),price=Number(form.base_price);
+ const name=form.name.trim(),category=normalizeStoreCategory(form.category),description=form.short_description.trim(),price=Number(form.base_price);
  if(!name||!category||!description){setMessage("Preencha nome, categoria e descrição.");return;}
  if(!Number.isFinite(price)||price<=0){setMessage("Informe um preço válido maior que zero.");return;}
  if(form.image_url.trim()){try{const url=new URL(form.image_url.trim());if(!["http:","https:"].includes(url.protocol))throw new Error("protocol");}catch{setMessage("Informe uma URL de imagem válida usando https:// ou http://.");return;}}
