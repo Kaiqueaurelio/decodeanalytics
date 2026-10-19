@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import type { StoreProduct } from "./ProductCard";
+import { resolveProductImage } from "./productImages";
 
 const SELECT =
   "id,name,slug,category,short_description,base_price,image_url,rating,reviews_count,min_quantity,badge,specs,unit";
@@ -43,9 +44,9 @@ function normalizeProducts(rows: StoreProduct[]): StoreProduct[] {
     .filter(isOfferedProduct)
     .map((p) => ({
       ...p,
-      // Use somente a foto real cadastrada pelo administrador. Sem foto, SmartImage
-      // mostra um placeholder em vez de uma imagem ilustrativa/genérica.
-      image_url: p.image_url,
+      // Preserve the product's own photo when available; otherwise use a local
+      // image for its product/category so the storefront card is never empty.
+      image_url: resolveProductImage(p.image_url, p.category, p.slug ?? p.id),
     }))
     .sort((a, b) => Number(isComputerService(b)) - Number(isComputerService(a)));
 }
