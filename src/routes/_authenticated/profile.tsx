@@ -44,21 +44,23 @@ function ProfilePage() {
     if (file.size > 5 * 1024 * 1024) return toast.error("A foto deve ter no máximo 5 MB.");
     setUploading(true);
     const extension = file.name.split(".").pop()?.toLowerCase() || "jpg";
-    const path = `avatars/${user.id}/profile-${Date.now()}.${extension}`;
+    const path = `avatars/${user.id}/profile.${extension}`;
     const { error } = await supabase.storage.from("company-assets").upload(path, file, { upsert: true, contentType: file.type });
     if (error) {
       setUploading(false);
       return toast.error("Não foi possível enviar a foto. Verifique as permissões do armazenamento.");
     }
-    const { data, error: urlError } = await supabase.storage.from("company-assets").createSignedUrl(path, 60 * 60 * 24 * 365);
-    if (urlError || !data) {
+    // O bucket company-assets é público; use uma URL pública estável em vez
+    // de uma URL assinada que expira e faria a foto desaparecer do perfil.
+    const { data } = supabase.storage.from("company-assets").getPublicUrl(path);
+    if (!data?.publicUrl) {
       setUploading(false);
       return toast.error("A foto foi enviada, mas não foi possível obter seu endereço.");
     }
-    const { error: profileError } = await supabase.auth.updateUser({ data: { avatar_url: data.signedUrl } });
+    const { error: profileError } = await supabase.auth.updateUser({ data: { avatar_url: data.publicUrl } });
     setUploading(false);
     if (profileError) return toast.error(profileError.message);
-    setAvatarUrl(data.signedUrl);
+    setAvatarUrl(data.publicUrl);
     toast.success("Foto de perfil atualizada.");
   }
 
