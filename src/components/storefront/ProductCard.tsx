@@ -48,7 +48,7 @@ export function ProductCard({ product }: { product: StoreProduct }) {
           alt={product.name}
           className="brightness-[1.02] contrast-[1.05] saturate-[1.08] transition-transform duration-500 group-hover:scale-110"
         />
-        {product.badge && tone && (
+        <span className="absolute bottom-2 right-2 rounded-lg border border-white/20 bg-[#080C1F]/90 p-1.5 shadow-md" aria-label="Decode Analytics">\n          <img src="/brand/decode-logo.png" alt="Decode Analytics" className="h-6 w-6 object-contain" loading="lazy" />\n        </span>\n        {product.badge && tone && (
           <span
             className={`absolute left-3 top-3 rounded-full px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-wide ${tone}`}
           >
