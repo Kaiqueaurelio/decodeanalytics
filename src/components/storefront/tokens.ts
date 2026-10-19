@@ -53,3 +53,8 @@ export function brl(value: number | string | null | undefined) {
   const n = typeof value === "number" ? value : Number(value ?? 0);
   return n.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 }
+
+export const INSTAGRAM_ACCOUNTS = [
+  { handle: "@decode.analytics", url: "https://instagram.com/decode.analytics" },
+  { handle: "@kaiqueaurelio.ai", url: "https://instagram.com/kaiqueaurelio.ai" },
+] as const;
