@@ -186,17 +186,14 @@ function QuoteEditor({ open, onOpenChange, id, onSaved }: { open: boolean; onOpe
     }
     const payload = { client_id: form.client_id, description: form.description, discount, total, validity_date: form.validity_date || null, notes: form.notes, status: form.status };
     let qid: string | null = id;
-    if (qid) {
-      const res = await supabase.from("quotes").update(payload).eq("id", qid);
-      if (res.error) return toast.error(res.error.message);
-    } else {
+    if (!qid) {
       const res = await supabase.from("quotes").insert(payload).select("id").single();
       if (res.error || !res.data) return toast.error(res.error?.message || "Não foi possível criar o orçamento.");
       qid = res.data.id;
     }
 
-    // Read the old item IDs first. Insert new rows before deleting old ones so an
-    // insert failure never destroys the current quote details.
+    // Read the old item IDs first. Keep them intact until replacement rows and
+    // the quote update both succeed.
     let oldItemIds: string[] = [];
     if (id) {
       const { data: oldItems, error: readError } = await supabase.from("quote_items").select("id").eq("quote_id", qid);
@@ -204,20 +201,28 @@ function QuoteEditor({ open, onOpenChange, id, onSaved }: { open: boolean; onOpe
       oldItemIds = (oldItems ?? []).map((item) => item.id);
     }
 
-    const { error: insertError } = await supabase.from("quote_items").insert(items.map((i) => ({
+    const { data: insertedItems, error: insertError } = await supabase.from("quote_items").insert(items.map((i) => ({
       quote_id: qid!,
       description: i.description.trim(),
       quantity: Number(i.quantity),
       unit_price: Number(i.unit_price),
       subtotal: Number(i.quantity) * Number(i.unit_price),
       service_id: i.service_id ?? null,
-    })));
-    if (insertError) return toast.error(`O orçamento foi salvo, mas os itens não foram atualizados: ${insertError.message}`);
+    }))).select("id");
+    if (insertError || !insertedItems) return toast.error(`Não foi possível salvar os itens: ${insertError?.message ?? "resposta inválida do banco"}`);
+
+    if (id) {
+      const { error: updateError } = await supabase.from("quotes").update(payload).eq("id", qid);
+      if (updateError) {
+        await supabase.from("quote_items").delete().in("id", insertedItems.map((item) => item.id));
+        return toast.error(`Não foi possível atualizar o orçamento: ${updateError.message}`);
+      }
+    }
 
     if (oldItemIds.length) {
       const { error: deleteError } = await supabase.from("quote_items").delete().in("id", oldItemIds);
       if (deleteError) {
-        return toast.error("Os novos itens foram adicionados, mas não foi possível remover os anteriores. Revise este orçamento antes de continuar.");
+        return toast.error("Orçamento atualizado, mas os itens anteriores não foram removidos. Revise os itens duplicados antes de continuar.");
       }
     }
     toast.success("Orçamento salvo.");
