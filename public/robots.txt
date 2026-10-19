@@ -1,2 +1,13 @@
 User-agent: *
 Allow: /
+Disallow: /auth
+Disallow: /dashboard
+Disallow: /catalog-admin
+Disallow: /clients
+Disallow: /orders
+Disallow: /quotes
+Disallow: /settings
+Disallow: /users
+Disallow: /api/
+
+Sitemap: https://decodeanalytics.vercel.app/sitemap.xml
