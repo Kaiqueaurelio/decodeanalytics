@@ -20,6 +20,7 @@ import {
   ShoppingCart,
   Activity,
   Users,
+  UserRound,
   GraduationCap,
   Beaker,
   X,
@@ -219,6 +220,8 @@ export function AppShell({ children }: { children: ReactNode }) {
 
   const title = currentTitle(path);
   const userInitial = user?.email?.charAt(0).toUpperCase() ?? "A";
+  const avatarUrl = String(user?.user_metadata?.avatar_url ?? "");
+  const displayName = String(user?.user_metadata?.full_name ?? user?.user_metadata?.name ?? user?.email?.split("@")[0] ?? "Meu perfil");
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-background">
@@ -394,6 +397,15 @@ export function AppShell({ children }: { children: ReactNode }) {
           })}
         </nav>
 
+        <div className={cn("px-3 pb-3", collapsed && "px-0 flex justify-center")}>
+          <Link to="/profile" title={collapsed ? "Meu perfil" : undefined} onClick={() => setOpen(false)} className={cn("flex items-center gap-3 rounded-xl border border-[#293451]/30 bg-[#080C1F] p-2 text-[#F8FAFC] transition-colors hover:bg-[#111936]", collapsed && "h-12 w-12 justify-center p-1")}>
+            <div className="grid h-9 w-9 shrink-0 place-items-center overflow-hidden rounded-full bg-[#087CF0]/20 text-sm font-bold text-[#087CF0]">
+              {avatarUrl ? <img src={avatarUrl} alt="" className="h-full w-full object-cover" /> : <UserRound className="h-5 w-5" />}
+            </div>
+            {!collapsed && <div className="min-w-0 flex-1"><p className="truncate text-xs font-bold">{displayName}</p><p className="text-[10px] text-[#AAB6D1]">Meu perfil · Editar dados</p></div>}
+          </Link>
+        </div>
+
         <div
           className={cn(
             "mt-auto border-t border-[#293451]/20 bg-[#080C1F]/50 p-3 flex flex-col",
@@ -507,9 +519,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                     {isAdmin ? "Administrador" : ROLE_LABEL[roles[0]] || "Usuário"}
                   </p>
                 </div>
-                <div className="grid h-9 w-9 place-items-center rounded-xl bg-[#0B1026] text-sm font-bold text-white shadow-lg shadow-[#0B1026]/10">
-                  {userInitial}
-                </div>
+                <Link to="/profile" aria-label="Abrir meu perfil" className="grid h-9 w-9 place-items-center overflow-hidden rounded-xl bg-[#0B1026] text-sm font-bold text-white shadow-lg shadow-[#0B1026]/10">{avatarUrl ? <img src={avatarUrl} alt="" className="h-full w-full object-cover" /> : userInitial}</Link>
               </div>
             </div>
           </div>
