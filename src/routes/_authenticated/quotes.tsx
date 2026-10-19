@@ -38,7 +38,7 @@ function QuotesPage() {
   });
 
   function openWhatsApp(q: any) {
-    const phone = String(q.clients?.whatsapp ?? "").replace(/\\D/g, "");
+    const phone = String(q.clients?.whatsapp ?? "").replace(/\D/g, "");
     if (!phone) { toast.error("Este cliente não tem WhatsApp cadastrado. Edite o cadastro do cliente primeiro."); return; }
     const items = (q.quote_items ?? []).map((item: any) => `${item.description} (quantidade: ${item.quantity})`).join(", ");
     const message = `Olá${q.clients?.name ? `, ${q.clients.name}` : ""}! Sobre o orçamento #${q.number} da Decode Analytics: ${items || q.description || "seu pedido"}. Total: ${brl(q.total)}. Como podemos ajudar?`;
