@@ -43,7 +43,9 @@ function normalizeProducts(rows: StoreProduct[]): StoreProduct[] {
     .filter(isOfferedProduct)
     .map((p) => ({
       ...p,
-      // Use somente a foto real cadastrada pelo administrador. Sem foto, SmartImage\n      // mostra um placeholder em vez de uma imagem ilustrativa/genérica.\n      image_url: p.image_url,
+      // Use somente a foto real cadastrada pelo administrador. Sem foto, SmartImage
+      // mostra um placeholder em vez de uma imagem ilustrativa/genérica.
+      image_url: p.image_url,
     }))
     .sort((a, b) => Number(isComputerService(b)) - Number(isComputerService(a)));
 }
