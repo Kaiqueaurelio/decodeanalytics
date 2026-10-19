@@ -24,6 +24,21 @@ export const STORE_CATEGORIES = [
   { slug: "Programação", label: "Programação" },
 ] as const;
 
+function categoryKey(value: string) {
+  return value.normalize("NFD").replace(/[\\u0300-\\u036f]/g, "").trim().replace(/\\s+/g, " ").toLocaleLowerCase("pt-BR");
+}
+
+/** Canonicalize known categories while preserving custom category names. */
+export function normalizeStoreCategory(value: string) {
+  const clean = value.trim().replace(/\\s+/g, " ");
+  const key = categoryKey(clean);
+  const known = STORE_CATEGORIES.find((category) =>
+    category.slug !== "todos" &&
+    (categoryKey(category.slug) === key || categoryKey(category.label) === key)
+  );
+  return known?.slug ?? clean;
+}
+
 export const WHATSAPP_NUMBER = "5511939222885";
 
 export const STORE_CONTACT = {
