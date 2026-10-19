@@ -32,7 +32,7 @@ function UsersPage() {
   const { isAdmin, user } = useAuth();
   const qc = useQueryClient();
 
-  const { data: rows, isLoading } = useQuery({
+  const { data: rows, isLoading, isError, refetch, isFetching } = useQuery({
     queryKey: ["admin-users-list"],
     staleTime: 0,
     queryFn: async (): Promise<Row[]> => {
@@ -111,6 +111,22 @@ function UsersPage() {
             <tbody className="divide-y">
               {isLoading ? (
                 <tr><td colSpan={4} className="p-8 text-center text-muted-foreground">Carregando...</td></tr>
+              ) : isError ? (
+                <tr>
+                  <td colSpan={4} className="p-8 text-center">
+                    <p className="text-sm text-destructive">Não foi possível carregar os usuários e suas permissões.</p>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      className="mt-3"
+                      disabled={isFetching}
+                      onClick={() => void refetch()}
+                    >
+                      {isFetching ? "Tentando novamente..." : "Tentar novamente"}
+                    </Button>
+                  </td>
+                </tr>
               ) : rows?.length ? (
                 rows.map((row) => {
                   const self = row.id === user?.id;
