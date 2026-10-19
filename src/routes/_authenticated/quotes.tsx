@@ -24,7 +24,9 @@ function QuotesPage() {
   const qc = useQueryClient();
   const [open, setOpen] = useState(false);
   const [editId, setEditId] = useState<string | null>(null);
-  const [convertFrom, setConvertFrom] = useState<string | null>(null);\n  const [search, setSearch] = useState("");\n  const [statusFilter, setStatusFilter] = useState("todos");
+  const [convertFrom, setConvertFrom] = useState<string | null>(null);
+  const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState("todos");
 
   const { data } = useQuery({
     queryKey: ["quotes"],
@@ -35,7 +37,21 @@ function QuotesPage() {
     },
   });
 
-  function openWhatsApp(q: any) {\n    const phone = String(q.clients?.whatsapp ?? "").replace(/\\D/g, "");\n    if (!phone) { toast.error("Este cliente não tem WhatsApp cadastrado. Edite o cadastro do cliente primeiro."); return; }\n    const items = (q.quote_items ?? []).map((item: any) => `${item.description} (quantidade: ${item.quantity})`).join(", ");\n    const message = `Olá${q.clients?.name ? `, ${q.clients.name}` : ""}! Sobre o orçamento #${q.number} da Decode Analytics: ${items || q.description || "seu pedido"}. Total: ${brl(q.total)}. Como podemos ajudar?`;\n    window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`, "_blank", "noopener,noreferrer");\n  }\n\n  const filtered = (data ?? []).filter((q: any) => {\n    const query = search.trim().toLocaleLowerCase("pt-BR");\n    const matchesSearch = !query || String(q.number ?? "").includes(query) || String(q.clients?.name ?? "").toLocaleLowerCase("pt-BR").includes(query) || (q.quote_items ?? []).some((item: any) => String(item.description ?? "").toLocaleLowerCase("pt-BR").includes(query));\n    return matchesSearch && (statusFilter === "todos" || q.status === statusFilter);\n  });\n\n  async function remove(id: string, n: number) {
+  function openWhatsApp(q: any) {
+    const phone = String(q.clients?.whatsapp ?? "").replace(/\\D/g, "");
+    if (!phone) { toast.error("Este cliente não tem WhatsApp cadastrado. Edite o cadastro do cliente primeiro."); return; }
+    const items = (q.quote_items ?? []).map((item: any) => `${item.description} (quantidade: ${item.quantity})`).join(", ");
+    const message = `Olá${q.clients?.name ? `, ${q.clients.name}` : ""}! Sobre o orçamento #${q.number} da Decode Analytics: ${items || q.description || "seu pedido"}. Total: ${brl(q.total)}. Como podemos ajudar?`;
+    window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`, "_blank", "noopener,noreferrer");
+  }
+
+  const filtered = (data ?? []).filter((q: any) => {
+    const query = search.trim().toLocaleLowerCase("pt-BR");
+    const matchesSearch = !query || String(q.number ?? "").includes(query) || String(q.clients?.name ?? "").toLocaleLowerCase("pt-BR").includes(query) || (q.quote_items ?? []).some((item: any) => String(item.description ?? "").toLocaleLowerCase("pt-BR").includes(query));
+    return matchesSearch && (statusFilter === "todos" || q.status === statusFilter);
+  });
+
+  async function remove(id: string, n: number) {
     if (!confirm(`Excluir orçamento #${n}?`)) return;
     const { error } = await supabase.from("quotes").delete().eq("id", id);
     if (error) return toast.error(error.message);
@@ -54,7 +70,9 @@ function QuotesPage() {
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">\n        <div className="relative w-full sm:max-w-xs"><Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" /><Input aria-label="Buscar orçamento" placeholder="Buscar cliente, produto ou nº" value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" /></div>\n        <Select value={statusFilter} onValueChange={setStatusFilter}><SelectTrigger className="w-full sm:w-48"><SelectValue placeholder="Filtrar status" /></SelectTrigger><SelectContent><SelectItem value="todos">Todos os status</SelectItem><SelectItem value="em_analise">Em análise</SelectItem><SelectItem value="enviado">Enviado</SelectItem><SelectItem value="aprovado">Aprovado</SelectItem><SelectItem value="recusado">Recusado</SelectItem></SelectContent></Select>
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="relative w-full sm:max-w-xs"><Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" /><Input aria-label="Buscar orçamento" placeholder="Buscar cliente, produto ou nº" value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" /></div>
+        <Select value={statusFilter} onValueChange={setStatusFilter}><SelectTrigger className="w-full sm:w-48"><SelectValue placeholder="Filtrar status" /></SelectTrigger><SelectContent><SelectItem value="todos">Todos os status</SelectItem><SelectItem value="em_analise">Em análise</SelectItem><SelectItem value="enviado">Enviado</SelectItem><SelectItem value="aprovado">Aprovado</SelectItem><SelectItem value="recusado">Recusado</SelectItem></SelectContent></Select>
         <Button onClick={() => { setEditId(null); setOpen(true); }}><Plus className="w-4 h-4 mr-1" />Novo orçamento</Button>
       </div>
       <Card>
@@ -70,12 +88,14 @@ function QuotesPage() {
               {filtered.map((q: any) => (
                 <tr key={q.id} className="border-t hover:bg-muted/30">
                   <td className="p-3 font-mono">#{q.number}</td>
-                  <td className="p-3">{q.clients?.name}</td>\n                  <td className="p-3 min-w-48">{(q.quote_items ?? []).map((item: any, index: number) => <div key={`${q.id}-${index}`} className="text-xs">{item.description} <span className="text-muted-foreground">× {item.quantity}</span></div>)}{!q.quote_items?.length && <span className="text-muted-foreground">—</span>}</td>
+                  <td className="p-3">{q.clients?.name}</td>
+                  <td className="p-3 min-w-48">{(q.quote_items ?? []).map((item: any, index: number) => <div key={`${q.id}-${index}`} className="text-xs">{item.description} <span className="text-muted-foreground">× {item.quantity}</span></div>)}{!q.quote_items?.length && <span className="text-muted-foreground">—</span>}</td>
                   <td className="p-3 hidden md:table-cell"><Badge variant="outline">{QUOTE_STATUS_LABEL[q.status]}</Badge></td>
                   <td className="p-3 hidden md:table-cell">{fmtDate(q.validity_date)}</td>
                   <td className="p-3 text-right font-mono">{brl(q.total)}</td>
                   <td className="p-3 text-right whitespace-nowrap">
-                    <Button size="icon" variant="ghost" aria-label={`Abrir WhatsApp do orçamento #${q.number}`} title="Enviar pelo WhatsApp" onClick={() => openWhatsApp(q)}><MessageCircle className="w-4 h-4 text-green-600" /></Button>\n                    {q.status === "aprovado" && (
+                    <Button size="icon" variant="ghost" aria-label={`Abrir WhatsApp do orçamento #${q.number}`} title="Enviar pelo WhatsApp" onClick={() => openWhatsApp(q)}><MessageCircle className="w-4 h-4 text-green-600" /></Button>
+                    {q.status === "aprovado" && (
                       <Button size="icon" variant="ghost" aria-label={`Gerar OS a partir do orçamento #${q.number}`} title="Gerar OS" onClick={() => { setConvertFrom(q.id); }}>
                         <CheckCircle2 className="w-4 h-4 text-primary" />
                       </Button>
