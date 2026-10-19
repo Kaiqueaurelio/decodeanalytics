@@ -10,4 +10,3 @@ Disallow: /settings
 Disallow: /users
 Disallow: /api/
 
-Sitemap: https://decodeanalytics.vercel.app/sitemap.xml
