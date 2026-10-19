@@ -17,7 +17,6 @@ export function SmartImage({
   onError,
   ...props
 }: SmartImageProps) {
-  const imgRef = useRef<HTMLImageElement>(null);
   const [error, setError] = useState(false);
   const [fallbackAttempted, setFallbackAttempted] = useState(false);
   const [loading, setLoading] = useState(Boolean(src));
@@ -27,18 +26,6 @@ export function SmartImage({
     setFallbackAttempted(false);
     setLoading(Boolean(src || fallbackSrc));
   }, [src, fallbackSrc]);
-
-  useEffect(() => {
-    const img = imgRef.current;
-    if (!src || !img?.complete) return;
-
-    if (img.naturalWidth > 0) {
-      setLoading(false);
-    } else {
-      setLoading(false);
-      setError(true);
-    }
-  }, [src, fallbackSrc, fallbackAttempted]);
 
   if (error || (!src && !fallbackSrc)) {
     return (
@@ -69,7 +56,6 @@ export function SmartImage({
         />
       )}
       <img
-        ref={imgRef}
         src={fallbackAttempted ? (fallbackSrc ?? src) : (src ?? fallbackSrc)}
         alt={alt}
         className={`h-full w-full object-cover transition-opacity duration-300 ${loading ? "opacity-0" : "opacity-100"}`}
