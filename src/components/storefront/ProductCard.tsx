@@ -82,7 +82,7 @@ export function ProductCard({ product }: { product: StoreProduct }) {
         )}
         <div className="mt-3 flex items-end justify-between gap-2">
           <div>
-            {showPrices ? (
+            {showPrices && Number(product.base_price) > 0 ? (
               <>
                 <p className="text-[10px] uppercase tracking-wide text-[var(--store-text-light)]">
                   A partir de
