@@ -29,7 +29,18 @@ function loadCart(): CartItem[] {
   if (typeof window === "undefined") return [];
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? JSON.parse(raw) : [];
+    if (!raw) return [];
+    const parsed: unknown = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return [];
+    return parsed.filter((item): item is CartItem => {
+      if (!item || typeof item !== "object") return false;
+      const cartItem = item as Partial<CartItem>;
+      return typeof cartItem.id === "string" &&
+        typeof cartItem.name === "string" &&
+        typeof cartItem.price === "number" && Number.isFinite(cartItem.price) &&
+        typeof cartItem.quantity === "number" && Number.isFinite(cartItem.quantity) &&
+        cartItem.quantity > 0;
+    });
   } catch {
     return [];
   }
@@ -37,7 +48,11 @@ function loadCart(): CartItem[] {
 
 function saveCart(items: CartItem[]) {
   if (typeof window === "undefined") return;
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+  } catch {
+    // Keep the cart usable in memory if browser storage is unavailable.
+  }
 }
 
 export function CartProvider({ children }: { children: ReactNode }) {
