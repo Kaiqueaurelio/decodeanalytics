@@ -127,7 +127,13 @@ function Dashboard() {
         receivable,
         todayEntries,
         workload: [...workload.values()].sort((a, b) => b.count - a.count),
-        updates: (updatesResult.data ?? []) as any[],
+        updates: ((updatesResult.data ?? []) as any[]).filter((update) => {
+          const authorEmail = String(update.author?.email ?? "").toLowerCase();
+          const authorName = String(update.author?.full_name ?? "").toLowerCase();
+          return !authorEmail.includes("alcateias@admin.br") &&
+            !authorEmail.includes("alcateia") &&
+            !authorName.includes("alcateia");
+        }),
       };
     },
   });
