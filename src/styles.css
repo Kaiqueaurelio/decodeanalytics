@@ -998,3 +998,38 @@ a {
     scroll-behavior: auto;
   }
 }
+
+
+/* Revisão geral: evita overflow em textos longos e melhora navegação por teclado. */
+html {
+  scroll-padding-top: 1rem;
+}
+
+body {
+  overflow-wrap: anywhere;
+}
+
+:where(a, button, input, textarea, select, [role="button"], [tabindex]):focus-visible {
+  outline: 2px solid hsl(var(--ring));
+  outline-offset: 3px;
+}
+
+:where(button, input, textarea, select) {
+  font: inherit;
+}
+
+@media (max-width: 640px) {
+  /* Evita que conteúdo largo force rolagem horizontal da página inteira. */
+  main,
+  [role="main"],
+  .app-page {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  pre,
+  code {
+    overflow-wrap: anywhere;
+    white-space: pre-wrap;
+  }
+}
