@@ -878,3 +878,123 @@ a[href*="lovable.dev"][target="_blank"] {
     transition-duration: 0.01ms !important;
   }
 }
+
+
+/* Responsividade global da PWA — reforços para telas pequenas, tablets e modo instalado. */
+html,
+body,
+#root {
+  min-width: 320px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+img,
+video,
+iframe,
+embed,
+object {
+  max-width: 100%;
+}
+
+input,
+textarea,
+select,
+button {
+  max-width: 100%;
+}
+
+input,
+textarea,
+select {
+  min-width: 0;
+}
+
+button,
+[role="button"],
+a {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+@media (max-width: 640px) {
+  body {
+    background-attachment: scroll;
+  }
+
+  /* Impede que títulos ou controles longos forcem a largura da tela. */
+  h1 {
+    font-size: clamp(1.5rem, 7vw, 2.25rem);
+    line-height: 1.12;
+  }
+
+  h2 {
+    font-size: clamp(1.25rem, 5.5vw, 1.875rem);
+    line-height: 1.18;
+  }
+
+  /* Formulários permanecem utilizáveis em telas estreitas. */
+  input,
+  textarea,
+  select {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  /* Alvos de toque confortáveis sem aumentar controles já compactos demais. */
+  button,
+  [role="button"] {
+    min-height: 44px;
+  }
+
+  /* Tabelas podem rolar dentro do próprio painel, sem alargar o aplicativo. */
+  .table-scroll,
+  [data-responsive-table] {
+    max-width: 100%;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Dialogs e drawers não ultrapassam a área visível do celular. */
+  [role="dialog"],
+  [role="alertdialog"] {
+    max-width: calc(100vw - 1rem);
+    max-height: calc(100dvh - 1rem - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  /* Protege barras fixas contra a área de gestos do iPhone. */
+  .safe-area-footer,
+  .safe-pb {
+    padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
+  }
+}
+
+@media (min-width: 641px) and (max-width: 1024px) {
+  .app-page {
+    padding: 1rem;
+  }
+}
+
+/* Em modo instalado, respeita a área segura do sistema sem bloquear o zoom. */
+@media (display-mode: standalone) {
+  body {
+    min-height: 100dvh;
+  }
+
+  #root {
+    min-height: 100dvh;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
