@@ -219,18 +219,13 @@ export function resolveProductImage(
   category: string | null | undefined,
   slug?: string | null,
 ): string {
-  // Preferir uma foto local específica para o produto sempre que disponível.
-  if (slug && PRODUCT_IMAGES_BY_SLUG[slug]) {
-    return PRODUCT_IMAGES_BY_SLUG[slug];
-  }
-
   const normalizedUrl = imageUrl?.trim();
   if (normalizedUrl) {
     const localProductImage = getImageFromFileName(normalizedUrl);
     if (localProductImage) return localProductImage;
 
-    // Preservar fotos próprias válidas, mas não devolver caminhos antigos do
-    // Lovable/CDN ou caminhos públicos legados que não existem neste deploy.
+    // Preservar primeiro a foto própria do cadastro quando ela for utilizável.
+    // Só usar os fallbacks locais para caminhos legados conhecidos.
     const isLegacyAssetPath =
       normalizedUrl.startsWith("/__l5e/") ||
       normalizedUrl.startsWith("/products/") ||
@@ -242,6 +237,11 @@ export function resolveProductImage(
         normalizedUrl.startsWith("/"))) {
       return normalizedUrl;
     }
+  }
+
+  // Se não houver foto utilizável, tentar uma imagem local específica do produto.
+  if (slug && PRODUCT_IMAGES_BY_SLUG[slug]) {
+    return PRODUCT_IMAGES_BY_SLUG[slug];
   }
 
   if (category) {
