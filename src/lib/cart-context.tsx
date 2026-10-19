@@ -22,7 +22,6 @@ interface CartContextType {
 }
 
 const CartContext = createContext<CartContextType | null>(null);
-
 const STORAGE_KEY = "alcateia_cart";
 
 function loadCart(): CartItem[] {
@@ -56,11 +55,21 @@ function saveCart(items: CartItem[]) {
 }
 
 export function CartProvider({ children }: { children: ReactNode }) {
-  const [items, setItems] = useState<CartItem[]>(loadCart);
+  // Keep the first render identical on the server and client. Reading localStorage
+  // in the state initializer can cause SSR hydration mismatches and can overwrite
+  // a saved cart before the browser has restored it.
+  const [items, setItems] = useState<CartItem[]>([]);
+  const [cartLoaded, setCartLoaded] = useState(false);
 
   useEffect(() => {
-    saveCart(items);
-  }, [items]);
+    setItems(loadCart());
+    setCartLoaded(true);
+  }, []);
+
+  useEffect(() => {
+    // Do not write the initial empty SSR/client state over the persisted cart.
+    if (cartLoaded) saveCart(items);
+  }, [items, cartLoaded]);
 
   const count = items.reduce((sum, item) => sum + item.quantity, 0);
   const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
