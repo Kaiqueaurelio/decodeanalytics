@@ -26,25 +26,37 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     let roleRequest = 0;
     let deferredLoad: ReturnType<typeof setTimeout> | undefined;
 
+    // Keep public pages from crashing if browser-side Supabase config is absent.
+    const hasSupabaseConfig = Boolean(
+      import.meta.env.VITE_SUPABASE_URL &&
+      import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY
+    );
+    if (!hasSupabaseConfig) {
+      console.error(
+        "[Auth] Supabase não está configurado no navegador. Configure VITE_SUPABASE_URL e VITE_SUPABASE_PUBLISHABLE_KEY para habilitar autenticação."
+      );
+      setSession(null);
+      setRoles([]);
+      setLoading(false);
+      return () => {
+        active = false;
+      };
+    }
+
     async function loadRoles(userId: string) {
       const requestId = ++roleRequest;
       setLoading(true);
-
       try {
         const { data, error } = await supabase
           .from("user_roles")
           .select("role")
           .eq("user_id", userId);
-
-        // Ignore stale responses if the account changed while the query was running.
         if (!active || requestId !== roleRequest) return;
-
         if (error) {
           console.error("[Auth] Não foi possível carregar os papéis do usuário.", error);
           setRoles([]);
           return;
         }
-
         setRoles((data ?? []).map((row) => row.role as AppRole));
       } catch (error) {
         if (!active || requestId !== roleRequest) return;
@@ -57,16 +69,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const { data: sub } = supabase.auth.onAuthStateChange((_event, nextSession) => {
       setSession(nextSession);
-      // Never retain the previous account's permissions while a new session loads.
       setRoles([]);
       if (deferredLoad) clearTimeout(deferredLoad);
-
       if (nextSession?.user) {
         deferredLoad = setTimeout(() => {
           void loadRoles(nextSession.user.id);
         }, 0);
       } else {
-        // Invalidate any pending role query from the previous session.
         roleRequest += 1;
         setLoading(false);
       }
@@ -82,7 +91,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           setLoading(false);
           return;
         }
-
         setSession(data.session);
         if (data.session?.user) {
           void loadRoles(data.session.user.id);
