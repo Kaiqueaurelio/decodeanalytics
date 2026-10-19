@@ -308,6 +308,10 @@ export type Database = {
           bento_description: string | null
           bento_kicker: string | null
           bento_title: string | null
+          brand_accent: string | null
+          brand_background: string | null
+          brand_primary: string | null
+          brand_secondary: string | null
           contact_description: string | null
           contact_title: string | null
           default_deadline_days: number | null
@@ -332,6 +336,10 @@ export type Database = {
           bento_description?: string | null
           bento_kicker?: string | null
           bento_title?: string | null
+          brand_accent?: string | null
+          brand_background?: string | null
+          brand_primary?: string | null
+          brand_secondary?: string | null
           contact_description?: string | null
           contact_title?: string | null
           default_deadline_days?: number | null
@@ -356,6 +364,10 @@ export type Database = {
           bento_description?: string | null
           bento_kicker?: string | null
           bento_title?: string | null
+          brand_accent?: string | null
+          brand_background?: string | null
+          brand_primary?: string | null
+          brand_secondary?: string | null
           contact_description?: string | null
           contact_title?: string | null
           default_deadline_days?: number | null

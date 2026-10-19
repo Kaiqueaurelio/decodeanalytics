@@ -1,0 +1,1 @@
+ALTER TABLE public.company_settings ADD COLUMN IF NOT EXISTS brand_background text, ADD COLUMN IF NOT EXISTS brand_primary text, ADD COLUMN IF NOT EXISTS brand_secondary text, ADD COLUMN IF NOT EXISTS brand_accent text;

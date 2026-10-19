@@ -207,7 +207,7 @@ function Gallery({ image, alt }: { image: string | null | undefined; alt: string
   return (
     <div className="space-y-3">
       <div className="aspect-square overflow-hidden rounded-[var(--store-radius-xl)] border border-[var(--store-border)] bg-[var(--store-surface-soft)]">
-        <SmartImage src={image} alt={alt} fallbackEmoji="🖼️" />
+        <SmartImage src={image} alt={alt} />
       </div>
     </div>
   );

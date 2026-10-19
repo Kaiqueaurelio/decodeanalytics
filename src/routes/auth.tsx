@@ -90,7 +90,7 @@ function AuthPage() {
       .from("user_roles")
       .select("role")
       .eq("user_id", authData.user.id);
-    if (rolesError || !assignedRoles?.some(({ role }) => role !== "aguardando_aprovacao")) {
+    if (rolesError || !assignedRoles?.length) {
       await supabase.auth.signOut();
       setLoading(false);
       return toast.info("O acesso à equipe ainda aguarda aprovação de um administrador.");
