@@ -31,3 +31,7 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+# Environment variables (keep local; configure these in the deployment environment)
+.env
+.env.*
+!.env.example
