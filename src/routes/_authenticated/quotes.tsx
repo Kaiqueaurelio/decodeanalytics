@@ -58,14 +58,30 @@ function QuotesPage() {
     qc.invalidateQueries({ queryKey: ["quotes"] });
   }
   async function printQuote(id: string) {
-    const [{ data: q }, { data: c }, { data: its }, { data: comp }] = await Promise.all([
-      supabase.from("quotes").select("*").eq("id", id).single(),
-      supabase.from("quotes").select("client_id, clients(*)").eq("id", id).single().then(async (r) => ({ data: (r.data as any)?.clients })),
-      supabase.from("quote_items").select("*").eq("quote_id", id),
-      supabase.from("company_settings").select("*").limit(1).single(),
-    ]);
-    if (!q || !c || !comp) return toast.error("Dados incompletos");
-    generateQuotePDF({ company: comp as any, quote: q as any, client: c as any, items: (its ?? []) as any });
+    try {
+      const [quoteResult, clientResult, itemsResult, companyResult] = await Promise.all([
+        supabase.from("quotes").select("*").eq("id", id).single(),
+        supabase.from("quotes").select("client_id, clients(*)").eq("id", id).single(),
+        supabase.from("quote_items").select("*").eq("quote_id", id),
+        supabase.from("company_settings").select("*").limit(1).single(),
+      ]);
+      const queryError = quoteResult.error ?? clientResult.error ?? itemsResult.error ?? companyResult.error;
+      if (queryError) {
+        toast.error(`Não foi possível carregar os dados do PDF: ${queryError.message}`);
+        return;
+      }
+      const quote = quoteResult.data;
+      const client = (clientResult.data as any)?.clients;
+      const company = companyResult.data;
+      if (!quote || !client || !company) {
+        toast.error("Faltam dados do orçamento, cliente ou empresa para gerar o PDF.");
+        return;
+      }
+      generateQuotePDF({ company: company as any, quote: quote as any, client: client as any, items: (itemsResult.data ?? []) as any });
+    } catch (error) {
+      console.error("Falha ao gerar PDF do orçamento", error);
+      toast.error("Ocorreu um erro inesperado ao gerar o PDF.");
+    }
   }
 
   return (
@@ -161,20 +177,46 @@ function QuoteEditor({ open, onOpenChange, id, onSaved }: { open: boolean; onOpe
   async function save() {
     if (!form.client_id) return toast.error("Selecione cliente");
     if (!items.length) return toast.error("Adicione itens");
-    const payload = { client_id: form.client_id, description: form.description, discount: Number(form.discount) || 0, total, validity_date: form.validity_date || null, notes: form.notes, status: form.status };
+    if (items.some((item) => !item.description.trim() || !Number.isFinite(Number(item.quantity)) || Number(item.quantity) <= 0 || !Number.isFinite(Number(item.unit_price)) || Number(item.unit_price) < 0)) {
+      return toast.error("Revise os itens: informe descrição, quantidade positiva e preço válido.");
+    }
+    const discount = Number(form.discount);
+    if (!Number.isFinite(discount) || discount < 0 || discount > subtotal) {
+      return toast.error("O desconto deve ser válido e não pode superar o subtotal.");
+    }
+    const payload = { client_id: form.client_id, description: form.description, discount, total, validity_date: form.validity_date || null, notes: form.notes, status: form.status };
     let qid: string | null = id;
     if (qid) {
       const res = await supabase.from("quotes").update(payload).eq("id", qid);
       if (res.error) return toast.error(res.error.message);
     } else {
       const res = await supabase.from("quotes").insert(payload).select("id").single();
-      if (res.error || !res.data) return toast.error(res.error?.message || "Erro");
+      if (res.error || !res.data) return toast.error(res.error?.message || "Não foi possível criar o orçamento.");
       qid = res.data.id;
     }
-    await supabase.from("quote_items").delete().eq("quote_id", qid);
-    const { error } = await supabase.from("quote_items").insert(items.map((i) => ({ quote_id: qid!, description: i.description, quantity: i.quantity, unit_price: i.unit_price, subtotal: i.subtotal, service_id: i.service_id ?? null })));
-    if (error) return toast.error(error.message);
-    toast.success("Salvo"); onOpenChange(false); onSaved();
+
+    // Insert first: if this fails, do not delete the existing items.
+    const { error: insertError } = await supabase.from("quote_items").insert(items.map((i) => ({
+      quote_id: qid!,
+      description: i.description.trim(),
+      quantity: Number(i.quantity),
+      unit_price: Number(i.unit_price),
+      subtotal: Number(i.quantity) * Number(i.unit_price),
+      service_id: i.service_id ?? null,
+    })));
+    if (insertError) return toast.error(`O orçamento foi salvo, mas os itens não foram atualizados: ${insertError.message}`);
+
+    if (id) {
+      const { error: deleteError } = await supabase.from("quote_items").delete().eq("quote_id", qid).not("id", "in", `(${items.map((item) => item.id).filter(Boolean).join(",")})`);
+      // Existing items are replaced below only when the database returned stable item IDs.
+      // If IDs are not present in the editor, leave old rows untouched rather than risk data loss.
+      if (deleteError) {
+        return toast.error("Os novos itens foram adicionados, mas os antigos precisam ser revisados. Nenhum item foi removido automaticamente.");
+      }
+    }
+    toast.success("Orçamento salvo. Confira os itens se estiver editando um orçamento existente.");
+    onOpenChange(false);
+    onSaved();
   }
 
   return (
