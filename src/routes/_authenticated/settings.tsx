@@ -18,7 +18,7 @@ export const Route = createFileRoute("/_authenticated/settings")({ component: Pa
 
 function Page() {
   const qc = useQueryClient();
-  const { data } = useQuery({
+  const { data, isError, refetch, isFetching } = useQuery({
     queryKey: ["company_settings"],
     queryFn: async () => {
       const { data, error } = await supabase.from("company_settings").select("*").limit(1).single();
@@ -92,6 +92,24 @@ function Page() {
     if (updateError) return toast.error(updateError.message);
     setForm({ ...form, logo_url: logoUrl });
     toast.success("Logo enviada e salva.");
+  }
+
+  if (isError) {
+    return (
+      <div className="mx-auto max-w-xl py-8">
+        <Card className="space-y-3 p-6 text-center">
+          <h2 className="font-semibold">Não foi possível carregar as configurações</h2>
+          <p className="text-sm text-muted-foreground">
+            Verifique sua conexão e tente carregar os dados novamente.
+          </p>
+          <div>
+            <Button type="button" variant="outline" disabled={isFetching} onClick={() => void refetch()}>
+              {isFetching ? "Carregando..." : "Tentar novamente"}
+            </Button>
+          </div>
+        </Card>
+      </div>
+    );
   }
 
   return (
