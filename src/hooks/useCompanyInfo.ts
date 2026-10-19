@@ -107,9 +107,12 @@ export function useCompanyInfo(): CompanyInfo {
   };
 }
 
-/** Respeita a opção show_prices configurada no painel administrativo. */
+/**
+ * Preços na loja pública: sempre ocultos ("Sob consulta") por decisão do cliente.
+ * Os valores continuam visíveis apenas no painel administrativo.
+ */
 export function useShowPrices() {
-  return useCompanyInfo().showPrices;
+  return false;
 }
 
 export function useWaLink() {
