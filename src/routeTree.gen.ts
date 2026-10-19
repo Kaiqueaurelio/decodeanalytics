@@ -31,8 +31,8 @@ import { Route as AuthenticatedEllaTrainingRouteImport } from './routes/_authent
 import { Route as AuthenticatedInventoryRouteImport } from './routes/_authenticated/inventory'
 import { Route as AuthenticatedOrdersRouteImport } from './routes/_authenticated/orders'
 import { Route as AuthenticatedPdvRouteImport } from './routes/_authenticated/pdv'
-import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
 import { Route as AuthenticatedProductionRouteImport } from './routes/_authenticated/production'
+import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
 import { Route as AuthenticatedQuotesRouteImport } from './routes/_authenticated/quotes'
 import { Route as AuthenticatedReceivablesRouteImport } from './routes/_authenticated/receivables'
 import { Route as AuthenticatedServicesRouteImport } from './routes/_authenticated/services'
@@ -150,11 +150,6 @@ const AuthenticatedOrdersRoute = AuthenticatedOrdersRouteImport.update({
   path: '/orders',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedProfileRoute = AuthenticatedProfileRouteImport.update({
-  id: '/profile',
-  path: '/profile',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
 const AuthenticatedPdvRoute = AuthenticatedPdvRouteImport.update({
   id: '/pdv',
   path: '/pdv',
@@ -163,6 +158,11 @@ const AuthenticatedPdvRoute = AuthenticatedPdvRouteImport.update({
 const AuthenticatedProductionRoute = AuthenticatedProductionRouteImport.update({
   id: '/production',
   path: '/production',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedProfileRoute = AuthenticatedProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedQuotesRoute = AuthenticatedQuotesRouteImport.update({
@@ -235,8 +235,8 @@ export interface FileRoutesByFullPath {
   '/inventory': typeof AuthenticatedInventoryRoute
   '/orders': typeof AuthenticatedOrdersRoute
   '/pdv': typeof AuthenticatedPdvRoute
-  '/profile': typeof AuthenticatedProfileRoute
   '/production': typeof AuthenticatedProductionRoute
+  '/profile': typeof AuthenticatedProfileRoute
   '/quotes': typeof AuthenticatedQuotesRoute
   '/receivables': typeof AuthenticatedReceivablesRoute
   '/services': typeof AuthenticatedServicesRoute
@@ -270,6 +270,7 @@ export interface FileRoutesByTo {
   '/orders': typeof AuthenticatedOrdersRoute
   '/pdv': typeof AuthenticatedPdvRoute
   '/production': typeof AuthenticatedProductionRoute
+  '/profile': typeof AuthenticatedProfileRoute
   '/quotes': typeof AuthenticatedQuotesRoute
   '/receivables': typeof AuthenticatedReceivablesRoute
   '/services': typeof AuthenticatedServicesRoute
@@ -304,8 +305,8 @@ export interface FileRoutesById {
   '/_authenticated/inventory': typeof AuthenticatedInventoryRoute
   '/_authenticated/orders': typeof AuthenticatedOrdersRoute
   '/_authenticated/pdv': typeof AuthenticatedPdvRoute
-  '/_authenticated/profile': typeof AuthenticatedProfileRoute
   '/_authenticated/production': typeof AuthenticatedProductionRoute
+  '/_authenticated/profile': typeof AuthenticatedProfileRoute
   '/_authenticated/quotes': typeof AuthenticatedQuotesRoute
   '/_authenticated/receivables': typeof AuthenticatedReceivablesRoute
   '/_authenticated/services': typeof AuthenticatedServicesRoute
@@ -341,6 +342,7 @@ export interface FileRouteTypes {
     | '/orders'
     | '/pdv'
     | '/production'
+    | '/profile'
     | '/quotes'
     | '/receivables'
     | '/services'
@@ -374,6 +376,7 @@ export interface FileRouteTypes {
     | '/orders'
     | '/pdv'
     | '/production'
+    | '/profile'
     | '/quotes'
     | '/receivables'
     | '/services'
@@ -408,6 +411,7 @@ export interface FileRouteTypes {
     | '/_authenticated/orders'
     | '/_authenticated/pdv'
     | '/_authenticated/production'
+    | '/_authenticated/profile'
     | '/_authenticated/quotes'
     | '/_authenticated/receivables'
     | '/_authenticated/services'
@@ -596,6 +600,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedProductionRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/profile': {
+      id: '/_authenticated/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof AuthenticatedProfileRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/quotes': {
       id: '/_authenticated/quotes'
       path: '/quotes'
@@ -677,8 +688,8 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedInventoryRoute: typeof AuthenticatedInventoryRoute
   AuthenticatedOrdersRoute: typeof AuthenticatedOrdersRoute
   AuthenticatedPdvRoute: typeof AuthenticatedPdvRoute
-  AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
   AuthenticatedProductionRoute: typeof AuthenticatedProductionRoute
+  AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
   AuthenticatedQuotesRoute: typeof AuthenticatedQuotesRoute
   AuthenticatedReceivablesRoute: typeof AuthenticatedReceivablesRoute
   AuthenticatedServicesRoute: typeof AuthenticatedServicesRoute
@@ -702,8 +713,8 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedInventoryRoute: AuthenticatedInventoryRoute,
   AuthenticatedOrdersRoute: AuthenticatedOrdersRoute,
   AuthenticatedPdvRoute: AuthenticatedPdvRoute,
-  AuthenticatedProfileRoute: AuthenticatedProfileRoute,
   AuthenticatedProductionRoute: AuthenticatedProductionRoute,
+  AuthenticatedProfileRoute: AuthenticatedProfileRoute,
   AuthenticatedQuotesRoute: AuthenticatedQuotesRoute,
   AuthenticatedReceivablesRoute: AuthenticatedReceivablesRoute,
   AuthenticatedServicesRoute: AuthenticatedServicesRoute,
