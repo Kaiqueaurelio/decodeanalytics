@@ -218,37 +218,58 @@ export function resolveProductImage(
   imageUrl: string | null | undefined,
   category: string | null | undefined,
   slug?: string | null,
-): string | undefined {
-  // Catalog records often repeat one category cover. Prefer a product-specific
-  // local image first, then keep a genuinely custom image supplied by the user.
+): string {
+  // Preferir uma foto local específica para o produto sempre que disponível.
   if (slug && PRODUCT_IMAGES_BY_SLUG[slug]) {
     return PRODUCT_IMAGES_BY_SLUG[slug];
   }
 
-  if (imageUrl?.startsWith("http") || imageUrl?.startsWith("data:")) {
-    const localProductImage = getImageFromFileName(imageUrl);
-    return localProductImage ?? imageUrl;
-  }
+  const normalizedUrl = imageUrl?.trim();
+  if (normalizedUrl) {
+    const localProductImage = getImageFromFileName(normalizedUrl);
+    if (localProductImage) return localProductImage;
 
-  if (imageUrl) {
-    const localProductImage = getImageFromFileName(imageUrl);
-    if (localProductImage) {
-      return localProductImage;
+    // Preservar fotos próprias válidas, mas não devolver caminhos antigos do
+    // Lovable/CDN ou caminhos públicos legados que não existem neste deploy.
+    const isLegacyAssetPath =
+      normalizedUrl.startsWith("/__l5e/") ||
+      normalizedUrl.startsWith("/products/") ||
+      normalizedUrl.startsWith("/assets/products/");
+    if (!isLegacyAssetPath && (normalizedUrl.startsWith("https://") ||
+        normalizedUrl.startsWith("http://") ||
+        normalizedUrl.startsWith("data:") ||
+        normalizedUrl.startsWith("blob:") ||
+        normalizedUrl.startsWith("/"))) {
+      return normalizedUrl;
     }
   }
 
-  // URLs relativas (inclui `/__l5e/...` do CDN de assets do Lovable).
-  if (imageUrl?.startsWith("/") && !imageUrl.startsWith("/products/")) {
-    return imageUrl;
-  }
-
-  if (imageUrl?.startsWith("data:")) {
-    return imageUrl;
-  }
-
   if (category) {
-    return CATEGORY_IMAGES[category] ?? CATEGORY_IMAGES_BY_KEY[getCategoryKey(category)];
+    const key = getCategoryKey(category);
+    const categoryImage =
+      CATEGORY_IMAGES[category] ??
+      CATEGORY_IMAGES_BY_KEY[key] ??
+      (key.includes("caneca") ? imgCanecas :
+       key.includes("copo") || key.includes("squeeze") ? imgSqueeze :
+       key.includes("camiseta") || key.includes("uniforme") || key.includes("textil") ? imgCamisetas :
+       key.includes("cartao") || key.includes("cartoes") ? imgCartoes :
+       key.includes("panfleto") || key.includes("folder") || key.includes("folheto") ? imgPanfletos :
+       key.includes("adesiv") || key.includes("rotulo") || key.includes("etiqueta") ? imgAdesivos :
+       key.includes("banner") || key.includes("lona") || key.includes("fachada") ? imgBanners :
+       key.includes("embalagem") || key.includes("sacola") || key.includes("caixa") ? imgEmbalagens :
+       key.includes("plotagem") || key.includes("impressao") ? imgPlotagem :
+       key.includes("brinde") || key.includes("presente") ? imgBrindes :
+       key.includes("manutencao") || key.includes("computador") || key.includes("hardware") ? imgManutencao :
+       key.includes("programacao") || key.includes("site") || key.includes("sistema") ? imgProgramacao :
+       key.includes("social") || key.includes("marketing") ? imgSocial :
+       key.includes("design") || key.includes("arte") ? imgDesign :
+       key.includes("convite") ? imgWeddingInvite :
+       key.includes("encadernacao") || key.includes("caderno") ? imgNotebook :
+       key.includes("cartaz") || key.includes("poster") ? imgPoster :
+       undefined);
+    if (categoryImage) return categoryImage;
   }
 
-  return undefined;
+  // Último recurso local: nunca deixar o card sem imagem por falta de URL.
+  return imgDesign;
 }
