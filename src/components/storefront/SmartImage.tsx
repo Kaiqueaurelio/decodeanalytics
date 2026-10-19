@@ -25,7 +25,7 @@ export function SmartImage({
   useEffect(() => {
     setError(false);
     setFallbackAttempted(false);
-    setLoading(Boolean(src));
+    setLoading(Boolean(src || fallbackSrc));
   }, [src, fallbackSrc]);
 
   useEffect(() => {
@@ -70,7 +70,7 @@ export function SmartImage({
       )}
       <img
         ref={imgRef}
-        src={fallbackAttempted ? (fallbackSrc ?? src) : src}
+        src={fallbackAttempted ? (fallbackSrc ?? src) : (src ?? fallbackSrc)}
         alt={alt}
         className={`h-full w-full object-cover transition-opacity duration-300 ${loading ? "opacity-0" : "opacity-100"}`}
         onLoad={(event) => {
