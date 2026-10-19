@@ -1,4 +1,5 @@
 import type { CSSProperties, ReactNode } from "react";
+import { INSTAGRAM_ACCOUNTS } from "@/components/storefront/tokens";
 import { Link, useRouterState } from "@tanstack/react-router";
 import {
   Search,
@@ -293,17 +294,18 @@ function StoreHeader() {
                   Soluções digitais, design e tecnologia pensadas para fazer seu negócio avançar.
                 </p>
                 <div className="flex gap-2">
-                  {info.instagramUrl && (
+                  {INSTAGRAM_ACCOUNTS.map((ig) => (
                     <a
-                      href={info.instagramUrl}
+                      key={ig.url}
+                      href={ig.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      aria-label="Instagram"
+                      aria-label={`Instagram ${ig.handle}`}
                       className="grid h-11 w-11 place-items-center rounded-lg border border-white/10 bg-white/5 text-slate-100 transition-colors hover:bg-white/10 hover:text-cyan-300"
                     >
                       <Instagram className="h-4 w-4" />
                     </a>
-                  )}
+                  ))}
                 </div>
               </div>
             </SheetContent>
@@ -428,19 +430,19 @@ function StoreFooter() {
           <p className="mt-4 text-sm leading-relaxed text-white/70">
             Tecnologia, design e presença digital para ajudar sua marca a crescer.
           </p>
-          {info.instagramUrl && (
-            <div className="mt-4 flex gap-2">
+          <div className="mt-4 flex flex-col gap-2">
+            {INSTAGRAM_ACCOUNTS.map((ig) => (
               <a
-                href={info.instagramUrl}
+                key={ig.url}
+                href={ig.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                aria-label="Instagram"
-                className="grid h-11 w-11 place-items-center rounded-lg bg-white/10 transition-colors hover:bg-white/20"
+                className="inline-flex min-h-11 items-center gap-2 rounded-lg bg-white/10 px-3 text-sm transition-colors hover:bg-white/20"
               >
-                <Instagram className="h-4 w-4" />
+                <Instagram className="h-4 w-4" /> {ig.handle}
               </a>
-            </div>
-          )}
+            ))}
+          </div>
         </div>
         <div>
           <h3 className="text-sm font-bold uppercase tracking-wide text-[var(--store-secondary)]">
