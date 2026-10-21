@@ -56,7 +56,7 @@ export function SmartImage({
         />
       )}
       <img
-        src={fallbackAttempted ? (fallbackSrc ?? src) : (src ?? fallbackSrc)}
+        src={(fallbackAttempted ? (fallbackSrc ?? src) : (src ?? fallbackSrc)) ?? undefined}
         alt={alt}
         className={`h-full w-full object-cover transition-opacity duration-300 ${loading ? "opacity-0" : "opacity-100"}`}
         onLoad={(event) => {
