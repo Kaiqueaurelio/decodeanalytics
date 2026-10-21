@@ -47,10 +47,12 @@ function ProductPage() {
   const { data: product, isLoading } = useQuery({
     queryKey: ["store-product", slug],
     queryFn: async () => {
+      const isUuid =
+        /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(slug);
       const byCol = await supabase
         .from("services")
         .select("*")
-        .or(`slug.eq.${slug},id.eq.${slug}`)
+        .or(isUuid ? `slug.eq.${slug},id.eq.${slug}` : `slug.eq.${slug}`)
         .eq("active", true)
         .maybeSingle();
       if (byCol.error) throw byCol.error;
