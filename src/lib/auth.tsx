@@ -2,7 +2,15 @@ import { createContext, useContext, useEffect, useState, type ReactNode } from "
 import type { Session, User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 
-export type AppRole = "administrador" | "atendente" | "producao" | "financeiro" | "vendedor" | "aguardando_aprovacao";
+export type AppRole =
+  | "administrador"
+  | "admin"
+  | "super_admin"
+  | "atendente"
+  | "producao"
+  | "financeiro"
+  | "vendedor"
+  | "aguardando_aprovacao";
 
 interface AuthCtx {
   user: User | null;
@@ -28,12 +36,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     // Keep public pages from crashing if browser-side Supabase config is absent.
     const hasSupabaseConfig = Boolean(
-      import.meta.env.VITE_SUPABASE_URL &&
-      import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY
+      import.meta.env.VITE_SUPABASE_URL && import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
     );
     if (!hasSupabaseConfig) {
       console.error(
-        "[Auth] Supabase não está configurado no navegador. Configure VITE_SUPABASE_URL e VITE_SUPABASE_PUBLISHABLE_KEY para habilitar autenticação."
+        "[Auth] Supabase não está configurado no navegador. Configure VITE_SUPABASE_URL e VITE_SUPABASE_PUBLISHABLE_KEY para habilitar autenticação.",
       );
       setSession(null);
       setRoles([]);
@@ -47,6 +54,31 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const requestId = ++roleRequest;
       setLoading(true);
       try {
+        const { data: profile, error: profileError } = await supabase
+          .from("profiles")
+          .select("*")
+          .eq("id", userId)
+          .maybeSingle();
+
+        if (profileError && profileError.code !== "42703" && profileError.code !== "PGRST204") {
+          console.error("[Auth] Não foi possível carregar o perfil do usuário.", profileError);
+          if (active && requestId === roleRequest) setRoles([]);
+          return;
+        }
+        if (!active || requestId !== roleRequest) return;
+        const profileAccess = profile as
+          (typeof profile & { role?: string; is_active?: boolean }) | null;
+        if (profileAccess?.is_active === false) {
+          setRoles([]);
+          return;
+        }
+
+        if (profileAccess?.role) {
+          setRoles([profileAccess.role.toLowerCase() as AppRole]);
+          return;
+        }
+
+        // Older deployments keep permissions in user_roles instead of profiles.role.
         const { data, error } = await supabase
           .from("user_roles")
           .select("role")
@@ -81,7 +113,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
     });
 
-    void supabase.auth.getSession()
+    void supabase.auth
+      .getSession()
       .then(({ data, error }) => {
         if (!active) return;
         if (error) {
@@ -125,7 +158,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (error) throw error;
     },
     hasRole: (...r) => r.some((x) => roles.includes(x)),
-    isAdmin: roles.includes("administrador"),
+    isAdmin: roles.some(
+      (role) => role === "administrador" || role === "admin" || role === "super_admin",
+    ),
   };
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
@@ -139,6 +174,8 @@ export function useAuth() {
 
 export const ROLE_LABEL: Record<AppRole, string> = {
   administrador: "Administrador",
+  admin: "Administrador",
+  super_admin: "Administrador",
   atendente: "Atendente",
   producao: "Produção",
   financeiro: "Financeiro",

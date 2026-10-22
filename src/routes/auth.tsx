@@ -39,10 +39,7 @@ function AuthPage() {
   // or after the local server has stopped, which otherwise causes ERR_CONNECTION_REFUSED.
   function getAuthRedirectUrl() {
     const hostname = window.location.hostname;
-    const isLocal =
-      hostname === "localhost" ||
-      hostname === "127.0.0.1" ||
-      hostname === "::1";
+    const isLocal = hostname === "localhost" || hostname === "127.0.0.1" || hostname === "::1";
     const origin = isLocal ? "https://decodeanalyticsdev.vercel.app" : window.location.origin;
     return `${origin}/auth`;
   }
@@ -99,15 +96,51 @@ function AuthPage() {
       return toast.error(error.message);
     }
 
-    // The connected Supabase project uses profiles.role/is_active (not user_roles).
-    // Check the actual schema to avoid signing valid users out due to a missing table.
     const { data: profile, error: profileError } = await supabase
       .from("profiles")
-      .select("role, is_active")
+      .select("*")
       .eq("id", authData.user.id)
       .maybeSingle();
 
-    if (profileError || !profile || profile.is_active === false || !profile.role || profile.role === "user" || profile.role === "aguardando_aprovacao") {
+    if (profileError && profileError.code !== "42703" && profileError.code !== "PGRST204") {
+      await supabase.auth.signOut();
+      setLoading(false);
+      emitAuthTelemetry("auth_submit_error", { form: "login", errorMessage: profileError.message });
+      return toast.error("Não foi possível verificar as permissões da conta. Tente novamente.");
+    }
+
+    const profileAccess = profile as
+      (typeof profile & { role?: string; is_active?: boolean }) | null;
+    let role = profileAccess?.role?.toLowerCase();
+    let isActive = profileAccess?.is_active !== false;
+    if (!role) {
+      const { data: userRoles, error: userRolesError } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", authData.user.id);
+      if (userRolesError) {
+        await supabase.auth.signOut();
+        setLoading(false);
+        emitAuthTelemetry("auth_submit_error", {
+          form: "login",
+          errorMessage: userRolesError.message,
+        });
+        return toast.error("Não foi possível verificar as permissões da conta. Tente novamente.");
+      }
+      role = userRoles?.[0]?.role;
+      isActive = Boolean(userRoles?.length);
+    }
+
+    const hasStaffAccess = [
+      "administrador",
+      "admin",
+      "super_admin",
+      "atendente",
+      "producao",
+      "financeiro",
+      "vendedor",
+    ].includes(role ?? "");
+    if (!isActive || !hasStaffAccess) {
       await supabase.auth.signOut();
       setLoading(false);
       return toast.info("O acesso à equipe ainda aguarda aprovação de um administrador.");
@@ -177,7 +210,9 @@ function AuthPage() {
             className="brand-logo auth-logo mx-auto mb-3 h-24 w-auto max-w-full rounded-xl bg-black p-2 object-contain sm:mb-4 sm:h-36 md:h-44"
           />
           <h1 className="text-xl sm:text-2xl font-bold text-primary">Decode Analytics Gestão</h1>
-          <p className="text-sm text-muted-foreground">Design & soluções digitais para o seu negócio</p>
+          <p className="text-sm text-muted-foreground">
+            Design & soluções digitais para o seu negócio
+          </p>
         </div>
         <Tabs defaultValue="login" className={isRecovery ? "hidden" : undefined}>
           <TabsList className="grid grid-cols-2 w-full mb-4 h-12">
