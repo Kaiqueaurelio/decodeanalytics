@@ -19,11 +19,14 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
-import { Trash2, Plus, FileText } from "lucide-react";
+import { Trash2, Plus, FileText, Laptop, Palette, ChevronLeft, ChevronRight } from "lucide-react";
 import { toast } from "sonner";
 import { brl, PAYMENT_METHODS, PRODUCTION_STATUS_LABEL, toIsoDate } from "@/lib/format";
 import { generateOrderPDF } from "@/lib/pdf";
 import { OSStatusBadge } from "@/components/OSStatusBadge";
+
+import { TechnicalIntake } from "@/components/TechnicalIntake";
+import { emptyTechnicalData, readTechnicalData, type TechnicalData } from "@/lib/technical-order";
 
 export interface OrderEditorProps {
   open: boolean;
@@ -51,6 +54,8 @@ export function OrderEditor({
   onSaved,
   fromQuoteId,
 }: OrderEditorProps) {
+  const [step, setStep] = useState(0);
+  const [technical, setTechnical] = useState<TechnicalData>(emptyTechnicalData);
   const [loading, setLoading] = useState(false);
   const [clients, setClients] = useState<{ id: string; name: string }[]>([]);
   const [services, setServices] = useState<{ id: string; name: string; base_price: number }[]>([]);
@@ -58,6 +63,7 @@ export function OrderEditor({
     { id: string; full_name: string | null; email: string | null }[]
   >([]);
   const [form, setForm] = useState<any>({
+    service_segment: "grafica",
     client_id: "",
     title: "",
     description: "",
@@ -81,6 +87,8 @@ export function OrderEditor({
 
   useEffect(() => {
     if (!open) return;
+    setStep(0);
+    setTechnical(emptyTechnicalData());
     supabase
       .from("clients")
       .select("id,name")
@@ -109,6 +117,7 @@ export function OrderEditor({
           .select("*")
           .eq("order_id", orderId);
         setForm({ ...o, deadline: o.deadline ?? "" });
+        setTechnical(readTechnicalData(o.technical_data));
         setItems(
           (its ?? []).map((i: any) => ({
             id: i.id,
@@ -151,7 +160,8 @@ export function OrderEditor({
       })();
     } else {
       setForm({
-        client_id: "",
+        service_segment: "grafica",
+    client_id: "",
         title: "",
         description: "",
         measurements: "",
@@ -185,9 +195,12 @@ export function OrderEditor({
 
   async function save() {
     if (!form.client_id) return toast.error("Selecione um cliente");
+    if (form.service_segment === "tecnologia" && (!technical.equipment || !technical.complaint.trim())) { setStep(1); return toast.error("Informe o equipamento e o defeito relatado"); }
     if (!items.length) return toast.error("Adicione ao menos um item");
     setLoading(true);
     const payload = {
+      service_segment: form.service_segment || "grafica",
+      technical_data: JSON.parse(JSON.stringify(technical)),
       client_id: form.client_id,
       title: form.title,
       description: form.description,
@@ -273,9 +286,16 @@ export function OrderEditor({
     });
   }
 
+  const isTech = form.service_segment === "tecnologia";
+  const steps = ["Cliente", "Equipamento", "Checklist", "Finalização"];
+  function nextStep() {
+    if (step === 0 && !form.client_id) return toast.error("Selecione um cliente");
+    if (step === 1 && (!technical.equipment || !technical.complaint.trim())) return toast.error("Informe o equipamento e o defeito relatado");
+    setStep(Math.min(3, step + 1));
+  }
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="w-[calc(100%-1rem)] max-w-4xl max-h-[92dvh] overflow-y-auto p-4 sm:p-6">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-3">
             <span>{orderId ? "Editar Ordem de Serviço" : "Nova Ordem de Serviço"}</span>
@@ -284,8 +304,13 @@ export function OrderEditor({
             )}
           </DialogTitle>
         </DialogHeader>
+        <div className="flex flex-wrap gap-2 border-b pb-3" role="group" aria-label="Segmento da ordem">
+          <Button variant={!isTech ? "default" : "outline"} aria-pressed={!isTech} onClick={() => {setForm({...form,service_segment:"grafica"}); setStep(0);}}><Palette className="h-4 w-4"/>Gráfica / Design</Button>
+          <Button variant={isTech ? "default" : "outline"} aria-pressed={isTech} onClick={() => {setForm({...form,service_segment:"tecnologia"});setStep(0);}}><Laptop className="h-4 w-4"/>Tecnologia / Manutenção</Button>
+        </div>
+        {isTech && <nav aria-label="Etapas da ordem" className="grid grid-cols-2 gap-1 sm:grid-cols-4">{steps.map((label,index)=><Button key={label} size="sm" variant={step===index?"default":"ghost"} onClick={()=>setStep(index)} aria-current={step===index?"step":undefined}>{index+1}. {label}</Button>)}</nav>}
         <div className="space-y-4">
-          <div className="grid md:grid-cols-3 gap-3">
+          <div className={isTech && step !== 0 ? "hidden" : "grid md:grid-cols-3 gap-3"}>
             <div className="md:col-span-2">
               <Label>Cliente *</Label>
               <Select
@@ -317,7 +342,7 @@ export function OrderEditor({
               </p>
             </div>
           </div>
-          <div className="grid md:grid-cols-2 gap-3">
+          <div className={isTech && step !== 0 ? "hidden" : "grid md:grid-cols-2 gap-3"}>
             <div>
               <Label>Título / Serviço</Label>
               <Input
@@ -325,21 +350,21 @@ export function OrderEditor({
                 onChange={(e) => setForm({ ...form, title: e.target.value })}
               />
             </div>
-            <div>
+            <div hidden={isTech}>
               <Label>Material</Label>
               <Input
                 value={form.material ?? ""}
                 onChange={(e) => setForm({ ...form, material: e.target.value })}
               />
             </div>
-            <div>
+            <div hidden={isTech}>
               <Label>Medidas</Label>
               <Input
                 value={form.measurements ?? ""}
                 onChange={(e) => setForm({ ...form, measurements: e.target.value })}
               />
             </div>
-            <div>
+            <div hidden={isTech}>
               <Label>Acabamento</Label>
               <Input
                 value={form.finishing ?? ""}
@@ -347,7 +372,7 @@ export function OrderEditor({
               />
             </div>
           </div>
-          <div>
+          <div hidden={isTech && step !== 0}>
             <Label>Descrição detalhada</Label>
             <Textarea
               rows={2}
@@ -356,6 +381,8 @@ export function OrderEditor({
             />
           </div>
 
+          {isTech && step > 0 && <TechnicalIntake value={technical} onChange={setTechnical} step={step} team={team}/>}
+          <div className={isTech && step !== 3 ? "hidden" : "space-y-4"}>
           <div>
             <div className="flex items-center justify-between mb-2">
               <Label>Itens</Label>
@@ -507,7 +534,7 @@ export function OrderEditor({
           </div>
           <div className="grid md:grid-cols-3 gap-3">
             <div>
-              <Label>Responsável pela produção</Label>
+              <Label>{isTech ? "Técnico responsável" : "Responsável pela produção"}</Label>
               <Select
                 value={form.assigned_to || "unassigned"}
                 onValueChange={(v) =>
@@ -566,15 +593,18 @@ export function OrderEditor({
               />
             </div>
           </div>
+          </div>
         </div>
-        <DialogFooter className="gap-2">
+        <DialogFooter className="sticky bottom-0 gap-2 border-t bg-background py-3">
+          {isTech && step > 0 && <Button variant="outline" onClick={()=>setStep(step-1)}><ChevronLeft className="h-4 w-4"/>Voltar</Button>}
+          {isTech && step < 3 && <Button onClick={nextStep}>Próximo<ChevronRight className="h-4 w-4"/></Button>}
           {orderId && (
             <Button variant="outline" onClick={printPDF}>
               <FileText className="w-4 h-4 mr-1" />
               PDF
             </Button>
           )}
-          <Button onClick={save} disabled={loading}>
+          <Button onClick={save} disabled={loading} className={isTech && step < 3 ? "hidden" : ""}>
             {loading ? "Salvando..." : "Salvar"}
           </Button>
         </DialogFooter>

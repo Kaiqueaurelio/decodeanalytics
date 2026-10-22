@@ -1,3 +1,4 @@
+import { customerTechnicalRows, readTechnicalData } from "./technical-order";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import { brl, DEFAULT_COMPANY_DOCUMENT, fmtCnpj, fmtDate, fmtDateOnly } from "./format";
@@ -109,7 +110,7 @@ export async function generateOrderPDF(opts: {
     number: number; created_at: string; deadline?: string | null;
     description?: string | null; client_notes?: string | null;
     total: number; paid: number; payment_method?: string | null;
-    production_status: string; urgent?: boolean;
+    production_status: string; urgent?: boolean; service_segment?: string; technical_data?: unknown;
   };
   client: { name: string; document?: string | null; whatsapp?: string | null; email?: string | null };
   items: Item[];
@@ -163,7 +164,12 @@ export async function generateOrderPDF(opts: {
   doc.line(14, 248, 90, 248); doc.setFontSize(9); doc.text("Assinatura do cliente", 14, 254);
   doc.line(110, 248, 196, 248); doc.text("Assinatura responsável", 110, 254);
 
-  footer(doc, opts.company);
+  if (opts.order.service_segment === "tecnologia") {
+    doc.addPage();
+    header(doc, opts.company, `Ficha técnica — OS #${opts.order.number}`, logo);
+    autoTable(doc, {startY: 52, head: [["Entrada e atendimento", "Registro"]], body: customerTechnicalRows(readTechnicalData(opts.order.technical_data)), styles: {fontSize: 9, cellWidth: 'wrap'}, columnStyles: {0: {cellWidth: 58}, 1: {cellWidth: 124}}, margin: {top: 52, bottom: 30}, headStyles: {fillColor: [11,16,38], textColor: 255} });
+  }
+  for (let page=1; page<=doc.getNumberOfPages(); page++) {doc.setPage(page); footer(doc, opts.company);}
   doc.save(`OS-${opts.order.number}.pdf`);
 }
 

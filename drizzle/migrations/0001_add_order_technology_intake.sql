@@ -1,0 +1,2 @@
+ALTER TABLE public.orders ADD COLUMN IF NOT EXISTS service_segment text NOT NULL DEFAULT 'grafica', ADD COLUMN IF NOT EXISTS technical_data jsonb NOT NULL DEFAULT '{}'::jsonb;
+COMMENT ON COLUMN public.orders.technical_data IS 'Private staff-only equipment intake, inspection answers, diagnostics and warranty; never project device credentials into public views or customer PDFs.';
