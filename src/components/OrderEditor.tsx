@@ -310,7 +310,7 @@ export function OrderEditor({
         </div>
         {isTech && <nav aria-label="Etapas da ordem" className="grid grid-cols-2 gap-1 sm:grid-cols-4">{steps.map((label,index)=><Button key={label} size="sm" variant={step===index?"default":"ghost"} onClick={()=>setStep(index)} aria-current={step===index?"step":undefined}>{index+1}. {label}</Button>)}</nav>}
         <div className="space-y-4">
-          <div hidden={isTech && step !== 0} className="grid md:grid-cols-3 gap-3">
+          <div className={isTech && step !== 0 ? "hidden" : "grid md:grid-cols-3 gap-3"}>
             <div className="md:col-span-2">
               <Label>Cliente *</Label>
               <Select
@@ -342,7 +342,7 @@ export function OrderEditor({
               </p>
             </div>
           </div>
-          <div hidden={isTech && step !== 0} className="grid md:grid-cols-2 gap-3">
+          <div className={isTech && step !== 0 ? "hidden" : "grid md:grid-cols-2 gap-3"}>
             <div>
               <Label>Título / Serviço</Label>
               <Input
@@ -382,7 +382,7 @@ export function OrderEditor({
           </div>
 
           {isTech && step > 0 && <TechnicalIntake value={technical} onChange={setTechnical} step={step} team={team}/>}
-          <div hidden={isTech && step !== 3} className="space-y-4">
+          <div className={isTech && step !== 3 ? "hidden" : "space-y-4"}>
           <div>
             <div className="flex items-center justify-between mb-2">
               <Label>Itens</Label>
