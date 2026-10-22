@@ -34,6 +34,19 @@ function AuthPage() {
   const recoveryPwdId = useId();
   const recoveryConfirmPwdId = useId();
 
+  // Recovery links must never point to localhost when requested from a local
+  // preview or development server. The email link is opened on another device
+  // or after the local server has stopped, which otherwise causes ERR_CONNECTION_REFUSED.
+  function getAuthRedirectUrl() {
+    const hostname = window.location.hostname;
+    const isLocal =
+      hostname === "localhost" ||
+      hostname === "127.0.0.1" ||
+      hostname === "::1";
+    const origin = isLocal ? "https://decodeanalyticsdev.vercel.app" : window.location.origin;
+    return `${origin}/auth`;
+  }
+
   useEffect(() => {
     emitAuthTelemetry("auth_page_view");
 
@@ -108,7 +121,7 @@ function AuthPage() {
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
-      options: { data: { full_name: fullName }, emailRedirectTo: window.location.origin },
+      options: { data: { full_name: fullName }, emailRedirectTo: getAuthRedirectUrl() },
     });
     setLoading(false);
     if (error) {
@@ -122,7 +135,7 @@ function AuthPage() {
   async function handleReset() {
     if (!email) return toast.error("Informe o e-mail primeiro");
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: window.location.origin + "/auth",
+      redirectTo: getAuthRedirectUrl(),
     });
     if (error) return toast.error(error.message);
     toast.success("Link de recuperação enviado.");
