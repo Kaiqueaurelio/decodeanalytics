@@ -20,10 +20,14 @@ import { OrderEditor } from "@/components/OrderEditor";
 import { OSStatusBadge } from "@/components/OSStatusBadge";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-export const Route = createFileRoute("/_authenticated/orders")({ component: OrdersPage });
+export const Route = createFileRoute("/_authenticated/orders")({
+  head: () => ({meta: [ {title: "Ordens de serviço | Decode Analytics"}, {name:"description",content:"Gestão de ordens de gráfica e manutenção de equipamentos da Decode Analytics."}, {property:"og:title",content:"Ordens de serviço | Decode Analytics"}, {property:"og:description",content:"Atendimento, checklist e acompanhamento de serviços gráficos e técnicos."}, {property:"og:type",content:"website"}, {name:"twitter:card",content:"summary"} ]}),
+  component: OrdersPage
+});
 
 function OrdersPage() {
   const qc = useQueryClient();
+  const [segment, setSegment] = useState("all");
   const [search, setSearch] = useState("");
   const [open, setOpen] = useState(false);
   const [editId, setEditId] = useState<string | null>(null);
@@ -112,10 +116,10 @@ function OrdersPage() {
       }
 
       return (
-        matchesSearch && matchesProd && matchesPay && matchesResp && matchesDeadline && matchesLifecycle
+        (segment === "all" || (r.service_segment || "grafica") === segment) && matchesSearch && matchesProd && matchesPay && matchesResp && matchesDeadline && matchesLifecycle
       );
     });
-  }, [rawOrders, search, productionStatus, paymentStatus, deadlineFilter, responsibleFilter, lifecycleTab]);
+  }, [rawOrders, segment, search, productionStatus, paymentStatus, deadlineFilter, responsibleFilter, lifecycleTab]);
 
   const counts = useMemo(() => {
     const rows = rawOrders ?? [];
@@ -229,7 +233,7 @@ function OrdersPage() {
               className="pl-9"
             />
           </div>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             <Button
               variant="outline"
               onClick={() => setShowCompleted((v) => !v)}
@@ -299,6 +303,7 @@ function OrdersPage() {
         </Select>
       </div>
       </div>
+      <div className="flex flex-wrap gap-2" role="group" aria-label="Filtrar segmento">{[["all","Todos os segmentos"],["tecnologia","Tecnologia / Manutenção"],["grafica","Gráfica / Design"]].map(([id,label])=><Button key={id} size="sm" variant={segment===id?"default":"outline"} aria-pressed={segment===id} onClick={()=>setSegment(id)}>{label}</Button>)}</div>
       <Tabs value={lifecycleTab} onValueChange={(v) => setLifecycleTab(v as any)}>
         <TabsList className="w-full sm:w-auto flex flex-wrap gap-1">
           <TabsTrigger value="todas" className="text-xs">
@@ -393,8 +398,9 @@ function OrdersPage() {
                 <tr key={o.id} className="border-t hover:bg-muted/30">
                   <td className="p-3 font-mono">#{o.number}</td>
                   <td className="p-3 font-medium">
-                    <div className="flex items-center gap-2">
+                    <div className="flex flex-wrap items-center gap-2">
                       {o.clients?.name}
+                      <Badge variant="outline">{o.service_segment === "tecnologia" ? "Tecnologia" : "Gráfica"}</Badge>
                       <OSStatusBadge status={o.production_status} className="text-[10px] px-2 py-0.5" />
                       {o.urgent && (
                         <Badge className="bg-destructive text-destructive-foreground">
