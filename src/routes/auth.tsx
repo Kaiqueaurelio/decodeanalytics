@@ -99,11 +99,15 @@ function AuthPage() {
       return toast.error(error.message);
     }
 
-    const { data: assignedRoles, error: rolesError } = await supabase
-      .from("user_roles")
-      .select("role")
-      .eq("user_id", authData.user.id);
-    if (rolesError || !assignedRoles?.length) {
+    // The connected Supabase project uses profiles.role/is_active (not user_roles).
+    // Check the actual schema to avoid signing valid users out due to a missing table.
+    const { data: profile, error: profileError } = await supabase
+      .from("profiles")
+      .select("role, is_active")
+      .eq("id", authData.user.id)
+      .maybeSingle();
+
+    if (profileError || !profile || profile.is_active === false || !profile.role || profile.role === "user" || profile.role === "aguardando_aprovacao") {
       await supabase.auth.signOut();
       setLoading(false);
       return toast.info("O acesso à equipe ainda aguarda aprovação de um administrador.");
