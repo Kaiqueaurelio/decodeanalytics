@@ -629,6 +629,8 @@ export type Database = {
           production_status: Database["public"]["Enums"]["production_status"]
           progress: number
           quote_id: string | null
+          service_segment: string
+          technical_data: Json
           title: string | null
           total: number
           updated_at: string
@@ -659,6 +661,8 @@ export type Database = {
           production_status?: Database["public"]["Enums"]["production_status"]
           progress?: number
           quote_id?: string | null
+          service_segment?: string
+          technical_data?: Json
           title?: string | null
           total?: number
           updated_at?: string
@@ -689,6 +693,8 @@ export type Database = {
           production_status?: Database["public"]["Enums"]["production_status"]
           progress?: number
           quote_id?: string | null
+          service_segment?: string
+          technical_data?: Json
           title?: string | null
           total?: number
           updated_at?: string
