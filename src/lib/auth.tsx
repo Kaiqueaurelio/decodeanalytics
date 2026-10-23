@@ -11,7 +11,8 @@ export type AppRole =
   | "producao"
   | "financeiro"
   | "vendedor"
-  | "aguardando_aprovacao";
+  | "aguardando_aprovacao"
+  | "viewer";
 
 interface AuthCtx {
   user: User | null;
@@ -161,4 +162,5 @@ export const ROLE_LABEL: Record<AppRole, string> = {
   financeiro: "Financeiro",
   vendedor: "Vendedor",
   aguardando_aprovacao: "Aguardando aprovação",
+  viewer: "Somente leitura",
 };
