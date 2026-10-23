@@ -93,12 +93,12 @@ function ProductionBoard() {
         supabase
           .from("orders")
           .select(
-            "*, clients(name,whatsapp), assignee:profiles!orders_assigned_to_fkey(id,full_name,email)",
+            "*, clients(name,whatsapp), assignee:profiles!orders_assigned_to_fkey(id,name,email)",
           )
           .in("production_status", statuses as any)
           .order("urgent", { ascending: false })
           .order("deadline", { ascending: true }),
-        supabase.from("profiles").select("id,full_name,email").order("full_name"),
+        supabase.from("profiles").select("id,name,email").order("name"),
       ]);
       if (ordersResult.error) throw ordersResult.error;
       return { orders: (ordersResult.data ?? []) as any[], team: profilesResult.data ?? [] };
@@ -111,7 +111,7 @@ function ProductionBoard() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("production_updates" as any)
-        .select("*, author:profiles!production_updates_author_id_fkey(full_name,email)")
+        .select("*, author:profiles!production_updates_author_id_fkey(name,email)")
         .eq("order_id", selected.id)
         .order("created_at", { ascending: false });
       if (error) throw error;
@@ -181,7 +181,7 @@ function ProductionBoard() {
               <SelectItem value="unassigned">Sem responsável</SelectItem>
               {(data?.team ?? []).map((member) => (
                 <SelectItem key={member.id} value={member.id}>
-                  {member.full_name || member.email}
+                  {member.name || member.email}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -305,7 +305,7 @@ function ProductionBoard() {
                         icon={UserRound}
                         label="Responsável"
                         value={
-                          order.assignee?.full_name || order.assignee?.email || "Não atribuído"
+                          order.assignee?.name || order.assignee?.email || "Não atribuído"
                         }
                         warning={!order.assigned_to}
                       />
@@ -473,7 +473,7 @@ function ProductionBoard() {
                       <div className="flex items-center justify-between mt-3 text-[10px] text-muted-foreground">
                         <span className="flex items-center gap-1">
                           <UserRound className="w-3 h-3" />
-                          {order.assignee?.full_name || order.assignee?.email || "Não atribuído"}
+                          {order.assignee?.name || order.assignee?.email || "Não atribuído"}
                         </span>
                         <span className="flex items-center gap-1">
                           <Clock3 className="w-3 h-3" />
@@ -533,7 +533,7 @@ function ProductionBoard() {
                   <Card className="p-3">
                     <p className="text-xs text-muted-foreground">Responsável</p>
                     <p className="font-semibold mt-1">
-                      {selected.assignee?.full_name || selected.assignee?.email || "Não atribuído"}
+                      {selected.assignee?.name || selected.assignee?.email || "Não atribuído"}
                     </p>
                   </Card>
                   <Card className="p-3">
@@ -571,7 +571,7 @@ function ProductionBoard() {
                           </span>
                         </div>
                         <p className="text-xs text-muted-foreground mt-1">
-                          {update.author?.full_name || update.author?.email} ·{" "}
+                          {update.author?.name || update.author?.email} ·{" "}
                           {PRODUCTION_STATUS_LABEL[update.status]} · {update.progress}%
                         </p>
                         {update.note && <p className="text-sm mt-2">{update.note}</p>}
