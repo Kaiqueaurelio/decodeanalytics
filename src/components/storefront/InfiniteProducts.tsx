@@ -1,4 +1,5 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { Button } from '@/components/ui/button';
 import { Link } from "@tanstack/react-router";
 import { Plus, Star } from "lucide-react";
 import { useStoreProducts } from "./useStoreProducts";
@@ -13,11 +14,25 @@ const PAGE = 8;
 export function InfiniteProducts() {
   const { data, isLoading, isError } = useStoreProducts();
   const all = useMemo(() => data ?? [], [data]);
+  const [visibleCount, setVisibleCount] = useState(PAGE);
+  const sentinel = useRef<HTMLDivElement>(null);
+  const hasMore = visibleCount < all.length;
+
+  useEffect(() => {
+    if (!hasMore || !sentinel.current || !('IntersectionObserver' in window)) return;
+    const observer = new IntersectionObserver(entries => {
+      if (entries.some(entry => entry.isIntersecting)) {
+        setVisibleCount(count => Math.min(count + PAGE, all.length));
+      }
+    }, { rootMargin: '0px 0px 300px 0px' });
+    observer.observe(sentinel.current);
+    return () => observer.disconnect();
+  }, [hasMore, visibleCount, all.length]);
 
   // Registra o catálogo inteiro disponível na landing page.
   useEffect(() => {
-    if (all.length) trackInfinitePage(Math.ceil(all.length / PAGE), all.length);
-  }, [all.length]);
+    if (all.length) trackInfinitePage(Math.ceil(Math.min(visibleCount, all.length) / PAGE), Math.min(visibleCount, all.length));
+  }, [all.length, visibleCount]);
 
   if (isLoading) {
     return (
@@ -82,7 +97,7 @@ export function InfiniteProducts() {
         </header>
 
         <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-4">
-          {all.map((p, idx) => (
+          {all.slice(0, visibleCount).map((p, idx) => (
             <FeedCard
               key={`${p.id}-${idx}`}
               product={p}
@@ -92,9 +107,12 @@ export function InfiniteProducts() {
           ))}
         </div>
 
-        <p role="status" className="mt-10 text-center text-sm text-slate-400">
-          Catálogo completo · {all.length} {all.length === 1 ? "produto" : "produtos"}
-        </p>
+        <div ref={sentinel} className="mt-10 flex min-h-12 flex-col items-center gap-3">
+          {hasMore && <Button variant="outline" onClick={() => setVisibleCount(count => Math.min(count + PAGE, all.length))}>Ver mais produtos</Button>}
+          <p role="status" className="text-center text-sm text-muted-foreground">
+            {Math.min(visibleCount, all.length)} de {all.length} produtos
+          </p>
+        </div>
       </div>
     </section>
   );
