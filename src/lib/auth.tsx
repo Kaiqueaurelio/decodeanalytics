@@ -47,16 +47,35 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           .eq("id", userId)
           .maybeSingle();
         if (!active || requestId !== roleRequest) return;
+        if (!error && data && data.is_active !== false && data.role) {
+          setRoles([data.role as AppRole]);
+          return;
+        }
+
+        // Compatibility fallback for deployments whose role data is in user_roles.
+        // The database still decides access; no role is inferred from the email.
         if (error) {
-          console.error("[Auth] Não foi possível carregar o perfil do usuário.", error);
+          console.error("[Auth] Falha ao consultar profiles.role; tentando user_roles.", error);
+        }
+        const { data: roleRows, error: roleError } = await (supabase as any)
+          .from("user_roles")
+          .select("role")
+          .eq("user_id", userId);
+        if (!active || requestId !== roleRequest) return;
+        if (roleError) {
+          console.error("[Auth] Não foi possível carregar user_roles.", roleError);
           setRoles([]);
           return;
         }
-        if (!data || data.is_active === false || !data.role) {
-          setRoles([]);
-          return;
-        }
-        setRoles([data.role as AppRole]);
+        const validRoles = (roleRows ?? [])
+          .map((row: { role?: string }) => row.role)
+          .filter((role: string | undefined): role is AppRole =>
+            Boolean(role && [
+              "administrador", "admin", "super_admin", "atendente",
+              "producao", "financeiro", "vendedor", "aguardando_aprovacao", "viewer"
+            ].includes(role))
+          );
+        setRoles(validRoles);
       } catch (error) {
         if (!active || requestId !== roleRequest) return;
         console.error("[Auth] Falha inesperada ao carregar os papéis do usuário.", error);
