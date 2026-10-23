@@ -43,7 +43,7 @@ function OrdersPage() {
     queryFn: async () => {
       let q = supabase
         .from("orders")
-        .select("*, clients(name), assignee:profiles!orders_assigned_to_fkey(full_name,email)")
+        .select("*, clients(name), assignee:profiles!orders_assigned_to_fkey(name,email)")
         .order("created_at", { ascending: false })
         .limit(200);
       // If a lifecycle tab targets concluídas/arquivadas we must include them
@@ -60,7 +60,7 @@ function OrdersPage() {
   const { data: team } = useQuery({
     queryKey: ["profiles-team"],
     queryFn: async () => {
-      const { data, error } = await supabase.from("profiles").select("id,full_name,email").order("full_name");
+      const { data, error } = await supabase.from("profiles").select("id,name,email").order("name");
       if (error) throw error;
       return data ?? [];
     },
@@ -184,7 +184,7 @@ function OrdersPage() {
     const name =
       responsibleFilter === "unassigned"
         ? "Sem responsável"
-        : (team ?? []).find((m: any) => m.id === responsibleFilter)?.full_name ||
+        : (team ?? []).find((m: any) => m.id === responsibleFilter)?.name ||
           (team ?? []).find((m: any) => m.id === responsibleFilter)?.email ||
           "Responsável";
     activeChips.push({ key: "resp", label: `Resp.: ${name}`, onClear: () => setResponsibleFilter("all") });
@@ -297,7 +297,7 @@ function OrdersPage() {
             <SelectItem value="all">Todos os responsáveis</SelectItem>
             <SelectItem value="unassigned">Sem responsável</SelectItem>
             {(team ?? []).map((m: any) => (
-              <SelectItem key={m.id} value={m.id}>{m.full_name || m.email}</SelectItem>
+              <SelectItem key={m.id} value={m.id}>{m.name || m.email}</SelectItem>
             ))}
           </SelectContent>
         </Select>
@@ -416,7 +416,7 @@ function OrdersPage() {
                   </td>
                   <td className="p-3 hidden xl:table-cell max-w-[260px]">
                     <div className="font-medium text-xs">
-                      {o.assignee?.full_name || o.assignee?.email || "Sem responsável"}
+                      {o.assignee?.name || o.assignee?.email || "Sem responsável"}
                     </div>
                     <div className="text-xs text-muted-foreground truncate mt-1">
                       {o.current_activity || "Atividade não informada"}

@@ -276,13 +276,14 @@ export const ellaChat = createServerFn({ method: "POST" })
     const supabase = context.supabase;
     const userId = context.userId;
 
-    const staffRoles = ["administrador", "atendente", "producao", "financeiro"];
-    const { data: assignedRoles, error: rolesError } = await supabase
-      .from("user_roles")
-      .select("role")
-      .eq("user_id", userId);
-    if (rolesError) throw new Error("Não foi possível verificar suas permissões.");
-    if (!assignedRoles?.some(({ role }) => staffRoles.includes(role))) {
+    const { data: profile, error: profileError } = await supabase
+      .from("profiles")
+      .select("role,is_active")
+      .eq("id", userId)
+      .maybeSingle();
+    if (profileError) throw new Error("Não foi possível verificar suas permissões.");
+    const staffRoles = ["admin", "super_admin", "administrador", "atendente", "producao", "financeiro", "vendedor"];
+    if (!profile || profile.is_active === false || !staffRoles.includes(profile.role ?? "")) {
       throw new Error("Acesso não liberado para esta conta.");
     }
 
@@ -766,41 +767,37 @@ export const ellaChat = createServerFn({ method: "POST" })
         },
       }),
       list_users: tool({
-        description: "Lista usuários do sistema com seus papéis.",
+        description: "Lista usuários do sistema com seu cargo e status de acesso.",
         inputSchema: z.object({}),
         execute: async () => {
           const { data: profiles, error } = await supabase
             .from("profiles")
-            .select("id,full_name,email")
-            .order("full_name");
+            .select("id,name,email,role,is_active")
+            .order("name");
           if (error) return { error: error.message };
-          const { data: roles } = await supabase.from("user_roles").select("user_id,role");
-          const byUser: Record<string, string[]> = {};
-          for (const r of roles ?? []) {
-            (byUser[r.user_id] ??= []).push(r.role);
-          }
           return {
-            users: (profiles ?? []).map((p: any) => ({ ...p, roles: byUser[p.id] ?? [] })),
+            users: (profiles ?? []).map((profile) => ({
+              ...profile,
+              roles: profile.role ? [profile.role] : [],
+            })),
           };
         },
       }),
       set_user_role: tool({
         description:
-          "Define o papel de um usuário. role em: administrador, atendente, producao, financeiro.",
+          "Define o cargo de um usuário. Cargos suportados: admin, super_admin, atendente, producao, financeiro, vendedor, viewer, user ou aguardando_aprovacao. Pode ativar/desativar a conta com active.",
         inputSchema: z.object({
           userId: z.string().uuid(),
-          role: z.enum(["administrador", "atendente", "producao", "financeiro"]),
-          replaceExisting: z.boolean().optional(),
+          role: z.enum(["admin", "super_admin", "administrador", "atendente", "producao", "financeiro", "vendedor", "viewer", "user", "aguardando_aprovacao"]),
+          active: z.boolean().optional(),
         }),
-        execute: async ({ userId: uid, role, replaceExisting }) => {
-          if (replaceExisting) {
-            await supabase.from("user_roles").delete().eq("user_id", uid);
-          }
-          const { error } = await supabase
-            .from("user_roles")
-            .insert({ user_id: uid, role })
-            .select("id")
-            .maybeSingle();
+        execute: async ({ userId: uid, role, active = true }) => {
+          const normalizedRole = role === "administrador" ? "admin" : role;
+          const { error } = await supabase.rpc("admin_update_profile_access", {
+            _user_id: uid,
+            _role: normalizedRole,
+            _is_active: active,
+          });
           if (error) return { error: error.message };
           return { success: true };
         },

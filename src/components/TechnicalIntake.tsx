@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Check, ChevronLeft, ChevronRight, RotateCcw, Smartphone, Laptop, ShieldCheck } from 'lucide-react';
 import { visibleInspection, type TechnicalData } from '@/lib/technical-order';
 
-export function TechnicalIntake({ value, onChange, step, team }: { value: TechnicalData; onChange: (v: TechnicalData) => void; step: number; team: {id: string; full_name: string | null; email: string | null}[] }) {
+export function TechnicalIntake({ value, onChange, step, team }: { value: TechnicalData; onChange: (v: TechnicalData) => void; step: number; team: {id: string; name: string | null; email: string | null}[] }) {
   const [questionIndex, setQuestionIndex] = useState(0);
   const [showPassword, setShowPassword] = useState(false);
   const update = (patch: Partial<TechnicalData>) => onChange({...value, ...patch});
@@ -40,7 +40,7 @@ export function TechnicalIntake({ value, onChange, step, team }: { value: Techni
     {fields([{key:'diagnosis',label:'Laudo prévio / diagnóstico',multiline:true},{key:'resolution',label:'Laudo final / solução e peças trocadas',multiline:true}])}
     <div><Label>Status técnico</Label><Select value={value.technical_status} onValueChange={v=>update({technical_status:v})}><SelectTrigger><SelectValue/></SelectTrigger><SelectContent>{[['aguardando_avaliacao','Aguardando avaliação'],['em_diagnostico','Em diagnóstico'],['aguardando_aprovacao','Aguardando aprovação'],['aguardando_pecas','Aguardando peças'],['em_reparo','Em reparo'],['pronto','Pronto para retirada']].map(([id,label])=><SelectItem key={id} value={id}>{label}</SelectItem>)}</SelectContent></Select></div>
     <div><Label htmlFor="warranty-days">Garantia (dias)</Label><Input id="warranty-days" type="number" min={0} value={value.warranty_days} onChange={e=>update({warranty_days:Math.max(0,Number(e.target.value))})}/></div>
-    <div><Label>Atendente</Label><Select value={value.attendant_id || 'none'} onValueChange={v=>update({attendant_id:v==='none'?'':v})}><SelectTrigger><SelectValue/></SelectTrigger><SelectContent><SelectItem value="none">Não informado</SelectItem>{team.map(p=><SelectItem key={p.id} value={p.id}>{p.full_name||p.email}</SelectItem>)}</SelectContent></Select></div>
+    <div><Label>Atendente</Label><Select value={value.attendant_id || 'none'} onValueChange={v=>update({attendant_id:v==='none'?'':v})}><SelectTrigger><SelectValue/></SelectTrigger><SelectContent><SelectItem value="none">Não informado</SelectItem>{team.map(p=><SelectItem key={p.id} value={p.id}>{p.name||p.email}</SelectItem>)}</SelectContent></Select></div>
     {fields([{key:'terms',label:'Termos e condições acordados',multiline:true}])}
   </div>;
 }

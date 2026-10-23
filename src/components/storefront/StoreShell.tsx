@@ -160,13 +160,13 @@ function StoreHeader() {
             <MessageCircle className="h-4 w-4 text-[var(--store-success)]" />
             Atendimento
           </a>
-          <Link
-            to="/auth"
+          <a
+            href="/auth"
             className="flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium text-[var(--store-text)] hover:bg-[var(--store-surface-soft)]"
           >
             <User className="h-4 w-4" />
             Entrar
-          </Link>
+          </a>
           <Link to="/orcamento" className="rounded-lg border border-[#22D3EE]/30 px-3 py-2 text-sm font-bold text-[#22D3EE] hover:bg-[#22D3EE]/10">Orçamento</Link>
           <CartButton />
         </nav>
@@ -245,14 +245,14 @@ function StoreHeader() {
                     Minha Conta
                   </h3>
                   <div className="space-y-2">
-                    <Link
-                      to="/auth"
+                    <a
+                      href="/auth"
                       onClick={() => setMobileMenuOpen(false)}
                       className="flex items-center gap-3 rounded-lg px-3 py-3 text-sm font-medium text-slate-100 transition-colors hover:bg-white/10"
                     >
                       <User className="h-4 w-4 text-[var(--store-primary)]" />
                       Entrar na conta
-                    </Link>
+                    </a>
                     <Link
                       to="/carrinho"
                       onClick={() => setMobileMenuOpen(false)}

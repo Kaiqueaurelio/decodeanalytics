@@ -64,5 +64,21 @@ for (const vp of viewports) {
       const submit = page.getByRole("button", { name: /entrar/i });
       await expect(submit).toBeVisible();
     });
+
+    test("link de entrar na conta abre a tela de login", async ({ page }) => {
+      await page.goto(BASE);
+
+      const menuButton = page.getByRole("button", { name: "Menu" });
+      if (await menuButton.isVisible()) {
+        await menuButton.click();
+        await page.getByRole("link", { name: /Entrar na conta/i }).click();
+      } else {
+        await page.getByRole("link", { name: /^Entrar$/i }).click();
+      }
+
+      await page.waitForURL((url) => url.pathname === "/auth");
+      await expect(page.getByRole("heading", { name: "Decode Analytics Gestão" })).toBeVisible();
+      await expect(page.getByLabel("E-mail").first()).toBeVisible();
+    });
   });
 }
