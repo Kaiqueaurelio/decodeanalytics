@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { emitAuthTelemetry, trackInputFocus } from "@/lib/auth-telemetry";
+import { hasStaffAccess } from '@/lib/access';
 
 export const Route = createFileRoute("/auth")({
   head: () => ({ meta: [{ title: "Entrar | Decode Analytics Gestão" }] }),
@@ -40,7 +41,7 @@ function AuthPage() {
   function getAuthRedirectUrl() {
     const hostname = window.location.hostname;
     const isLocal = hostname === "localhost" || hostname === "127.0.0.1" || hostname === "::1";
-    const origin = isLocal ? "https://decodeanalyticsdev.vercel.app" : window.location.origin;
+    const origin = isLocal ? "https://decodeanalytiics.lovable.app" : window.location.origin;
     return `${origin}/auth`;
   }
 
@@ -96,25 +97,7 @@ function AuthPage() {
       return toast.error(error.message);
     }
 
-    const { data: profile, error: profileError } = await supabase
-      .from("profiles")
-      .select("*")
-      .eq("id", authData.user.id)
-      .maybeSingle();
-
-    if (profileError && profileError.code !== "42703" && profileError.code !== "PGRST204") {
-      await supabase.auth.signOut();
-      setLoading(false);
-      emitAuthTelemetry("auth_submit_error", { form: "login", errorMessage: profileError.message });
-      return toast.error("Não foi possível verificar as permissões da conta. Tente novamente.");
-    }
-
-    const profileAccess = profile as
-      (typeof profile & { role?: string; is_active?: boolean }) | null;
-    let role = profileAccess?.role?.toLowerCase();
-    let isActive = profileAccess?.is_active !== false;
-    if (!role) {
-      const { data: userRoles, error: userRolesError } = await supabase
+    const { data: userRoles, error: userRolesError } = await supabase
         .from("user_roles")
         .select("role")
         .eq("user_id", authData.user.id);
@@ -127,20 +110,7 @@ function AuthPage() {
         });
         return toast.error("Não foi possível verificar as permissões da conta. Tente novamente.");
       }
-      role = userRoles?.[0]?.role;
-      isActive = Boolean(userRoles?.length);
-    }
-
-    const hasStaffAccess = [
-      "administrador",
-      "admin",
-      "super_admin",
-      "atendente",
-      "producao",
-      "financeiro",
-      "vendedor",
-    ].includes(role ?? "");
-    if (!isActive || !hasStaffAccess) {
+    if (!hasStaffAccess((userRoles ?? []).map(row => row.role))) {
       await supabase.auth.signOut();
       setLoading(false);
       return toast.info("O acesso à equipe ainda aguarda aprovação de um administrador.");
