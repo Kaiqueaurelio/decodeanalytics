@@ -15,6 +15,13 @@
       "when": 1792675148526,
       "tag": "0001_add_order_technology_intake",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1792715952903,
+      "tag": "0002_repair_role_policy_recursion_and_order_edit",
+      "breakpoints": true
     }
   ]
 }
