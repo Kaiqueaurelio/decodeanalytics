@@ -1,4 +1,4 @@
-// Keep these aliases aligned with existing role values stored in user_roles.
+// Keep these aliases aligned with role values stored in profiles.role.
 // Access is granted only by an explicit role row, never by profile fields or email.
 export const ADMIN_ROLES = ['administrador', 'admin', 'super_admin'] as const;
 export const STAFF_ROLES = [...ADMIN_ROLES, 'atendente', 'producao', 'financeiro', 'vendedor'] as const;
