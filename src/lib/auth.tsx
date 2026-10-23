@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import type { Session, User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
-import { hasAdministratorAccess } from '@/lib/access';
+import { hasAdministratorAccess } from "@/lib/access";
 
 export type AppRole =
   | "administrador"
@@ -34,22 +34,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     let active = true;
     let roleRequest = 0;
     let deferredLoad: ReturnType<typeof setTimeout> | undefined;
-
-    // Keep public pages from crashing if browser-side Supabase config is absent.
-    const hasSupabaseConfig = Boolean(
-      import.meta.env.VITE_SUPABASE_URL && import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
-    );
-    if (!hasSupabaseConfig) {
-      console.error(
-        "[Auth] Supabase não está configurado no navegador. Configure VITE_SUPABASE_URL e VITE_SUPABASE_PUBLISHABLE_KEY para habilitar autenticação.",
-      );
-      setSession(null);
-      setRoles([]);
-      setLoading(false);
-      return () => {
-        active = false;
-      };
-    }
 
     async function loadRoles(userId: string) {
       const requestId = ++roleRequest;
