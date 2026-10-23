@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { emitAuthTelemetry, trackInputFocus } from "@/lib/auth-telemetry";
-import { hasStaffAccess } from '@/lib/access';
+import { hasStaffAccess } from "@/lib/access";
 
 export const Route = createFileRoute("/auth")({
   head: () => ({ meta: [{ title: "Entrar | Decode Analytics Gestão" }] }),
@@ -64,7 +64,10 @@ function AuthPage() {
           if (data.session?.user.email) setEmail(data.session.user.email);
         })
         .catch((error: unknown) => {
-          console.error("[Auth] Não foi possível recuperar a sessão para redefinição de senha.", error);
+          console.error(
+            "[Auth] Não foi possível recuperar a sessão para redefinição de senha.",
+            error,
+          );
           toast.error("Não foi possível validar o link. Solicite uma nova recuperação de senha.");
         });
     }
@@ -101,14 +104,18 @@ function AuthPage() {
     const clearSessionSafely = async () => {
       try {
         const { error: signOutError } = await supabase.auth.signOut();
-        if (signOutError) console.error("[Auth] Não foi possível encerrar a sessão sem acesso.", signOutError);
+        if (signOutError)
+          console.error("[Auth] Não foi possível encerrar a sessão sem acesso.", signOutError);
       } catch (signOutError) {
         console.error("[Auth] Falha ao encerrar a sessão sem acesso.", signOutError);
       }
     };
 
     try {
-      const { data: authData, error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
+      const { data: authData, error } = await supabase.auth.signInWithPassword({
+        email: email.trim(),
+        password,
+      });
       if (error) {
         emitAuthTelemetry("auth_submit_error", { form: "login", errorMessage: error.message });
         toast.error(error.message);
