@@ -60,7 +60,7 @@ export function OrderEditor({
   const [clients, setClients] = useState<{ id: string; name: string }[]>([]);
   const [services, setServices] = useState<{ id: string; name: string; base_price: number }[]>([]);
   const [team, setTeam] = useState<
-    { id: string; full_name: string | null; email: string | null }[]
+    { id: string; name: string | null; email: string | null }[]
   >([]);
   const [form, setForm] = useState<any>({
     service_segment: "grafica",
@@ -102,8 +102,8 @@ export function OrderEditor({
       .then(({ data }) => setServices(data ?? []));
     supabase
       .from("profiles")
-      .select("id,full_name,email")
-      .order("full_name")
+      .select("id,name,email")
+      .order("name")
       .then(({ data }) => setTeam(data ?? []));
     if (orderId) {
       (async () => {
@@ -548,7 +548,7 @@ export function OrderEditor({
                   <SelectItem value="unassigned">Sem responsável</SelectItem>
                   {team.map((person) => (
                     <SelectItem key={person.id} value={person.id}>
-                      {person.full_name || person.email}
+                      {person.name || person.email}
                     </SelectItem>
                   ))}
                 </SelectContent>
