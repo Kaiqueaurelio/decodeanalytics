@@ -37,7 +37,13 @@ function UsersPage() {
   const { isAdmin, user } = useAuth();
   const qc = useQueryClient();
 
-  const { data: rows, isLoading, isError, refetch, isFetching } = useQuery({
+  const {
+    data: rows,
+    isLoading,
+    isError,
+    refetch,
+    isFetching,
+  } = useQuery({
     queryKey: ["admin-users-list"],
     staleTime: 0,
     enabled: isAdmin,
@@ -61,7 +67,8 @@ function UsersPage() {
 
   const setRole = useMutation({
     mutationFn: async ({ row, role }: { row: Row; role: Role }) => {
-      if (row.id === user?.id) throw new Error("Não é permitido alterar o próprio acesso por esta tela.");
+      if (row.id === user?.id)
+        throw new Error("Não é permitido alterar o próprio acesso por esta tela.");
       const { error } = await supabase.rpc("admin_update_profile_access", {
         _user_id: row.id,
         _role: role,
@@ -69,7 +76,10 @@ function UsersPage() {
       });
       if (error) throw error;
     },
-    onSuccess: () => { refresh(); toast.success("Cargo atualizado."); },
+    onSuccess: () => {
+      refresh();
+      toast.success("Cargo atualizado.");
+    },
     onError: (error) => toast.error(error.message || "Não foi possível alterar o cargo."),
   });
 
@@ -83,7 +93,10 @@ function UsersPage() {
       });
       if (error) throw error;
     },
-    onSuccess: () => { refresh(); toast.success("Acesso removido."); },
+    onSuccess: () => {
+      refresh();
+      toast.success("Acesso removido.");
+    },
     onError: (error) => toast.error(error.message || "Não foi possível remover o acesso."),
   });
 
@@ -92,7 +105,9 @@ function UsersPage() {
       <Card className="mx-auto mt-8 max-w-xl p-8 text-center">
         <ShieldAlert aria-hidden="true" className="mx-auto mb-4 h-10 w-10 text-primary" />
         <h2 className="text-xl font-bold">Acesso restrito</h2>
-        <p className="mt-2 text-sm text-muted-foreground">Apenas administradores podem gerenciar usuários.</p>
+        <p className="mt-2 text-sm text-muted-foreground">
+          Apenas administradores podem gerenciar usuários.
+        </p>
       </Card>
     );
   }
@@ -101,7 +116,9 @@ function UsersPage() {
     <div className="space-y-6">
       <div>
         <h2 className="text-2xl font-bold tracking-tight">Usuários e permissões</h2>
-        <p className="text-sm text-muted-foreground">Defina o cargo de cada pessoa ou remova o acesso ao sistema.</p>
+        <p className="text-sm text-muted-foreground">
+          Defina o cargo de cada pessoa ou remova o acesso ao sistema.
+        </p>
       </div>
       <Card className="overflow-hidden">
         <div className="overflow-x-auto">
@@ -117,11 +134,17 @@ function UsersPage() {
             </thead>
             <tbody className="divide-y">
               {isLoading ? (
-                <tr><td colSpan={5} className="p-8 text-center text-muted-foreground">Carregando...</td></tr>
+                <tr>
+                  <td colSpan={5} className="p-8 text-center text-muted-foreground">
+                    Carregando...
+                  </td>
+                </tr>
               ) : isError ? (
                 <tr>
                   <td colSpan={5} className="p-8 text-center">
-                    <p className="text-sm text-destructive">Não foi possível carregar os usuários e suas permissões.</p>
+                    <p className="text-sm text-destructive">
+                      Não foi possível carregar os usuários e suas permissões.
+                    </p>
                     <Button
                       type="button"
                       variant="outline"
@@ -139,7 +162,10 @@ function UsersPage() {
                   const self = row.id === user?.id;
                   return (
                     <tr key={row.id} className="hover:bg-muted/30">
-                      <td className="p-4 font-medium">{row.name}{self && <span className="ml-2 text-xs text-muted-foreground">(você)</span>}</td>
+                      <td className="p-4 font-medium">
+                        {row.name}
+                        {self && <span className="ml-2 text-xs text-muted-foreground">(você)</span>}
+                      </td>
                       <td className="p-4 text-muted-foreground">{row.email}</td>
                       <td className="p-4">
                         <select
@@ -149,7 +175,11 @@ function UsersPage() {
                           disabled={self || setRole.isPending || revoke.isPending}
                           onChange={(e) => setRole.mutate({ row, role: e.target.value as Role })}
                         >
-                          {ROLES.map((role) => <option key={role.value} value={role.value}>{role.label}</option>)}
+                          {ROLES.map((role) => (
+                            <option key={role.value} value={role.value}>
+                              {role.label}
+                            </option>
+                          ))}
                         </select>
                       </td>
                       <td className="p-4">
@@ -159,9 +189,13 @@ function UsersPage() {
                       </td>
                       <td className="p-4 text-right">
                         <Button
-                          type="button" size="sm" variant="outline"
+                          type="button"
+                          size="sm"
+                          variant="outline"
                           disabled={self || !row.isActive || revoke.isPending || setRole.isPending}
-                          onClick={() => { if (confirm(`Remover o acesso de ${row.email}?`)) revoke.mutate(row); }}
+                          onClick={() => {
+                            if (confirm(`Remover o acesso de ${row.email}?`)) revoke.mutate(row);
+                          }}
                         >
                           <Trash2 className="mr-1 h-4 w-4" /> Revogar acesso
                         </Button>
@@ -170,13 +204,20 @@ function UsersPage() {
                   );
                 })
               ) : (
-                <tr><td colSpan={5} className="p-8 text-center text-muted-foreground">Nenhum usuário.</td></tr>
+                <tr>
+                  <td colSpan={5} className="p-8 text-center text-muted-foreground">
+                    Nenhum usuário.
+                  </td>
+                </tr>
               )}
             </tbody>
           </table>
         </div>
       </Card>
-      <p className="text-xs text-muted-foreground">Por segurança, a conta conectada não pode alterar nem remover o próprio acesso. O banco também impede a remoção do último administrador ativo.</p>
+      <p className="text-xs text-muted-foreground">
+        Por segurança, a conta conectada não pode alterar nem remover o próprio acesso. O banco
+        também impede a remoção do último administrador ativo.
+      </p>
     </div>
   );
 }
