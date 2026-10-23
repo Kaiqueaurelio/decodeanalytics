@@ -12,7 +12,7 @@ AS $function$
     SELECT 1
     FROM public.profiles AS p
     WHERE p.id = (SELECT auth.uid())
-      AND p.role IN ('admin', 'super_admin')
+      AND p.role IN ('admin', 'super_admin', 'administrador')
       AND COALESCE(p.is_active, true) = true
   );
 $function$;
@@ -28,7 +28,7 @@ AS $function$
     SELECT 1
     FROM public.profiles AS p
     WHERE p.id = (SELECT auth.uid())
-      AND p.role IN ('admin', 'super_admin', 'viewer')
+      AND p.role IN ('admin', 'super_admin', 'administrador', 'viewer')
       AND COALESCE(p.is_active, true) = true
   );
 $function$;
@@ -104,13 +104,13 @@ BEGIN
       USING ERRCODE = 'P0002';
   END IF;
 
-  IF v_old_role IN ('admin', 'super_admin')
+  IF v_old_role IN ('admin', 'super_admin', 'administrador')
      AND v_old_active
      AND (v_role NOT IN ('admin', 'super_admin') OR NOT _is_active) THEN
     SELECT count(*)::integer
       INTO v_admin_count
       FROM public.profiles AS p
-     WHERE p.role IN ('admin', 'super_admin')
+     WHERE p.role IN ('admin', 'super_admin', 'administrador')
        AND COALESCE(p.is_active, true) = true;
 
     IF v_admin_count <= 1 THEN
