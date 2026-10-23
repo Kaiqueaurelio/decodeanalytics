@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import type { Session, User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
-import { hasAdministratorAccess } from '@/lib/access';
+import { hasAdministratorAccess } from "@/lib/access";
 
 export type AppRole =
   | "administrador"
