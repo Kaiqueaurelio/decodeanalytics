@@ -115,22 +115,25 @@ function AuthPage() {
         return;
       }
 
-      const { data: userRoles, error: userRolesError } = await supabase
-        .from("user_roles")
-        .select("role")
-        .eq("user_id", authData.user.id);
+      // This production Supabase project stores the canonical account role in
+      // profiles.role; it does not have a public.user_roles table.
+      const { data: userProfile, error: userProfileError } = await supabase
+        .from("profiles")
+        .select("role,is_active")
+        .eq("id", authData.user.id)
+        .maybeSingle();
 
-      if (userRolesError) {
+      if (userProfileError || !userProfile) {
         await clearSessionSafely();
         emitAuthTelemetry("auth_submit_error", {
           form: "login",
-          errorMessage: userRolesError.message,
+          errorMessage: userProfileError?.message ?? "Profile not found",
         });
         toast.error("Não foi possível verificar as permissões da conta. Tente novamente.");
         return;
       }
 
-      if (!hasStaffAccess((userRoles ?? []).map((row) => row.role))) {
+      if (userProfile.is_active === false || !hasStaffAccess([userProfile.role ?? ""])) {
         await clearSessionSafely();
         toast.info("O acesso à equipe ainda aguarda aprovação de um administrador.");
         return;
