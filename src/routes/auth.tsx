@@ -41,7 +41,7 @@ function AuthPage() {
   function getAuthRedirectUrl() {
     const hostname = window.location.hostname;
     const isLocal = hostname === "localhost" || hostname === "127.0.0.1" || hostname === "::1";
-    const origin = isLocal ? "https://decodeanalytiics.lovable.app" : window.location.origin;
+    const origin = isLocal ? "https://decodeanalyticsdev.vercel.app" : window.location.origin;
     return `${origin}/auth`;
   }
 
@@ -57,9 +57,16 @@ function AuthPage() {
 
     if (recoveryLink) {
       setIsRecovery(true);
-      void supabase.auth.getSession().then(({ data }) => {
-        if (data.session?.user.email) setEmail(data.session.user.email);
-      });
+      void supabase.auth
+        .getSession()
+        .then(({ data, error }) => {
+          if (error) throw error;
+          if (data.session?.user.email) setEmail(data.session.user.email);
+        })
+        .catch((error: unknown) => {
+          console.error("[Auth] Não foi possível recuperar a sessão para redefinição de senha.", error);
+          toast.error("Não foi possível validar o link. Solicite uma nova recuperação de senha.");
+        });
     }
 
     const errorDescription =
@@ -90,35 +97,57 @@ function AuthPage() {
     e.preventDefault();
     emitAuthTelemetry("auth_submit_attempt", { form: "login" });
     setLoading(true);
-    const { data: authData, error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) {
-      setLoading(false);
-      emitAuthTelemetry("auth_submit_error", { form: "login", errorMessage: error.message });
-      return toast.error(error.message);
-    }
 
-    const { data: userRoles, error: userRolesError } = await supabase
+    const clearSessionSafely = async () => {
+      try {
+        const { error: signOutError } = await supabase.auth.signOut();
+        if (signOutError) console.error("[Auth] Não foi possível encerrar a sessão sem acesso.", signOutError);
+      } catch (signOutError) {
+        console.error("[Auth] Falha ao encerrar a sessão sem acesso.", signOutError);
+      }
+    };
+
+    try {
+      const { data: authData, error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
+      if (error) {
+        emitAuthTelemetry("auth_submit_error", { form: "login", errorMessage: error.message });
+        toast.error(error.message);
+        return;
+      }
+
+      const { data: userRoles, error: userRolesError } = await supabase
         .from("user_roles")
         .select("role")
         .eq("user_id", authData.user.id);
+
       if (userRolesError) {
-        await supabase.auth.signOut();
-        setLoading(false);
+        await clearSessionSafely();
         emitAuthTelemetry("auth_submit_error", {
           form: "login",
           errorMessage: userRolesError.message,
         });
-        return toast.error("Não foi possível verificar as permissões da conta. Tente novamente.");
+        toast.error("Não foi possível verificar as permissões da conta. Tente novamente.");
+        return;
       }
-    if (!hasStaffAccess((userRoles ?? []).map(row => row.role))) {
-      await supabase.auth.signOut();
-      setLoading(false);
-      return toast.info("O acesso à equipe ainda aguarda aprovação de um administrador.");
-    }
 
-    setLoading(false);
-    toast.success("Bem-vindo!");
-    nav({ to: "/dashboard" });
+      if (!hasStaffAccess((userRoles ?? []).map((row) => row.role))) {
+        await clearSessionSafely();
+        toast.info("O acesso à equipe ainda aguarda aprovação de um administrador.");
+        return;
+      }
+
+      toast.success("Bem-vindo!");
+      await nav({ to: "/dashboard" });
+    } catch (error) {
+      console.error("[Auth] Falha inesperada no login.", error);
+      emitAuthTelemetry("auth_submit_error", {
+        form: "login",
+        errorMessage: error instanceof Error ? error.message : String(error),
+      });
+      toast.error("Não foi possível concluir o login. Verifique sua conexão e tente novamente.");
+    } finally {
+      setLoading(false);
+    }
   }
 
   async function handleSignup(e: React.FormEvent) {
