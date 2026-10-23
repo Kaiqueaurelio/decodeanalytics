@@ -55,18 +55,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const requestId = ++roleRequest;
       setLoading(true);
       try {
-        // Protected role rows are the sole authority for application access.
+        // The connected production schema stores the account role in profiles.role.
         const { data, error } = await supabase
-          .from("user_roles")
-          .select("role")
-          .eq("user_id", userId);
+          .from("profiles")
+          .select("role,is_active")
+          .eq("id", userId)
+          .maybeSingle();
         if (!active || requestId !== roleRequest) return;
         if (error) {
-          console.error("[Auth] Não foi possível carregar os papéis do usuário.", error);
+          console.error("[Auth] Não foi possível carregar o perfil do usuário.", error);
           setRoles([]);
           return;
         }
-        setRoles((data ?? []).map((row) => row.role as AppRole));
+        if (!data || data.is_active === false || !data.role) {
+          setRoles([]);
+          return;
+        }
+        setRoles([data.role as AppRole]);
       } catch (error) {
         if (!active || requestId !== roleRequest) return;
         console.error("[Auth] Falha inesperada ao carregar os papéis do usuário.", error);
