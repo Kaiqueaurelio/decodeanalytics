@@ -130,17 +130,32 @@ function AuthPage() {
         .eq("id", authData.user.id)
         .maybeSingle();
 
-      if (userProfileError || !userProfile) {
-        await clearSessionSafely();
-        emitAuthTelemetry("auth_submit_error", {
-          form: "login",
-          errorMessage: userProfileError?.message ?? "Profile not found",
-        });
-        toast.error("Não foi possível verificar as permissões da conta. Tente novamente.");
-        return;
+      let assignedRoles = userProfile?.role ? [userProfile.role] : [];
+      let accountActive = userProfile?.is_active !== false;
+
+      // Fallback for environments where permissions are stored in user_roles.
+      // Access is still granted only by a role explicitly assigned in the database.
+      if (userProfileError || !userProfile || !userProfile.role) {
+        console.error("[Auth] Consulta de profiles.role falhou ou não retornou cargo.", userProfileError);
+        const { data: roleRows, error: roleError } = await (supabase as any)
+          .from("user_roles")
+          .select("role")
+          .eq("user_id", authData.user.id);
+        if (roleError) {
+          console.error("[Auth] Consulta de user_roles também falhou.", roleError);
+          await clearSessionSafely();
+          emitAuthTelemetry("auth_submit_error", {
+            form: "login",
+            errorMessage: roleError.message,
+          });
+          toast.error("Não foi possível verificar as permissões da conta. Tente novamente.");
+          return;
+        }
+        assignedRoles = (roleRows ?? []).map((row: { role: string }) => row.role);
+        accountActive = true;
       }
 
-      if (userProfile.is_active === false || !hasStaffAccess([userProfile.role ?? ""])) {
+      if (!accountActive || !hasStaffAccess(assignedRoles)) {
         await clearSessionSafely();
         toast.info("O acesso à equipe ainda aguarda aprovação de um administrador.");
         return;
