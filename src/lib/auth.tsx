@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import type { Session, User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
+import { hasAdministratorAccess } from '@/lib/access';
 
 export type AppRole =
   | "administrador"
@@ -54,31 +55,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const requestId = ++roleRequest;
       setLoading(true);
       try {
-        const { data: profile, error: profileError } = await supabase
-          .from("profiles")
-          .select("*")
-          .eq("id", userId)
-          .maybeSingle();
-
-        if (profileError && profileError.code !== "42703" && profileError.code !== "PGRST204") {
-          console.error("[Auth] Não foi possível carregar o perfil do usuário.", profileError);
-          if (active && requestId === roleRequest) setRoles([]);
-          return;
-        }
-        if (!active || requestId !== roleRequest) return;
-        const profileAccess = profile as
-          (typeof profile & { role?: string; is_active?: boolean }) | null;
-        if (profileAccess?.is_active === false) {
-          setRoles([]);
-          return;
-        }
-
-        if (profileAccess?.role) {
-          setRoles([profileAccess.role.toLowerCase() as AppRole]);
-          return;
-        }
-
-        // Older deployments keep permissions in user_roles instead of profiles.role.
+        // Protected role rows are the sole authority for application access.
         const { data, error } = await supabase
           .from("user_roles")
           .select("role")
@@ -158,9 +135,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (error) throw error;
     },
     hasRole: (...r) => r.some((x) => roles.includes(x)),
-    isAdmin: roles.some(
-      (role) => role === "administrador" || role === "admin" || role === "super_admin",
-    ),
+    isAdmin: hasAdministratorAccess(roles),
   };
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
