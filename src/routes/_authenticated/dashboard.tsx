@@ -37,11 +37,11 @@ export const Route = createFileRoute("/_authenticated/dashboard")({ component: D
 
 const STATUS_COLORS: Record<string, string> = {
   aguardando: "#94a3b8",
-  em_producao: "#0f7052",
+  em_producao: "#315b9b",
   arte: "#315b9b",
-  impressao: "#d7a52d",
-  acabamento: "#e1783f",
-  pronto_para_retirada: "#22a06b",
+  impressao: "#22d3ee",
+  acabamento: "#a78bfa",
+  pronto_para_retirada: "#34d399",
 };
 
 function Dashboard() {
@@ -199,32 +199,32 @@ function Dashboard() {
       value: (data?.overdue.length ?? 0) + (data?.stale.length ?? 0),
       helper: "prazos ou atualizações pendentes",
       icon: AlertTriangle,
-      gradient: "from-[#8c3142] to-[#d25f62]",
+      gradient: "from-[#7f2635] to-[#b9475a]",
     },
     {
       label: "Prontas para entrega",
       value: data?.ready.length ?? 0,
       helper: "serviços finalizados",
       icon: CheckCircle2,
-      gradient: "from-[#064934] to-[#159269]",
+      gradient: "from-[#123b35] to-[#176a5b]",
     },
     {
       label: "Faturamento no mês",
       value: brl(data?.monthRevenue ?? 0),
       helper: `${brl(data?.todayEntries ?? 0)} recebido hoje`,
       icon: TrendingUp,
-      gradient: "from-[#a16d08] to-[#e4b52e]",
+      gradient: "from-[#233653] to-[#34547b]",
     },
   ];
 
   return (
     <div className="space-y-5 pb-8">
-      <section className="relative overflow-hidden rounded-3xl bg-[#071d19] px-5 py-6 text-white shadow-xl md:px-7">
-        <div className="absolute -right-16 -top-24 h-72 w-72 rounded-full bg-[#d7a52d]/20 blur-3xl" />
-        <div className="absolute bottom-0 left-1/3 h-36 w-64 rounded-full bg-[#159269]/20 blur-3xl" />
+      <section className="relative overflow-hidden rounded-3xl bg-linear-to-br from-[#0b1830] via-[#10264b] to-[#123b46] px-5 py-6 text-white shadow-xl md:px-7">
+        <div className="absolute -right-16 -top-24 h-72 w-72 rounded-full bg-cyan-400/15 blur-3xl" />
+        <div className="absolute bottom-0 left-1/3 h-36 w-64 rounded-full bg-blue-400/15 blur-3xl" />
         <div className="relative flex flex-col justify-between gap-5 lg:flex-row lg:items-center">
           <div>
-            <div className="mb-2 flex items-center gap-2 text-xs font-medium text-[#f1d67c]">
+            <div className="mb-2 flex items-center gap-2 text-xs font-medium text-cyan-200">
               <CalendarDays className="h-4 w-4" />
               {new Date().toLocaleDateString("pt-BR", {
                 weekday: "long",
@@ -247,7 +247,7 @@ function Dashboard() {
               <Link to="/production">Abrir produção</Link>
             </Button>
             <Button
-              className="bg-[#e4b52e] text-[#10241e] shadow-lg hover:bg-[#f1c94e]"
+              className="bg-cyan-400 text-[#07111f] shadow-lg hover:bg-cyan-300"
               onClick={() => setNewOrderOpen(true)}
             >
               <Plus className="mr-2 h-4 w-4" /> Nova ordem de serviço
@@ -417,7 +417,7 @@ function Dashboard() {
                 >
                   <div className="flex items-center justify-between gap-3">
                     <div className="flex min-w-0 items-center gap-3">
-                      <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-[#0b4a3a] font-bold text-white">
+                      <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-[#12264d] font-bold text-white">
                         {person.name.charAt(0).toUpperCase()}
                       </div>
                       <div className="min-w-0">
@@ -429,11 +429,11 @@ function Dashboard() {
                         </p>
                       </div>
                     </div>
-                    <strong className="text-sm text-[#0b4a3a]">{average}%</strong>
+                    <strong className="text-sm text-[#315b9b]">{average}%</strong>
                   </div>
                   <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-slate-200">
                     <div
-                      className="h-full rounded-full bg-linear-to-r from-[#0b4a3a] to-[#d7a52d]"
+                      className="h-full rounded-full bg-linear-to-r from-[#315b9b] to-[#22d3ee]"
                       style={{ width: `${average}%` }}
                     />
                   </div>
@@ -459,7 +459,7 @@ function Dashboard() {
             <p className="text-xs text-muted-foreground">Recebimentos e valores pendentes</p>
           </div>
           <div className="p-5">
-            <div className="mb-5 rounded-2xl bg-linear-to-br from-[#10264b] to-[#174b44] p-4 text-white">
+            <div className="mb-5 rounded-2xl bg-linear-to-br from-[#10264b] to-[#174b72] p-4 text-white">
               <div className="flex items-center justify-between text-xs text-white/65">
                 <span>Faturamento mensal</span>
                 <Wallet className="h-4 w-4" />
@@ -576,7 +576,7 @@ function Dashboard() {
                     <p className="truncate text-sm font-semibold text-slate-900">
                       {update.activity}
                     </p>
-                    <strong className="text-xs text-[#0b4a3a]">{update.progress}%</strong>
+                    <strong className="text-xs text-[#315b9b]">{update.progress}%</strong>
                   </div>
                   <p className="mt-0.5 text-xs text-muted-foreground">
                     OS #{update.orders?.number} · {update.author?.name || update.author?.email}

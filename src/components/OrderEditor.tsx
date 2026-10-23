@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -56,6 +56,8 @@ export function OrderEditor({
 }: OrderEditorProps) {
   const [step, setStep] = useState(0);
   const [technical, setTechnical] = useState<TechnicalData>(emptyTechnicalData);
+  const [photoFiles, setPhotoFiles] = useState<File[]>([]);
+  const originalPhotoPaths = useRef<string[]>([]);
   const [loading, setLoading] = useState(false);
   const [clients, setClients] = useState<{ id: string; name: string }[]>([]);
   const [services, setServices] = useState<{ id: string; name: string; base_price: number }[]>([]);
@@ -89,6 +91,8 @@ export function OrderEditor({
     if (!open) return;
     setStep(0);
     setTechnical(emptyTechnicalData());
+    setPhotoFiles([]);
+    originalPhotoPaths.current = [];
     supabase
       .from("clients")
       .select("id,name")
@@ -118,6 +122,7 @@ export function OrderEditor({
           .eq("order_id", orderId);
         setForm({ ...o, deadline: o.deadline ?? "" });
         setTechnical(readTechnicalData(o.technical_data));
+        originalPhotoPaths.current = readTechnicalData(o.technical_data).photos;
         setItems(
           (its ?? []).map((i: any) => ({
             id: i.id,
@@ -221,12 +226,37 @@ export function OrderEditor({
       progress: Number(form.progress) || 0,
     };
     let id = orderId;
+    const uploadedPhotoPaths: string[] = [];
+    const uploadTechnicalPhotos = async (orderUuid: string) => {
+      for (const file of photoFiles) {
+        const extension = file.name.split(".").pop()?.toLowerCase() || "jpg";
+        const path = `${orderUuid}/${crypto.randomUUID()}.${extension}`;
+        const { error } = await supabase.storage
+          .from("technical-order-photos")
+          .upload(path, file, { contentType: file.type, upsert: false });
+        if (error) {
+          if (uploadedPhotoPaths.length) await supabase.storage.from("technical-order-photos").remove(uploadedPhotoPaths);
+          throw error;
+        }
+        uploadedPhotoPaths.push(path);
+      }
+    };
     if (id) {
-      const { error } = await supabase.from("orders").update(payload).eq("id", id);
+      try {
+        await uploadTechnicalPhotos(id);
+      } catch (error) {
+        setLoading(false);
+        return toast.error(error instanceof Error ? error.message : "Não foi possível enviar as fotos.");
+      }
+      const updatedTechnical = { ...technical, photos: [...technical.photos, ...uploadedPhotoPaths] };
+      const { error } = await supabase.from("orders").update({ ...payload, technical_data: updatedTechnical }).eq("id", id);
       if (error) {
+        if (uploadedPhotoPaths.length) await supabase.storage.from("technical-order-photos").remove(uploadedPhotoPaths);
         setLoading(false);
         return toast.error(error.message);
       }
+      const removedPhotos = originalPhotoPaths.current.filter(path => !updatedTechnical.photos.includes(path));
+      if (removedPhotos.length) await supabase.storage.from("technical-order-photos").remove(removedPhotos);
       // Substitui itens atomicamente via RPC (evita OS sem itens em caso de falha).
       const { error: rpcErr } = await (supabase as any).rpc("replace_order_items", {
         _order_id: id,
@@ -241,6 +271,7 @@ export function OrderEditor({
       setLoading(false);
       if (rpcErr) return toast.error(rpcErr.message);
       toast.success("Ordem salva");
+      setPhotoFiles([]);
       onOpenChange(false);
       onSaved?.();
       return;
@@ -251,6 +282,22 @@ export function OrderEditor({
         return toast.error(error?.message || "Erro");
       }
       id = data.id;
+    }
+    if (isTech && id && photoFiles.length) {
+      try {
+        await uploadTechnicalPhotos(id);
+      } catch (error) {
+        setLoading(false);
+        return toast.error(`A OS foi criada, mas as fotos não foram enviadas: ${error instanceof Error ? error.message : "erro no upload"}`);
+      }
+      const { error: photoMetadataError } = await supabase.from("orders").update({
+        technical_data: { ...technical, photos: uploadedPhotoPaths },
+      }).eq("id", id);
+      if (photoMetadataError) {
+        await supabase.storage.from("technical-order-photos").remove(uploadedPhotoPaths);
+        setLoading(false);
+        return toast.error(`A OS foi criada, mas não foi possível salvar as fotos: ${photoMetadataError.message}`);
+      }
     }
     const { error: e2 } = await supabase.from("order_items").insert(
       items.map((i) => ({
@@ -265,6 +312,7 @@ export function OrderEditor({
     setLoading(false);
     if (e2) return toast.error(e2.message);
     toast.success("Ordem salva");
+    setPhotoFiles([]);
     onOpenChange(false);
     onSaved?.();
   }
@@ -381,7 +429,7 @@ export function OrderEditor({
             />
           </div>
 
-          {isTech && step > 0 && <TechnicalIntake value={technical} onChange={setTechnical} step={step} team={team}/>}
+          {isTech && step > 0 && <TechnicalIntake value={technical} onChange={setTechnical} step={step} team={team} photoFiles={photoFiles} onPhotoFilesChange={setPhotoFiles}/>}
           <div className={isTech && step !== 3 ? "hidden" : "space-y-4"}>
           <div>
             <div className="flex items-center justify-between mb-2">

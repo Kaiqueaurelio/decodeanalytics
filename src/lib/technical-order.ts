@@ -4,6 +4,7 @@ export interface TechnicalData {
   unlock_mode: 'senha' | 'padrao'; password: string; pattern: number[];
   complaint: string; accessories: string; color: string; carriers: string[];
   inspection: Record<string, InspectionAnswer>; inspection_notes: string;
+  photos: string[];
   diagnosis: string; resolution: string; warranty_days: number; terms: string;
   attendant_id: string; technical_status: string;
 }
@@ -24,11 +25,13 @@ export const inspectionQuestions = [
   { id: 'bateria', title: 'A bateria está carregando?' },
 ] as const;
 export function emptyTechnicalData(): TechnicalData {
-  return { equipment: '', brand: '', model: '', serial: '', unlock_mode: 'senha', password: '', pattern: [], complaint: '', accessories: '', color: '', carriers: [], inspection: {}, inspection_notes: '', diagnosis: '', resolution: '', warranty_days: 0, terms: '', attendant_id: '', technical_status: 'aguardando_avaliacao' };
+  return { equipment: '', brand: '', model: '', serial: '', unlock_mode: 'senha', password: '', pattern: [], complaint: '', accessories: '', color: '', carriers: [], inspection: {}, inspection_notes: '', photos: [], diagnosis: '', resolution: '', warranty_days: 0, terms: '', attendant_id: '', technical_status: 'aguardando_avaliacao' };
 }
 export function readTechnicalData(value: unknown): TechnicalData {
   if (!value || typeof value !== 'object' || Array.isArray(value)) return emptyTechnicalData();
-  return { ...emptyTechnicalData(), ...value } as TechnicalData;
+  const data = { ...emptyTechnicalData(), ...value } as TechnicalData;
+  data.photos = Array.isArray(data.photos) ? data.photos.filter((path): path is string => typeof path === 'string') : [];
+  return data;
 }
 export function visibleInspection(data: TechnicalData) {
   const stop = data.inspection['liga'] === 'nao';
