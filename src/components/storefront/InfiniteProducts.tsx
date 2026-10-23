@@ -12,7 +12,7 @@ import { trackCardClick, trackCta, trackInfinitePage } from "@/lib/analytics";
 const PAGE = 8;
 
 export function InfiniteProducts() {
-  const { data, isLoading, isError } = useStoreProducts();
+  const { data, isLoading, isError, refetch, isFetching } = useStoreProducts();
   const all = useMemo(() => data ?? [], [data]);
   const [visibleCount, setVisibleCount] = useState(PAGE);
   const sentinel = useRef<HTMLDivElement>(null);
@@ -62,7 +62,28 @@ export function InfiniteProducts() {
     );
   }
 
-  if (!all.length) return null;
+  if (!all.length) {
+    return (
+      <section className="bg-[var(--store-bg)] py-12 sm:py-16">
+        <div className="mx-auto w-full max-w-[1280px] px-4">
+          <div className="rounded-2xl border border-white/10 bg-[#0B1026] p-6 text-center text-slate-300 sm:p-10">
+            <h2 className="font-display text-3xl font-bold text-white">Nossos produtos</h2>
+            <p className="mx-auto mt-3 max-w-lg text-sm leading-6 text-slate-400">
+              Não conseguimos exibir o catálogo neste momento. Tente atualizar a lista; seus produtos não foram apagados.
+            </p>
+            <div className="mt-5 flex flex-wrap items-center justify-center gap-3">
+              <Button variant="outline" onClick={() => void refetch()} disabled={isFetching}>
+                {isFetching ? "Atualizando..." : "Tentar novamente"}
+              </Button>
+              <Link to="/produtos" className="inline-flex min-h-10 items-center font-bold text-[#22D3EE]">
+                Abrir catálogo completo →
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="bg-[var(--store-bg)] py-12 sm:py-16">
