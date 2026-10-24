@@ -10,22 +10,22 @@ import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { ellaPublicChat } from "@/lib/api/ella-public.functions";
 import { StoreShell } from "@/components/storefront/StoreShell";
-import { Bot } from "lucide-react";
+import { EllaAvatar } from "@/components/EllaAvatar";
 
 export const Route = createFileRoute("/assistente")({
   component: AssistantePage,
   head: () => ({
     meta: [
-      { title: "Assistente virtual — Decode Analytics — Design & Soluções" },
+      { title: "Ella Ribeiro — Assistente de IA — Decode Analytics" },
       {
         name: "description",
         content:
-          "Tire dúvidas sobre produtos gráficos, design, manutenção de computadores, social media e programação com nosso assistente virtual.",
+          "Converse com Ella Ribeiro, assistente virtual de IA da Decode Analytics, sobre produtos gráficos e serviços de design, tecnologia e presença digital.",
       },
-      { property: "og:title", content: "Assistente virtual — Decode Analytics — Design & Soluções" },
+      { property: "og:title", content: "Ella Ribeiro — Assistente de IA — Decode Analytics" },
       {
         property: "og:description",
-        content: "Tire dúvidas sobre nossos produtos gráficos e serviços de design, tecnologia e presença digital.",
+        content: "Tire dúvidas com Ella Ribeiro, assistente virtual de IA da Decode Analytics.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -53,7 +53,7 @@ function AssistantePage() {
       id: "welcome",
       role: "assistant",
       content:
-        "Oi! 👋 Sou o assistente virtual da Decode Analytics. Posso ajudar com produtos gráficos, design, manutenção de computadores, social media e programação. O que você está buscando?",
+        "Oi! 👋 Eu sou a Ella Ribeiro, assistente virtual de inteligência artificial da Decode Analytics. Posso ajudar você a escolher produtos gráficos e entender nossos serviços de design, tecnologia, social media e programação. Se precisar de orçamento personalizado ou atendimento humano, também te encaminho para a equipe. O que você está procurando?",
     },
   ]);
   const [input, setInput] = useState("");
@@ -95,16 +95,22 @@ function AssistantePage() {
   return (
     <StoreShell>
       <div className="mx-auto flex max-w-3xl flex-col px-3 sm:px-6 py-6 min-h-[70vh]">
-        <header className="grid grid-cols-[auto_minmax(0,1fr)] items-center gap-3 pb-4 border-b border-[var(--store-border)]">
-          <span className="grid h-12 w-12 shrink-0 place-items-center rounded-full bg-[var(--store-primary)] text-white ring-2 ring-[var(--store-secondary)]">
-            <Bot className="h-6 w-6" />
-          </span>
+        <header className="grid grid-cols-[auto_minmax(0,1fr)] items-center gap-3 border-b border-[var(--store-border)] pb-4">
+          <EllaAvatar
+            size={56}
+            alt="Ella Ribeiro, assistente virtual de inteligência artificial"
+            loading="eager"
+            ringClassName="ring-2 ring-[var(--store-secondary)] shadow-sm"
+          />
           <div className="min-w-0">
             <h1 className="truncate text-xl font-black tracking-tight text-[var(--store-primary)]">
-              Assistente virtual
+              Ella Ribeiro
             </h1>
-            <p className="truncate text-sm text-[var(--store-text-muted)]">
-              Decode Analytics — Design & Soluções — te ajuda a escolher o produto ideal
+            <p className="text-sm text-[var(--store-text-muted)]">
+              Assistente virtual de IA · Decode Analytics
+            </p>
+            <p className="mt-0.5 text-xs text-[var(--store-text-muted)]">
+              Te ajudo com produtos e serviços; quando necessário, chamo a equipe humana.
             </p>
           </div>
         </header>
@@ -113,8 +119,14 @@ function AssistantePage() {
           {messages.map((m) => (
             <div
               key={m.id}
-              className={cn("flex", m.role === "user" ? "justify-end" : "justify-start")}
+              className={cn(
+                "flex items-end gap-2",
+                m.role === "user" ? "justify-end" : "justify-start",
+              )}
             >
+              {m.role === "assistant" && (
+                <EllaAvatar size={30} alt="" ringClassName="ring-1 ring-[var(--store-border)]" />
+              )}
               <div
                 className={cn(
                   "max-w-[90%] sm:max-w-[80%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed",
@@ -134,10 +146,11 @@ function AssistantePage() {
             </div>
           ))}
           {loading && (
-            <div className="flex justify-start">
+            <div className="flex items-end gap-2">
+              <EllaAvatar size={30} alt="" ringClassName="ring-1 ring-[var(--store-border)]" />
               <div className="bg-[var(--store-surface-soft)] rounded-2xl rounded-bl-sm px-4 py-2.5 flex items-center gap-2 text-sm text-[var(--store-text-muted)]">
                 <Loader2 className="h-4 w-4 animate-spin" />
-                Pensando…
+                Ella está consultando…
               </div>
             </div>
           )}
@@ -168,6 +181,7 @@ function AssistantePage() {
         >
           <Textarea
             ref={inputRef}
+            aria-label="Mensagem para Ella Ribeiro"
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => {
@@ -186,7 +200,7 @@ function AssistantePage() {
             size="icon"
             disabled={loading || !input.trim()}
             className="h-11 w-11 shrink-0 bg-[var(--store-primary)] hover:bg-[var(--store-primary-light)] text-white"
-            aria-label="Enviar"
+            aria-label="Enviar mensagem para Ella Ribeiro"
           >
             {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
           </Button>

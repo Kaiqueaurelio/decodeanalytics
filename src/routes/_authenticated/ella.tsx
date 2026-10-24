@@ -24,7 +24,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { ellaChat } from "@/lib/api/ella.functions";
-
+import { EllaAvatar } from "@/components/EllaAvatar";
 
 export const Route = createFileRoute("/_authenticated/ella")({
   component: EllaPage,
@@ -100,7 +100,7 @@ function ToolChip({ t }: { t: ToolActivity }) {
       </button>
       {open && (
         <pre className="max-h-52 overflow-auto border-t bg-muted/50 px-2 py-1.5 text-[11px] leading-snug">
-{JSON.stringify({ input: t.input, output: t.output }, null, 2)}
+          {JSON.stringify({ input: t.input, output: t.output }, null, 2)}
         </pre>
       )}
     </div>
@@ -114,7 +114,7 @@ function EllaPage() {
       id: "welcome",
       role: "assistant",
       content:
-        "Olá! 👋 Sou seu **gestor operacional**. Executo tudo: OS, cobranças, clientes, usuários e papéis, lembretes e mais. Você pode falar por **áudio** 🎤 ou anexar **arquivos** 📎 (imagem, PDF, vídeo, áudio) para análise técnica.",
+        "Olá! 👋 Sou a **Ella Ribeiro**, assistente de inteligência artificial da Decode Analytics. Posso apoiar a equipe em ordens de serviço, clientes, cobranças, lembretes e consultas. Você pode falar por **áudio** 🎤 ou anexar **arquivos** 📎 para análise. Sou uma IA; quando algo exigir decisão humana, vou deixar isso claro.",
     },
   ]);
   const [input, setInput] = useState("");
@@ -295,12 +295,17 @@ function EllaPage() {
 
   return (
     <div className="flex flex-col h-[calc(100dvh-4rem)] sm:h-[calc(100dvh-5rem)] max-w-3xl mx-auto w-full px-3 sm:px-6 py-3 sm:py-6">
-      <header className="grid grid-cols-[auto_minmax(0,1fr)] items-center gap-3 pb-3 sm:pb-4 border-b">
-        <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-primary text-primary-foreground"><LayoutDashboard className="h-6 w-6" /></span>
+      <header className="grid grid-cols-[auto_minmax(0,1fr)] items-center gap-3 border-b pb-3 sm:pb-4">
+        <EllaAvatar
+          size={48}
+          alt="Ella Ribeiro, assistente virtual de inteligência artificial"
+          loading="eager"
+          ringClassName="ring-2 ring-primary/30"
+        />
         <div className="min-w-0">
-          <h1 className="truncate text-lg sm:text-xl font-black tracking-tight">Gestor Inteligente</h1>
-          <p className="truncate text-xs sm:text-sm text-muted-foreground">
-            Interface de automação — cria OS, cobranças, lembretes e faz consultas via processamento inteligente
+          <h1 className="truncate text-lg font-black tracking-tight sm:text-xl">Ella Ribeiro</h1>
+          <p className="text-xs text-muted-foreground sm:text-sm">
+            Assistente de IA da equipe · automações, consultas e apoio operacional
           </p>
         </div>
       </header>
@@ -309,8 +314,14 @@ function EllaPage() {
         {messages.map((m) => (
           <div
             key={m.id}
-            className={cn("flex", m.role === "user" ? "justify-end" : "justify-start")}
+            className={cn(
+              "flex items-end gap-2",
+              m.role === "user" ? "justify-end" : "justify-start",
+            )}
           >
+            {m.role === "assistant" && (
+              <EllaAvatar size={30} alt="" ringClassName="ring-1 ring-border" />
+            )}
             <div
               className={cn(
                 "max-w-[90%] sm:max-w-[80%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed",
@@ -388,10 +399,7 @@ function EllaPage() {
         </div>
       )}
 
-      <form
-        onSubmit={handleSubmit}
-        className="flex flex-col gap-2 pt-2 border-t"
-      >
+      <form onSubmit={handleSubmit} className="flex flex-col gap-2 pt-2 border-t">
         {attachments.length > 0 && (
           <div className="flex flex-wrap gap-2">
             {attachments.map((a, i) => (
@@ -455,6 +463,7 @@ function EllaPage() {
           </Button>
           <Textarea
             ref={inputRef}
+            aria-label="Mensagem para Ella Ribeiro"
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => {
@@ -477,7 +486,7 @@ function EllaPage() {
             size="icon"
             disabled={loading || (!input.trim() && attachments.length === 0)}
             className="h-11 w-11 shrink-0 bg-brand-yellow hover:bg-brand-yellow/90 text-brand-blue"
-            aria-label="Enviar"
+            aria-label="Enviar mensagem para Ella Ribeiro"
           >
             {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
           </Button>

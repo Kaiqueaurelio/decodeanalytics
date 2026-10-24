@@ -162,24 +162,24 @@ const NAV: NavItem[] = [
   },
   {
     to: "/ella",
-    label: "Gestor Inteligente",
-    description: "Automação e consultas de gestão",
+    label: "Ella Ribeiro",
+    description: "Assistente de IA da equipe",
     icon: LayoutDashboard,
     section: "Administração",
     roles: ["administrador"],
   },
   {
     to: "/ella-training",
-    label: "Treinar a IA",
-    description: "Base de conhecimento e regras do gestor",
+    label: "Treinar Ella",
+    description: "Base de conhecimento da assistente",
     icon: GraduationCap,
     section: "Administração",
     roles: ["administrador"],
   },
   {
     to: "/ella-sandbox",
-    label: "Sandbox da IA",
-    description: "Testar respostas e ver treinamento aplicado",
+    label: "Testar Ella",
+    description: "Validar respostas e treinamentos",
     icon: Beaker,
     section: "Administração",
     roles: ["administrador"],
@@ -543,7 +543,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         </main>
       </div>
 
-      <EllaFab />
+      <EllaFab audience="staff" />
 
       {open && (
         <button

@@ -27,7 +27,7 @@ export function EllaAvatar({
   className,
   imgClassName,
   ringClassName = "ring-2 ring-brand-yellow",
-  alt = "Avatar do Assistente",
+  alt = "Avatar de Ella Ribeiro, assistente virtual de inteligência artificial",
   maxRetries = 3,
   retryDelayMs = 2000,
   loading = "lazy",
@@ -81,7 +81,12 @@ export function EllaAvatar({
       loading={loading}
       onError={handleError}
       style={{ width: size, height: size }}
-      className={cn("shrink-0 rounded-full object-cover object-top", ringClassName, imgClassName, className)}
+      className={cn(
+        "shrink-0 rounded-full object-cover object-top",
+        ringClassName,
+        imgClassName,
+        className,
+      )}
     />
   );
 }

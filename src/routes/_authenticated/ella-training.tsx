@@ -41,9 +41,9 @@ import {
   Pencil,
   Trash2,
   Search,
-  Zap,
 } from "lucide-react";
 import { toast } from "sonner";
+import { EllaAvatar } from "@/components/EllaAvatar";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/_authenticated/ella-training")({
@@ -232,13 +232,17 @@ function EllaTrainingPage() {
     <div className="mx-auto max-w-7xl px-4 py-6 space-y-6">
       <header className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-black tracking-tight flex items-center gap-2">
-            <Zap className="h-6 w-6 text-primary" />
-            Regras do Sistema (Treinamento)
+          <h1 className="text-2xl font-black tracking-tight flex items-center gap-3">
+            <EllaAvatar
+              size={42}
+              alt="Ella Ribeiro, assistente virtual de inteligência artificial"
+              ringClassName="ring-2 ring-primary/30"
+            />
+            Ensinar Ella Ribeiro
           </h1>
           <p className="text-sm text-muted-foreground max-w-2xl">
-            Ensine o sistema de automação. Tudo que você registrar aqui vira base de conhecimento que ele
-            consulta em todo processamento inteligente — no painel e na loja pública.
+            Cadastre informações aprovadas pela equipe para Ella consultar no painel e no atendimento
+            público. Defina claramente o que pode ser compartilhado com clientes.
           </p>
         </div>
         <Button onClick={() => openNew()}>
