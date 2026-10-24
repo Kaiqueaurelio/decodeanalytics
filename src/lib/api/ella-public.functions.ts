@@ -40,12 +40,19 @@ export const ellaPublicChat = createServerFn({ method: "POST" })
       auth: { storage: undefined, persistSession: false, autoRefreshToken: false },
     });
 
-    // Durable DB-backed limiter works across serverless instances; fail closed if unavailable.
-    const { data: withinRateLimit, error: rateLimitError } = await (supabase as any).rpc(
-      "consume_public_ai_rate_limit",
-      { p_key: ipKey },
-    );
-    if (rateLimitError || withinRateLimit !== true) {
+    // Use the server-only service role for the durable limiter; never expose this RPC to visitors.
+    let withinRateLimit = false;
+    try {
+      const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+      const { data, error } = await (supabaseAdmin as any).rpc(
+        "consume_public_ai_rate_limit",
+        { p_key: ipKey },
+      );
+      withinRateLimit = !error && data === true;
+    } catch {
+      withinRateLimit = false;
+    }
+    if (!withinRateLimit) {
       return {
         response:
           "Estou recebendo muitas mensagens agora. Aguarde alguns segundos ou fale direto com a equipe pelo WhatsApp 💙",
