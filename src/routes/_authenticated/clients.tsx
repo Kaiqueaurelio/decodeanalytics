@@ -67,7 +67,7 @@ function ClientsPage() {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="min-w-0 space-y-3 sm:space-y-4">
       <div className="flex flex-col sm:flex-row gap-2 sm:items-center justify-between">
         <div className="relative flex-1 max-w-sm">
           <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
@@ -79,7 +79,7 @@ function ClientsPage() {
           </DialogTrigger>
           <DialogContent className="max-w-2xl">
             <DialogHeader><DialogTitle>{editing?.id ? "Editar cliente" : "Novo cliente"}</DialogTitle></DialogHeader>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div className="grid min-w-0 grid-cols-1 gap-2 sm:gap-3 md:grid-cols-2">
               <div className="md:col-span-2"><Label>Nome / Empresa *</Label><Input value={editing?.name ?? ""} onChange={(e) => setEditing({ ...editing, name: e.target.value })} /></div>
               <div><Label>CPF / CNPJ</Label><Input value={editing?.document ?? ""} onChange={(e) => setEditing({ ...editing, document: e.target.value })} /></div>
               <div><Label>WhatsApp</Label><Input value={editing?.whatsapp ?? ""} onChange={(e) => setEditing({ ...editing, whatsapp: e.target.value })} /></div>
@@ -89,7 +89,7 @@ function ClientsPage() {
               <div><Label>Cidade</Label><Input value={editing?.city ?? ""} onChange={(e) => setEditing({ ...editing, city: e.target.value })} /></div>
               <div className="md:col-span-2"><Label>Observações</Label><Textarea value={editing?.notes ?? ""} onChange={(e) => setEditing({ ...editing, notes: e.target.value })} /></div>
             </div>
-            <DialogFooter><Button onClick={save}>Salvar</Button></DialogFooter>
+            <DialogFooter className="sticky bottom-0 -mx-1 border-t bg-background/95 pt-3 backdrop-blur-sm"><Button onClick={save} className="w-full sm:w-auto">Salvar</Button></DialogFooter>
           </DialogContent>
         </Dialog>
       </div>
