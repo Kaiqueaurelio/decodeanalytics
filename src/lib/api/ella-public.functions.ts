@@ -68,7 +68,7 @@ export const ellaPublicChat = createServerFn({ method: "POST" })
           // Sanitize text before interpolating it into PostgREST filter grammar.
           const safeSearch = (search ?? "")
             .normalize("NFKC")
-            .replace(/[^\\p{L}\\p{N}\\s-]/gu, "")
+            .replace(/[^\p{L}\p{N}\s-]/gu, "")
             .trim()
             .slice(0, 80);
           if (safeSearch) q = q.or(`name.ilike.%${safeSearch}%,category.ilike.%${safeSearch}%`);
