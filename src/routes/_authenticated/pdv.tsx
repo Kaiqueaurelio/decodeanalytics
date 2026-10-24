@@ -66,6 +66,15 @@ import { PdvCalculator } from "@/components/pdv/PdvCalculator";
 
 export const Route = createFileRoute("/_authenticated/pdv")({ component: PDVPage });
 
+function escapeReceiptHtml(value: unknown) {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
 function buildClosureReceiptHtml(c: any, items: any[]) {
   const m = c.by_method || {};
   const ok = Math.abs(Number(c.difference || 0)) < 0.01;
@@ -84,8 +93,8 @@ function buildClosureReceiptHtml(c: any, items: any[]) {
       });
       const sign = it.type === "saida" ? "-" : "+";
       const cls = it.type === "saida" ? "out" : "in";
-      const desc = String(it.description || it.category || "Lançamento").replace(/</g, "&lt;");
-      const pm = String(it.payment_method || "").replace(/</g, "&lt;");
+      const desc = escapeReceiptHtml(it.description || it.category || "Lançamento");
+      const pm = escapeReceiptHtml(it.payment_method || "");
       return `<tr><td>${time}</td><td>${desc}<div class="muted">${pm}</div></td><td class="right ${cls}">${sign}${fmtBrl(it.amount)}</td></tr>`;
     })
     .join("");
@@ -109,7 +118,7 @@ td{padding:5px 0;border-bottom:1px dashed #cbd5e1;vertical-align:top}
 </style></head><body>
 <div class="brand"><strong>Decode Analytics</strong><span class="tag">Fechamento de caixa</span></div>
 <h1>Recibo de Fechamento</h1>
-<p class="muted">${date} · Fechado em ${closedAt} · Operador: ${c.operator || "—"} · <span class="badge ${ok ? "ok" : "bad"}">${ok ? "Caixa bate" : "Com diferença"}</span></p>
+<p class="muted">${date} · Fechado em ${closedAt} · Operador: ${escapeReceiptHtml(c.operator || "—")} · <span class="badge ${ok ? "ok" : "bad"}">${ok ? "Caixa bate" : "Com diferença"}</span></p>
 
 <h2>Resumo</h2>
 <table>
@@ -139,7 +148,7 @@ td{padding:5px 0;border-bottom:1px dashed #cbd5e1;vertical-align:top}
 ${items?.length ? `<h2>Vendas e lançamentos do dia (${items.length})</h2>
 <table>${rows}</table>` : ""}
 
-${c.notes ? `<h2>Observações</h2><p style="font-size:12px">${String(c.notes).replace(/</g, "&lt;")}</p>` : ""}
+${c.notes ? `<h2>Observações</h2><p style="font-size:12px">${escapeReceiptHtml(c.notes)}</p>` : ""}
 
 <p style="margin-top:24px;text-align:center"><button onclick="window.print()" style="padding:8px 18px;border-radius:8px;border:1px solid #0f172a;background:#0f172a;color:#fff;font-weight:700;cursor:pointer">Imprimir / Salvar PDF</button></p>
 <script>setTimeout(()=>window.print(),350)</script>
