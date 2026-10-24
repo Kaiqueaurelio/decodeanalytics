@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { ArrowDown, ArrowRight, Code2, Laptop, MessageCircle, PenTool, Share2, Sparkles, Workflow, Zap, Printer, Palette, Globe, BadgeCheck, Clock3, ShieldCheck, ShoppingBag, Download, X } from "lucide-react";
-import { CATEGORY_IMAGES } from "@/components/storefront/productImages";
 import { InfiniteProducts } from "@/components/storefront/InfiniteProducts";
 import { useWaLink } from "@/hooks/useCompanyInfo";
 
@@ -151,7 +150,7 @@ export function DecodeLanding() {
                 </div>
                 <span className="font-mono text-[10px] tracking-widest text-slate-400">DECODE ANALYTICS</span>
               </div>
-              <div className="grid grid-cols-2 gap-3 py-5 sm:gap-4">
+              <div className="flex snap-x snap-mandatory gap-3 overflow-x-auto py-5 pb-6 [scrollbar-width:thin] [scrollbar-color:#22D3EE_transparent] sm:gap-4">
                 {[
                   { title: "Informática & TI", subtitle: "Manutenção e suporte para computadores", category: "Manutenção de Computadores", Icon: Laptop, color: "#22D3EE" },
                   { title: "Sites e tecnologia", subtitle: "Soluções digitais sob medida", category: "Programação", Icon: Globe, color: "#087CF0" },
@@ -161,9 +160,9 @@ export function DecodeLanding() {
                   <a
                     key={title}
                     href={`/produtos?cat=${encodeURIComponent(category)}`}
-                    className="group relative isolate flex min-h-36 flex-col justify-between overflow-hidden rounded-2xl border border-white/10 bg-[#080C1F] p-4 transition duration-300 hover:-translate-y-1 hover:border-[#22D3EE]/50 sm:min-h-40 sm:p-5"
+                    className="group relative isolate flex min-h-44 min-w-[245px] snap-start flex-col justify-between overflow-hidden rounded-2xl border border-white/10 bg-[#080C1F] p-4 transition duration-300 hover:-translate-y-1 hover:border-[#22D3EE]/50 sm:min-h-48 sm:min-w-[260px] sm:p-5"
                   >
-                    <img src={CATEGORY_IMAGES[category]} alt="" aria-hidden="true" loading="lazy" className="absolute inset-0 -z-20 h-full w-full object-cover opacity-45 transition duration-500 group-hover:scale-105 group-hover:opacity-60" />
+                    <span aria-hidden="true" className="absolute inset-0 -z-20 transition duration-500 group-hover:scale-105" style={{ background: `radial-gradient(circle at 18% 18%, ${color}55, transparent 58%), linear-gradient(135deg, #0B1026 0%, #05070D 100%)` }} />
                     <span aria-hidden="true" className="absolute inset-0 -z-10 bg-gradient-to-t from-[#05070D] via-[#0B1026]/65 to-[#0B1026]/20" />
                     <span className="grid h-10 w-10 place-items-center rounded-xl border border-white/15 bg-[#080C1F]/80 backdrop-blur" style={{ color }}>
                       <Icon aria-hidden="true" className="h-5 w-5" />
