@@ -43,14 +43,14 @@ export const Route = createFileRoute("/_authenticated/dashboard")({ component: D
 
 const STATUS_COLORS: Record<string, string> = {
   orcamento: "var(--muted-foreground)",
-  aguardando_aprovacao: "var(--brand-yellow)",
-  aguardando_arte: "var(--brand-blue)",
-  arte_em_criacao: "var(--brand-blue-light)",
-  aguardando_pagamento: "var(--brand-orange)",
-  aprovado: "var(--success)",
-  em_producao: "var(--primary)",
+  aguardando_aprovacao: "#22D3EE",
+  aguardando_arte: "#087CF0",
+  arte_em_criacao: "#38BDF8",
+  aguardando_pagamento: "#7138F5",
+  aprovado: "#22D3EE",
+  em_producao: "#087CF0",
   pausado: "var(--destructive)",
-  pronto_para_retirada: "var(--success)",
+  pronto_para_retirada: "#22D3EE",
 };
 
 function Dashboard() {
@@ -261,7 +261,7 @@ function Dashboard() {
       value: activeOrders.length,
       helper: `${averageProgress}% de progresso médio`,
       icon: Clock3,
-      iconTone: "text-primary bg-primary/10",
+      iconTone: "text-[#087CF0] bg-[#087CF0]/10",
       to: "/orders",
     },
     {
@@ -277,7 +277,7 @@ function Dashboard() {
       value: readyOrders.length,
       helper: "serviços finalizados",
       icon: CheckCircle2,
-      iconTone: "text-success bg-success/10",
+      iconTone: "text-[#22D3EE] bg-[#22D3EE]/10",
       to: "/production",
     },
     {
@@ -285,28 +285,28 @@ function Dashboard() {
       value: brl(data?.monthRevenue ?? 0),
       helper: `${brl(data?.todayEntries ?? 0)} recebido hoje`,
       icon: TrendingUp,
-      iconTone: "text-brand-blue bg-brand-blue/10",
+      iconTone: "text-[#087CF0] bg-[#087CF0]/10",
       to: "/cash",
     },
   ] as const;
 
   const shortcuts = [
-    { label: "Ordens de serviço", description: "Separar gráfica e tecnologia", icon: Printer, to: "/orders", tone: "text-primary bg-primary/10" },
-    { label: "Quadro de produção", description: "Etapas e responsáveis", icon: KanbanSquare, to: "/production", tone: "text-brand-blue bg-brand-blue/10" },
-    { label: "Orçamentos", description: "Propostas em andamento", icon: FileText, to: "/quotes", tone: "text-brand-orange bg-brand-orange/10" },
-    { label: "Clientes", description: "Cadastro e relacionamento", icon: Users, to: "/clients", tone: "text-success bg-success/10" },
-    { label: "Financeiro", description: "Caixa e recebimentos", icon: Wallet, to: "/cash", tone: "text-primary bg-primary/10" },
+    { label: "Ordens de serviço", description: "Separar gráfica e tecnologia", icon: Printer, to: "/orders", tone: "text-[#087CF0] bg-[#087CF0]/10" },
+    { label: "Quadro de produção", description: "Etapas e responsáveis", icon: KanbanSquare, to: "/production", tone: "text-[#087CF0] bg-[#087CF0]/10" },
+    { label: "Orçamentos", description: "Propostas em andamento", icon: FileText, to: "/quotes", tone: "text-[#7138F5] bg-[#7138F5]/10" },
+    { label: "Clientes", description: "Cadastro e relacionamento", icon: Users, to: "/clients", tone: "text-[#22D3EE] bg-[#22D3EE]/10" },
+    { label: "Financeiro", description: "Caixa e recebimentos", icon: Wallet, to: "/cash", tone: "text-[#087CF0] bg-[#087CF0]/10" },
     { label: "Contas a receber", description: "Pendências e vencimentos", icon: Receipt, to: "/receivables", tone: "text-destructive bg-destructive/10" },
   ] as const;
 
   return (
     <div className="space-y-5 pb-8">
-      <section className="relative overflow-hidden rounded-3xl border border-primary/15 bg-card px-5 py-6 text-card-foreground shadow-sm md:px-7">
-        <div className="absolute -right-16 -top-24 h-72 w-72 rounded-full bg-brand-blue/10 blur-3xl" />
-        <div className="absolute bottom-0 left-1/3 h-36 w-64 rounded-full bg-brand-yellow/10 blur-3xl" />
+      <section className="relative overflow-hidden rounded-3xl border border-[#22D3EE]/20 bg-card px-5 py-6 text-card-foreground shadow-sm md:px-7">
+        <div className="absolute -right-16 -top-24 h-72 w-72 rounded-full bg-[#087CF0]/10 blur-3xl" />
+        <div className="absolute bottom-0 left-1/3 h-36 w-64 rounded-full bg-[#7138F5]/10 blur-3xl" />
         <div className="relative flex flex-col justify-between gap-5 lg:flex-row lg:items-center">
           <div>
-            <div className="mb-2 flex items-center gap-2 text-xs font-semibold text-primary">
+            <div className="mb-2 flex items-center gap-2 text-xs font-semibold text-[#22D3EE]">
               <CalendarDays className="h-4 w-4" />
               {new Date().toLocaleDateString("pt-BR", {
                 weekday: "long",
@@ -393,7 +393,7 @@ function Dashboard() {
                 Ordens abertas e movimentadas nos últimos {periodDays} dias
               </p>
             </div>
-            <Badge variant="outline" className="border-primary/20 bg-primary/5 text-primary">
+            <Badge variant="outline" className="border-[#087CF0]/20 bg-[#087CF0]/5 text-[#087CF0]">
               {segmentFilter === "all" ? "Todas as áreas" : segmentFilter === "grafica" ? "Gráfica / Design" : "Tecnologia / Manutenção"}
             </Badge>
           </div>
@@ -402,8 +402,8 @@ function Dashboard() {
               <AreaChart data={weeklyData} margin={{ left: -20, right: 10 }}>
                 <defs>
                   <linearGradient id="productionFill" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="var(--brand-blue)" stopOpacity={0.28} />
-                    <stop offset="100%" stopColor="var(--brand-blue)" stopOpacity={0.02} />
+                    <stop offset="0%" stopColor="#087CF0" stopOpacity={0.28} />
+                    <stop offset="100%" stopColor="#087CF0" stopOpacity={0.02} />
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="4 4" vertical={false} stroke="var(--border)" />
@@ -427,7 +427,7 @@ function Dashboard() {
                   type="monotone"
                   dataKey="movimentadas"
                   name="Movimentadas"
-                  stroke="var(--brand-blue)"
+                  stroke="#087CF0"
                   strokeWidth={3}
                   fill="url(#productionFill)"
                 />
@@ -435,7 +435,7 @@ function Dashboard() {
                   type="monotone"
                   dataKey="abertas"
                   name="Novas OS"
-                  stroke="var(--brand-yellow)"
+                  stroke="#22D3EE"
                   strokeWidth={2}
                   fill="transparent"
                 />
@@ -521,7 +521,7 @@ function Dashboard() {
                 >
                   <div className="flex items-center justify-between gap-3">
                     <div className="flex min-w-0 items-center gap-3">
-                      <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-primary font-bold text-primary-foreground">
+                      <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-[#0B1026] font-bold text-white">
                         {person.name.charAt(0).toUpperCase()}
                       </div>
                       <div className="min-w-0">
@@ -533,11 +533,11 @@ function Dashboard() {
                         </p>
                       </div>
                     </div>
-                    <strong className="text-sm text-primary">{average}%</strong>
+                    <strong className="text-sm text-[#087CF0]">{average}%</strong>
                   </div>
                   <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-muted">
                     <div
-                      className="h-full rounded-full bg-primary"
+                      className="h-full rounded-full bg-[#087CF0]"
                       style={{ width: `${average}%` }}
                     />
                   </div>
@@ -563,13 +563,13 @@ function Dashboard() {
             <p className="text-xs text-muted-foreground">Recebimentos e valores pendentes</p>
           </div>
           <div className="p-5">
-            <div className="mb-5 rounded-2xl bg-primary p-4 text-primary-foreground">
-              <div className="flex items-center justify-between text-xs text-primary-foreground/70">
+            <div className="mb-5 rounded-2xl bg-[#0B1026] p-4 text-white">
+              <div className="flex items-center justify-between text-xs text-white/70">
                 <span>Faturamento mensal</span>
                 <Wallet className="h-4 w-4" />
               </div>
               <p className="mt-2 text-2xl font-bold">{brl(data?.monthRevenue ?? 0)}</p>
-              <p className="mt-1 text-[11px] text-brand-yellow">
+              <p className="mt-1 text-[11px] text-[#22D3EE]">
                 {brl(data?.todayEntries ?? 0)} entrou hoje
               </p>
             </div>
@@ -591,7 +591,7 @@ function Dashboard() {
                   />
                   <Bar
                     dataKey="movimentadas"
-                    fill="var(--brand-blue)"
+                    fill="#087CF0"
                     radius={[5, 5, 0, 0]}
                     maxBarSize={22}
                   />
@@ -672,7 +672,7 @@ function Dashboard() {
                 {index < (data?.updates.length ?? 0) - 1 && (
                   <span className="absolute left-[15px] top-8 h-[calc(100%-20px)] w-px bg-border" />
                 )}
-                <div className="z-10 grid h-8 w-8 shrink-0 place-items-center rounded-full bg-primary/10 text-primary">
+                <div className="z-10 grid h-8 w-8 shrink-0 place-items-center rounded-full bg-[#087CF0]/10 text-[#087CF0]">
                   <CheckCircle2 className="h-4 w-4" />
                 </div>
                 <div className="min-w-0 flex-1">
@@ -680,7 +680,7 @@ function Dashboard() {
                     <p className="truncate text-sm font-semibold text-foreground">
                       {update.activity}
                     </p>
-                    <strong className="text-xs text-primary">{update.progress}%</strong>
+                    <strong className="text-xs text-[#087CF0]">{update.progress}%</strong>
                   </div>
                   <p className="mt-0.5 text-xs text-muted-foreground">
                     OS #{update.orders?.number} · {update.author?.name || update.author?.email}
@@ -710,7 +710,7 @@ function Dashboard() {
           {shortcuts.map((shortcut) => {
             const Icon = shortcut.icon;
             return (
-              <Link key={shortcut.to} to={shortcut.to} className="group flex items-center gap-3 rounded-2xl border bg-card p-4 transition-all hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+              <Link key={shortcut.to} to={shortcut.to} className="group flex items-center gap-3 rounded-2xl border bg-card p-4 transition-all hover:-translate-y-0.5 hover:border-[#087CF0]/30 hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
                 <span className={`grid h-11 w-11 shrink-0 place-items-center rounded-xl ${shortcut.tone}`}><Icon className="h-5 w-5" /></span>
                 <span className="min-w-0 flex-1">
                   <span className="block font-semibold text-card-foreground">{shortcut.label}</span>

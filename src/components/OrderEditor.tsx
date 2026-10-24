@@ -31,7 +31,6 @@ import { emptyTechnicalData, readTechnicalData, type TechnicalData } from "@/lib
 export interface OrderEditorProps {
   open: boolean;
   onOpenChange: (v: boolean) => void;
-  initialSegment?: "grafica" | "tecnologia";
   orderId?: string | null;
   onSaved?: () => void;
   fromQuoteId?: string | null;
@@ -51,7 +50,6 @@ const PROD_STATUSES = Object.keys(PRODUCTION_STATUS_LABEL);
 export function OrderEditor({
   open,
   onOpenChange,
-  initialSegment = "grafica",
   orderId,
   onSaved,
   fromQuoteId,
@@ -162,8 +160,8 @@ export function OrderEditor({
       })();
     } else {
       setForm({
-        service_segment: initialSegment,
-        client_id: "",
+        service_segment: "grafica",
+    client_id: "",
         title: "",
         description: "",
         measurements: "",
@@ -183,7 +181,7 @@ export function OrderEditor({
       });
       setItems([]);
     }
-  }, [open, orderId, fromQuoteId, initialSegment]);
+  }, [open, orderId, fromQuoteId]);
 
   function updateItem(idx: number, patch: Partial<Item>) {
     setItems((arr) => {
