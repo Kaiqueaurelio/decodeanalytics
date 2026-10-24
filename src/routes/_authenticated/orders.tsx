@@ -13,16 +13,52 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Plus, Pencil, Trash2, Search, AlertTriangle, Eye, EyeOff, X, Clock, CalendarClock, CalendarX, Play, CheckCircle2 } from "lucide-react";
+import {
+  Plus,
+  Pencil,
+  Trash2,
+  Search,
+  AlertTriangle,
+  Eye,
+  EyeOff,
+  X,
+  Clock,
+  CalendarClock,
+  CalendarX,
+  Play,
+  CheckCircle2,
+} from "lucide-react";
 import { toast } from "sonner";
-import { addIsoDays, brl, fmtDate, PRODUCTION_STATUS_LABEL, PAYMENT_STATUS_LABEL, toIsoDate } from "@/lib/format";
+import {
+  addIsoDays,
+  brl,
+  fmtDate,
+  PRODUCTION_STATUS_LABEL,
+  PAYMENT_STATUS_LABEL,
+  toIsoDate,
+} from "@/lib/format";
 import { OrderEditor } from "@/components/OrderEditor";
 import { OSStatusBadge } from "@/components/OSStatusBadge";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export const Route = createFileRoute("/_authenticated/orders")({
-  head: () => ({meta: [ {title: "Ordens de serviço | Decode Analytics"}, {name:"description",content:"Gestão de ordens de gráfica e manutenção de equipamentos da Decode Analytics."}, {property:"og:title",content:"Ordens de serviço | Decode Analytics"}, {property:"og:description",content:"Atendimento, checklist e acompanhamento de serviços gráficos e técnicos."}, {property:"og:type",content:"website"}, {name:"twitter:card",content:"summary"} ]}),
-  component: OrdersPage
+  head: () => ({
+    meta: [
+      { title: "Ordens de serviço | Decode Analytics" },
+      {
+        name: "description",
+        content: "Gestão de ordens de gráfica e manutenção de equipamentos da Decode Analytics.",
+      },
+      { property: "og:title", content: "Ordens de serviço | Decode Analytics" },
+      {
+        property: "og:description",
+        content: "Atendimento, checklist e acompanhamento de serviços gráficos e técnicos.",
+      },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
+    ],
+  }),
+  component: OrdersPage,
 });
 
 function OrdersPage() {
@@ -36,16 +72,20 @@ function OrdersPage() {
   const [paymentStatus, setPaymentStatus] = useState("all");
   const [deadlineFilter, setDeadlineFilter] = useState("all");
   const [responsibleFilter, setResponsibleFilter] = useState("all");
-  const [lifecycleTab, setLifecycleTab] = useState<"todas" | "producao" | "concluidas" | "arquivadas">("todas");
+  const [lifecycleTab, setLifecycleTab] = useState<
+    "todas" | "producao" | "concluidas" | "arquivadas"
+  >("todas");
 
   const { data: rawOrders } = useQuery({
     queryKey: ["orders", showCompleted, lifecycleTab],
     queryFn: async () => {
       let q = supabase
-        .from("orders")
-        .select("*, clients(name), assignee:profiles!orders_assigned_to_fkey(name,email)")
+        .from("orders" as any)
+        .select(
+          "*, clients(name), assignee:profiles!orders_assigned_to_fkey(name,email), service_contracts(number,title)",
+        )
         .order("created_at", { ascending: false })
-        .limit(200);
+        .limit(200) as any;
       // If a lifecycle tab targets concluídas/arquivadas we must include them
       const forceAll = lifecycleTab !== "todas" && lifecycleTab !== "producao";
       if (!showCompleted && !forceAll) {
@@ -111,15 +151,29 @@ function OrdersPage() {
       } else if (lifecycleTab === "concluidas") {
         matchesLifecycle = r.production_status === "entregue";
       } else if (lifecycleTab === "arquivadas") {
-        matchesLifecycle =
-          r.production_status === "cancelado" || r.production_status === "pausado";
+        matchesLifecycle = r.production_status === "cancelado" || r.production_status === "pausado";
       }
 
       return (
-        (segment === "all" || (r.service_segment || "grafica") === segment) && matchesSearch && matchesProd && matchesPay && matchesResp && matchesDeadline && matchesLifecycle
+        (segment === "all" || (r.service_segment || "grafica") === segment) &&
+        matchesSearch &&
+        matchesProd &&
+        matchesPay &&
+        matchesResp &&
+        matchesDeadline &&
+        matchesLifecycle
       );
     });
-  }, [rawOrders, segment, search, productionStatus, paymentStatus, deadlineFilter, responsibleFilter, lifecycleTab]);
+  }, [
+    rawOrders,
+    segment,
+    search,
+    productionStatus,
+    paymentStatus,
+    deadlineFilter,
+    responsibleFilter,
+    lifecycleTab,
+  ]);
 
   const counts = useMemo(() => {
     const rows = rawOrders ?? [];
@@ -153,8 +207,16 @@ function OrdersPage() {
 
   const activeChips: { key: string; label: string; onClear: () => void }[] = [];
   if (lifecycleTab !== "todas") {
-    const map = { producao: "Em produção", concluidas: "Concluídas", arquivadas: "Arquivadas" } as const;
-    activeChips.push({ key: "lifecycle", label: map[lifecycleTab], onClear: () => setLifecycleTab("todas") });
+    const map = {
+      producao: "Em produção",
+      concluidas: "Concluídas",
+      arquivadas: "Arquivadas",
+    } as const;
+    activeChips.push({
+      key: "lifecycle",
+      label: map[lifecycleTab],
+      onClear: () => setLifecycleTab("todas"),
+    });
   }
   if (productionStatus !== "all") {
     activeChips.push({
@@ -178,7 +240,11 @@ function OrdersPage() {
       no_prazo: "Prazo: no prazo",
       sem_prazo: "Prazo: sem prazo",
     };
-    activeChips.push({ key: "deadline", label: map[deadlineFilter] ?? deadlineFilter, onClear: () => setDeadlineFilter("all") });
+    activeChips.push({
+      key: "deadline",
+      label: map[deadlineFilter] ?? deadlineFilter,
+      onClear: () => setDeadlineFilter("all"),
+    });
   }
   if (responsibleFilter !== "all") {
     const name =
@@ -187,10 +253,18 @@ function OrdersPage() {
         : (team ?? []).find((m: any) => m.id === responsibleFilter)?.name ||
           (team ?? []).find((m: any) => m.id === responsibleFilter)?.email ||
           "Responsável";
-    activeChips.push({ key: "resp", label: `Resp.: ${name}`, onClear: () => setResponsibleFilter("all") });
+    activeChips.push({
+      key: "resp",
+      label: `Resp.: ${name}`,
+      onClear: () => setResponsibleFilter("all"),
+    });
   }
   if (search.trim()) {
-    activeChips.push({ key: "search", label: `Busca: "${search.trim()}"`, onClear: () => setSearch("") });
+    activeChips.push({
+      key: "search",
+      label: `Busca: "${search.trim()}"`,
+      onClear: () => setSearch(""),
+    });
   }
 
   async function remove(id: string, number: number) {
@@ -237,73 +311,101 @@ function OrdersPage() {
             <Button
               variant="outline"
               onClick={() => setShowCompleted((v) => !v)}
-              title={showCompleted ? "Ocultar entregues/cancelados" : "Mostrar entregues/cancelados"}
+              title={
+                showCompleted ? "Ocultar entregues/cancelados" : "Mostrar entregues/cancelados"
+              }
             >
-              {showCompleted ? <EyeOff className="w-4 h-4 mr-1" /> : <Eye className="w-4 h-4 mr-1" />}
+              {showCompleted ? (
+                <EyeOff className="w-4 h-4 mr-1" />
+              ) : (
+                <Eye className="w-4 h-4 mr-1" />
+              )}
               {showCompleted ? "Ocultar concluídas" : "Mostrar concluídas"}
             </Button>
             <Button
-            onClick={() => {
-              setEditId(null);
-              setOpen(true);
-            }}
-          >
-            <Plus className="w-4 h-4 mr-1" />
-            Nova OS
-          </Button>
+              onClick={() => {
+                setEditId(null);
+                setOpen(true);
+              }}
+            >
+              <Plus className="w-4 h-4 mr-1" />
+              Nova OS
+            </Button>
+          </div>
+        </div>
+        <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
+          <Select value={productionStatus} onValueChange={setProductionStatus}>
+            <SelectTrigger className="h-9 text-xs">
+              <SelectValue placeholder="Status produção" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Todos os status</SelectItem>
+              {Object.entries(PRODUCTION_STATUS_LABEL).map(([key, label]) => (
+                <SelectItem key={key} value={key}>
+                  {label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Select value={paymentStatus} onValueChange={setPaymentStatus}>
+            <SelectTrigger className="h-9 text-xs">
+              <SelectValue placeholder="Status pagamento" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Todos os pagamentos</SelectItem>
+              {Object.entries(PAYMENT_STATUS_LABEL).map(([key, label]) => (
+                <SelectItem key={key} value={key}>
+                  {label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Select value={deadlineFilter} onValueChange={setDeadlineFilter}>
+            <SelectTrigger className="h-9 text-xs">
+              <SelectValue placeholder="Prazo" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Qualquer prazo</SelectItem>
+              <SelectItem value="atrasado">Atrasadas</SelectItem>
+              <SelectItem value="no_prazo">No prazo</SelectItem>
+              <SelectItem value="hoje">Para hoje</SelectItem>
+              <SelectItem value="proximos7">Próximos 7 dias</SelectItem>
+              <SelectItem value="sem_prazo">Sem prazo</SelectItem>
+            </SelectContent>
+          </Select>
+          <Select value={responsibleFilter} onValueChange={setResponsibleFilter}>
+            <SelectTrigger className="h-9 text-xs">
+              <SelectValue placeholder="Responsável" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Todos os responsáveis</SelectItem>
+              <SelectItem value="unassigned">Sem responsável</SelectItem>
+              {(team ?? []).map((m: any) => (
+                <SelectItem key={m.id} value={m.id}>
+                  {m.name || m.email}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
       </div>
-      <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
-        <Select value={productionStatus} onValueChange={setProductionStatus}>
-          <SelectTrigger className="h-9 text-xs">
-            <SelectValue placeholder="Status produção" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">Todos os status</SelectItem>
-            {Object.entries(PRODUCTION_STATUS_LABEL).map(([key, label]) => (
-              <SelectItem key={key} value={key}>{label}</SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        <Select value={paymentStatus} onValueChange={setPaymentStatus}>
-          <SelectTrigger className="h-9 text-xs">
-            <SelectValue placeholder="Status pagamento" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">Todos os pagamentos</SelectItem>
-            {Object.entries(PAYMENT_STATUS_LABEL).map(([key, label]) => (
-              <SelectItem key={key} value={key}>{label}</SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        <Select value={deadlineFilter} onValueChange={setDeadlineFilter}>
-          <SelectTrigger className="h-9 text-xs">
-            <SelectValue placeholder="Prazo" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">Qualquer prazo</SelectItem>
-            <SelectItem value="atrasado">Atrasadas</SelectItem>
-            <SelectItem value="no_prazo">No prazo</SelectItem>
-            <SelectItem value="hoje">Para hoje</SelectItem>
-            <SelectItem value="proximos7">Próximos 7 dias</SelectItem>
-            <SelectItem value="sem_prazo">Sem prazo</SelectItem>
-          </SelectContent>
-        </Select>
-        <Select value={responsibleFilter} onValueChange={setResponsibleFilter}>
-          <SelectTrigger className="h-9 text-xs">
-            <SelectValue placeholder="Responsável" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">Todos os responsáveis</SelectItem>
-            <SelectItem value="unassigned">Sem responsável</SelectItem>
-            {(team ?? []).map((m: any) => (
-              <SelectItem key={m.id} value={m.id}>{m.name || m.email}</SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+      <div className="flex flex-wrap gap-2" role="group" aria-label="Filtrar segmento">
+        {[
+          ["all", "Todos os segmentos"],
+          ["tecnologia", "Tecnologia / Manutenção"],
+          ["grafica", "Gráfica / Design"],
+        ].map(([id, label]) => (
+          <Button
+            key={id}
+            size="sm"
+            variant={segment === id ? "default" : "outline"}
+            aria-pressed={segment === id}
+            onClick={() => setSegment(id)}
+          >
+            {label}
+          </Button>
+        ))}
       </div>
-      </div>
-      <div className="flex flex-wrap gap-2" role="group" aria-label="Filtrar segmento">{[["all","Todos os segmentos"],["tecnologia","Tecnologia / Manutenção"],["grafica","Gráfica / Design"]].map(([id,label])=><Button key={id} size="sm" variant={segment===id?"default":"outline"} aria-pressed={segment===id} onClick={()=>setSegment(id)}>{label}</Button>)}</div>
       <Tabs value={lifecycleTab} onValueChange={(v) => setLifecycleTab(v as any)}>
         <TabsList className="w-full sm:w-auto flex flex-wrap gap-1">
           <TabsTrigger value="todas" className="text-xs">
@@ -322,14 +424,52 @@ function OrdersPage() {
       </Tabs>
       <div className="flex flex-wrap items-center gap-2">
         <span className="text-xs font-medium text-muted-foreground">Prazo:</span>
-        {([
-          { key: "all", label: "Todos", icon: null, tone: "bg-muted text-foreground border-transparent", activeTone: "bg-primary text-primary-foreground" },
-          { key: "atrasado", label: `Atrasadas${deadlineCounts.atrasado ? ` (${deadlineCounts.atrasado})` : ""}`, icon: <AlertTriangle className="w-3.5 h-3.5" />, tone: "bg-red-50 text-red-700 border-red-200", activeTone: "bg-red-600 text-white border-red-600" },
-          { key: "no_prazo", label: `No prazo${deadlineCounts.no_prazo ? ` (${deadlineCounts.no_prazo})` : ""}`, icon: <Clock className="w-3.5 h-3.5" />, tone: "bg-emerald-50 text-emerald-700 border-emerald-200", activeTone: "bg-emerald-600 text-white border-emerald-600" },
-          { key: "hoje", label: "Para hoje", icon: <CalendarClock className="w-3.5 h-3.5" />, tone: "bg-amber-50 text-amber-700 border-amber-200", activeTone: "bg-amber-600 text-white border-amber-600" },
-          { key: "proximos7", label: "Próximos 7 dias", icon: <CalendarClock className="w-3.5 h-3.5" />, tone: "bg-blue-50 text-blue-700 border-blue-200", activeTone: "bg-blue-600 text-white border-blue-600" },
-          { key: "sem_prazo", label: `Sem prazo${deadlineCounts.sem_prazo ? ` (${deadlineCounts.sem_prazo})` : ""}`, icon: <CalendarX className="w-3.5 h-3.5" />, tone: "bg-slate-50 text-slate-600 border-slate-200", activeTone: "bg-slate-700 text-white border-slate-700" },
-        ] as const).map((opt) => {
+        {(
+          [
+            {
+              key: "all",
+              label: "Todos",
+              icon: null,
+              tone: "bg-muted text-foreground border-transparent",
+              activeTone: "bg-primary text-primary-foreground",
+            },
+            {
+              key: "atrasado",
+              label: `Atrasadas${deadlineCounts.atrasado ? ` (${deadlineCounts.atrasado})` : ""}`,
+              icon: <AlertTriangle className="w-3.5 h-3.5" />,
+              tone: "bg-red-50 text-red-700 border-red-200",
+              activeTone: "bg-red-600 text-white border-red-600",
+            },
+            {
+              key: "no_prazo",
+              label: `No prazo${deadlineCounts.no_prazo ? ` (${deadlineCounts.no_prazo})` : ""}`,
+              icon: <Clock className="w-3.5 h-3.5" />,
+              tone: "bg-emerald-50 text-emerald-700 border-emerald-200",
+              activeTone: "bg-emerald-600 text-white border-emerald-600",
+            },
+            {
+              key: "hoje",
+              label: "Para hoje",
+              icon: <CalendarClock className="w-3.5 h-3.5" />,
+              tone: "bg-amber-50 text-amber-700 border-amber-200",
+              activeTone: "bg-amber-600 text-white border-amber-600",
+            },
+            {
+              key: "proximos7",
+              label: "Próximos 7 dias",
+              icon: <CalendarClock className="w-3.5 h-3.5" />,
+              tone: "bg-blue-50 text-blue-700 border-blue-200",
+              activeTone: "bg-blue-600 text-white border-blue-600",
+            },
+            {
+              key: "sem_prazo",
+              label: `Sem prazo${deadlineCounts.sem_prazo ? ` (${deadlineCounts.sem_prazo})` : ""}`,
+              icon: <CalendarX className="w-3.5 h-3.5" />,
+              tone: "bg-slate-50 text-slate-600 border-slate-200",
+              activeTone: "bg-slate-700 text-white border-slate-700",
+            },
+          ] as const
+        ).map((opt) => {
           const active = deadlineFilter === opt.key;
           return (
             <button
@@ -400,8 +540,18 @@ function OrdersPage() {
                   <td className="p-3 font-medium">
                     <div className="flex flex-wrap items-center gap-2">
                       {o.clients?.name}
-                      <Badge variant="outline">{o.service_segment === "tecnologia" ? "Tecnologia" : "Gráfica"}</Badge>
-                      <OSStatusBadge status={o.production_status} className="text-[10px] px-2 py-0.5" />
+                      <Badge variant="outline">
+                        {o.service_segment === "tecnologia" ? "Tecnologia" : "Gráfica"}
+                      </Badge>
+                      <OSStatusBadge
+                        status={o.production_status}
+                        className="text-[10px] px-2 py-0.5"
+                      />
+                      {o.service_contracts?.number && (
+                        <Badge variant="secondary" className="text-[10px]">
+                          Contrato #{o.service_contracts.number}
+                        </Badge>
+                      )}
                       {o.urgent && (
                         <Badge className="bg-destructive text-destructive-foreground">
                           Urgente
@@ -447,20 +597,19 @@ function OrdersPage() {
                           <Play className="w-4 h-4 text-blue-600" />
                         </Button>
                       )}
-                    {o.production_status !== "entregue" &&
-                      o.production_status !== "cancelado" && (
-                        <Button
-                          size="icon"
-                          variant="ghost"
-                          title="Marcar como concluída"
-                          onClick={() => {
-                            if (!confirm(`Concluir OS #${o.number}?`)) return;
-                            quickStatus(o.id, o.number, "entregue", "marcada como concluída");
-                          }}
-                        >
-                          <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                        </Button>
-                      )}
+                    {o.production_status !== "entregue" && o.production_status !== "cancelado" && (
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        title="Marcar como concluída"
+                        onClick={() => {
+                          if (!confirm(`Concluir OS #${o.number}?`)) return;
+                          quickStatus(o.id, o.number, "entregue", "marcada como concluída");
+                        }}
+                      >
+                        <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                      </Button>
+                    )}
                     <Button
                       size="icon"
                       variant="ghost"

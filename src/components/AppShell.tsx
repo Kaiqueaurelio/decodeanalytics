@@ -3,6 +3,7 @@ import { Link, useRouterState } from "@tanstack/react-router";
 import {
   LayoutDashboard,
   FileText,
+  FileSignature,
   ClipboardList,
   Kanban,
   Boxes,
@@ -70,6 +71,14 @@ const NAV: NavItem[] = [
     icon: ClipboardList,
     section: "Operação",
     roles: ["administrador", "atendente", "producao", "financeiro"],
+  },
+  {
+    to: "/contracts",
+    label: "Contratos",
+    description: "Modelos, aprovações e serviços recorrentes",
+    icon: FileSignature,
+    section: "Operação",
+    roles: ["administrador", "atendente", "financeiro"],
   },
   {
     to: "/production",
@@ -239,7 +248,12 @@ export function AppShell({ children }: { children: ReactNode }) {
   const title = currentTitle(path);
   const userInitial = user?.email?.charAt(0).toUpperCase() ?? "A";
   const avatarUrl = String(user?.user_metadata?.avatar_url ?? "");
-  const displayName = String(user?.user_metadata?.full_name ?? user?.user_metadata?.name ?? user?.email?.split("@")[0] ?? "Meu perfil");
+  const displayName = String(
+    user?.user_metadata?.full_name ??
+      user?.user_metadata?.name ??
+      user?.email?.split("@")[0] ??
+      "Meu perfil",
+  );
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-background">
@@ -294,12 +308,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             )}
           </div>
 
-          <div
-            className={cn(
-              "relative w-full px-2",
-              compact && "flex justify-center",
-            )}
-          >
+          <div className={cn("relative w-full px-2", compact && "flex justify-center")}>
             <div
               className={cn(
                 "group relative flex h-10 items-center rounded-lg bg-[#080C1F] transition-all focus-within:bg-[#080C1F]/80 border border-[#293451]/30",
@@ -363,7 +372,10 @@ export function AppShell({ children }: { children: ReactNode }) {
           </div>
         </div>
 
-        <nav aria-label="Navegação principal" className="app-scrollbar flex-1 space-y-4 overflow-y-auto px-3 py-3">
+        <nav
+          aria-label="Navegação principal"
+          className="app-scrollbar flex-1 space-y-4 overflow-y-auto px-3 py-3"
+        >
           {SECTIONS.map((section, sectionIndex) => {
             const sectionItems = items.filter((item) => item.section === section);
             if (!sectionItems.length) return null;
@@ -509,7 +521,18 @@ export function AppShell({ children }: { children: ReactNode }) {
                     {isAdmin ? "Administrador" : ROLE_LABEL[roles[0]] || "Usuário"}
                   </p>
                 </div>
-                <Link to="/profile" aria-label={`Abrir perfil de ${displayName}`} title="Meu perfil" className="grid h-9 w-9 place-items-center overflow-hidden rounded-xl border border-white/10 bg-[#111A38] text-sm font-bold text-white transition-colors hover:border-[#22D3EE]/40 hover:bg-[#172347] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#22D3EE]">{avatarUrl ? <img src={avatarUrl} alt="" className="h-full w-full object-cover" /> : userInitial}</Link>
+                <Link
+                  to="/profile"
+                  aria-label={`Abrir perfil de ${displayName}`}
+                  title="Meu perfil"
+                  className="grid h-9 w-9 place-items-center overflow-hidden rounded-xl border border-white/10 bg-[#111A38] text-sm font-bold text-white transition-colors hover:border-[#22D3EE]/40 hover:bg-[#172347] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#22D3EE]"
+                >
+                  {avatarUrl ? (
+                    <img src={avatarUrl} alt="" className="h-full w-full object-cover" />
+                  ) : (
+                    userInitial
+                  )}
+                </Link>
               </div>
             </div>
           </div>

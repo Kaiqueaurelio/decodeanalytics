@@ -24,6 +24,7 @@ import { Route as AuthenticatedCashRouteImport } from './routes/_authenticated/c
 import { Route as AuthenticatedCatalogAdminRouteImport } from './routes/_authenticated/catalog-admin'
 import { Route as AuthenticatedClientsRouteImport } from './routes/_authenticated/clients'
 import { Route as AuthenticatedClosuresRouteImport } from './routes/_authenticated/closures'
+import { Route as AuthenticatedContractsRouteImport } from './routes/_authenticated/contracts'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedEllaRouteImport } from './routes/_authenticated/ella'
 import { Route as AuthenticatedEllaSandboxRouteImport } from './routes/_authenticated/ella-sandbox'
@@ -39,6 +40,7 @@ import { Route as AuthenticatedServicesRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
 import { Route as AuthenticatedUsersRouteImport } from './routes/_authenticated/users'
 import { Route as BriefingTokenRouteImport } from './routes/briefing.$token'
+import { Route as ContractTokenRouteImport } from './routes/contract.$token'
 import { Route as ProdutoSlugRouteImport } from './routes/produto.$slug'
 import { Route as AuthenticatedSandboxRunIdRouteImport } from './routes/_authenticated/sandbox-run.$id'
 import { Route as ApiPublicAiHealthRouteImport } from './routes/api/public/ai-health'
@@ -116,6 +118,11 @@ const AuthenticatedClientsRoute = AuthenticatedClientsRouteImport.update({
 const AuthenticatedClosuresRoute = AuthenticatedClosuresRouteImport.update({
   id: '/closures',
   path: '/closures',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedContractsRoute = AuthenticatedContractsRouteImport.update({
+  id: '/contracts',
+  path: '/contracts',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
@@ -196,6 +203,11 @@ const BriefingTokenRoute = BriefingTokenRouteImport.update({
   path: '/briefing/$token',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ContractTokenRoute = ContractTokenRouteImport.update({
+  id: '/contract/$token',
+  path: '/contract/$token',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProdutoSlugRoute = ProdutoSlugRouteImport.update({
   id: '/produto/$slug',
   path: '/produto/$slug',
@@ -228,6 +240,7 @@ export interface FileRoutesByFullPath {
   '/catalog-admin': typeof AuthenticatedCatalogAdminRoute
   '/clients': typeof AuthenticatedClientsRoute
   '/closures': typeof AuthenticatedClosuresRoute
+  '/contracts': typeof AuthenticatedContractsRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/ella': typeof AuthenticatedEllaRoute
   '/ella-sandbox': typeof AuthenticatedEllaSandboxRoute
@@ -243,6 +256,7 @@ export interface FileRoutesByFullPath {
   '/settings': typeof AuthenticatedSettingsRoute
   '/users': typeof AuthenticatedUsersRoute
   '/briefing/$token': typeof BriefingTokenRoute
+  '/contract/$token': typeof ContractTokenRoute
   '/produto/$slug': typeof ProdutoSlugRoute
   '/sandbox-run/$id': typeof AuthenticatedSandboxRunIdRoute
   '/api/public/ai-health': typeof ApiPublicAiHealthRoute
@@ -262,6 +276,7 @@ export interface FileRoutesByTo {
   '/catalog-admin': typeof AuthenticatedCatalogAdminRoute
   '/clients': typeof AuthenticatedClientsRoute
   '/closures': typeof AuthenticatedClosuresRoute
+  '/contracts': typeof AuthenticatedContractsRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/ella': typeof AuthenticatedEllaRoute
   '/ella-sandbox': typeof AuthenticatedEllaSandboxRoute
@@ -277,6 +292,7 @@ export interface FileRoutesByTo {
   '/settings': typeof AuthenticatedSettingsRoute
   '/users': typeof AuthenticatedUsersRoute
   '/briefing/$token': typeof BriefingTokenRoute
+  '/contract/$token': typeof ContractTokenRoute
   '/produto/$slug': typeof ProdutoSlugRoute
   '/sandbox-run/$id': typeof AuthenticatedSandboxRunIdRoute
   '/api/public/ai-health': typeof ApiPublicAiHealthRoute
@@ -298,6 +314,7 @@ export interface FileRoutesById {
   '/_authenticated/catalog-admin': typeof AuthenticatedCatalogAdminRoute
   '/_authenticated/clients': typeof AuthenticatedClientsRoute
   '/_authenticated/closures': typeof AuthenticatedClosuresRoute
+  '/_authenticated/contracts': typeof AuthenticatedContractsRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/ella': typeof AuthenticatedEllaRoute
   '/_authenticated/ella-sandbox': typeof AuthenticatedEllaSandboxRoute
@@ -313,6 +330,7 @@ export interface FileRoutesById {
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
   '/_authenticated/users': typeof AuthenticatedUsersRoute
   '/briefing/$token': typeof BriefingTokenRoute
+  '/contract/$token': typeof ContractTokenRoute
   '/produto/$slug': typeof ProdutoSlugRoute
   '/_authenticated/sandbox-run/$id': typeof AuthenticatedSandboxRunIdRoute
   '/api/public/ai-health': typeof ApiPublicAiHealthRoute
@@ -334,6 +352,7 @@ export interface FileRouteTypes {
     | '/catalog-admin'
     | '/clients'
     | '/closures'
+    | '/contracts'
     | '/dashboard'
     | '/ella'
     | '/ella-sandbox'
@@ -349,6 +368,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/users'
     | '/briefing/$token'
+    | '/contract/$token'
     | '/produto/$slug'
     | '/sandbox-run/$id'
     | '/api/public/ai-health'
@@ -368,6 +388,7 @@ export interface FileRouteTypes {
     | '/catalog-admin'
     | '/clients'
     | '/closures'
+    | '/contracts'
     | '/dashboard'
     | '/ella'
     | '/ella-sandbox'
@@ -383,6 +404,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/users'
     | '/briefing/$token'
+    | '/contract/$token'
     | '/produto/$slug'
     | '/sandbox-run/$id'
     | '/api/public/ai-health'
@@ -403,6 +425,7 @@ export interface FileRouteTypes {
     | '/_authenticated/catalog-admin'
     | '/_authenticated/clients'
     | '/_authenticated/closures'
+    | '/_authenticated/contracts'
     | '/_authenticated/dashboard'
     | '/_authenticated/ella'
     | '/_authenticated/ella-sandbox'
@@ -418,6 +441,7 @@ export interface FileRouteTypes {
     | '/_authenticated/settings'
     | '/_authenticated/users'
     | '/briefing/$token'
+    | '/contract/$token'
     | '/produto/$slug'
     | '/_authenticated/sandbox-run/$id'
     | '/api/public/ai-health'
@@ -433,6 +457,7 @@ export interface RootRouteChildren {
   ProdutosRoute: typeof ProdutosRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   BriefingTokenRoute: typeof BriefingTokenRoute
+  ContractTokenRoute: typeof ContractTokenRoute
   ProdutoSlugRoute: typeof ProdutoSlugRoute
   ApiPublicAiHealthRoute: typeof ApiPublicAiHealthRoute
 }
@@ -544,6 +569,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedClosuresRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/contracts': {
+      id: '/_authenticated/contracts'
+      path: '/contracts'
+      fullPath: '/contracts'
+      preLoaderRoute: typeof AuthenticatedContractsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/dashboard': {
       id: '/_authenticated/dashboard'
       path: '/dashboard'
@@ -649,6 +681,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BriefingTokenRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/contract/$token': {
+      id: '/contract/$token'
+      path: '/contract/$token'
+      fullPath: '/contract/$token'
+      preLoaderRoute: typeof ContractTokenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/produto/$slug': {
       id: '/produto/$slug'
       path: '/produto/$slug'
@@ -681,6 +720,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedCatalogAdminRoute: typeof AuthenticatedCatalogAdminRoute
   AuthenticatedClientsRoute: typeof AuthenticatedClientsRoute
   AuthenticatedClosuresRoute: typeof AuthenticatedClosuresRoute
+  AuthenticatedContractsRoute: typeof AuthenticatedContractsRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedEllaRoute: typeof AuthenticatedEllaRoute
   AuthenticatedEllaSandboxRoute: typeof AuthenticatedEllaSandboxRoute
@@ -706,6 +746,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedCatalogAdminRoute: AuthenticatedCatalogAdminRoute,
   AuthenticatedClientsRoute: AuthenticatedClientsRoute,
   AuthenticatedClosuresRoute: AuthenticatedClosuresRoute,
+  AuthenticatedContractsRoute: AuthenticatedContractsRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedEllaRoute: AuthenticatedEllaRoute,
   AuthenticatedEllaSandboxRoute: AuthenticatedEllaSandboxRoute,
@@ -736,6 +777,7 @@ const rootRouteChildren: RootRouteChildren = {
   ProdutosRoute: ProdutosRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   BriefingTokenRoute: BriefingTokenRoute,
+  ContractTokenRoute: ContractTokenRoute,
   ProdutoSlugRoute: ProdutoSlugRoute,
   ApiPublicAiHealthRoute: ApiPublicAiHealthRoute,
 }

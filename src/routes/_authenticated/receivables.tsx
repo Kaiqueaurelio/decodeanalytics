@@ -84,10 +84,10 @@ function Page() {
   const { data } = useQuery({
     queryKey: ["receivables"],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("receivables")
-        .select("*, clients(name, whatsapp), orders(number)")
-        .order("due_date", { ascending: true });
+      const { data, error } = await (supabase
+        .from("receivables" as any)
+        .select("*, clients(name, whatsapp), orders(number), service_contracts(number,title)")
+        .order("due_date", { ascending: true }) as any);
       if (error) throw error;
       return (data ?? []) as any[];
     },
@@ -102,8 +102,10 @@ function Page() {
         .eq("id", r.id),
       supabase.from("cash_entries").insert({
         type: "entrada",
-        description: `Pagamento OS #${r.orders?.number ?? ""}`,
-        category: "Pagamento de OS",
+        description: r.service_contracts?.number
+          ? `Pagamento contrato #${r.service_contracts.number}`
+          : `Pagamento OS #${r.orders?.number ?? ""}`,
+        category: r.service_contracts?.number ? "Pagamento de contrato" : "Pagamento de OS",
         amount: r.amount,
         client_id: r.client_id,
         order_id: r.order_id,
@@ -117,7 +119,8 @@ function Page() {
         .select("paid,total")
         .eq("id", r.order_id)
         .single();
-      if (o) updates.push(supabase.from("orders").update({ paid: o.total }).eq("id", r.order_id) as any);
+      if (o)
+        updates.push(supabase.from("orders").update({ paid: o.total }).eq("id", r.order_id) as any);
     }
     const results = await Promise.all(updates);
     const err = results.find((x: any) => x.error);
@@ -153,7 +156,12 @@ function Page() {
     return acc;
   }, [enriched]);
 
-  const totalPending = buckets.overdue.total + buckets.today.total + buckets.week.total + buckets.month.total + buckets.future.total;
+  const totalPending =
+    buckets.overdue.total +
+    buckets.today.total +
+    buckets.week.total +
+    buckets.month.total +
+    buckets.future.total;
 
   const orderedBuckets: Bucket[] = ["overdue", "today", "week", "month", "future", "paid"];
 
@@ -163,13 +171,26 @@ function Page() {
     const term = search.trim().toLowerCase();
     if (!term) return true;
     return (
-      String(r.clients?.name || "").toLowerCase().includes(term) ||
-      String(r.orders?.number || "").includes(term)
+      String(r.clients?.name || "")
+        .toLowerCase()
+        .includes(term) ||
+      String(r.orders?.number || "").includes(term) ||
+      String(r.service_contracts?.number || "").includes(term) ||
+      String(r.service_contracts?.title || "")
+        .toLowerCase()
+        .includes(term)
     );
   });
 
   const grouped = useMemo(() => {
-    const g: Record<Bucket, any[]> = { overdue: [], today: [], week: [], month: [], future: [], paid: [] };
+    const g: Record<Bucket, any[]> = {
+      overdue: [],
+      today: [],
+      week: [],
+      month: [],
+      future: [],
+      paid: [],
+    };
     for (const r of visibleRows) g[r.bucket as Bucket].push(r);
     return g;
   }, [visibleRows]);
@@ -189,17 +210,26 @@ function Page() {
         <Card className="p-5 bg-linear-to-br from-primary to-primary/80 text-primary-foreground border-0">
           <div className="flex items-center gap-2 mb-1">
             <Wallet className="w-4 h-4" />
-            <span className="text-xs font-bold uppercase tracking-wide opacity-90">A receber (total)</span>
+            <span className="text-xs font-bold uppercase tracking-wide opacity-90">
+              A receber (total)
+            </span>
           </div>
           <p className="text-3xl font-black">{brl(totalPending)}</p>
           <p className="text-xs mt-1 opacity-90">
-            {buckets.overdue.rows.length + buckets.today.rows.length + buckets.week.rows.length + buckets.month.rows.length + buckets.future.rows.length} pendente(s)
+            {buckets.overdue.rows.length +
+              buckets.today.rows.length +
+              buckets.week.rows.length +
+              buckets.month.rows.length +
+              buckets.future.rows.length}{" "}
+            pendente(s)
           </p>
         </Card>
         <Card className="p-5 bg-linear-to-br from-emerald-500 to-emerald-600 text-white border-0">
           <div className="flex items-center gap-2 mb-1">
             <CheckCircle2 className="w-4 h-4" />
-            <span className="text-xs font-bold uppercase tracking-wide opacity-90">Já recebidas</span>
+            <span className="text-xs font-bold uppercase tracking-wide opacity-90">
+              Já recebidas
+            </span>
           </div>
           <p className="text-3xl font-black">{brl(buckets.paid.total)}</p>
           <p className="text-xs mt-1 opacity-90">{buckets.paid.rows.length} cobrança(s)</p>
@@ -221,7 +251,9 @@ function Page() {
           <button
             onClick={() => setActive("all")}
             className={`shrink-0 rounded-xl border px-3 py-2 text-xs font-bold transition ${
-              active === "all" ? "border-primary bg-primary text-primary-foreground" : "bg-card hover:border-primary/40"
+              active === "all"
+                ? "border-primary bg-primary text-primary-foreground"
+                : "bg-card hover:border-primary/40"
             }`}
           >
             Todos
@@ -234,7 +266,9 @@ function Page() {
                 key={b}
                 onClick={() => setActive(active === b ? "all" : b)}
                 className={`shrink-0 rounded-xl border px-3 py-2 text-xs font-bold transition ${
-                  active === b ? "border-primary bg-primary text-primary-foreground" : `${meta.tone} hover:brightness-95`
+                  active === b
+                    ? "border-primary bg-primary text-primary-foreground"
+                    : `${meta.tone} hover:brightness-95`
                 }`}
               >
                 {meta.label} · {n}
@@ -255,7 +289,9 @@ function Page() {
             <section key={b}>
               <div className="flex items-center justify-between mb-2 px-1">
                 <div className="flex items-center gap-2">
-                  <span className={`inline-flex items-center justify-center w-7 h-7 rounded-lg border ${meta.tone}`}>
+                  <span
+                    className={`inline-flex items-center justify-center w-7 h-7 rounded-lg border ${meta.tone}`}
+                  >
                     <Icon className="w-4 h-4" />
                   </span>
                   <div>
@@ -274,7 +310,9 @@ function Page() {
                 {rows.map((r) => {
                   const overdueDays =
                     b === "overdue" && r.due_date
-                      ? Math.round((Date.now() - new Date(`${r.due_date}T00:00:00`).getTime()) / 86400000)
+                      ? Math.round(
+                          (Date.now() - new Date(`${r.due_date}T00:00:00`).getTime()) / 86400000,
+                        )
                       : 0;
                   return (
                     <Card key={r.id} className="p-4 hover:shadow-md transition-shadow">
@@ -282,7 +320,11 @@ function Page() {
                         <div className="min-w-0">
                           <p className="font-bold truncate">{r.clients?.name || "Cliente"}</p>
                           <p className="text-xs text-muted-foreground">
-                            {r.orders?.number ? `OS #${r.orders.number}` : "Sem OS vinculada"}
+                            {r.service_contracts?.number
+                              ? `Contrato #${r.service_contracts.number} · ${r.service_contracts.title}`
+                              : r.orders?.number
+                                ? `OS #${r.orders.number}`
+                                : "Sem OS ou contrato vinculado"}
                           </p>
                         </div>
                         <Badge variant="outline" className={meta.tone}>
@@ -291,20 +333,32 @@ function Page() {
                       </div>
                       <div className="flex items-end justify-between gap-2 pt-2 border-t border-border/60">
                         <div>
-                          <p className="text-[10px] uppercase text-muted-foreground tracking-wide">Vencimento</p>
+                          {r.competence_month && (
+                            <>
+                              <p className="text-[10px] uppercase text-muted-foreground tracking-wide">
+                                Competência
+                              </p>
+                              <p className="mb-1 text-xs font-medium">
+                                {fmtDate(r.competence_month)}
+                              </p>
+                            </>
+                          )}
+                          <p className="text-[10px] uppercase text-muted-foreground tracking-wide">
+                            Vencimento
+                          </p>
                           <p className="text-sm font-semibold">{fmtDate(r.due_date)}</p>
                         </div>
                         <div className="text-right">
-                          <p className="text-[10px] uppercase text-muted-foreground tracking-wide">Valor</p>
-                          <p className="text-lg font-black font-mono text-primary">{brl(r.amount)}</p>
+                          <p className="text-[10px] uppercase text-muted-foreground tracking-wide">
+                            Valor
+                          </p>
+                          <p className="text-lg font-black font-mono text-primary">
+                            {brl(r.amount)}
+                          </p>
                         </div>
                       </div>
                       {b !== "paid" && (
-                        <Button
-                          size="sm"
-                          className="w-full mt-3"
-                          onClick={() => markPaid(r)}
-                        >
+                        <Button size="sm" className="w-full mt-3" onClick={() => markPaid(r)}>
                           <Check className="w-4 h-4 mr-1" />
                           Receber
                         </Button>
