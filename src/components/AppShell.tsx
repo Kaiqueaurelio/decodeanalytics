@@ -1,5 +1,5 @@
 import { useState, useMemo, type ReactNode } from "react";
-import { Link, useRouterState, useNavigate } from "@tanstack/react-router";
+import { Link, useRouterState } from "@tanstack/react-router";
 import {
   LayoutDashboard,
   FileText,
@@ -13,7 +13,6 @@ import {
   Palette,
   PanelLeftClose,
   PanelLeftOpen,
-  Plus,
   Receipt,
   Search,
   Settings,
@@ -192,7 +191,6 @@ const SECTIONS: NavItem["section"][] = ["Visão geral", "Operação", "Financeir
 export function AppShell({ children }: { children: ReactNode }) {
   const { user, roles, signOut, isAdmin } = useAuth();
   const path = useRouterState({ select: (state) => state.location.pathname });
-  const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(() => {
     if (typeof window === "undefined") return false;
@@ -201,6 +199,8 @@ export function AppShell({ children }: { children: ReactNode }) {
   });
   const [search, setSearch] = useState("");
   const [searchFocused, setSearchFocused] = useState(false);
+  // The mobile drawer always shows labels, even when the desktop sidebar is collapsed.
+  const compact = collapsed && !open;
 
   const items = useMemo(() => {
     return NAV.filter((item) => {
@@ -228,21 +228,21 @@ export function AppShell({ children }: { children: ReactNode }) {
       <aside
         className={cn(
           "fixed inset-y-0 left-0 z-40 flex flex-col overflow-hidden border-r border-[#293451]/20 bg-[#0B1026] text-[#AAB6D1] transition-[width,transform] duration-500 ease-[cubic-bezier(0.4,0,0.2,1)]",
-          collapsed ? "w-72 md:w-20" : "w-72 md:w-60",
+          collapsed ? "w-72 md:w-20" : "w-72 md:w-64 lg:w-[17.5rem]",
           open ? "translate-x-0" : "-translate-x-full md:translate-x-0",
         )}
       >
-        <div className={cn("flex flex-col py-8", collapsed ? "items-center px-0" : "px-3")}>
+        <div className={cn("flex flex-col py-5", compact ? "items-center px-0" : "px-3")}>
           <div
             className={cn(
               "flex w-full items-center px-3 mb-6",
-              collapsed ? "justify-center" : "justify-between",
+              compact ? "justify-center" : "justify-between",
             )}
           >
             <div
               className={cn(
                 "flex items-center transition-all duration-500",
-                collapsed ? "justify-center" : "gap-2.5",
+                compact ? "justify-center" : "gap-3",
               )}
             >
               <img
@@ -250,10 +250,10 @@ export function AppShell({ children }: { children: ReactNode }) {
                 alt="Decode Analytics"
                 className={cn(
                   "brand-logo shrink-0 rounded-md bg-black p-1 object-contain transition-all duration-300",
-                  collapsed ? "h-11 w-11" : "h-8 w-auto max-w-28",
+                  compact ? "h-11 w-11" : "h-9 w-auto max-w-32",
                 )}
               />
-              {!collapsed && (
+              {!compact && (
                 <div className="flex flex-col leading-none animate-in fade-in duration-500">
                   <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[#F8FAFC]">
                     Decode Analytics
@@ -264,10 +264,12 @@ export function AppShell({ children }: { children: ReactNode }) {
                 </div>
               )}
             </div>
-            {!collapsed && (
+            {!compact && (
               <button
+                type="button"
+                aria-label="Fechar menu"
                 onClick={() => setOpen(false)}
-                className="grid h-8 w-8 place-items-center rounded-lg bg-[#080C1F] text-[#AAB6D1] hover:bg-[#080C1F]/80 hover:text-[#F8FAFC] md:hidden"
+                className="grid h-9 w-9 place-items-center rounded-lg text-[#AAB6D1] transition-colors hover:bg-white/5 hover:text-[#F8FAFC] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#22D3EE] md:hidden"
               >
                 <X className="h-4 w-4" />
               </button>
@@ -276,22 +278,33 @@ export function AppShell({ children }: { children: ReactNode }) {
 
           <div
             className={cn(
-              "relative w-full transition-all duration-300 px-3",
-              collapsed && "flex justify-center",
+              "relative w-full px-2",
+              compact && "flex justify-center",
             )}
           >
             <div
               className={cn(
                 "group relative flex h-10 items-center rounded-lg bg-[#080C1F] transition-all focus-within:bg-[#080C1F]/80 border border-[#293451]/30",
-                collapsed ? "w-11 justify-center px-0" : "w-full px-3",
+                compact ? "w-11 justify-center px-0" : "w-full px-3",
               )}
-              title={collapsed ? "Buscar" : undefined}
+              title={compact ? "Expandir menu para buscar" : undefined}
             >
-              <Search
-                className={cn(
-                  "h-4 w-4 shrink-0 text-[#AAB6D1]/50 group-focus-within:text-[#F8FAFC] transition-colors",
-                )}
-              />
+              {compact ? (
+                <button
+                  type="button"
+                  aria-label="Expandir menu para buscar"
+                  title="Expandir menu para buscar"
+                  onClick={() => {
+                    localStorage.setItem("alcateia_sidebar_collapsed", "0");
+                    setCollapsed(false);
+                  }}
+                  className="grid h-10 w-10 place-items-center rounded-lg text-[#AAB6D1] transition-colors hover:bg-white/5 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#22D3EE]"
+                >
+                  <Search className="h-4 w-4" />
+                </button>
+              ) : (
+                <Search className="h-4 w-4 shrink-0 text-[#AAB6D1]/70 transition-colors group-focus-within:text-[#22D3EE]" />
+              )}
               <input
                 type="text"
                 placeholder="Buscar..."
@@ -301,10 +314,10 @@ export function AppShell({ children }: { children: ReactNode }) {
                 onBlur={() => setTimeout(() => setSearchFocused(false), 200)}
                 className={cn(
                   "ml-2 flex-1 bg-transparent text-xs text-white placeholder:text-[#AAB6D1] focus:outline-hidden",
-                  collapsed && "hidden",
+                  compact && "hidden",
                 )}
               />
-              {searchFocused && results.length > 0 && !collapsed && (
+              {searchFocused && results.length > 0 && !compact && (
                 <div className="absolute top-full right-0 left-0 z-50 mt-2 max-h-60 overflow-y-auto rounded-xl border border-[#293451]/30 bg-[#080C1F] p-1 shadow-2xl backdrop-blur-xl">
                   {results.map((item) => (
                     <Link
@@ -328,18 +341,21 @@ export function AppShell({ children }: { children: ReactNode }) {
           </div>
         </div>
 
-        <nav className="app-scrollbar flex-1 overflow-y-auto px-3 py-2 space-y-8">
-          {SECTIONS.map((section) => {
+        <nav className="app-scrollbar flex-1 space-y-5 overflow-y-auto px-3 py-3">
+          {SECTIONS.map((section, sectionIndex) => {
             const sectionItems = items.filter((item) => item.section === section);
             if (!sectionItems.length) return null;
             return (
-              <div key={section} className={cn("flex flex-col", collapsed && "items-center")}>
-                {!collapsed && (
-                  <p className="mb-2 px-3 text-[10px] font-black uppercase tracking-[0.2em] text-[#F8FAFC]/90">
+              <div key={section} className={cn("flex flex-col", compact && "items-center")}>
+                {compact && sectionIndex > 0 && (
+                  <div aria-hidden="true" className="my-1 h-px w-7 bg-white/10" />
+                )}
+                {!compact && (
+                  <p className="mb-2 px-3 text-[10px] font-bold uppercase tracking-[0.16em] text-[#94A3B8]">
                     {section}
                   </p>
                 )}
-                <div className={cn("space-y-1 w-full", collapsed && "flex flex-col items-center")}>
+                <div className={cn("flex w-full flex-col gap-1", compact && "items-center")}>
                   {sectionItems.map((item) => {
                     const active =
                       path === item.to || (item.to !== "/dashboard" && path.startsWith(item.to));
@@ -349,44 +365,35 @@ export function AppShell({ children }: { children: ReactNode }) {
                         key={item.to}
                         to={item.to}
                         onClick={() => setOpen(false)}
-                        title={collapsed ? item.label : undefined}
+                        title={compact ? item.label : undefined}
+                        aria-label={item.label}
                         className={cn(
                           "group relative flex items-center rounded-xl transition-all duration-300",
                           active
-                            ? "bg-[#080C1F] text-white font-bold shadow-lg shadow-black/30 border border-[#293451]/30"
-                            : "text-[#F8FAFC] hover:bg-[#080C1F]/50 hover:text-white",
-                          collapsed
+                            ? "border border-[#22D3EE]/20 bg-[#111A38] font-semibold text-white shadow-sm shadow-black/20"
+                            : "border border-transparent text-[#D5DEEF] hover:bg-white/5 hover:text-white",
+                          compact
                             ? "h-11 w-11 justify-center px-0"
-                            : "h-auto w-full px-3 py-3 gap-3 justify-start",
+                            : "min-h-11 w-full gap-3 px-3 py-2.5 justify-start",
                         )}
                       >
                         <Icon
                           className={cn(
                             "shrink-0 transition-transform duration-300",
                             active
-                              ? "text-white scale-110"
+                              ? "scale-105 text-[#22D3EE]"
                               : "text-[#AAB6D1] group-hover:text-[#F8FAFC]",
-                            collapsed ? "h-5 w-5" : "h-5 w-5",
+                            "h-5 w-5",
                           )}
                         />
-                        {!collapsed && (
+                        {!compact && (
                           <>
                             <span className="flex-1 truncate">{item.label}</span>
-                            {item.label === "Dashboard" && (
-                              <span className="rounded-md bg-rose-500 px-1.5 py-0.5 text-[8px] font-black text-white uppercase animate-pulse">
-                                Novo
-                              </span>
-                            )}
-                            {item.label === "Ordens de Serviço" && (
-                              <span className="rounded-full bg-blue-500 w-4 h-4 flex items-center justify-center text-[8px] font-black text-white">
-                                3
-                              </span>
-                            )}
-                            {active && <ChevronRight className="h-3 w-3 text-white/40" />}
+                            {active && <ChevronRight className="h-4 w-4 shrink-0 text-[#22D3EE]" />}
                           </>
                         )}
-                        {active && collapsed && (
-                          <div className="absolute -right-0.5 top-1/2 -translate-y-1/2 w-1 h-3 rounded-l-full bg-[#087CF0] shadow-[0_0_8px_rgba(255,129,0,0.5)]" />
+                        {active && compact && (
+                          <div className="absolute -right-0.5 top-1/2 -translate-y-1/2 w-1 h-3 rounded-l-full bg-[#087CF0] shadow-[0_0_8px_rgba(8,124,240,0.5)]" />
                         )}
                       </Link>
                     );
@@ -397,38 +404,38 @@ export function AppShell({ children }: { children: ReactNode }) {
           })}
         </nav>
 
-        <div className={cn("px-3 pb-3", collapsed && "px-0 flex justify-center")}>
-          <Link to="/profile" title={collapsed ? "Meu perfil" : undefined} onClick={() => setOpen(false)} className={cn("flex items-center gap-3 rounded-xl border border-[#293451]/30 bg-[#080C1F] p-2 text-[#F8FAFC] transition-colors hover:bg-[#111936]", collapsed && "h-12 w-12 justify-center p-1")}>
+        <div className={cn("px-3 pb-3", compact && "px-0 flex justify-center")}>
+          <Link to="/profile" title={compact ? "Meu perfil" : undefined} onClick={() => setOpen(false)} className={cn("flex items-center gap-3 rounded-xl border border-[#293451]/30 bg-[#080C1F] p-2 text-[#F8FAFC] transition-colors hover:bg-[#111936]", compact && "h-12 w-12 justify-center p-1")}>
             <div className="grid h-9 w-9 shrink-0 place-items-center overflow-hidden rounded-full bg-[#087CF0]/20 text-sm font-bold text-[#087CF0]">
               {avatarUrl ? <img src={avatarUrl} alt="" className="h-full w-full object-cover" /> : <UserRound className="h-5 w-5" />}
             </div>
-            {!collapsed && <div className="min-w-0 flex-1"><p className="truncate text-xs font-bold">{displayName}</p><p className="text-[10px] text-[#AAB6D1]">Meu perfil · Editar dados</p></div>}
+            {!compact && <div className="min-w-0 flex-1"><p className="truncate text-xs font-bold">{displayName}</p><p className="text-[10px] text-[#AAB6D1]">Meu perfil · Editar dados</p></div>}
           </Link>
         </div>
 
         <div
           className={cn(
             "mt-auto border-t border-[#293451]/20 bg-[#080C1F]/50 p-3 flex flex-col",
-            collapsed && "items-center",
+            compact && "items-center",
           )}
         >
-          <div className={cn("mb-4 w-full", collapsed && "flex justify-center")}>
+          <div className={cn("mb-4 w-full", compact && "flex justify-center")}>
             <div
               className={cn(
                 "flex items-center rounded-xl bg-[#080C1F] ring-1 ring-[#293451]/20 transition-all duration-300",
-                collapsed ? "h-12 w-12 justify-center" : "gap-3 p-2 w-full",
+                compact ? "h-12 w-12 justify-center" : "min-h-12 w-full gap-3 p-2",
               )}
-              title={collapsed ? (isAdmin ? "Administrador" : "Usuário") : undefined}
+              title={compact ? (isAdmin ? "Administrador" : "Usuário") : undefined}
             >
               <div
                 className={cn(
                   "flex shrink-0 items-center justify-center rounded-lg bg-[#087CF0]/20 text-[10px] font-black text-[#087CF0] transition-all duration-300",
-                  collapsed ? "h-10 w-10" : "h-8 w-8",
+                  compact ? "h-10 w-10" : "h-8 w-8",
                 )}
               >
                 {isAdmin ? "AD" : roles[0]?.substring(0, 2).toUpperCase() || "US"}
               </div>
-              {!collapsed && (
+              {!compact && (
                 <div className="flex flex-col min-w-0 animate-in fade-in duration-500">
                   <span className="text-[10px] font-bold text-[#F8FAFC] truncate uppercase tracking-wider">
                     {user?.email?.split("@")[0]}
@@ -451,10 +458,12 @@ export function AppShell({ children }: { children: ReactNode }) {
               })
             }
             className={cn(
-              "group flex items-center rounded-xl text-xs text-[#F8FAFC] transition-all hover:bg-[#080C1F] hover:text-white",
-              collapsed ? "h-11 w-11 justify-center mx-auto" : "w-full gap-3 px-3 py-2.5",
+              "group hidden items-center rounded-xl text-xs text-[#F8FAFC] transition-all hover:bg-[#080C1F] hover:text-white md:flex",
+              compact ? "h-11 w-11 justify-center mx-auto" : "min-h-11 w-full gap-3 px-3 py-2.5",
             )}
-            title={collapsed ? "Expandir menu" : undefined}
+            aria-label={compact ? "Expandir menu" : "Recolher menu"}
+            aria-expanded={!collapsed}
+            title={compact ? "Expandir menu" : undefined}
           >
             {collapsed ? (
               <PanelLeftOpen className="h-4 w-4 shrink-0" />
@@ -470,12 +479,12 @@ export function AppShell({ children }: { children: ReactNode }) {
             onClick={() => signOut()}
             className={cn(
               "group mt-1 flex items-center rounded-xl text-xs text-rose-400 transition-all hover:bg-rose-500/10 hover:text-rose-300",
-              collapsed ? "h-11 w-11 justify-center mx-auto" : "w-full gap-3 px-3 py-2.5",
+              compact ? "h-11 w-11 justify-center mx-auto" : "min-h-11 w-full gap-3 px-3 py-2.5",
             )}
-            title={collapsed ? "Sair" : undefined}
+            title={compact ? "Sair" : undefined}
           >
             <LogOut className="h-4 w-4 shrink-0" />
-            {!collapsed && <span className="flex-1 truncate">Sair</span>}
+            {!compact && <span className="flex-1 truncate">Sair</span>}
           </button>
         </div>
       </aside>
@@ -483,24 +492,25 @@ export function AppShell({ children }: { children: ReactNode }) {
       <div
         className={cn(
           "flex flex-col transition-[padding] duration-500 ease-[cubic-bezier(0.4,0,0.2,1)]",
-          collapsed ? "md:pl-20" : "md:pl-60",
+          collapsed ? "md:pl-20" : "md:pl-64 lg:pl-[17.5rem]",
         )}
       >
-        <header className="sticky top-0 z-30 h-16 border-b border-slate-200 bg-white/80 backdrop-blur-md">
+        <header className="sticky top-0 z-30 h-16 border-b border-border bg-background/90 text-foreground backdrop-blur-md">
           <div className="flex h-full items-center justify-between px-4 md:px-6">
             <div className="flex items-center gap-3">
               <button
                 onClick={() => setOpen(true)}
-                className="grid h-10 w-10 place-items-center rounded-xl bg-slate-100 text-slate-600 hover:bg-slate-200 md:hidden"
+                aria-label="Abrir menu"
+                className="grid h-10 w-10 place-items-center rounded-xl border border-border bg-card text-foreground transition-colors hover:bg-muted md:hidden"
               >
                 <Menu className="h-5 w-5" />
               </button>
               <div>
-                <h1 className="text-sm font-bold tracking-tight text-slate-900 md:text-base">
+                <h1 className="text-sm font-bold tracking-tight text-foreground md:text-base">
                   {title}
                 </h1>
-                <div className="hidden items-center gap-2 text-[10px] font-medium text-slate-500 uppercase tracking-wider md:flex">
-                  <span className="h-1 w-1 rounded-full bg-slate-300" />
+                <div className="hidden items-center gap-2 text-[10px] font-medium text-muted-foreground uppercase tracking-wider md:flex">
+                  <span className="h-1 w-1 rounded-full bg-[#22D3EE]" />
                   Decode Analytics
                 </div>
               </div>
@@ -509,13 +519,13 @@ export function AppShell({ children }: { children: ReactNode }) {
             <div className="flex items-center gap-2 md:gap-3">
               <ThemeToggle />
               <NotificationsBell />
-              <div className="mx-1 h-4 w-px bg-slate-200 md:mx-2" />
+              <div className="mx-1 h-4 w-px bg-border md:mx-2" />
               <div className="flex items-center gap-2 md:gap-3">
                 <div className="hidden text-right md:block">
-                  <p className="text-xs font-bold text-slate-900 truncate max-w-[120px]">
+                  <p className="text-xs font-bold text-foreground truncate max-w-[120px]">
                     {user?.email?.split("@")[0]}
                   </p>
-                  <p className="text-[10px] font-medium text-slate-500 uppercase tracking-tighter">
+                  <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-tighter">
                     {isAdmin ? "Administrador" : ROLE_LABEL[roles[0]] || "Usuário"}
                   </p>
                 </div>
@@ -533,7 +543,9 @@ export function AppShell({ children }: { children: ReactNode }) {
       <EllaFab />
 
       {open && (
-        <div
+        <button
+          type="button"
+          aria-label="Fechar menu"
           className="fixed inset-0 z-30 bg-black/60 backdrop-blur-xs md:hidden"
           onClick={() => setOpen(false)}
         />

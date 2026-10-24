@@ -162,6 +162,14 @@ function Dashboard() {
     [visibleOrders],
   );
 
+  const segmentCounts = useMemo(() => {
+    const active = (data?.orders ?? []).filter((order) => !["entregue", "cancelado"].includes(order.production_status));
+    return {
+      grafica: active.filter((order) => (order.service_segment || "grafica") === "grafica").length,
+      tecnologia: active.filter((order) => order.service_segment === "tecnologia").length,
+    };
+  }, [data?.orders]);
+
   const overdueOrders = useMemo(
     () => activeOrders.filter((order) => order.deadline && new Date(`${order.deadline}T23:59:59`) < new Date()),
     [activeOrders],
@@ -273,6 +281,14 @@ function Dashboard() {
       to: "/orders",
     },
     {
+      label: "Sem responsável",
+      value: unassignedOrders.length,
+      helper: "precisam de distribuição",
+      icon: UserRound,
+      iconTone: "text-[#7138F5] bg-[#7138F5]/10",
+      to: "/orders",
+    },
+    {
       label: "Prontas para entrega",
       value: readyOrders.length,
       helper: "serviços finalizados",
@@ -333,7 +349,7 @@ function Dashboard() {
         </div>
       </section>
 
-      <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+      <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
         {metrics.map((metric) => {
           const Icon = metric.icon;
           return (
@@ -382,6 +398,31 @@ function Dashboard() {
             </Button>
           ))}
         </div>
+      </section>
+
+      <section aria-labelledby="segment-summary-title" className="grid gap-3 sm:grid-cols-2">
+        {([
+          { key: "grafica", title: "Gráfica & design", detail: "Impressos, criação e acabamento", color: "#087CF0", count: segmentCounts.grafica },
+          { key: "tecnologia", title: "Tecnologia & manutenção", detail: "Suporte, instalação e serviços técnicos", color: "#7138F5", count: segmentCounts.tecnologia },
+        ] as const).map((segment) => (
+          <button
+            key={segment.key}
+            type="button"
+            aria-pressed={segmentFilter === segment.key}
+            onClick={() => setSegmentFilter(segmentFilter === segment.key ? "all" : segment.key)}
+            className={`group flex min-h-24 items-center gap-4 rounded-2xl border bg-card p-4 text-left transition-all hover:-translate-y-0.5 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${segmentFilter === segment.key ? "border-[#087CF0]/40 ring-2 ring-[#087CF0]/10" : "border-border hover:border-[#087CF0]/25"}`}
+          >
+            <span className="grid h-12 w-12 shrink-0 place-items-center rounded-xl text-white shadow-sm" style={{ backgroundColor: segment.color }}>
+              {segment.key === "grafica" ? <Printer className="h-5 w-5" /> : <Laptop className="h-5 w-5" />}
+            </span>
+            <span className="min-w-0 flex-1">
+              <span className="block text-sm font-semibold text-card-foreground">{segment.title}</span>
+              <span className="mt-0.5 block text-xs text-muted-foreground">{segment.detail}</span>
+            </span>
+            <span className="shrink-0 text-2xl font-bold tabular-nums" style={{ color: segment.color }}>{segment.count}</span>
+          </button>
+        ))}
+        <h2 id="segment-summary-title" className="sr-only">Ordens abertas por segmento</h2>
       </section>
 
       <section className="grid gap-4 xl:grid-cols-[1.45fr_.75fr]">

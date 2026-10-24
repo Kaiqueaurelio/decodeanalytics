@@ -14,7 +14,7 @@ export function ThemeToggle({ className }: { className?: string }) {
       aria-label={isDark ? "Ativar modo claro" : "Ativar modo escuro"}
       title={isDark ? "Modo claro" : "Modo escuro"}
       className={cn(
-        "relative inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-border bg-white text-brand-blue shadow-sm transition-colors hover:bg-muted dark:bg-card dark:text-foreground",
+        "relative inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-border bg-card text-brand-blue shadow-sm transition-colors hover:bg-muted dark:text-foreground",
         className,
       )}
     >

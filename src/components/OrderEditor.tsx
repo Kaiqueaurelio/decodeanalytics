@@ -34,6 +34,7 @@ export interface OrderEditorProps {
   orderId?: string | null;
   onSaved?: () => void;
   fromQuoteId?: string | null;
+  initialSegment?: "grafica" | "tecnologia";
 }
 
 interface Item {
@@ -53,6 +54,7 @@ export function OrderEditor({
   orderId,
   onSaved,
   fromQuoteId,
+  initialSegment = "grafica",
 }: OrderEditorProps) {
   const [step, setStep] = useState(0);
   const [technical, setTechnical] = useState<TechnicalData>(emptyTechnicalData);
@@ -160,8 +162,8 @@ export function OrderEditor({
       })();
     } else {
       setForm({
-        service_segment: "grafica",
-    client_id: "",
+        service_segment: initialSegment,
+        client_id: "",
         title: "",
         description: "",
         measurements: "",
@@ -181,7 +183,7 @@ export function OrderEditor({
       });
       setItems([]);
     }
-  }, [open, orderId, fromQuoteId]);
+  }, [open, orderId, fromQuoteId, initialSegment]);
 
   function updateItem(idx: number, patch: Partial<Item>) {
     setItems((arr) => {
