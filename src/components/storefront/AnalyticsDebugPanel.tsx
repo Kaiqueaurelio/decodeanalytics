@@ -24,9 +24,11 @@ const EVENT_TONE: Record<string, string> = {
 };
 
 export function AnalyticsDebugPanel() {
-  // Render só em dev.
   if (!import.meta.env.DEV) return null;
+  return <AnalyticsDebugPanelContent />;
+}
 
+function AnalyticsDebugPanelContent() {
   const [open, setOpen] = useState<boolean>(() => {
     if (typeof window === "undefined") return false;
     return window.localStorage.getItem(STORAGE_KEY) === "1";
