@@ -46,13 +46,74 @@ interface Message {
   attachments?: { name: string; mimeType: string; previewUrl?: string }[];
 }
 
-const SUGGESTIONS = [
-  "Panorama do dia: OS ativas, cobranças pendentes e faturamento do mês",
-  "Crie uma OS para Flavia — 100 cartões de visita a R$ 0,50, prazo em 5 dias",
-  "Gere uma cobrança de R$ 250 para o cliente Flavia com vencimento em 7 dias",
-  "Me lembra amanhã às 10h de ligar para o cliente Silva sobre a OS #1004",
-  "Liste as OS em produção",
-  "Quais cobranças estão pendentes?",
+const QUICK_ACTION_GROUPS = [
+  {
+    id: "visao-geral",
+    label: "Visão geral",
+    actions: [
+      "Panorama do dia: OS ativas, cobranças pendentes e faturamento do mês",
+      "Resuma os indicadores do mês e destaque o que exige minha atenção",
+      "Liste as tarefas e lembretes pendentes",
+    ],
+  },
+  {
+    id: "clientes",
+    label: "Clientes",
+    actions: [
+      "Liste os clientes cadastrados mais recentemente",
+      "Procure um cliente pelo nome ou telefone",
+      "Cadastre um novo cliente e me pergunte os dados que faltarem",
+    ],
+  },
+  {
+    id: "producao",
+    label: "OS e produção",
+    actions: [
+      "Liste as OS em produção e seus prazos",
+      "Mostre as OS atrasadas ou próximas do prazo",
+      "Crie uma nova OS e confirme comigo os dados que faltarem",
+      "Consulte o andamento de uma OS pelo número",
+    ],
+  },
+  {
+    id: "financeiro",
+    label: "Financeiro",
+    actions: [
+      "Quais cobranças estão pendentes e quais estão vencidas?",
+      "Resuma o faturamento e os recebimentos deste mês",
+      "Gere uma cobrança para um cliente e confirme valor e vencimento",
+      "Mostre a situação do caixa de hoje",
+    ],
+  },
+  {
+    id: "catalogo",
+    label: "Catálogo e estoque",
+    actions: [
+      "Liste os produtos e serviços ativos no catálogo",
+      "Procure um produto no catálogo e mostre o preço atual",
+      "Consulte os itens de estoque com quantidade baixa",
+      "Ajude-me a atualizar o preço de um serviço",
+    ],
+  },
+  {
+    id: "rotina",
+    label: "Rotina e lembretes",
+    actions: [
+      "Crie um lembrete para mim com data e horário que eu informar",
+      "Liste meus próximos lembretes",
+      "Mostre os lembretes atrasados e pendentes",
+    ],
+  },
+  {
+    id: "treinamento",
+    label: "Treinamento da Ella",
+    actions: [
+      "Mostre como posso ensinar uma nova regra interna à Ella",
+      "Procure na base de conhecimento uma política ou informação da empresa",
+      "Quero registrar um aprendizado apenas para a equipe administrativa",
+      "Explique como diferenciar um conhecimento interno de um conhecimento público",
+    ],
+  },
 ];
 
 const TOOL_LABELS: Record<string, string> = {
@@ -119,6 +180,8 @@ function EllaPage() {
   ]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
+  const [quickActionsOpen, setQuickActionsOpen] = useState(true);
+  const [quickActionGroup, setQuickActionGroup] = useState("visao-geral");
   const [attachments, setAttachments] = useState<Attachment[]>([]);
   const [recording, setRecording] = useState(false);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
@@ -255,6 +318,7 @@ function EllaPage() {
       .filter((m) => m.id !== "welcome")
       .map((m) => ({ role: m.role, content: m.content }));
     setMessages((prev) => [...prev, userMsg]);
+    setQuickActionsOpen(false);
     setInput("");
     setAttachments([]);
     setLoading(true);
@@ -295,7 +359,7 @@ function EllaPage() {
 
   return (
     <div className="flex flex-col h-[calc(100dvh-4rem)] sm:h-[calc(100dvh-5rem)] max-w-3xl mx-auto w-full px-3 sm:px-6 py-3 sm:py-6">
-      <header className="grid grid-cols-[auto_minmax(0,1fr)] items-center gap-3 border-b pb-3 sm:pb-4">
+      <header className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 border-b pb-3 sm:pb-4">
         <EllaAvatar
           size={48}
           alt="Ella Ribeiro, assistente virtual de inteligência artificial"
@@ -305,10 +369,68 @@ function EllaPage() {
         <div className="min-w-0">
           <h1 className="truncate text-lg font-black tracking-tight sm:text-xl">Ella Ribeiro</h1>
           <p className="text-xs text-muted-foreground sm:text-sm">
-            Assistente de IA da equipe · automações, consultas e apoio operacional
+            Assistente administrativa · gestão, análises e operações internas
           </p>
         </div>
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          className="shrink-0 gap-1.5 px-2 sm:px-3"
+          onClick={() => setQuickActionsOpen((open) => !open)}
+          aria-expanded={quickActionsOpen}
+          aria-controls="ella-admin-quick-actions"
+        >
+          <Wrench className="h-4 w-4" />
+          <span className="hidden sm:inline">Ações rápidas</span>
+          <ChevronDown className={cn("h-4 w-4 transition-transform", quickActionsOpen && "rotate-180")} />
+        </Button>
       </header>
+
+      {quickActionsOpen && (
+        <section id="ella-admin-quick-actions" className="shrink-0 space-y-3 rounded-xl border bg-muted/20 p-3 sm:p-4">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <h2 className="text-sm font-semibold">Central de ações da administradora</h2>
+              <p className="text-xs text-muted-foreground">Escolha uma área ou envie uma sugestão pronta para a Ella.</p>
+            </div>
+            <span className="rounded-full bg-primary/10 px-2 py-1 text-[11px] font-medium text-primary">Uso interno</span>
+          </div>
+          <div className="flex gap-1.5 overflow-x-auto pb-1" role="tablist" aria-label="Categorias de ações da Ella">
+            {QUICK_ACTION_GROUPS.map((group) => (
+              <button
+                key={group.id}
+                type="button"
+                role="tab"
+                aria-selected={quickActionGroup === group.id}
+                onClick={() => setQuickActionGroup(group.id)}
+                className={cn(
+                  "shrink-0 rounded-full border px-3 py-1.5 text-xs font-medium transition-colors",
+                  quickActionGroup === group.id
+                    ? "border-primary bg-primary text-primary-foreground"
+                    : "bg-background hover:bg-muted",
+                )}
+              >
+                {group.label}
+              </button>
+            ))}
+          </div>
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2" role="tabpanel">
+            {(QUICK_ACTION_GROUPS.find((group) => group.id === quickActionGroup) ?? QUICK_ACTION_GROUPS[0]).actions.map((action) => (
+              <button
+                key={action}
+                type="button"
+                disabled={loading}
+                onClick={() => void send(action)}
+                className="flex min-h-10 items-start gap-2 rounded-lg border bg-background p-2.5 text-left text-xs leading-relaxed transition-colors hover:border-primary/50 hover:bg-muted disabled:cursor-not-allowed disabled:opacity-50 sm:text-sm"
+              >
+                <Zap className="mt-0.5 h-3.5 w-3.5 shrink-0 text-brand-orange" />
+                <span>{action}</span>
+              </button>
+            ))}
+          </div>
+        </section>
+      )}
 
       <div className="flex-1 overflow-y-auto py-4 space-y-3">
         {messages.map((m) => (
@@ -384,20 +506,7 @@ function EllaPage() {
         <div ref={endRef} />
       </div>
 
-      {messages.length <= 1 && !loading && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pb-3">
-          {SUGGESTIONS.map((s) => (
-            <button
-              key={s}
-              onClick={() => send(s)}
-              className="rounded-xl border p-3 text-left text-sm hover:bg-muted transition-colors flex items-start gap-2"
-            >
-              <Zap className="h-4 w-4 text-brand-orange shrink-0 mt-0.5" />
-              <span className="min-w-0">{s}</span>
-            </button>
-          ))}
-        </div>
-      )}
+
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-2 pt-2 border-t">
         {attachments.length > 0 && (
