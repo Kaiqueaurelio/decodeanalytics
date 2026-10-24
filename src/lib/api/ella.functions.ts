@@ -1249,6 +1249,26 @@ export const ellaChat = createServerFn({ method: "POST" })
         user_id: userId,
         ...cls,
       });
+      if (cls.error_type === "auth") {
+        // A chave do gateway pode estar ausente, expirada ou inválida.
+        // Não bloqueie operações simples: degrade para as ferramentas locais.
+        try {
+          const fallback = await ellaLocalFallback({
+            message: data.message,
+            supabase,
+            userId,
+          });
+          return {
+            ...fallback,
+            response: `${fallback.response}\n\nAviso: o serviço avançado de IA está com a credencial inválida. Estou usando o modo básico por enquanto; um administrador precisa atualizar LOVABLE_API_KEY nas variáveis de ambiente do servidor para restaurar todas as funções.`,
+            trace_id: traceId,
+            degraded: true,
+          };
+        } catch (fallbackError: any) {
+          console.error("ellaChat local fallback failed:", traceId, fallbackError);
+        }
+      }
+
       return {
         response:
           "Tive um problema ao processar agora. Se o erro persistir, me diga o que estava tentando fazer que eu tento outro caminho.",
