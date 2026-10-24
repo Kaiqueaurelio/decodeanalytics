@@ -16,8 +16,10 @@ export function EllaFab({ audience = "public" }: EllaFabProps) {
     <div
       className="group fixed z-40"
       style={{
-        bottom: "calc(env(safe-area-inset-bottom) + 5.5rem)",
-        right: "calc(env(safe-area-inset-right) + 1.25rem)",
+        bottom: "calc(env(safe-area-inset-bottom) + 1.25rem)",
+        ...(audience === "public"
+          ? { left: "calc(env(safe-area-inset-left) + 1.25rem)" }
+          : { right: "calc(env(safe-area-inset-right) + 1.25rem)" }),
       }}
     >
       <Link
@@ -42,9 +44,9 @@ export function EllaFab({ audience = "public" }: EllaFabProps) {
       </Link>
       <span
         aria-hidden="true"
-        className="pointer-events-none absolute right-[4.25rem] top-1/2 -translate-y-1/2 whitespace-nowrap rounded-lg bg-[#0B1026] px-3 py-2 text-xs font-semibold text-white opacity-100 shadow-lg transition-opacity sm:opacity-0 group-hover:opacity-100 group-focus-within:opacity-100"
+        className={`pointer-events-none absolute ${audience === "public" ? "left-[4.25rem]" : "right-[4.25rem]"} top-1/2 -translate-y-1/2 whitespace-nowrap rounded-lg bg-[#0B1026] px-3 py-2 text-xs font-semibold text-white opacity-100 shadow-lg transition-opacity sm:opacity-0 group-hover:opacity-100 group-focus-within:opacity-100`}
       >
-        Ella Ribeiro · IA
+        {audience === "public" ? "Tire dúvidas com Ella · IA" : "Ella Ribeiro · IA"}
       </span>
     </div>
   );

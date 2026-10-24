@@ -40,10 +40,10 @@ interface Msg {
 }
 
 const SUGGESTIONS = [
-  "Quero cartão de visita com acabamento premium",
-  "Preciso de banner grande para evento — o que recomenda?",
   "Quais adesivos vocês fazem?",
-  "Faço uniformes personalizados com vocês?",
+  "Me conte sobre as canecas personalizadas",
+  "Como peço orçamento de panfletos?",
+  "Quais opções de convites personalizados existem?",
 ];
 
 function AssistantePage() {
@@ -53,7 +53,7 @@ function AssistantePage() {
       id: "welcome",
       role: "assistant",
       content:
-        "Oi! 👋 Eu sou a Ella Ribeiro, assistente virtual de inteligência artificial da Decode Analytics. Posso ajudar você a escolher produtos gráficos e entender nossos serviços de design, tecnologia, social media e programação. Se precisar de orçamento personalizado ou atendimento humano, também te encaminho para a equipe. O que você está procurando?",
+        "Oi! 👋 Eu sou a Ella Ribeiro, assistente virtual de inteligência artificial da Decode Analytics. Posso consultar nosso catálogo ativo, explicar detalhes dos produtos e mostrar como pedir orçamento ou comprar. Se você procura um serviço que não aparece no catálogo, encaminho sua dúvida para a equipe. O que você está buscando?",
     },
   ]);
   const [input, setInput] = useState("");
