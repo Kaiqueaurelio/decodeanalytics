@@ -15,7 +15,7 @@ export const Route = createFileRoute("/_authenticated/profile")({
 });
 
 function ProfilePage() {
-  const { user } = useAuth();
+  const { user, isAdmin } = useAuth();
   const [name, setName] = useState("");
   const [avatarUrl, setAvatarUrl] = useState("");
   const [email, setEmail] = useState("");
@@ -75,7 +75,10 @@ function ProfilePage() {
   }
 
   return <div className="mx-auto max-w-3xl space-y-6">
-    <div><h2 className="text-2xl font-bold tracking-tight">Meu perfil</h2><p className="mt-1 text-sm text-muted-foreground">Gerencie sua foto, seus dados e a senha da sua conta.</p></div>
+    <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <div><h2 className="text-2xl font-bold tracking-tight">Meu perfil</h2><p className="mt-1 text-sm text-muted-foreground">Gerencie sua foto, seus dados e a senha da sua conta.</p></div>
+      {isAdmin && <img src="/brand/decode-logo.png" alt="Decode Analytics" className="h-12 w-auto max-w-[180px] object-contain self-start sm:self-auto" />}
+    </div>
     <Card className="space-y-6 p-5 sm:p-7">
       <div className="flex flex-col items-center gap-4 border-b pb-6 sm:flex-row">
         <div className="relative grid h-24 w-24 shrink-0 place-items-center overflow-hidden rounded-full border bg-muted text-muted-foreground">
