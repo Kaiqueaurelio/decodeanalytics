@@ -169,6 +169,16 @@ export const ellaSandboxChat = createServerFn({ method: "POST" })
     }));
 
     try {
+      const fallbackText = used.length
+        ? [
+            "A chave de IA do servidor não está configurada. Encontrei este conteúdo na base de treinamento que pode ajudar:",
+            "",
+            ...used.map((k, i) => `${i + 1}. ${k.title}\n${k.content}`),
+            "",
+            "Para habilitar respostas geradas por IA, configure GEMINI_API_KEY no ambiente do servidor.",
+          ].join("\n")
+        : "A chave de IA do servidor não está configurada e não encontrei conteúdo de treinamento diretamente relacionado à pergunta. Configure GEMINI_API_KEY no ambiente do servidor para habilitar as respostas inteligentes.";
+
       const result = model
         ? await step("generate_text", () => generateText({
             model,
@@ -176,11 +186,7 @@ export const ellaSandboxChat = createServerFn({ method: "POST" })
             messages: [{ role: "user", content: data.message }],
             temperature,
           }), () => ({ model: geminiKey ? "gemini-2.5-flash" : modelName, temperature }))
-        : {
-            text: used.length
-              ? `A chave de IA do servidor não está configurada. Encontrei este conteúdo na base de treinamento que pode ajudar:\\n\\n${used.map((k, i) => `${i + 1}. ${k.title}\\n${k.content}`).join("\\n\\n")}\\n\\nPara habilitar respostas geradas por IA, configure GEMINI_API_KEY no ambiente do servidor.`
-              : "A chave de IA do servidor não está configurada e não encontrei conteúdo de treinamento diretamente relacionado à pergunta. Configure GEMINI_API_KEY no ambiente do servidor para habilitar as respostas inteligentes.";
-      };
+        : { text: fallbackText };
 
       const duration = Date.now() - startedAt;
       logAiEvent({
