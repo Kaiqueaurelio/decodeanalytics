@@ -87,29 +87,7 @@ export const ellaSandboxChat = createServerFn({ method: "POST" })
             detail: null,
             error: e?.message ?? String(e),
           });
-          // Retorne uma mensagem segura para a interface; não propague o erro serializado/stack do servidor.
-      const isAuthError = errType === "auth";
-      const fallbackAnswer = used.length
-        ? `A conexão com o serviço de IA foi recusada${isAuthError ? " por uma credencial inválida" : ""}. Para continuar, confira GEMINI_API_KEY no ambiente do servidor. Conteúdo de treinamento relacionado:\\n\\n${used.map((k, i) => `${i + 1}. ${k.title}\\n${k.content}`).join("\\n\\n")}`
-        : `A conexão com o serviço de IA falhou${isAuthError ? " por uma credencial inválida" : ""}. Confira GEMINI_API_KEY no ambiente do servidor e tente novamente.`;
-      return {
-        run_id: (run as any)?.id ?? null,
-        status: "error" as const,
-        answer: fallbackAnswer,
-        trace_id: traceId,
-        duration_ms: duration,
-        model: geminiKey ? "gemini-2.5-flash" : modelName,
-        provider: geminiKey ? "Google Gemini" : "Lovable AI Gateway",
-        scope: data.scope,
-        temperature,
-        systemPrompt,
-        basePromptName,
-        knowledgeTotal: kbAll.length,
-        knowledgeUsed,
-        inputs,
-        steps,
-        error: { type: errType, message: isAuthError ? "Credencial de IA inválida ou recusada." : "Não foi possível consultar o serviço de IA." },
-      };
+          throw e;
         }
       });
 
@@ -306,7 +284,29 @@ export const ellaSandboxChat = createServerFn({ method: "POST" })
       e.error_type = errType;
       e.stack_trace = stack;
       e.steps = steps;
-      throw e;
+      // Retorne uma mensagem segura para a interface; não propague a stack trace do servidor.
+      const isAuthError = errType === "auth";
+      const fallbackAnswer = used.length
+        ? `A conexão com o serviço de IA foi recusada${isAuthError ? " por uma credencial inválida" : ""}. Confira GEMINI_API_KEY no ambiente do servidor. Conteúdo de treinamento relacionado:\n\n${used.map((k, i) => `${i + 1}. ${k.title}\n${k.content}`).join("\n\n")}`
+        : `A conexão com o serviço de IA falhou${isAuthError ? " por uma credencial inválida" : ""}. Confira GEMINI_API_KEY no ambiente do servidor e tente novamente.`;
+      return {
+        run_id: (run as any)?.id ?? null,
+        status: "error" as const,
+        answer: fallbackAnswer,
+        trace_id: traceId,
+        duration_ms: duration,
+        model: geminiKey ? "gemini-2.5-flash" : modelName,
+        provider: geminiKey ? "Google Gemini" : "Lovable AI Gateway",
+        scope: data.scope,
+        temperature,
+        systemPrompt,
+        basePromptName,
+        knowledgeTotal: kbAll.length,
+        knowledgeUsed,
+        inputs,
+        steps,
+        error: { type: errType, message: isAuthError ? "Credencial de IA inválida ou recusada." : "Não foi possível consultar o serviço de IA." },
+      };
     }
   });
 
