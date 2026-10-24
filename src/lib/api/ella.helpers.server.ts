@@ -107,10 +107,16 @@ export async function resolveClientId(
 ) {
   if (clientId) return clientId;
   if (!clientName) return null;
-  const { data } = await database
+  const safeName = clientName.slice(0, 120).replace(/[\\%_]/g, "\\  const { data } = await database
     .from("clients")
     .select("id,name")
     .ilike("name", `%${clientName}%`)
+    .limit(1)
+    .maybeSingle();");
+  const { data } = await database
+    .from("clients")
+    .select("id,name")
+    .ilike("name", `%${safeName}%`)
     .limit(1)
     .maybeSingle();
   return data?.id ?? null;
