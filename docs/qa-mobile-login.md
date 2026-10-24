@@ -53,8 +53,8 @@ window.addEventListener('auth-telemetry', (e) => analytics.track(e.detail.event,
 
 ## Testes E2E
 
-Playwright em `tests/e2e/auth-mobile.spec.ts` — roda em viewport iPhone 13 e Pixel 5, valida abertura de teclado (heurística de foco + digitação) e ausência de overflow horizontal.
+Playwright em `tests/e2e/auth-mobile.e2e.ts` — roda em viewport iPhone 13 e Pixel 5, valida abertura de teclado (heurística de foco + digitação) e ausência de overflow horizontal.
 
 ```
-bunx playwright test tests/e2e/auth-mobile.spec.ts
+npm run test:e2e -- tests/e2e/auth-mobile.e2e.ts
 ```
