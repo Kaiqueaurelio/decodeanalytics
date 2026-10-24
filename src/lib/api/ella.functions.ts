@@ -344,7 +344,8 @@ export const ellaChat = createServerFn({ method: "POST" })
             .select("id,name,category,base_price,unit,active")
             .eq("active", true)
             .order("name");
-          if (search) q = q.or(`name.ilike.%${search}%,category.ilike.%${search}%`);
+          const safeSearch = (search ?? "").normalize("NFKC").replace(/[^\\p{L}\\p{N}\\s-]/gu, "").trim().slice(0, 80);
+          if (safeSearch) q = q.or(`name.ilike.%${safeSearch}%,category.ilike.%${safeSearch}%`);
           const { data, error } = await q.limit(30);
           if (error) return { error: error.message };
           return { services: data ?? [] };
