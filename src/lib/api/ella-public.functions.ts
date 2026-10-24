@@ -4,7 +4,7 @@ import { generateText, tool, stepCountIs } from "ai";
 import { z } from "zod";
 import { createLovableGateway } from "@/lib/ai-gateway.server";
 import type { Database } from "@/integrations/supabase/types";
-import { getRequestIP, getRequestHeader } from "@tanstack/react-start/server";
+import { getRequestIP } from "@tanstack/react-start/server";
 import { PUBLIC_SYSTEM_PROMPT, checkPublicRateLimit } from "./ella.helpers.server";
 import { classifyAiError, logAiEvent, newTraceId } from "./ai-logs.server";
 
