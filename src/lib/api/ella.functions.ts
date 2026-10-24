@@ -28,6 +28,10 @@ const InputSchema = z.object({
   attachments: z.array(AttachmentSchema).max(5).optional(),
 });
 
+function escapeIlikePattern(value: string) {
+  return value.slice(0, 120).replace(/[\\%_]/g, "\\function normalizeText(value: unknown) {");
+}
+
 function normalizeText(value: unknown) {
   return String(value ?? "")
     .normalize("NFD")
@@ -151,7 +155,7 @@ async function ellaLocalFallback({
     const { data: found } = await supabase
       .from("services")
       .select("id,name")
-      .ilike("name", `%${name}%`)
+      .ilike("name", `%${escapeIlikePattern(name)}%`)
       .limit(1)
       .maybeSingle();
     if (!found) return { response: `Não encontrei "${name}" no catálogo.`, toolActivity };
@@ -206,7 +210,7 @@ async function ellaLocalFallback({
     const found = await supabase
       .from("inventory_items" as any)
       .select("*")
-      .ilike("name", `%${name}%`)
+      .ilike("name", `%${escapeIlikePattern(name)}%`)
       .limit(1)
       .maybeSingle();
     if (found.error) return { response: `Não consegui consultar o estoque: ${found.error.message}`, toolActivity };
@@ -306,10 +310,10 @@ export const ellaChat = createServerFn({ method: "POST" })
     const tools = {
       list_clients: tool({
         description: "Lista clientes, opcionalmente filtrando por trecho do nome.",
-        inputSchema: z.object({ search: z.string().optional(), limit: z.number().optional() }),
+        inputSchema: z.object({ search: z.string().max(100).optional(), limit: z.number().int().min(1).max(30).optional() }),
         execute: async ({ search, limit }) => {
           let q = supabase.from("clients").select("id,name,whatsapp,email,city").order("name");
-          if (search) q = q.ilike("name", `%${search}%`);
+          if (search) q = q.ilike("name", `%${escapeIlikePattern(search)}%`);
           const { data, error } = await q.limit(limit ?? 20);
           if (error) return { error: error.message };
           return { clients: data ?? [] };
@@ -358,7 +362,7 @@ export const ellaChat = createServerFn({ method: "POST" })
           const { data: found } = await supabase
             .from("services")
             .select("id,name")
-            .ilike("name", `%${name}%`)
+            .ilike("name", `%${escapeIlikePattern(name)}%`)
             .limit(1)
             .maybeSingle();
           if (!found) return { error: `Serviço "${name}" não encontrado` };
@@ -854,7 +858,7 @@ export const ellaChat = createServerFn({ method: "POST" })
             const { data: found } = await supabase
               .from("services")
               .select("id")
-              .ilike("name", `%${name_query}%`)
+              .ilike("name", `%${escapeIlikePattern(name_query)}%`)
               .limit(1)
               .maybeSingle();
             sid = found?.id;
@@ -881,7 +885,7 @@ export const ellaChat = createServerFn({ method: "POST" })
             const { data: found } = await supabase
               .from("services")
               .select("id")
-              .ilike("name", `%${name_query}%`)
+              .ilike("name", `%${escapeIlikePattern(name_query)}%`)
               .limit(1)
               .maybeSingle();
             sid = found?.id;
