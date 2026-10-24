@@ -10,12 +10,12 @@ import { classifyAiError, logAiEvent, newTraceId } from "./ai-logs.server";
 
 const MessageSchema = z.object({
   role: z.enum(["user", "assistant"]),
-  content: z.string().max(2000),
+  content: z.string().max(1000),
 });
 
 const InputSchema = z.object({
-  message: z.string().min(1).max(2000),
-  conversationHistory: z.array(MessageSchema).max(30).optional(),
+  message: z.string().trim().min(1).max(2000),
+  conversationHistory: z.array(MessageSchema).max(12).optional(),
 });
 
 export const ellaPublicChat = createServerFn({ method: "POST" })
@@ -24,10 +24,8 @@ export const ellaPublicChat = createServerFn({ method: "POST" })
     // Anti-abuso: limita mensagens por IP.
     let ipKey = "unknown";
     try {
-      ipKey =
-        getRequestIP({ xForwardedFor: true }) ||
-        getRequestHeader("x-forwarded-for") ||
-        "unknown";
+      // Never trust a raw forwarded header supplied by the client.
+      ipKey = getRequestIP({ xForwardedFor: true }) || "unknown";
     } catch {
       ipKey = "unknown";
     }
@@ -67,7 +65,13 @@ export const ellaPublicChat = createServerFn({ method: "POST" })
             .select("name,category,slug,base_price,unit,short_description,min_quantity,specs")
             .eq("active", true)
             .order("name");
-          if (search) q = q.or(`name.ilike.%${search}%,category.ilike.%${search}%`);
+          // Sanitize text before interpolating it into PostgREST filter grammar.
+          const safeSearch = (search ?? "")
+            .normalize("NFKC")
+            .replace(/[^\\p{L}\\p{N}\\s-]/gu, "")
+            .trim()
+            .slice(0, 80);
+          if (safeSearch) q = q.or(`name.ilike.%${safeSearch}%,category.ilike.%${safeSearch}%`);
           const { data, error } = await q.limit(limit ?? 8);
           if (error) return { error: "Não consegui consultar o catálogo agora." };
           return { products: data ?? [] };
@@ -102,10 +106,13 @@ export const ellaPublicChat = createServerFn({ method: "POST" })
             .join("\n")}`
         : "";
 
-    const history = (data.conversationHistory ?? []).map((m) => ({
-      role: m.role as "user" | "assistant",
-      content: m.content,
-    }));
+    // Client-supplied history is untrusted context; cap both turns and message size.
+    const history = (data.conversationHistory ?? [])
+      .slice(-12)
+      .map((m) => ({
+        role: m.role as "user" | "assistant",
+        content: m.content.slice(-1000),
+      }));
 
     try {
       const result = await generateText({
