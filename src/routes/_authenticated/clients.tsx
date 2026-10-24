@@ -26,7 +26,7 @@ function ClientsPage() {
     queryKey: ["clients", search],
     queryFn: async () => {
       let q = supabase.from("clients").select("*").order("name", { ascending: true });
-      if (search) q = q.ilike("name", `%${search}%`);
+      if (search) q = q.ilike("name", `%${search.slice(0, 120).replace(/[\\%_]/g, "\\if (search) q = q.ilike("name", `%${search}%`);")}%`);
       const { data, error } = await q;
       if (error) {
         console.error("Erro ao buscar clientes:", error);
