@@ -13,19 +13,19 @@ import { classifyAiError, logAiEvent, newTraceId } from "./ai-logs.server";
 
 const MessageSchema = z.object({
   role: z.enum(["user", "assistant"]),
-  content: z.string(),
+  content: z.string().max(4000),
 });
 
 const AttachmentSchema = z.object({
-  name: z.string(),
-  mimeType: z.string(),
-  dataBase64: z.string(),
+  name: z.string().max(180),
+  mimeType: z.string().max(120),
+  dataBase64: z.string().max(12_000_000),
 });
 
 const InputSchema = z.object({
-  message: z.string().min(1),
-  conversationHistory: z.array(MessageSchema).optional(),
-  attachments: z.array(AttachmentSchema).optional(),
+  message: z.string().trim().min(1).max(4000),
+  conversationHistory: z.array(MessageSchema).max(20).optional(),
+  attachments: z.array(AttachmentSchema).max(5).optional(),
 });
 
 function normalizeText(value: unknown) {
@@ -1150,10 +1150,12 @@ export const ellaChat = createServerFn({ method: "POST" })
       }),
     };
 
-    const history = (data.conversationHistory ?? []).map((m) => ({
-      role: m.role as "user" | "assistant",
-      content: m.content,
-    }));
+    const history = (data.conversationHistory ?? [])
+      .slice(-12)
+      .map((m) => ({
+        role: m.role as "user" | "assistant",
+        content: m.content.slice(-2000),
+      }));
 
     const today = new Date().toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo" });
 
