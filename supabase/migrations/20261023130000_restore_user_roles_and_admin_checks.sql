@@ -32,6 +32,21 @@ CREATE TABLE IF NOT EXISTS public.user_roles (
   CONSTRAINT user_roles_user_id_role_key UNIQUE (user_id, role)
 );
 
+-- Seed the role table from the existing, authoritative profile role. The app
+-- checks user_roles through RLS and existing policies call has_role(). Without
+-- this backfill, existing administrators would lose access after this migration.
+INSERT INTO public.user_roles (user_id, role)
+SELECT p.id, p.role::public.app_role
+  FROM public.profiles AS p
+ WHERE p.role = 'administrador'
+   AND p.is_active IS DISTINCT FROM false
+   AND NOT EXISTS (
+     SELECT 1
+       FROM public.user_roles AS ur
+      WHERE ur.user_id = p.id
+        AND ur.role = p.role::public.app_role
+   );
+
 ALTER TABLE public.user_roles ENABLE ROW LEVEL SECURITY;
 
 CREATE OR REPLACE FUNCTION public.has_role(_role public.app_role, _user_id uuid)

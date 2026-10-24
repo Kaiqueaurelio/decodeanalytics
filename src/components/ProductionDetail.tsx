@@ -41,6 +41,7 @@ export function ProductionDetail({
   const [note, setNote] = useState("");
   const [newStatus, setNewStatus] = useState<string>("");
   const [saving, setSaving] = useState(false);
+  const [technicalPhotoUrls, setTechnicalPhotoUrls] = useState<string[]>([]);
 
   async function load() {
     if (!orderId) return;
@@ -55,6 +56,15 @@ export function ProductionDetail({
       .eq("order_id", orderId)
       .order("created_at", { ascending: false });
     setOrder(o);
+    if (o?.service_segment === "tecnologia") {
+      const paths = Array.isArray(o.technical_data?.photos) ? o.technical_data.photos.filter((path: unknown): path is string => typeof path === "string") : [];
+      const { data: signedPhotos } = paths.length
+        ? await supabase.storage.from("technical-order-photos").createSignedUrls(paths, 1800)
+        : { data: [] };
+      setTechnicalPhotoUrls((signedPhotos ?? []).flatMap((photo) => photo.signedUrl ? [photo.signedUrl] : []));
+    } else {
+      setTechnicalPhotoUrls([]);
+    }
     setUpdates(u ?? []);
     setAssignee(o?.assignee_name ?? "");
     setNewStatus(o?.production_status ?? "");
@@ -159,6 +169,19 @@ export function ProductionDetail({
               <div className="font-mono font-medium">{brl(order.paid)}</div>
             </div>
           </div>
+
+          {technicalPhotoUrls.length > 0 && (
+            <section className="space-y-2">
+              <h3 className="text-sm font-semibold">Fotos da entrada do aparelho</h3>
+              <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+                {technicalPhotoUrls.map((url, index) => (
+                  <a key={url} href={url} target="_blank" rel="noreferrer" className="overflow-hidden rounded-lg border">
+                    <img src={url} alt={`Foto ${index + 1} do aparelho recebido`} className="h-28 w-full object-cover" />
+                  </a>
+                ))}
+              </div>
+            </section>
+          )}
 
           {(order.title || order.description || order.material || order.measurements) && (
             <div className="bg-muted/30 rounded p-3 text-sm space-y-1">
