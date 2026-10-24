@@ -95,12 +95,12 @@ export function NotificationsBell() {
       <PopoverTrigger asChild>
         <button
           type="button"
-          className="relative inline-flex min-h-11 min-w-11 items-center justify-center rounded-xl border border-border bg-white p-2.5 text-brand-blue shadow-sm transition-colors hover:bg-muted"
+          className="relative inline-flex min-h-11 min-w-11 items-center justify-center rounded-xl border border-white/10 bg-white/[0.05] p-2.5 text-[#CBD5E1] transition-colors hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#22D3EE]"
           aria-label="Notificações"
         >
           <Bell className="h-5 w-5" />
           {count > 0 && (
-            <span className="absolute -right-1 -top-1 grid h-4 min-w-[16px] place-items-center rounded-full bg-brand-orange px-1 text-[10px] font-black text-white ring-2 ring-white">
+            <span className="absolute -right-1 -top-1 grid h-4 min-w-[16px] place-items-center rounded-full bg-[#7138F5] px-1 text-[10px] font-black text-white ring-2 ring-[#0B1026]">
               {count > 9 ? "9+" : count}
             </span>
           )}
