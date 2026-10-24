@@ -29,7 +29,7 @@ const InputSchema = z.object({
 });
 
 function escapeIlikePattern(value: string) {
-  return value.slice(0, 120).replace(/[\\%_]/g, "\\function normalizeText(value: unknown) {");
+  return value.slice(0, 120).replace(/[\\%_]/g, "\\$&");
 }
 
 function normalizeText(value: unknown) {
