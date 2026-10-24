@@ -50,13 +50,21 @@ function EllaSandboxPage() {
     mutationFn: async () => call({ data: { message: message.trim(), scope } }),
     onSuccess: (data) => { setResult(data); setFailure(null); },
     onError: (err: any) => {
-      toast.error(err?.message ?? "Falha ao consultar o sistema");
+      const rawMessage = String(err?.message ?? "");
+      const isAuthError = /unauthorized|invalid token|invalid api key|api key not valid/i.test(rawMessage);
+      const safeMessage = isAuthError
+        ? "A autenticação da sessão ou a credencial do serviço de IA foi recusada. Entre novamente no aplicativo; se persistir, o administrador deve conferir GEMINI_API_KEY nas variáveis de ambiente do servidor."
+        : rawMessage && !/deserialize|stack trace|\.js:\d+:\d+/i.test(rawMessage)
+          ? rawMessage
+          : "Não foi possível concluir o teste da Ella. Atualize a página e tente novamente.";
+      toast.error(safeMessage);
       setResult(null);
       setFailure({
         run_id: err?.run_id,
-        message: err?.message ?? "Falha ao consultar o sistema",
-        error_type: err?.error_type,
-        stack_trace: err?.stack_trace ?? err?.stack ?? null,
+        message: safeMessage,
+        error_type: isAuthError ? "auth" : err?.error_type,
+        // Do not render raw server stack traces in the user-facing UI.
+        stack_trace: null,
         steps: err?.steps,
       });
     },
