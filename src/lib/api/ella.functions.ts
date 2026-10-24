@@ -2,7 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { generateText, tool, stepCountIs } from "ai";
 import { z } from "zod";
-import { createLovableGateway } from "@/lib/ai-gateway.server";
+import { createGeminiProvider, createLovableGateway } from "@/lib/ai-gateway.server";
 import {
   ADMIN_SYSTEM_PROMPT,
   STATUS_ENUM,
@@ -267,7 +267,7 @@ async function ellaLocalFallback({
 
   return {
     response:
-      "Estou funcionando em modo básico de automação. Para a experiência completa de processamento inteligente, áudio e análise técnica de anexos, configure LOVABLE_API_KEY. Mesmo assim, já consigo executar comandos como atualizar preço, criar produto, listar OS e gerir o estoque.",
+      "Estou funcionando em modo básico de automação. Para a experiência completa, configure GEMINI_API_KEY (Google AI Studio) ou LOVABLE_API_KEY no ambiente do servidor. Mesmo assim, já consigo executar comandos como atualizar preço, criar produto, listar OS e gerir o estoque.",
     toolActivity,
   };
 }
@@ -276,7 +276,8 @@ export const ellaChat = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((v: unknown) => InputSchema.parse(v))
   .handler(async ({ data, context }) => {
-    const key = process.env['LOVABLE_API_KEY'];
+    const geminiKey = process.env['GEMINI_API_KEY'];
+    const lovableKey = process.env['LOVABLE_API_KEY'];
     const supabase = context.supabase;
     const userId = context.userId;
 
@@ -291,7 +292,7 @@ export const ellaChat = createServerFn({ method: "POST" })
       throw new Error("Acesso não liberado para esta conta.");
     }
 
-    if (!key) {
+    if (!geminiKey && !lovableKey) {
       const fallback = await ellaLocalFallback({
         message: data.message,
         supabase,
@@ -303,7 +304,9 @@ export const ellaChat = createServerFn({ method: "POST" })
       };
     }
 
-    const model = createLovableGateway(key)("google/gemini-2.5-flash");
+    const model = geminiKey
+      ? createGeminiProvider(geminiKey)("gemini-2.5-flash")
+      : createLovableGateway(lovableKey!)("google/gemini-2.5-flash");
     const traceId = newTraceId();
     const startedAt = Date.now();
 
@@ -1260,7 +1263,7 @@ export const ellaChat = createServerFn({ method: "POST" })
           });
           return {
             ...fallback,
-            response: `${fallback.response}\n\nAviso: o serviço avançado de IA está com a credencial inválida. Estou usando o modo básico por enquanto; um administrador precisa atualizar LOVABLE_API_KEY nas variáveis de ambiente do servidor para restaurar todas as funções.`,
+            response: `${fallback.response}\n\nAviso: o serviço avançado de IA está com a credencial inválida. Estou usando o modo básico por enquanto; um administrador precisa validar GEMINI_API_KEY (Google AI Studio) ou LOVABLE_API_KEY nas variáveis de ambiente do servidor para restaurar todas as funções.`,
             trace_id: traceId,
             degraded: true,
           };
