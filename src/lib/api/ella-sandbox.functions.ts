@@ -2,7 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { generateText } from "ai";
 import { z } from "zod";
-import { createLovableGateway } from "@/lib/ai-gateway.server";
+import { createGeminiProvider, createLovableGateway } from "@/lib/ai-gateway.server";
 import { ADMIN_SYSTEM_PROMPT, PUBLIC_SYSTEM_PROMPT } from "./ella.helpers.server";
 import { classifyAiError, logAiEvent, newTraceId } from "./ai-logs.server";
 
@@ -98,10 +98,11 @@ export const ellaSandboxChat = createServerFn({ method: "POST" })
       user_id: userId,
     };
 
-    // Fail fast if API key missing — persist evidence.
-    const key = process.env.LOVABLE_API_KEY;
-    if (!key) {
-      const err = new Error("LOVABLE_API_KEY não configurada");
+    // Prefer the Google AI Studio key when configured; otherwise use the Lovable gateway.
+    const geminiKey = process.env.GEMINI_API_KEY;
+    const lovableKey = process.env.LOVABLE_API_KEY;
+    if (!geminiKey && !lovableKey) {
+      const err = new Error("Configure GEMINI_API_KEY (Google AI Studio) ou LOVABLE_API_KEY nas variáveis de ambiente do servidor.");
       steps.push({ name: "check_api_key", status: "error", at_ms: 0, duration_ms: 0, detail: null, error: err.message });
       await persistErrorRun(supabase, userId, {
         inputs, steps, traceId, modelName, temperature,
@@ -113,7 +114,9 @@ export const ellaSandboxChat = createServerFn({ method: "POST" })
       });
       throw err;
     }
-    const model = createLovableGateway(key)(modelName);
+    const model = geminiKey
+      ? createGeminiProvider(geminiKey)("gemini-2.5-flash")
+      : createLovableGateway(lovableKey!)(modelName);
 
     const scopes = data.scope === "admin" ? ["admin", "both"] : ["public", "both"];
     const { data: kbRaw } = await step("load_knowledge", async () => supabase
