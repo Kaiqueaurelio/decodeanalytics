@@ -33,10 +33,6 @@ import imgBannerBacklight from "@/assets/products/sub/banner-backlight.jpg";
 import imgPoster from "@/assets/products/sub/poster.jpg";
 import imgSqueeze from "@/assets/products/sub/squeeze.jpg";
 import imgMousepad from "@/assets/products/sub/mousepad.jpg";
-import imgManutencao from "@/assets/products/manutencao.jpg";
-import imgDesign from "@/assets/products/design.jpg";
-import imgProgramacao from "@/assets/products/programacao.jpg";
-import imgSocial from "@/assets/products/socialmedia.jpg";
 
 // Fotos locais da própria biblioteca do catálogo: carregam sem depender de terceiros.
 /**
@@ -51,27 +47,27 @@ const PRODUCT_IMAGES_BY_SLUG: Record<string, string> = {
   "convites-personalizados-catalogo": imgWeddingInvite,
   "copos-termicos-personalizados-catalogo": imgSqueeze,
   "canecas-personalizadas-catalogo": imgCanecas,
-  "social-media": imgSocial,
-  "design-grafico": imgDesign,
-  programacao: imgProgramacao,
-  "manutencao-de-computadores": imgManutencao,
+  "social-media": imgPoster,
+  "design-grafico": imgBusinessCard,
+  programacao: imgNotebook,
+  "manutencao-de-computadores": imgNotebook,
   // Serviços e entregas digitais
-  "apresentacoes-catalogos": imgDesign,
-  "automacoes-integracoes": imgProgramacao,
-  "identidade-visual": imgDesign,
-  "sites-landing-pages": imgProgramacao,
-  "design-pecas": imgDesign,
-  "diagnostico-hardware": imgManutencao,
-  "formatacao-otimizacao": imgManutencao,
-  "edicao-reels": imgSocial,
-  "gestao-redes-sociais": imgSocial,
-  "impressao-3d": imgProgramacao,
-  "limpeza-pasta-termica": imgManutencao,
-  "loja-virtual": imgProgramacao,
-  "pacote-artes-feed-stories": imgSocial,
-  "sistemas-sob-medida": imgProgramacao,
-  "trafego-pago": imgSocial,
-  "upgrade-ssd-ram": imgManutencao,
+  "apresentacoes-catalogos": imgBusinessCard,
+  "automacoes-integracoes": imgNotebook,
+  "identidade-visual": imgBusinessCard,
+  "sites-landing-pages": imgNotebook,
+  "design-pecas": imgBusinessCard,
+  "diagnostico-hardware": imgNotebook,
+  "formatacao-otimizacao": imgNotebook,
+  "edicao-reels": imgPoster,
+  "gestao-redes-sociais": imgPoster,
+  "impressao-3d": imgNotebook,
+  "limpeza-pasta-termica": imgNotebook,
+  "loja-virtual": imgNotebook,
+  "pacote-artes-feed-stories": imgPoster,
+  "sistemas-sob-medida": imgNotebook,
+  "trafego-pago": imgPoster,
+  "upgrade-ssd-ram": imgNotebook,
   // Produtos sem imagem própria no catálogo: use foto específica disponível.
   "adesivacao-vitrine-veiculo": imgFloorSticker,
   "adesivo-vinil": imgHoloSticker,
@@ -153,15 +149,15 @@ export const CATEGORY_IMAGES: Record<string, string> = {
   Brindes: imgBrindes,
   Embalagens: imgEmbalagens,
   Plotagem: imgPlotagem,
-  "Manutenção de Computadores": imgManutencao,
-  Programação: imgProgramacao,
+  "Manutenção de Computadores": imgNotebook,
+  Programação: imgNotebook,
   Encadernação: imgNotebook,
   "Laminação e Plastificação": imgLabelTransparent,
   Cartazes: imgPoster,
   Convites: imgWeddingInvite,
   "Copos Térmicos": imgSqueeze,
-  "Social Media": imgSocial,
-  "Design Gráfico": imgDesign,
+  "Social Media": imgPoster,
+  "Design Gráfico": imgBusinessCard,
 };
 
 const CATEGORY_IMAGES_BY_KEY: Record<string, string> = {
@@ -174,11 +170,11 @@ const CATEGORY_IMAGES_BY_KEY: Record<string, string> = {
   embalagens: imgEmbalagens,
   panfletos: imgPanfletos,
   plotagem: imgPlotagem,
-  "manutencao de computadores": imgManutencao,
-  "manutenção de computadores": imgManutencao,
-  programacao: imgProgramacao,
-  "social media": imgSocial,
-  "design grafico": imgDesign,
+  "manutencao de computadores": imgNotebook,
+  "manutenção de computadores": imgNotebook,
+  programacao: imgNotebook,
+  "social media": imgPoster,
+  "design grafico": imgBusinessCard,
   encadernacao: imgNotebook,
   "laminacao e plastificacao": imgLabelTransparent,
   cartazes: imgPoster,
@@ -259,10 +255,10 @@ export function resolveProductImage(
        key.includes("embalagem") || key.includes("sacola") || key.includes("caixa") ? imgEmbalagens :
        key.includes("plotagem") || key.includes("impressao") ? imgPlotagem :
        key.includes("brinde") || key.includes("presente") ? imgBrindes :
-       key.includes("manutencao") || key.includes("computador") || key.includes("hardware") ? imgManutencao :
-       key.includes("programacao") || key.includes("site") || key.includes("sistema") ? imgProgramacao :
-       key.includes("social") || key.includes("marketing") ? imgSocial :
-       key.includes("design") || key.includes("arte") ? imgDesign :
+       key.includes("manutencao") || key.includes("computador") || key.includes("hardware") ? imgNotebook :
+       key.includes("programacao") || key.includes("site") || key.includes("sistema") ? imgNotebook :
+       key.includes("social") || key.includes("marketing") ? imgPoster :
+       key.includes("design") || key.includes("arte") ? imgBusinessCard :
        key.includes("convite") ? imgWeddingInvite :
        key.includes("encadernacao") || key.includes("caderno") ? imgNotebook :
        key.includes("cartaz") || key.includes("poster") ? imgPoster :
@@ -271,5 +267,5 @@ export function resolveProductImage(
   }
 
   // Último recurso local: nunca deixar o card sem imagem por falta de URL.
-  return imgDesign;
+  return imgBusinessCard;
 }
