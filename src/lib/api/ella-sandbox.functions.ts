@@ -210,7 +210,7 @@ export const ellaSandboxChat = createServerFn({ method: "POST" })
           system_prompt: systemPrompt,
           knowledge_used: knowledgeUsed,
           knowledge_total: kbAll.length,
-          status: "success",
+          status: model ? "success" : "error",
           inputs,
           steps,
         } as any)
@@ -219,7 +219,7 @@ export const ellaSandboxChat = createServerFn({ method: "POST" })
 
       return {
         run_id: (run as any)?.id ?? null,
-        status: "success" as const,
+        status: model ? "success" as const : "degraded" as const,
         answer: result.text || "(sem resposta)",
         trace_id: traceId,
         duration_ms: duration,
@@ -233,7 +233,7 @@ export const ellaSandboxChat = createServerFn({ method: "POST" })
         knowledgeUsed,
         inputs,
         steps,
-        error: null as null | { type: string; message: string; stack?: string | null },
+        error: model ? null : { type: "config", message: "GEMINI_API_KEY não configurada; resposta baseada apenas na base de treinamento." } as null | { type: string; message: string; stack?: string | null },
       };
     } catch (err: any) {
       const cls = classifyAiError(err);
