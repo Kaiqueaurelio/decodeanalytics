@@ -87,7 +87,29 @@ export const ellaSandboxChat = createServerFn({ method: "POST" })
             detail: null,
             error: e?.message ?? String(e),
           });
-          throw e;
+          // Retorne uma mensagem segura para a interface; não propague o erro serializado/stack do servidor.
+      const isAuthError = errType === "auth";
+      const fallbackAnswer = used.length
+        ? `A conexão com o serviço de IA foi recusada${isAuthError ? " por uma credencial inválida" : ""}. Para continuar, confira GEMINI_API_KEY no ambiente do servidor. Conteúdo de treinamento relacionado:\\n\\n${used.map((k, i) => `${i + 1}. ${k.title}\\n${k.content}`).join("\\n\\n")}`
+        : `A conexão com o serviço de IA falhou${isAuthError ? " por uma credencial inválida" : ""}. Confira GEMINI_API_KEY no ambiente do servidor e tente novamente.`;
+      return {
+        run_id: (run as any)?.id ?? null,
+        status: "error" as const,
+        answer: fallbackAnswer,
+        trace_id: traceId,
+        duration_ms: duration,
+        model: geminiKey ? "gemini-2.5-flash" : modelName,
+        provider: geminiKey ? "Google Gemini" : "Lovable AI Gateway",
+        scope: data.scope,
+        temperature,
+        systemPrompt,
+        basePromptName,
+        knowledgeTotal: kbAll.length,
+        knowledgeUsed,
+        inputs,
+        steps,
+        error: { type: errType, message: isAuthError ? "Credencial de IA inválida ou recusada." : "Não foi possível consultar o serviço de IA." },
+      };
         }
       });
 
@@ -101,22 +123,12 @@ export const ellaSandboxChat = createServerFn({ method: "POST" })
     // Prefer the Google AI Studio key when configured; otherwise use the Lovable gateway.
     const geminiKey = process.env.GEMINI_API_KEY;
     const lovableKey = process.env.LOVABLE_API_KEY;
-    if (!geminiKey && !lovableKey) {
-      const err = new Error("Configure GEMINI_API_KEY (Google AI Studio) ou LOVABLE_API_KEY nas variáveis de ambiente do servidor.");
-      steps.push({ name: "check_api_key", status: "error", at_ms: 0, duration_ms: 0, detail: null, error: err.message });
-      await persistErrorRun(supabase, userId, {
-        inputs, steps, traceId, modelName, temperature,
-        scope: data.scope, systemPrompt: "", basePromptName: "", knowledgeUsed: [], knowledgeTotal: 0,
-        duration: Date.now() - startedAt,
-        error_type: "config",
-        error_message: err.message,
-        stack_trace: err.stack ?? null,
-      });
-      throw err;
-    }
+    const providerName = geminiKey ? "Google Gemini" : lovableKey ? "Lovable AI Gateway" : "Modo básico (sem chave configurada)";
     const model = geminiKey
       ? createGeminiProvider(geminiKey)("gemini-2.5-flash")
-      : createLovableGateway(lovableKey!)(modelName);
+      : lovableKey
+        ? createLovableGateway(lovableKey)(modelName)
+        : null;
 
     const scopes = data.scope === "admin" ? ["admin", "both"] : ["public", "both"];
     const { data: kbRaw } = await step("load_knowledge", async () => supabase
@@ -179,20 +191,26 @@ export const ellaSandboxChat = createServerFn({ method: "POST" })
     }));
 
     try {
-      const result = await step("generate_text", () => generateText({
-        model,
-        system: systemPrompt,
-        messages: [{ role: "user", content: data.message }],
-        temperature,
-      }), () => ({ model: modelName, temperature }));
+      const result = model
+        ? await step("generate_text", () => generateText({
+            model,
+            system: systemPrompt,
+            messages: [{ role: "user", content: data.message }],
+            temperature,
+          }), () => ({ model: geminiKey ? "gemini-2.5-flash" : modelName, temperature }))
+        : {
+            text: used.length
+              ? `A chave de IA do servidor não está configurada. Encontrei este conteúdo na base de treinamento que pode ajudar:\\n\\n${used.map((k, i) => `${i + 1}. ${k.title}\\n${k.content}`).join("\\n\\n")}\\n\\nPara habilitar respostas geradas por IA, configure GEMINI_API_KEY no ambiente do servidor.`
+              : "A chave de IA do servidor não está configurada e não encontrei conteúdo de treinamento diretamente relacionado à pergunta. Configure GEMINI_API_KEY no ambiente do servidor para habilitar as respostas inteligentes.";
+      };
 
       const duration = Date.now() - startedAt;
       logAiEvent({
-        provider: "lovable-ai-gateway",
-        model: modelName,
+        provider: geminiKey ? "google-gemini" : lovableKey ? "lovable-ai-gateway" : "local-fallback",
+        model: geminiKey ? "gemini-2.5-flash" : modelName,
         endpoint: "/ella-sandbox",
         trace_id: traceId,
-        status: "success",
+        status: model ? "success" : "error",
         duration_ms: duration,
         user_id: userId,
         extra: { kb_used: used.length, scope: data.scope },
@@ -206,7 +224,7 @@ export const ellaSandboxChat = createServerFn({ method: "POST" })
           answer: result.text || "(sem resposta)",
           scope: data.scope,
           model: modelName,
-          provider: "Lovable AI Gateway",
+          provider: providerName,
           temperature,
           duration_ms: duration,
           trace_id: traceId,
@@ -228,7 +246,7 @@ export const ellaSandboxChat = createServerFn({ method: "POST" })
         trace_id: traceId,
         duration_ms: duration,
         model: modelName,
-        provider: "Lovable AI Gateway",
+        provider: providerName,
         scope: data.scope,
         temperature,
         systemPrompt,
