@@ -5,7 +5,7 @@ import { z } from "zod";
 import { createLovableGateway } from "@/lib/ai-gateway.server";
 import type { Database } from "@/integrations/supabase/types";
 import { getRequestIP } from "@tanstack/react-start/server";
-import { PUBLIC_SYSTEM_PROMPT, checkPublicRateLimit } from "./ella.helpers.server";
+import { PUBLIC_SYSTEM_PROMPT } from "./ella.helpers.server";
 import { classifyAiError, logAiEvent, newTraceId } from "./ai-logs.server";
 
 const MessageSchema = z.object({
@@ -29,13 +29,6 @@ export const ellaPublicChat = createServerFn({ method: "POST" })
     } catch {
       ipKey = "unknown";
     }
-    if (!checkPublicRateLimit(ipKey)) {
-      return {
-        response:
-          "Estou recebendo muitas mensagens agora. Aguarde alguns segundos ou fale direto com a equipe pelo WhatsApp 💙",
-      };
-    }
-
     const key = process.env.LOVABLE_API_KEY;
     const url = process.env.SUPABASE_URL;
     const anonKey = process.env.SUPABASE_PUBLISHABLE_KEY;
@@ -46,6 +39,18 @@ export const ellaPublicChat = createServerFn({ method: "POST" })
     const supabase = createClient<Database>(url, anonKey, {
       auth: { storage: undefined, persistSession: false, autoRefreshToken: false },
     });
+
+    // Durable DB-backed limiter works across serverless instances; fail closed if unavailable.
+    const { data: withinRateLimit, error: rateLimitError } = await (supabase as any).rpc(
+      "consume_public_ai_rate_limit",
+      { p_key: ipKey },
+    );
+    if (rateLimitError || withinRateLimit !== true) {
+      return {
+        response:
+          "Estou recebendo muitas mensagens agora. Aguarde alguns segundos ou fale direto com a equipe pelo WhatsApp 💙",
+      };
+    }
 
     const model = createLovableGateway(key)("google/gemini-2.5-flash");
     const traceId = newTraceId();
