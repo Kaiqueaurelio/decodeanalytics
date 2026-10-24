@@ -13,7 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Plus, Pencil, Trash2, Search, AlertTriangle, Eye, EyeOff, X, Clock, CalendarClock, CalendarX, Play, CheckCircle2 } from "lucide-react";
+import { Pencil, Trash2, Search, AlertTriangle, Eye, EyeOff, X, Clock, CalendarClock, CalendarX, Play, CheckCircle2, Palette, Laptop } from "lucide-react";
 import { toast } from "sonner";
 import { addIsoDays, brl, fmtDate, PRODUCTION_STATUS_LABEL, PAYMENT_STATUS_LABEL, toIsoDate } from "@/lib/format";
 import { OrderEditor } from "@/components/OrderEditor";
@@ -27,7 +27,8 @@ export const Route = createFileRoute("/_authenticated/orders")({
 
 function OrdersPage() {
   const qc = useQueryClient();
-  const [segment, setSegment] = useState("all");
+  const [segment, setSegment] = useState<"all" | "grafica" | "tecnologia">("grafica");
+  const [newOrderSegment, setNewOrderSegment] = useState<"grafica" | "tecnologia">("grafica");
   const [search, setSearch] = useState("");
   const [open, setOpen] = useState(false);
   const [editId, setEditId] = useState<string | null>(null);
@@ -122,7 +123,9 @@ function OrdersPage() {
   }, [rawOrders, segment, search, productionStatus, paymentStatus, deadlineFilter, responsibleFilter, lifecycleTab]);
 
   const counts = useMemo(() => {
-    const rows = rawOrders ?? [];
+    const rows = (rawOrders ?? []).filter((r: any) =>
+      segment === "all" || (r.service_segment || "grafica") === segment,
+    );
     return {
       todas: rows.length,
       producao: rows.filter(
@@ -136,7 +139,22 @@ function OrdersPage() {
         (r: any) => r.production_status === "cancelado" || r.production_status === "pausado",
       ).length,
     };
+  }, [rawOrders, segment]);
+
+  const segmentCounts = useMemo(() => {
+    const rows = rawOrders ?? [];
+    return {
+      grafica: rows.filter((r: any) => (r.service_segment || "grafica") === "grafica").length,
+      tecnologia: rows.filter((r: any) => r.service_segment === "tecnologia").length,
+    };
   }, [rawOrders]);
+
+  function startNewOrder(orderSegment: "grafica" | "tecnologia") {
+    setSegment(orderSegment);
+    setEditId(null);
+    setNewOrderSegment(orderSegment);
+    setOpen(true);
+  }
 
   const deadlineCounts = useMemo(() => {
     const rows = rawOrders ?? [];
@@ -222,6 +240,20 @@ function OrdersPage() {
 
   return (
     <div className="space-y-4">
+      <header className="flex flex-col gap-3 rounded-xl border bg-card p-4 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h1 className="text-xl font-bold">{segment === "tecnologia" ? "Ordens de tecnologia" : segment === "grafica" ? "Ordens gráficas" : "Todas as ordens de serviço"}</h1>
+          <p className="mt-1 text-sm text-muted-foreground">Fluxos separados para gráfica/design e tecnologia/manutenção.</p>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <Button variant={newOrderSegment === "grafica" ? "default" : "outline"} onClick={() => startNewOrder("grafica")}>
+            <Palette className="mr-2 h-4 w-4" /> Nova OS gráfica
+          </Button>
+          <Button variant={newOrderSegment === "tecnologia" ? "default" : "outline"} onClick={() => startNewOrder("tecnologia")}>
+            <Laptop className="mr-2 h-4 w-4" /> Nova OS de tecnologia
+          </Button>
+        </div>
+      </header>
       <div className="flex flex-col gap-2">
         <div className="flex flex-col sm:flex-row gap-2 justify-between">
           <div className="relative flex-1 max-w-sm">
@@ -242,15 +274,6 @@ function OrdersPage() {
               {showCompleted ? <EyeOff className="w-4 h-4 mr-1" /> : <Eye className="w-4 h-4 mr-1" />}
               {showCompleted ? "Ocultar concluídas" : "Mostrar concluídas"}
             </Button>
-            <Button
-            onClick={() => {
-              setEditId(null);
-              setOpen(true);
-            }}
-          >
-            <Plus className="w-4 h-4 mr-1" />
-            Nova OS
-          </Button>
         </div>
       </div>
       <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
@@ -303,7 +326,17 @@ function OrdersPage() {
         </Select>
       </div>
       </div>
-      <div className="flex flex-wrap gap-2" role="group" aria-label="Filtrar segmento">{[["all","Todos os segmentos"],["tecnologia","Tecnologia / Manutenção"],["grafica","Gráfica / Design"]].map(([id,label])=><Button key={id} size="sm" variant={segment===id?"default":"outline"} aria-pressed={segment===id} onClick={()=>setSegment(id)}>{label}</Button>)}</div>
+      <div className="flex flex-wrap gap-2" role="group" aria-label="Filtrar ordens por tipo">
+        <Button size="sm" variant={segment === "grafica" ? "default" : "outline"} aria-pressed={segment === "grafica"} onClick={() => setSegment("grafica")}>
+          <Palette className="mr-2 h-4 w-4" /> Gráfica / Design ({segmentCounts.grafica})
+        </Button>
+        <Button size="sm" variant={segment === "tecnologia" ? "default" : "outline"} aria-pressed={segment === "tecnologia"} onClick={() => setSegment("tecnologia")}>
+          <Laptop className="mr-2 h-4 w-4" /> Tecnologia / Manutenção ({segmentCounts.tecnologia})
+        </Button>
+        <Button size="sm" variant={segment === "all" ? "default" : "outline"} aria-pressed={segment === "all"} onClick={() => setSegment("all")}>
+          Todas as ordens ({segmentCounts.grafica + segmentCounts.tecnologia})
+        </Button>
+      </div>
       <Tabs value={lifecycleTab} onValueChange={(v) => setLifecycleTab(v as any)}>
         <TabsList className="w-full sm:w-auto flex flex-wrap gap-1">
           <TabsTrigger value="todas" className="text-xs">
@@ -497,6 +530,7 @@ function OrdersPage() {
       <OrderEditor
         open={open}
         onOpenChange={setOpen}
+        initialSegment={newOrderSegment}
         orderId={editId}
         onSaved={() => qc.invalidateQueries({ queryKey: ["orders"] })}
       />
