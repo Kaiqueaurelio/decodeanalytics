@@ -1,4 +1,4 @@
-import { useState, useMemo, type ReactNode } from "react";
+import { useState, useMemo, useEffect, useRef, useCallback, type ReactNode } from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
 import {
   LayoutDashboard,
@@ -19,7 +19,6 @@ import {
   ShoppingCart,
   Activity,
   Users,
-  UserRound,
   GraduationCap,
   Beaker,
   X,
@@ -199,8 +198,27 @@ export function AppShell({ children }: { children: ReactNode }) {
   });
   const [search, setSearch] = useState("");
   const [searchFocused, setSearchFocused] = useState(false);
+  const searchInputRef = useRef<HTMLInputElement>(null);
   // The mobile drawer always shows labels, even when the desktop sidebar is collapsed.
   const compact = collapsed && !open;
+
+  const expandAndFocusSearch = useCallback(() => {
+    localStorage.setItem("alcateia_sidebar_collapsed", "0");
+    setCollapsed(false);
+    if (window.matchMedia("(max-width: 767px)").matches) setOpen(true);
+    window.requestAnimationFrame(() => searchInputRef.current?.focus());
+  }, []);
+
+  useEffect(() => {
+    const handleShortcut = (event: KeyboardEvent) => {
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
+        event.preventDefault();
+        expandAndFocusSearch();
+      }
+    };
+    window.addEventListener("keydown", handleShortcut);
+    return () => window.removeEventListener("keydown", handleShortcut);
+  }, [expandAndFocusSearch]);
 
   const items = useMemo(() => {
     return NAV.filter((item) => {
@@ -227,7 +245,7 @@ export function AppShell({ children }: { children: ReactNode }) {
     <div className="min-h-screen overflow-x-hidden bg-background">
       <aside
         className={cn(
-          "fixed inset-y-0 left-0 z-40 flex flex-col overflow-hidden border-r border-[#293451]/20 bg-[#0B1026] text-[#AAB6D1] transition-[width,transform] duration-500 ease-[cubic-bezier(0.4,0,0.2,1)]",
+          "fixed inset-y-0 left-0 z-40 flex flex-col overflow-hidden border-r border-white/10 bg-[#0B1026] text-[#CBD5E1] shadow-2xl shadow-black/20 transition-[width,transform] duration-300 ease-out",
           collapsed ? "w-72 md:w-20" : "w-72 md:w-64 lg:w-[17.5rem]",
           open ? "translate-x-0" : "-translate-x-full md:translate-x-0",
         )}
@@ -249,16 +267,16 @@ export function AppShell({ children }: { children: ReactNode }) {
                 src="/brand/decode-logo.png"
                 alt="Decode Analytics"
                 className={cn(
-                  "brand-logo shrink-0 rounded-md bg-black p-1 object-contain transition-all duration-300",
-                  compact ? "h-11 w-11" : "h-9 w-auto max-w-32",
+                  "brand-logo shrink-0 object-contain transition-all duration-300",
+                  compact ? "h-10 w-10" : "h-9 w-auto max-w-32",
                 )}
               />
               {!compact && (
                 <div className="flex flex-col leading-none animate-in fade-in duration-500">
-                  <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[#F8FAFC]">
+                  <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-white">
                     Decode Analytics
                   </span>
-                  <span className="mt-0.5 text-[8px] font-bold uppercase tracking-[0.1em] text-[#AAB6D1]">
+                  <span className="mt-1 text-[9px] font-medium uppercase tracking-[0.12em] text-[#94A3B8]">
                     Design & Soluções
                   </span>
                 </div>
@@ -294,10 +312,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                   type="button"
                   aria-label="Expandir menu para buscar"
                   title="Expandir menu para buscar"
-                  onClick={() => {
-                    localStorage.setItem("alcateia_sidebar_collapsed", "0");
-                    setCollapsed(false);
-                  }}
+                  onClick={expandAndFocusSearch}
                   className="grid h-10 w-10 place-items-center rounded-lg text-[#AAB6D1] transition-colors hover:bg-white/5 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#22D3EE]"
                 >
                   <Search className="h-4 w-4" />
@@ -306,17 +321,24 @@ export function AppShell({ children }: { children: ReactNode }) {
                 <Search className="h-4 w-4 shrink-0 text-[#AAB6D1]/70 transition-colors group-focus-within:text-[#22D3EE]" />
               )}
               <input
-                type="text"
-                placeholder="Buscar..."
+                ref={searchInputRef}
+                type="search"
+                aria-label="Buscar no menu"
+                placeholder="Buscar no menu..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 onFocus={() => setSearchFocused(true)}
                 onBlur={() => setTimeout(() => setSearchFocused(false), 200)}
                 className={cn(
-                  "ml-2 flex-1 bg-transparent text-xs text-white placeholder:text-[#AAB6D1] focus:outline-hidden",
+                  "ml-2 min-w-0 flex-1 bg-transparent text-xs text-white placeholder:text-[#94A3B8] focus:outline-hidden",
                   compact && "hidden",
                 )}
               />
+              {!compact && !search && (
+                <kbd className="ml-2 shrink-0 rounded-md border border-white/10 bg-white/[0.04] px-1.5 py-1 text-[9px] font-medium text-[#94A3B8]">
+                  ⌘K
+                </kbd>
+              )}
               {searchFocused && results.length > 0 && !compact && (
                 <div className="absolute top-full right-0 left-0 z-50 mt-2 max-h-60 overflow-y-auto rounded-xl border border-[#293451]/30 bg-[#080C1F] p-1 shadow-2xl backdrop-blur-xl">
                   {results.map((item) => (
@@ -341,7 +363,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           </div>
         </div>
 
-        <nav className="app-scrollbar flex-1 space-y-5 overflow-y-auto px-3 py-3">
+        <nav aria-label="Navegação principal" className="app-scrollbar flex-1 space-y-4 overflow-y-auto px-3 py-3">
           {SECTIONS.map((section, sectionIndex) => {
             const sectionItems = items.filter((item) => item.section === section);
             if (!sectionItems.length) return null;
@@ -370,8 +392,8 @@ export function AppShell({ children }: { children: ReactNode }) {
                         className={cn(
                           "group relative flex items-center rounded-xl transition-all duration-300",
                           active
-                            ? "border border-[#22D3EE]/20 bg-[#111A38] font-semibold text-white shadow-sm shadow-black/20"
-                            : "border border-transparent text-[#D5DEEF] hover:bg-white/5 hover:text-white",
+                            ? "border border-[#22D3EE]/20 bg-[#087CF0]/15 font-semibold text-white shadow-[inset_3px_0_0_#22D3EE]"
+                            : "border border-transparent text-[#CBD5E1] hover:bg-white/[0.06] hover:text-white",
                           compact
                             ? "h-11 w-11 justify-center px-0"
                             : "min-h-11 w-full gap-3 px-3 py-2.5 justify-start",
@@ -404,50 +426,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           })}
         </nav>
 
-        <div className={cn("px-3 pb-3", compact && "px-0 flex justify-center")}>
-          <Link to="/profile" title={compact ? "Meu perfil" : undefined} onClick={() => setOpen(false)} className={cn("flex items-center gap-3 rounded-xl border border-[#293451]/30 bg-[#080C1F] p-2 text-[#F8FAFC] transition-colors hover:bg-[#111936]", compact && "h-12 w-12 justify-center p-1")}>
-            <div className="grid h-9 w-9 shrink-0 place-items-center overflow-hidden rounded-full bg-[#087CF0]/20 text-sm font-bold text-[#087CF0]">
-              {avatarUrl ? <img src={avatarUrl} alt="" className="h-full w-full object-cover" /> : <UserRound className="h-5 w-5" />}
-            </div>
-            {!compact && <div className="min-w-0 flex-1"><p className="truncate text-xs font-bold">{displayName}</p><p className="text-[10px] text-[#AAB6D1]">Meu perfil · Editar dados</p></div>}
-          </Link>
-        </div>
-
-        <div
-          className={cn(
-            "mt-auto border-t border-[#293451]/20 bg-[#080C1F]/50 p-3 flex flex-col",
-            compact && "items-center",
-          )}
-        >
-          <div className={cn("mb-4 w-full", compact && "flex justify-center")}>
-            <div
-              className={cn(
-                "flex items-center rounded-xl bg-[#080C1F] ring-1 ring-[#293451]/20 transition-all duration-300",
-                compact ? "h-12 w-12 justify-center" : "min-h-12 w-full gap-3 p-2",
-              )}
-              title={compact ? (isAdmin ? "Administrador" : "Usuário") : undefined}
-            >
-              <div
-                className={cn(
-                  "flex shrink-0 items-center justify-center rounded-lg bg-[#087CF0]/20 text-[10px] font-black text-[#087CF0] transition-all duration-300",
-                  compact ? "h-10 w-10" : "h-8 w-8",
-                )}
-              >
-                {isAdmin ? "AD" : roles[0]?.substring(0, 2).toUpperCase() || "US"}
-              </div>
-              {!compact && (
-                <div className="flex flex-col min-w-0 animate-in fade-in duration-500">
-                  <span className="text-[10px] font-bold text-[#F8FAFC] truncate uppercase tracking-wider">
-                    {user?.email?.split("@")[0]}
-                  </span>
-                  <span className="text-[9px] font-medium text-[#AAB6D1] uppercase tracking-tighter">
-                    {isAdmin ? "Administrador" : ROLE_LABEL[roles[0]] || "Usuário"}
-                  </span>
-                </div>
-              )}
-            </div>
-          </div>
-
+        <div className="mt-auto border-t border-white/10 bg-[#080C1F]/40 p-3">
           <button
             type="button"
             onClick={() =>
@@ -458,7 +437,7 @@ export function AppShell({ children }: { children: ReactNode }) {
               })
             }
             className={cn(
-              "group hidden items-center rounded-xl text-xs text-[#F8FAFC] transition-all hover:bg-[#080C1F] hover:text-white md:flex",
+              "group hidden items-center rounded-xl text-xs text-[#CBD5E1] transition-colors hover:bg-white/[0.06] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#22D3EE] md:flex",
               compact ? "h-11 w-11 justify-center mx-auto" : "min-h-11 w-full gap-3 px-3 py-2.5",
             )}
             aria-label={compact ? "Expandir menu" : "Recolher menu"}
@@ -476,9 +455,10 @@ export function AppShell({ children }: { children: ReactNode }) {
           </button>
 
           <button
+            type="button"
             onClick={() => signOut()}
             className={cn(
-              "group mt-1 flex items-center rounded-xl text-xs text-rose-400 transition-all hover:bg-rose-500/10 hover:text-rose-300",
+              "group mt-1 flex items-center rounded-xl text-xs text-rose-300 transition-colors hover:bg-rose-500/10 hover:text-rose-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-300",
               compact ? "h-11 w-11 justify-center mx-auto" : "min-h-11 w-full gap-3 px-3 py-2.5",
             )}
             title={compact ? "Sair" : undefined}
@@ -495,41 +475,41 @@ export function AppShell({ children }: { children: ReactNode }) {
           collapsed ? "md:pl-20" : "md:pl-64 lg:pl-[17.5rem]",
         )}
       >
-        <header className="sticky top-0 z-30 h-16 border-b border-border bg-background/90 text-foreground backdrop-blur-md">
+        <header className="sticky top-0 z-30 h-16 border-b border-white/10 bg-[#0B1026]/95 text-white shadow-sm shadow-black/10 backdrop-blur-xl">
           <div className="flex h-full items-center justify-between px-4 md:px-6">
             <div className="flex items-center gap-3">
               <button
                 onClick={() => setOpen(true)}
                 aria-label="Abrir menu"
-                className="grid h-10 w-10 place-items-center rounded-xl border border-border bg-card text-foreground transition-colors hover:bg-muted md:hidden"
+                className="grid h-10 w-10 place-items-center rounded-xl border border-white/10 bg-white/[0.05] text-[#CBD5E1] transition-colors hover:bg-white/10 hover:text-white md:hidden"
               >
                 <Menu className="h-5 w-5" />
               </button>
               <div>
-                <h1 className="text-sm font-bold tracking-tight text-foreground md:text-base">
+                <h1 className="max-w-[8rem] truncate text-sm font-semibold tracking-tight text-white sm:max-w-[11rem] md:max-w-none md:text-base">
                   {title}
                 </h1>
-                <div className="hidden items-center gap-2 text-[10px] font-medium text-muted-foreground uppercase tracking-wider md:flex">
-                  <span className="h-1 w-1 rounded-full bg-[#22D3EE]" />
+                <div className="hidden items-center gap-2 text-[10px] font-medium uppercase tracking-wider text-[#94A3B8] md:flex">
+                  <span className="h-1.5 w-1.5 rounded-full bg-[#22D3EE]" />
                   Decode Analytics
                 </div>
               </div>
             </div>
 
             <div className="flex items-center gap-2 md:gap-3">
-              <ThemeToggle />
+              <ThemeToggle className="border-white/10 bg-white/[0.05] text-[#CBD5E1] shadow-none hover:bg-white/10 hover:text-white dark:text-[#CBD5E1]" />
               <NotificationsBell />
-              <div className="mx-1 h-4 w-px bg-border md:mx-2" />
+              <div className="mx-1 h-4 w-px bg-white/10 md:mx-2" />
               <div className="flex items-center gap-2 md:gap-3">
                 <div className="hidden text-right md:block">
-                  <p className="text-xs font-bold text-foreground truncate max-w-[120px]">
+                  <p className="max-w-[160px] truncate text-xs font-semibold text-white">
                     {user?.email?.split("@")[0]}
                   </p>
-                  <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-tighter">
+                  <p className="text-[10px] font-medium uppercase tracking-wide text-[#94A3B8]">
                     {isAdmin ? "Administrador" : ROLE_LABEL[roles[0]] || "Usuário"}
                   </p>
                 </div>
-                <Link to="/profile" aria-label="Abrir meu perfil" className="grid h-9 w-9 place-items-center overflow-hidden rounded-xl bg-[#0B1026] text-sm font-bold text-white shadow-lg shadow-[#0B1026]/10">{avatarUrl ? <img src={avatarUrl} alt="" className="h-full w-full object-cover" /> : userInitial}</Link>
+                <Link to="/profile" aria-label={`Abrir perfil de ${displayName}`} title="Meu perfil" className="grid h-9 w-9 place-items-center overflow-hidden rounded-xl border border-white/10 bg-[#111A38] text-sm font-bold text-white transition-colors hover:border-[#22D3EE]/40 hover:bg-[#172347] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#22D3EE]">{avatarUrl ? <img src={avatarUrl} alt="" className="h-full w-full object-cover" /> : userInitial}</Link>
               </div>
             </div>
           </div>
