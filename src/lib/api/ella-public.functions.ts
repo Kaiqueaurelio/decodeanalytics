@@ -32,8 +32,7 @@ export const ellaPublicChat = createServerFn({ method: "POST" })
     const key = process.env.LOVABLE_API_KEY;
     const url = process.env.SUPABASE_URL;
     const anonKey = process.env.SUPABASE_PUBLISHABLE_KEY;
-    if (!key || !url || !anonKey)
-      throw new Error("Configuração de servidor ausente.");
+    if (!key || !url || !anonKey) throw new Error("Configuração de servidor ausente.");
 
     // Cliente anônimo — RLS trata como visitante (sem sessão).
     const supabase = createClient<Database>(url, anonKey, {
@@ -44,10 +43,9 @@ export const ellaPublicChat = createServerFn({ method: "POST" })
     let withinRateLimit = false;
     try {
       const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-      const { data, error } = await (supabaseAdmin as any).rpc(
-        "consume_public_ai_rate_limit",
-        { p_key: ipKey },
-      );
+      const { data, error } = await (supabaseAdmin as any).rpc("consume_public_ai_rate_limit", {
+        p_key: ipKey,
+      });
       withinRateLimit = !error && data === true;
     } catch {
       withinRateLimit = false;
@@ -66,12 +64,13 @@ export const ellaPublicChat = createServerFn({ method: "POST" })
     const tools = {
       list_products: tool({
         description:
-          "Consulta o catálogo público de produtos e serviços Decode. Filtra por texto (nome ou categoria).",
+          "Consulta o catálogo público ATIVO da Decode. Use antes de afirmar disponibilidade, preço, especificações ou recomendar um produto/serviço. Sem busca, retorna o catálogo completo (até 50 itens). Preços são sob consulta no site. Inclui links reais para detalhes e orçamento.",
         inputSchema: z.object({
           search: z.string().max(100).optional(),
-          limit: z.number().int().min(1).max(15).optional(),
+          category: z.string().max(80).optional(),
+          limit: z.number().int().min(1).max(50).optional(),
         }),
-        execute: async ({ search, limit }) => {
+        execute: async ({ search, category, limit }) => {
           let q = supabase
             .from("services")
             .select("name,category,slug,base_price,unit,short_description,min_quantity,specs")
@@ -83,14 +82,43 @@ export const ellaPublicChat = createServerFn({ method: "POST" })
             .replace(/[^\p{L}\p{N}\s-]/gu, "")
             .trim()
             .slice(0, 80);
-          if (safeSearch) q = q.or(`name.ilike.%${safeSearch}%,category.ilike.%${safeSearch}%`);
-          const { data, error } = await q.limit(limit ?? 8);
+          const safeCategory = (category ?? "")
+            .normalize("NFKC")
+            .replace(/[^\p{L}\p{N}\s-]/gu, "")
+            .trim()
+            .slice(0, 80);
+          if (safeSearch) {
+            q = q.or(
+              `name.ilike.%${safeSearch}%,category.ilike.%${safeSearch}%,short_description.ilike.%${safeSearch}%`,
+            );
+          }
+          if (safeCategory) q = q.ilike("category", `%${safeCategory}%`);
+          const { data, error } = await q.limit(limit ?? 50);
           if (error) return { error: "Não consegui consultar o catálogo agora." };
-          return { products: data ?? [] };
+          return {
+            products: (data ?? []).map((product) => ({
+              name: product.name,
+              category: product.category,
+              slug: product.slug,
+              price: "Sob consulta",
+              unit: product.unit,
+              short_description: (product.short_description ?? "").replace(
+                /R\$\s*[\d.,]+/gi,
+                "valor sob consulta",
+              ),
+              min_quantity: product.min_quantity,
+              specs: product.specs,
+              detail_url: product.slug ? `/produto/${product.slug}` : null,
+              quote_url: "/orcamento",
+            })),
+            count: data?.length ?? 0,
+            source: "catálogo público ativo da Decode",
+          };
         },
       }),
       list_categories: tool({
-        description: "Lista as categorias de produtos disponíveis na loja.",
+        description:
+          "Lista somente as categorias que têm produtos ou serviços ativos no catálogo público agora.",
         inputSchema: z.object({}),
         execute: async () => {
           const { data, error } = await supabase
@@ -119,12 +147,10 @@ export const ellaPublicChat = createServerFn({ method: "POST" })
         : "";
 
     // Client-supplied history is untrusted context; cap both turns and message size.
-    const history = (data.conversationHistory ?? [])
-      .slice(-12)
-      .map((m) => ({
-        role: m.role as "user" | "assistant",
-        content: m.content.slice(-1000),
-      }));
+    const history = (data.conversationHistory ?? []).slice(-12).map((m) => ({
+      role: m.role as "user" | "assistant",
+      content: m.content.slice(-1000),
+    }));
 
     try {
       const result = await generateText({

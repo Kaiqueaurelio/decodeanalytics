@@ -20,9 +20,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Beaker, Send, Zap, BookOpen, Cpu, Clock, Loader2, Copy, Link2, AlertTriangle, ListChecks, CheckCircle2, XCircle, LayoutDashboard } from "lucide-react";
+import { Beaker, Send, Zap, BookOpen, Cpu, Clock, Loader2, Copy, Link2, AlertTriangle, ListChecks, CheckCircle2, XCircle } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { toast } from "sonner";
+import { EllaAvatar } from "@/components/EllaAvatar";
 
 export const Route = createFileRoute("/_authenticated/ella-sandbox")({
   component: EllaSandboxPage,
@@ -69,14 +70,15 @@ function EllaSandboxPage() {
   return (
     <div className="mx-auto max-w-4xl space-y-6 p-4 md:p-6">
       <header className="flex items-start gap-3">
-        <div className="rounded-xl bg-primary/10 p-3 text-primary">
-          <LayoutDashboard className="h-6 w-6" />
-        </div>
+        <EllaAvatar
+          size={48}
+          alt="Ella Ribeiro, assistente virtual de inteligência artificial"
+          ringClassName="ring-2 ring-primary/30"
+        />
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Sandbox de Gestão</h1>
+          <h1 className="text-2xl font-semibold tracking-tight">Testar Ella Ribeiro</h1>
           <p className="text-sm text-muted-foreground">
-            Teste o processamento inteligente com as diretrizes atuais e veja exatamente qual treinamento foi usado
-            para responder.
+            Teste as respostas da assistente de IA com os treinamentos atuais antes de disponibilizá-los.
           </p>
         </div>
       </header>
@@ -89,6 +91,7 @@ function EllaSandboxPage() {
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               placeholder="Digite sua pergunta aqui para testar o sistema..."
+              aria-label="Pergunta de teste para Ella Ribeiro"
               rows={4}
               onKeyDown={(e) => {
                 if ((e.metaKey || e.ctrlKey) && e.key === "Enter") submit();

@@ -21,6 +21,7 @@ const SOLUTION_CATEGORIES = STORE_CATEGORIES.filter(({ slug }) =>
 );
 import { useCompanyInfo, useWaLink } from "@/hooks/useCompanyInfo";
 import { useCart } from "@/lib/cart-context";
+import { EllaFab } from "@/components/EllaFab";
 import { useEffect, useState } from "react";
 import {
   Sheet,
@@ -43,6 +44,7 @@ export function StoreShell({ children }: { children: ReactNode }) {
       <CategoryNav />
       <main className="min-h-[60vh]">{children}</main>
       <StoreFooter />
+      <EllaFab audience="public" />
       <FloatingWhatsApp />
     </div>
   );

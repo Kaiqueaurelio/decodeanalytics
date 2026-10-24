@@ -35,6 +35,7 @@ export interface OrderEditorProps {
   onSaved?: () => void;
   fromQuoteId?: string | null;
   initialSegment?: "grafica" | "tecnologia";
+  initialContractId?: string | null;
 }
 
 interface Item {
@@ -55,15 +56,25 @@ export function OrderEditor({
   onSaved,
   fromQuoteId,
   initialSegment = "grafica",
+  initialContractId,
 }: OrderEditorProps) {
   const [step, setStep] = useState(0);
   const [technical, setTechnical] = useState<TechnicalData>(emptyTechnicalData);
   const [loading, setLoading] = useState(false);
   const [clients, setClients] = useState<{ id: string; name: string }[]>([]);
   const [services, setServices] = useState<{ id: string; name: string; base_price: number }[]>([]);
-  const [team, setTeam] = useState<
-    { id: string; name: string | null; email: string | null }[]
+  const [contracts, setContracts] = useState<
+    {
+      id: string;
+      number: number;
+      title: string;
+      client_id: string;
+      service_id: string;
+      amount: number;
+      billing_mode: string;
+    }[]
   >([]);
+  const [team, setTeam] = useState<{ id: string; name: string | null; email: string | null }[]>([]);
   const [form, setForm] = useState<any>({
     service_segment: "grafica",
     client_id: "",
@@ -79,6 +90,8 @@ export function OrderEditor({
     payment_method: "",
     production_status: "aguardando_arte",
     deadline: "",
+    performed_on: "",
+    service_contract_id: "",
     urgent: false,
     assigned_to: "",
     current_activity: "",
@@ -107,9 +120,19 @@ export function OrderEditor({
       .select("id,name,email")
       .order("name")
       .then(({ data }) => setTeam(data ?? []));
+    (
+      supabase
+        .from("service_contracts" as any)
+        .select("id,number,title,client_id,service_id,amount,billing_mode")
+        .eq("status", "aprovado") as any
+    ).then(({ data }: any) => setContracts(data ?? []));
     if (orderId) {
       (async () => {
-        const { data: o, error: oErr } = await supabase.from("orders").select("*").eq("id", orderId).single();
+        const { data: o, error: oErr } = await (supabase
+          .from("orders" as any)
+          .select("*")
+          .eq("id", orderId)
+          .single() as any);
         if (oErr || !o) {
           toast.error("Não consegui carregar a OS. Feche e tente novamente.");
           return;
@@ -118,7 +141,12 @@ export function OrderEditor({
           .from("order_items")
           .select("*")
           .eq("order_id", orderId);
-        setForm({ ...o, deadline: o.deadline ?? "" });
+        setForm({
+          ...o,
+          deadline: o.deadline ?? "",
+          performed_on: o.performed_on ?? "",
+          service_contract_id: o.service_contract_id ?? "",
+        });
         setTechnical(readTechnicalData(o.technical_data));
         setItems(
           (its ?? []).map((i: any) => ({
@@ -160,6 +188,49 @@ export function OrderEditor({
           })),
         );
       })();
+    } else if (initialContractId) {
+      (async () => {
+        const { data: contract, error } = await (supabase
+          .from("service_contracts" as any)
+          .select("id,number,title,client_id,service_id,amount,billing_mode,scope")
+          .eq("id", initialContractId)
+          .eq("status", "aprovado")
+          .single() as any);
+        if (error || !contract) return toast.error("Não consegui carregar o contrato aprovado.");
+        const unitPrice =
+          contract.billing_mode === "mensal_fixo" ? 0 : Number(contract.amount) || 0;
+        setForm({
+          service_segment: "grafica",
+          client_id: contract.client_id,
+          service_contract_id: contract.id,
+          title: contract.title,
+          description: contract.scope ?? "",
+          measurements: "",
+          material: "",
+          finishing: "",
+          client_notes: "",
+          internal_notes: "",
+          total: unitPrice,
+          paid: 0,
+          payment_method: "",
+          production_status: "aguardando_arte",
+          deadline: "",
+          performed_on: "",
+          urgent: false,
+          assigned_to: "",
+          current_activity: "",
+          progress: 0,
+        });
+        setItems([
+          {
+            description: contract.title,
+            quantity: 1,
+            unit_price: unitPrice,
+            subtotal: unitPrice,
+            service_id: contract.service_id,
+          },
+        ]);
+      })();
     } else {
       setForm({
         service_segment: initialSegment,
@@ -176,6 +247,8 @@ export function OrderEditor({
         payment_method: "",
         production_status: "aguardando_arte",
         deadline: "",
+        performed_on: "",
+        service_contract_id: "",
         urgent: false,
         assigned_to: "",
         current_activity: "",
@@ -183,7 +256,7 @@ export function OrderEditor({
       });
       setItems([]);
     }
-  }, [open, orderId, fromQuoteId, initialSegment]);
+  }, [open, orderId, fromQuoteId, initialSegment, initialContractId]);
 
   function updateItem(idx: number, patch: Partial<Item>) {
     setItems((arr) => {
@@ -197,7 +270,13 @@ export function OrderEditor({
 
   async function save() {
     if (!form.client_id) return toast.error("Selecione um cliente");
-    if (form.service_segment === "tecnologia" && (!technical.equipment || !technical.complaint.trim())) { setStep(1); return toast.error("Informe o equipamento e o defeito relatado"); }
+    if (
+      form.service_segment === "tecnologia" &&
+      (!technical.equipment || !technical.complaint.trim())
+    ) {
+      setStep(1);
+      return toast.error("Informe o equipamento e o defeito relatado");
+    }
     if (!items.length) return toast.error("Adicione ao menos um item");
     setLoading(true);
     const payload = {
@@ -216,6 +295,8 @@ export function OrderEditor({
       payment_method: form.payment_method || null,
       production_status: form.production_status,
       deadline: form.deadline || null,
+      performed_on: form.performed_on || null,
+      service_contract_id: form.service_contract_id || null,
       urgent: !!form.urgent,
       quote_id: form.quote_id ?? null,
       assigned_to: form.assigned_to || null,
@@ -224,7 +305,10 @@ export function OrderEditor({
     };
     let id = orderId;
     if (id) {
-      const { error } = await supabase.from("orders").update(payload).eq("id", id);
+      const { error } = await (supabase
+        .from("orders" as any)
+        .update(payload)
+        .eq("id", id) as any);
       if (error) {
         setLoading(false);
         return toast.error(error.message);
@@ -247,12 +331,20 @@ export function OrderEditor({
       onSaved?.();
       return;
     } else {
-      const { data, error } = await supabase.from("orders").insert(payload).select("id").single();
+      const { data, error } = await (supabase
+        .from("orders" as any)
+        .insert(payload)
+        .select("id")
+        .single() as any);
       if (error || !data) {
         setLoading(false);
         return toast.error(error?.message || "Erro");
       }
       id = data.id;
+    }
+    if (!id) {
+      setLoading(false);
+      return toast.error("Não foi possível identificar a ordem salva.");
     }
     const { error: e2 } = await supabase.from("order_items").insert(
       items.map((i) => ({
@@ -292,7 +384,8 @@ export function OrderEditor({
   const steps = ["Cliente", "Equipamento", "Checklist", "Finalização"];
   function nextStep() {
     if (step === 0 && !form.client_id) return toast.error("Selecione um cliente");
-    if (step === 1 && (!technical.equipment || !technical.complaint.trim())) return toast.error("Informe o equipamento e o defeito relatado");
+    if (step === 1 && (!technical.equipment || !technical.complaint.trim()))
+      return toast.error("Informe o equipamento e o defeito relatado");
     setStep(Math.min(3, step + 1));
   }
   return (
@@ -306,18 +399,67 @@ export function OrderEditor({
             )}
           </DialogTitle>
         </DialogHeader>
-        <div className="flex flex-wrap gap-2 border-b pb-3" role="group" aria-label="Segmento da ordem">
-          <Button variant={!isTech ? "default" : "outline"} aria-pressed={!isTech} onClick={() => {setForm({...form,service_segment:"grafica"}); setStep(0);}}><Palette className="h-4 w-4"/>Gráfica / Design</Button>
-          <Button variant={isTech ? "default" : "outline"} aria-pressed={isTech} onClick={() => {setForm({...form,service_segment:"tecnologia"});setStep(0);}}><Laptop className="h-4 w-4"/>Tecnologia / Manutenção</Button>
+        <div
+          className="flex flex-wrap gap-2 border-b pb-3"
+          role="group"
+          aria-label="Segmento da ordem"
+        >
+          <Button
+            variant={!isTech ? "default" : "outline"}
+            aria-pressed={!isTech}
+            onClick={() => {
+              setForm({ ...form, service_segment: "grafica" });
+              setStep(0);
+            }}
+          >
+            <Palette className="h-4 w-4" />
+            Gráfica / Design
+          </Button>
+          <Button
+            variant={isTech ? "default" : "outline"}
+            aria-pressed={isTech}
+            onClick={() => {
+              setForm({ ...form, service_segment: "tecnologia" });
+              setStep(0);
+            }}
+          >
+            <Laptop className="h-4 w-4" />
+            Tecnologia / Manutenção
+          </Button>
         </div>
-        {isTech && <nav aria-label="Etapas da ordem" className="grid grid-cols-2 gap-1 sm:grid-cols-4">{steps.map((label,index)=><Button key={label} size="sm" variant={step===index?"default":"ghost"} onClick={()=>setStep(index)} aria-current={step===index?"step":undefined}>{index+1}. {label}</Button>)}</nav>}
+        {isTech && (
+          <nav aria-label="Etapas da ordem" className="grid grid-cols-2 gap-1 sm:grid-cols-4">
+            {steps.map((label, index) => (
+              <Button
+                key={label}
+                size="sm"
+                variant={step === index ? "default" : "ghost"}
+                onClick={() => setStep(index)}
+                aria-current={step === index ? "step" : undefined}
+              >
+                {index + 1}. {label}
+              </Button>
+            ))}
+          </nav>
+        )}
         <div className="space-y-4">
           <div className={isTech && step !== 0 ? "hidden" : "grid md:grid-cols-3 gap-3"}>
             <div className="md:col-span-2">
               <Label>Cliente *</Label>
               <Select
                 value={form.client_id}
-                onValueChange={(v) => setForm({ ...form, client_id: v })}
+                onValueChange={(v) =>
+                  setForm({
+                    ...form,
+                    client_id: v,
+                    service_contract_id: contracts.some(
+                      (contract) =>
+                        contract.id === form.service_contract_id && contract.client_id === v,
+                    )
+                      ? form.service_contract_id
+                      : "",
+                  })
+                }
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Selecione" />
@@ -341,6 +483,42 @@ export function OrderEditor({
               />
               <p className="mt-1 text-xs text-muted-foreground">
                 Você pode definir o prazo para hoje ou para uma data futura.
+              </p>
+            </div>
+          </div>
+          <div className={isTech && step !== 0 ? "hidden" : "grid gap-3 sm:grid-cols-2"}>
+            <div>
+              <Label>Contrato aprovado (opcional)</Label>
+              <Select
+                value={form.service_contract_id || "nenhum"}
+                onValueChange={(value) =>
+                  setForm({ ...form, service_contract_id: value === "nenhum" ? "" : value })
+                }
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Sem contrato vinculado" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="nenhum">Sem contrato</SelectItem>
+                  {contracts
+                    .filter((contract) => contract.client_id === form.client_id)
+                    .map((contract) => (
+                      <SelectItem key={contract.id} value={contract.id}>
+                        #{contract.number} · {contract.title}
+                      </SelectItem>
+                    ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label>Data em que o serviço foi realizado</Label>
+              <Input
+                type="date"
+                value={form.performed_on ?? ""}
+                onChange={(event) => setForm({ ...form, performed_on: event.target.value })}
+              />
+              <p className="mt-1 text-xs text-muted-foreground">
+                Permite registrar trabalhos feitos anteriormente.
               </p>
             </div>
           </div>
@@ -383,223 +561,241 @@ export function OrderEditor({
             />
           </div>
 
-          {isTech && step > 0 && <TechnicalIntake value={technical} onChange={setTechnical} step={step} team={team}/>}
+          {isTech && step > 0 && (
+            <TechnicalIntake value={technical} onChange={setTechnical} step={step} team={team} />
+          )}
           <div className={isTech && step !== 3 ? "hidden" : "space-y-4"}>
-          <div>
-            <div className="flex items-center justify-between mb-2">
-              <Label>Itens</Label>
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={() =>
-                  setItems([...items, { description: "", quantity: 1, unit_price: 0, subtotal: 0 }])
-                }
-              >
-                <Plus className="w-3 h-3 mr-1" />
-                Adicionar
-              </Button>
-            </div>
-            <div className="space-y-2">
-              {items.map((it, idx) => (
-                <div
-                  key={idx}
-                  className="grid grid-cols-12 gap-2 items-end bg-muted/30 p-2 rounded"
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <Label>Itens</Label>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() =>
+                    setItems([
+                      ...items,
+                      { description: "", quantity: 1, unit_price: 0, subtotal: 0 },
+                    ])
+                  }
                 >
-                  <div className="col-span-12 md:col-span-5">
-                    <Select
-                      value={it.service_id ?? ""}
-                      onValueChange={(v) => {
-                        const s = services.find((x) => x.id === v);
-                        updateItem(idx, {
-                          service_id: v,
-                          description: s?.name ?? it.description,
-                          unit_price: s?.base_price ?? it.unit_price,
-                        });
-                      }}
-                    >
-                      <SelectTrigger className="h-8">
-                        <SelectValue placeholder="Serviço (opcional)" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {services.map((s) => (
-                          <SelectItem key={s.id} value={s.id}>
-                            {s.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <Input
-                      className="mt-1"
-                      placeholder="Descrição"
-                      value={it.description}
-                      onChange={(e) => updateItem(idx, { description: e.target.value })}
-                    />
+                  <Plus className="w-3 h-3 mr-1" />
+                  Adicionar
+                </Button>
+              </div>
+              <div className="space-y-2">
+                {items.map((it, idx) => (
+                  <div
+                    key={idx}
+                    className="grid grid-cols-12 gap-2 items-end bg-muted/30 p-2 rounded"
+                  >
+                    <div className="col-span-12 md:col-span-5">
+                      <Select
+                        value={it.service_id ?? ""}
+                        onValueChange={(v) => {
+                          const s = services.find((x) => x.id === v);
+                          updateItem(idx, {
+                            service_id: v,
+                            description: s?.name ?? it.description,
+                            unit_price: s?.base_price ?? it.unit_price,
+                          });
+                        }}
+                      >
+                        <SelectTrigger className="h-8">
+                          <SelectValue placeholder="Serviço (opcional)" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {services.map((s) => (
+                            <SelectItem key={s.id} value={s.id}>
+                              {s.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <Input
+                        className="mt-1"
+                        placeholder="Descrição"
+                        value={it.description}
+                        onChange={(e) => updateItem(idx, { description: e.target.value })}
+                      />
+                    </div>
+                    <div className="col-span-3 md:col-span-2">
+                      <Input
+                        type="number"
+                        step="0.01"
+                        placeholder="Qtd"
+                        value={it.quantity}
+                        onChange={(e) => updateItem(idx, { quantity: Number(e.target.value) })}
+                      />
+                    </div>
+                    <div className="col-span-4 md:col-span-2">
+                      <Input
+                        type="number"
+                        step="0.01"
+                        placeholder="Unit."
+                        value={it.unit_price}
+                        onChange={(e) => updateItem(idx, { unit_price: Number(e.target.value) })}
+                      />
+                    </div>
+                    <div className="col-span-4 md:col-span-2 text-right font-mono text-sm">
+                      {brl(it.subtotal)}
+                    </div>
+                    <div className="col-span-1">
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        aria-label="Remover item"
+                        onClick={() => setItems(items.filter((_, i) => i !== idx))}
+                      >
+                        <Trash2 className="w-4 h-4 text-destructive" />
+                      </Button>
+                    </div>
                   </div>
-                  <div className="col-span-3 md:col-span-2">
-                    <Input
-                      type="number"
-                      step="0.01"
-                      placeholder="Qtd"
-                      value={it.quantity}
-                      onChange={(e) => updateItem(idx, { quantity: Number(e.target.value) })}
-                    />
-                  </div>
-                  <div className="col-span-4 md:col-span-2">
-                    <Input
-                      type="number"
-                      step="0.01"
-                      placeholder="Unit."
-                      value={it.unit_price}
-                      onChange={(e) => updateItem(idx, { unit_price: Number(e.target.value) })}
-                    />
-                  </div>
-                  <div className="col-span-4 md:col-span-2 text-right font-mono text-sm">
-                    {brl(it.subtotal)}
-                  </div>
-                  <div className="col-span-1">
-                    <Button
-                      size="icon"
-                      variant="ghost"
-                      aria-label="Remover item"
-                      onClick={() => setItems(items.filter((_, i) => i !== idx))}
-                    >
-                      <Trash2 className="w-4 h-4 text-destructive" />
-                    </Button>
-                  </div>
-                </div>
-              ))}
-              {!items.length && (
-                <div className="text-sm text-muted-foreground italic">Sem itens.</div>
-              )}
+                ))}
+                {!items.length && (
+                  <div className="text-sm text-muted-foreground italic">Sem itens.</div>
+                )}
+              </div>
             </div>
-          </div>
 
-          <div className="grid md:grid-cols-4 gap-3 items-end">
-            <div className="md:col-span-2 text-right">
-              <div className="text-sm text-muted-foreground">Total</div>
-              <div className="text-2xl font-bold text-primary">{brl(total)}</div>
+            <div className="grid md:grid-cols-4 gap-3 items-end">
+              <div className="md:col-span-2 text-right">
+                <div className="text-sm text-muted-foreground">Total</div>
+                <div className="text-2xl font-bold text-primary">{brl(total)}</div>
+              </div>
+              <div>
+                <Label>Entrada / Pago</Label>
+                <Input
+                  type="number"
+                  step="0.01"
+                  value={form.paid}
+                  onChange={(e) => setForm({ ...form, paid: Number(e.target.value) })}
+                />
+              </div>
+              <div>
+                <Label>Forma de pagto</Label>
+                <Select
+                  value={form.payment_method ?? ""}
+                  onValueChange={(v) => setForm({ ...form, payment_method: v })}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="—" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {PAYMENT_METHODS.map((p) => (
+                      <SelectItem key={p} value={p}>
+                        {p}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
-            <div>
-              <Label>Entrada / Pago</Label>
-              <Input
-                type="number"
-                step="0.01"
-                value={form.paid}
-                onChange={(e) => setForm({ ...form, paid: Number(e.target.value) })}
-              />
+            <div className="grid md:grid-cols-3 gap-3 items-end">
+              <div>
+                <Label>Status produção</Label>
+                <Select
+                  value={form.production_status}
+                  onValueChange={(v) => setForm({ ...form, production_status: v })}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {PROD_STATUSES.map((s) => (
+                      <SelectItem key={s} value={s}>
+                        {PRODUCTION_STATUS_LABEL[s]}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="flex items-center gap-2">
+                <Switch
+                  checked={!!form.urgent}
+                  onCheckedChange={(v) => setForm({ ...form, urgent: v })}
+                />
+                <Label>Marcar como urgente</Label>
+              </div>
             </div>
-            <div>
-              <Label>Forma de pagto</Label>
-              <Select
-                value={form.payment_method ?? ""}
-                onValueChange={(v) => setForm({ ...form, payment_method: v })}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="—" />
-                </SelectTrigger>
-                <SelectContent>
-                  {PAYMENT_METHODS.map((p) => (
-                    <SelectItem key={p} value={p}>
-                      {p}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+            <div className="grid md:grid-cols-3 gap-3">
+              <div>
+                <Label>{isTech ? "Técnico responsável" : "Responsável pela produção"}</Label>
+                <Select
+                  value={form.assigned_to || "unassigned"}
+                  onValueChange={(v) =>
+                    setForm({ ...form, assigned_to: v === "unassigned" ? "" : v })
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Sem responsável" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="unassigned">Sem responsável</SelectItem>
+                    {team.map((person) => (
+                      <SelectItem key={person.id} value={person.id}>
+                        {person.name || person.email}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Label>Atividade atual</Label>
+                <Input
+                  value={form.current_activity ?? ""}
+                  onChange={(e) => setForm({ ...form, current_activity: e.target.value })}
+                  placeholder="Ex.: Criando arte do Instagram"
+                />
+              </div>
+              <div>
+                <Label>Progresso inicial (%)</Label>
+                <Input
+                  type="number"
+                  min={0}
+                  max={100}
+                  value={form.progress ?? 0}
+                  onChange={(e) =>
+                    setForm({
+                      ...form,
+                      progress: Math.min(100, Math.max(0, Number(e.target.value))),
+                    })
+                  }
+                />
+              </div>
             </div>
-          </div>
-          <div className="grid md:grid-cols-3 gap-3 items-end">
-            <div>
-              <Label>Status produção</Label>
-              <Select
-                value={form.production_status}
-                onValueChange={(v) => setForm({ ...form, production_status: v })}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {PROD_STATUSES.map((s) => (
-                    <SelectItem key={s} value={s}>
-                      {PRODUCTION_STATUS_LABEL[s]}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+            <div className="grid md:grid-cols-2 gap-3">
+              <div>
+                <Label>Observações do cliente</Label>
+                <Textarea
+                  rows={2}
+                  value={form.client_notes ?? ""}
+                  onChange={(e) => setForm({ ...form, client_notes: e.target.value })}
+                />
+              </div>
+              <div>
+                <Label>Observações internas</Label>
+                <Textarea
+                  rows={2}
+                  value={form.internal_notes ?? ""}
+                  onChange={(e) => setForm({ ...form, internal_notes: e.target.value })}
+                />
+              </div>
             </div>
-            <div className="flex items-center gap-2">
-              <Switch
-                checked={!!form.urgent}
-                onCheckedChange={(v) => setForm({ ...form, urgent: v })}
-              />
-              <Label>Marcar como urgente</Label>
-            </div>
-          </div>
-          <div className="grid md:grid-cols-3 gap-3">
-            <div>
-              <Label>{isTech ? "Técnico responsável" : "Responsável pela produção"}</Label>
-              <Select
-                value={form.assigned_to || "unassigned"}
-                onValueChange={(v) =>
-                  setForm({ ...form, assigned_to: v === "unassigned" ? "" : v })
-                }
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Sem responsável" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="unassigned">Sem responsável</SelectItem>
-                  {team.map((person) => (
-                    <SelectItem key={person.id} value={person.id}>
-                      {person.name || person.email}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div>
-              <Label>Atividade atual</Label>
-              <Input
-                value={form.current_activity ?? ""}
-                onChange={(e) => setForm({ ...form, current_activity: e.target.value })}
-                placeholder="Ex.: Criando arte do Instagram"
-              />
-            </div>
-            <div>
-              <Label>Progresso inicial (%)</Label>
-              <Input
-                type="number"
-                min={0}
-                max={100}
-                value={form.progress ?? 0}
-                onChange={(e) =>
-                  setForm({ ...form, progress: Math.min(100, Math.max(0, Number(e.target.value))) })
-                }
-              />
-            </div>
-          </div>
-          <div className="grid md:grid-cols-2 gap-3">
-            <div>
-              <Label>Observações do cliente</Label>
-              <Textarea
-                rows={2}
-                value={form.client_notes ?? ""}
-                onChange={(e) => setForm({ ...form, client_notes: e.target.value })}
-              />
-            </div>
-            <div>
-              <Label>Observações internas</Label>
-              <Textarea
-                rows={2}
-                value={form.internal_notes ?? ""}
-                onChange={(e) => setForm({ ...form, internal_notes: e.target.value })}
-              />
-            </div>
-          </div>
           </div>
         </div>
         <DialogFooter className="sticky bottom-0 gap-2 border-t bg-background py-3">
-          {isTech && step > 0 && <Button variant="outline" onClick={()=>setStep(step-1)}><ChevronLeft className="h-4 w-4"/>Voltar</Button>}
-          {isTech && step < 3 && <Button onClick={nextStep}>Próximo<ChevronRight className="h-4 w-4"/></Button>}
+          {isTech && step > 0 && (
+            <Button variant="outline" onClick={() => setStep(step - 1)}>
+              <ChevronLeft className="h-4 w-4" />
+              Voltar
+            </Button>
+          )}
+          {isTech && step < 3 && (
+            <Button onClick={nextStep}>
+              Próximo
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+          )}
           {orderId && (
             <Button variant="outline" onClick={printPDF}>
               <FileText className="w-4 h-4 mr-1" />

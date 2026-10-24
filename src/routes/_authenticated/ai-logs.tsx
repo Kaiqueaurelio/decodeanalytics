@@ -15,6 +15,7 @@ import {
 import { Activity, AlertTriangle, CheckCircle2, RefreshCw, Copy } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { EllaAvatar } from "@/components/EllaAvatar";
 
 export const Route = createFileRoute("/_authenticated/ai-logs")({
   component: AiLogsPage,
@@ -100,12 +101,16 @@ function AiLogsPage() {
     <div className="mx-auto max-w-7xl px-4 py-6 space-y-6">
       <header className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-black tracking-tight flex items-center gap-2">
-            <Activity className="h-6 w-6 text-primary" />
-            Logs do Assistente
+          <h1 className="text-2xl font-black tracking-tight flex items-center gap-3">
+            <EllaAvatar
+              size={40}
+              alt="Ella Ribeiro, assistente virtual de inteligência artificial"
+              ringClassName="ring-2 ring-primary/30"
+            />
+            IA da Ella Ribeiro
           </h1>
           <p className="text-sm text-muted-foreground">
-            Monitoramento de chamadas e falhas do Lovable AI Gateway.
+            Monitoramento de chamadas e falhas do atendimento público e do painel interno.
           </p>
         </div>
         <div className="flex items-center gap-2">
