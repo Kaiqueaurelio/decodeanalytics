@@ -212,7 +212,7 @@ export function DecodeLanding() {
               Conheça o Decode Launcher e a Suíte de Aplicativos
             </h2>
             <p className="mt-2 text-sm leading-relaxed text-slate-300">
-              Instale PhotoCraft, FilmCraft, VectorCraft, WordCraft e outros 9 aplicativos criativos de código aberto em um só lugar. Construído 100% em Rust para máxima velocidade e sem anúncios.
+              Instale PhotoDecode, FilmDecode, VectorDecode, WordDecode e outros 9 aplicativos criativos de código aberto em um só lugar. Construído 100% em Rust para máxima velocidade e sem anúncios.
             </p>
           </div>
           <div className="flex flex-shrink-0 flex-wrap items-center gap-4">
