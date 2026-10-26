@@ -42,7 +42,7 @@ export interface LauncherApp {
 export const APPS_DATA: LauncherApp[] = [
   {
     id: "photocraft",
-    name: "PhotoDecode",
+    name: "DecodePhoto",
     category: "Visual",
     tagline: "Edição de fotos profissional",
     description:
@@ -53,7 +53,7 @@ export const APPS_DATA: LauncherApp[] = [
   },
   {
     id: "vectorcraft",
-    name: "VectorDecode",
+    name: "DecodeVector",
     category: "Visual",
     tagline: "Ilustração vetorial precisa",
     description:
@@ -64,7 +64,7 @@ export const APPS_DATA: LauncherApp[] = [
   },
   {
     id: "filmcraft",
-    name: "FilmDecode",
+    name: "DecodeFilm",
     category: "Vídeo",
     tagline: "Edição de vídeo, cor e som",
     description:
@@ -75,7 +75,7 @@ export const APPS_DATA: LauncherApp[] = [
   },
   {
     id: "lightcraft",
-    name: "LightDecode",
+    name: "DecodeLight",
     category: "Visual",
     tagline: "Catálogo fotográfico e revelação RAW",
     description:
@@ -86,7 +86,7 @@ export const APPS_DATA: LauncherApp[] = [
   },
   {
     id: "pdfcraft",
-    name: "PdfDecode",
+    name: "DecodePdf",
     category: "Editorial",
     tagline: "Leitura, organização e proteção de PDFs",
     description:
@@ -97,7 +97,7 @@ export const APPS_DATA: LauncherApp[] = [
   },
   {
     id: "effectcraft",
-    name: "EffectDecode",
+    name: "DecodeEffect",
     category: "Vídeo",
     tagline: "Motion graphics e efeitos visuais",
     description:
@@ -108,7 +108,7 @@ export const APPS_DATA: LauncherApp[] = [
   },
   {
     id: "designcraft",
-    name: "DesignDecode",
+    name: "DecodeDesign",
     category: "Editorial",
     tagline: "Diagramação e publicação gráfica",
     description:
@@ -119,7 +119,7 @@ export const APPS_DATA: LauncherApp[] = [
   },
   {
     id: "figcraft",
-    name: "FigDecode",
+    name: "DecodeFig",
     category: "Visual",
     tagline: "Design de interfaces e componentes",
     description:
@@ -130,7 +130,7 @@ export const APPS_DATA: LauncherApp[] = [
   },
   {
     id: "wordcraft",
-    name: "WordDecode",
+    name: "DecodeWord",
     category: "Produtividade",
     tagline: "Processador de texto focado na escrita",
     description:
@@ -141,7 +141,7 @@ export const APPS_DATA: LauncherApp[] = [
   },
   {
     id: "deckcraft",
-    name: "DeckDecode",
+    name: "DecodeDeck",
     category: "Produtividade",
     tagline: "Slides modernos e apresentações dinâmicas",
     description:
@@ -152,7 +152,7 @@ export const APPS_DATA: LauncherApp[] = [
   },
   {
     id: "gridcraft",
-    name: "GridDecode",
+    name: "DecodeGrid",
     category: "Produtividade",
     tagline: "Planilhas velozes e análise de dados",
     description:
@@ -163,18 +163,18 @@ export const APPS_DATA: LauncherApp[] = [
   },
   {
     id: "cadcraft",
-    name: "CADDecode",
+    name: "DecodeCAD",
     category: "Engenharia & Áudio",
     tagline: "Modelagem paramétrica e projetos técnicos",
     description:
       "Desenho assistido por computador 2D/3D com restrições geométricas, precisão milimétrica para projetos mecânicos e manufatura.",
     color: "#64748B",
     icon: "/apps/cadcraft.png",
-    githubRepo: "storytold/cadcraft",
+    githubRepo: "Kaiqueaurelio/decodecad",
   },
   {
     id: "soundcraft",
-    name: "SoundDecode",
+    name: "DecodeSound",
     category: "Engenharia & Áudio",
     tagline: "Gravação e edição de áudio multifaixa",
     description:
