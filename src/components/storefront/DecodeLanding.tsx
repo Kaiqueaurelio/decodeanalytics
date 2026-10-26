@@ -200,6 +200,32 @@ export function DecodeLanding() {
         </div>
       </section>
 
+      {/* BANNER DECODE LAUNCHER & APPS */}
+      <section aria-label="Decode Launcher & Open Source Hub" className="border-t border-white/10 bg-gradient-to-r from-[#0A1333] via-[#0E1A45] to-[#120F38] px-4 py-12 sm:px-8 lg:px-16">
+        <div className="mx-auto flex max-w-[1280px] flex-col items-center justify-between gap-8 rounded-3xl border border-white/15 bg-white/[0.03] p-8 md:flex-row md:p-10 shadow-2xl shadow-blue-950/40">
+          <div className="max-w-2xl">
+            <div className="inline-flex items-center gap-2 rounded-full border border-[#22D3EE]/30 bg-[#22D3EE]/10 px-3 py-1 text-xs font-bold text-[#22D3EE]">
+              <Sparkles className="h-3.5 w-3.5" />
+              NOVO · OPEN SOURCE HUB
+            </div>
+            <h2 className="mt-3 text-2xl font-black text-white sm:text-3xl">
+              Conheça o Decode Launcher e a Suíte de Aplicativos
+            </h2>
+            <p className="mt-2 text-sm leading-relaxed text-slate-300">
+              Instale PhotoCraft, FilmCraft, VectorCraft, WordCraft e outros 9 aplicativos criativos de código aberto em um só lugar. Construído 100% em Rust para máxima velocidade e sem anúncios.
+            </p>
+          </div>
+          <div className="flex flex-shrink-0 flex-wrap items-center gap-4">
+            <a
+              href="/apps"
+              className="inline-flex min-h-12 items-center gap-2 rounded-xl bg-gradient-to-r from-[#087CF0] to-[#22D3EE] px-6 text-sm font-extrabold text-white shadow-lg transition hover:brightness-110"
+            >
+              Conhecer a Suíte <ArrowRight className="h-4 w-4" />
+            </a>
+          </div>
+        </div>
+      </section>
+
       <InfiniteProducts />
 
       <section id="sobre" aria-labelledby="sobre-title" className="scroll-mt-20 border-y border-white/[0.06] bg-[#0A0E1A] px-4 py-20 sm:px-8 lg:px-16 lg:py-28">

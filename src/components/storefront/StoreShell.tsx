@@ -13,6 +13,7 @@ import {
   Instagram,
   X,
   CheckCircle,
+  Layers,
 } from "lucide-react";
 import { STORE_CATEGORIES } from "./tokens";
 
@@ -153,6 +154,13 @@ function StoreHeader() {
         </form>
 
         <nav className="hidden items-center gap-1 md:flex">
+          <Link
+            to="/apps"
+            className="flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-semibold text-[#22D3EE] hover:bg-[#22D3EE]/10 transition"
+          >
+            <Layers className="h-4 w-4 text-[#22D3EE]" />
+            Apps & Launcher
+          </Link>
           <a
             href={waLink("Olá! Vim do site da Decode Analytics.")}
             target="_blank"
@@ -227,6 +235,7 @@ function StoreHeader() {
                   </h3>
                   <div className="space-y-2">
                     <Link to="/produtos" onClick={() => setMobileMenuOpen(false)} className="block rounded-lg bg-[var(--store-primary)] px-3 py-2 text-sm font-bold text-white transition hover:bg-[var(--store-primary-light)]">Ver catálogo completo</Link>
+                    <Link to="/apps" onClick={() => setMobileMenuOpen(false)} className="block rounded-lg border border-[#22D3EE]/30 bg-[#22D3EE]/10 px-3 py-2 text-sm font-bold text-[#22D3EE] transition hover:bg-[#22D3EE]/20">Decode Launcher & Apps</Link>
                     <Link to="/orcamento" onClick={() => setMobileMenuOpen(false)} className="block rounded-lg border border-[#22D3EE]/30 px-3 py-2 text-sm font-bold text-[#22D3EE] transition hover:bg-white/10">Solicitar orçamento</Link>
                     {menuCategories.map((c) => (
                       <Link

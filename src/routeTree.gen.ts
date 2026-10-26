@@ -16,6 +16,8 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as CarrinhoRouteImport } from './routes/carrinho'
 import { Route as OrcamentoRouteImport } from './routes/orcamento'
 import { Route as ProdutosRouteImport } from './routes/produtos'
+import { Route as AppsRouteImport } from './routes/apps'
+import { Route as LauncherRouteImport } from './routes/launcher'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as AuthenticatedAiLogsRouteImport } from './routes/_authenticated/ai-logs'
 import { Route as AuthenticatedBrandRouteImport } from './routes/_authenticated/brand'
@@ -77,6 +79,16 @@ const OrcamentoRoute = OrcamentoRouteImport.update({
 const ProdutosRoute = ProdutosRouteImport.update({
   id: '/produtos',
   path: '/produtos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AppsRoute = AppsRouteImport.update({
+  id: '/apps',
+  path: '/apps',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LauncherRoute = LauncherRouteImport.update({
+  id: '/launcher',
+  path: '/launcher',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
@@ -232,6 +244,8 @@ export interface FileRoutesByFullPath {
   '/carrinho': typeof CarrinhoRoute
   '/orcamento': typeof OrcamentoRoute
   '/produtos': typeof ProdutosRoute
+  '/apps': typeof AppsRoute
+  '/launcher': typeof LauncherRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/ai-logs': typeof AuthenticatedAiLogsRoute
   '/brand': typeof AuthenticatedBrandRoute
@@ -268,6 +282,8 @@ export interface FileRoutesByTo {
   '/carrinho': typeof CarrinhoRoute
   '/orcamento': typeof OrcamentoRoute
   '/produtos': typeof ProdutosRoute
+  '/apps': typeof AppsRoute
+  '/launcher': typeof LauncherRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/ai-logs': typeof AuthenticatedAiLogsRoute
   '/brand': typeof AuthenticatedBrandRoute
@@ -306,6 +322,8 @@ export interface FileRoutesById {
   '/carrinho': typeof CarrinhoRoute
   '/orcamento': typeof OrcamentoRoute
   '/produtos': typeof ProdutosRoute
+  '/apps': typeof AppsRoute
+  '/launcher': typeof LauncherRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/_authenticated/ai-logs': typeof AuthenticatedAiLogsRoute
   '/_authenticated/brand': typeof AuthenticatedBrandRoute
@@ -455,6 +473,8 @@ export interface RootRouteChildren {
   CarrinhoRoute: typeof CarrinhoRoute
   OrcamentoRoute: typeof OrcamentoRoute
   ProdutosRoute: typeof ProdutosRoute
+  AppsRoute: typeof AppsRoute
+  LauncherRoute: typeof LauncherRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   BriefingTokenRoute: typeof BriefingTokenRoute
   ContractTokenRoute: typeof ContractTokenRoute
@@ -504,6 +524,20 @@ declare module '@tanstack/react-router' {
       path: '/orcamento'
       fullPath: '/orcamento'
       preLoaderRoute: typeof OrcamentoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/apps': {
+      id: '/apps'
+      path: '/apps'
+      fullPath: '/apps'
+      preLoaderRoute: typeof AppsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/launcher': {
+      id: '/launcher'
+      path: '/launcher'
+      fullPath: '/launcher'
+      preLoaderRoute: typeof LauncherRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/produtos': {
@@ -775,6 +809,8 @@ const rootRouteChildren: RootRouteChildren = {
   CarrinhoRoute: CarrinhoRoute,
   OrcamentoRoute: OrcamentoRoute,
   ProdutosRoute: ProdutosRoute,
+  AppsRoute: AppsRoute,
+  LauncherRoute: LauncherRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   BriefingTokenRoute: BriefingTokenRoute,
   ContractTokenRoute: ContractTokenRoute,
