@@ -70,13 +70,13 @@ function Dashboard() {
         supabase.from("cash_entries").select("type,amount,entry_date"),
         supabase
           .from("orders")
-          .select("*, clients(name), assignee:profiles!orders_assigned_to_fkey(id,name,email)")
+          .select("*, clients(name), assignee:profiles!orders_assigned_to_fkey(id,name:full_name,email)")
           .order("updated_at", { ascending: false }),
         supabase.from("receivables").select("amount,status,due_date"),
         supabase
           .from("production_updates" as any)
           .select(
-            "*, orders(number,title), author:profiles!production_updates_author_id_fkey(name,email)",
+            "*, orders(number,title), author:profiles!production_updates_author_id_fkey(name:full_name,email)",
           )
           .order("created_at", { ascending: false })
           .limit(8),

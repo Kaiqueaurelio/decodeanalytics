@@ -40,24 +40,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const requestId = ++roleRequest;
       setLoading(true);
       try {
-        // The connected production schema stores the account role in profiles.role.
-        const { data, error } = await supabase
-          .from("profiles")
-          .select("role,is_active")
-          .eq("id", userId)
-          .maybeSingle();
-        if (!active || requestId !== roleRequest) return;
-        if (!error && data && data.is_active !== false && data.role) {
-          setRoles([data.role as AppRole]);
-          return;
-        }
-
-        // Compatibility fallback for deployments whose role data is in user_roles.
-        // The database still decides access; no role is inferred from the email.
-        if (error) {
-          console.error("[Auth] Falha ao consultar profiles.role; tentando user_roles.", error);
-        }
-        const { data: roleRows, error: roleError } = await (supabase as any)
+        const { data: roleRows, error: roleError } = await supabase
           .from("user_roles")
           .select("role")
           .eq("user_id", userId);

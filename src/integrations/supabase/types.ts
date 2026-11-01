@@ -777,40 +777,25 @@ export type Database = {
       }
       profiles: {
         Row: {
-          avatar: string | null
-          created_at: string | null
+          created_at: string
           email: string | null
+          full_name: string | null
           id: string
-          is_2fa_enabled: boolean | null
-          is_active: boolean | null
-          last_login: string | null
-          name: string | null
-          role: string | null
-          two_factor_secret: string | null
+          updated_at: string
         }
         Insert: {
-          avatar?: string | null
-          created_at?: string | null
+          created_at?: string
           email?: string | null
+          full_name?: string | null
           id: string
-          is_2fa_enabled?: boolean | null
-          is_active?: boolean | null
-          last_login?: string | null
-          name?: string | null
-          role?: string | null
-          two_factor_secret?: string | null
+          updated_at?: string
         }
         Update: {
-          avatar?: string | null
-          created_at?: string | null
+          created_at?: string
           email?: string | null
+          full_name?: string | null
           id?: string
-          is_2fa_enabled?: boolean | null
-          is_active?: boolean | null
-          last_login?: string | null
-          name?: string | null
-          role?: string | null
-          two_factor_secret?: string | null
+          updated_at?: string
         }
         Relationships: []
       }
@@ -1089,29 +1074,47 @@ export type Database = {
         }
         Relationships: []
       }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      admin_update_profile_access: {
-        Args: { _is_active: boolean; _role: string; _user_id: string }
-        Returns: undefined
-      }
-      current_user_can_view_all_profiles: {
-        Args: Record<PropertyKey, never>
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
         Returns: boolean
       }
-      current_user_is_admin: {
-        Args: Record<PropertyKey, never>
-        Returns: boolean
-      }
+      is_admin: { Args: { _user_id: string }; Returns: boolean }
       replace_order_items: {
         Args: { _items: Json; _order_id: string }
         Returns: undefined
       }
     }
     Enums: {
+      app_role: "administrador" | "atendente" | "producao" | "financeiro"
       art_proof_status: "pendente" | "aprovado" | "reprovado"
       cash_type: "entrada" | "saida"
       ella_scope: "admin" | "public" | "both"

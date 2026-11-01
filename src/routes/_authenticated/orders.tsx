@@ -82,7 +82,7 @@ function OrdersPage() {
       let q = supabase
         .from("orders" as any)
         .select(
-          "*, clients(name), assignee:profiles!orders_assigned_to_fkey(name,email), service_contracts(number,title)",
+          "*, clients(name), assignee:profiles!orders_assigned_to_fkey(name:full_name,email), service_contracts(number,title)",
         )
         .order("created_at", { ascending: false })
         .limit(200) as any;
@@ -100,7 +100,7 @@ function OrdersPage() {
   const { data: team } = useQuery({
     queryKey: ["profiles-team"],
     queryFn: async () => {
-      const { data, error } = await supabase.from("profiles").select("id,name,email").order("name");
+      const { data, error } = await supabase.from("profiles").select("id,name:full_name,email").order("full_name");
       if (error) throw error;
       return data ?? [];
     },

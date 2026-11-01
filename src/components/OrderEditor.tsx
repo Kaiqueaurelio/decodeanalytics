@@ -117,8 +117,8 @@ export function OrderEditor({
       .then(({ data }) => setServices(data ?? []));
     supabase
       .from("profiles")
-      .select("id,name,email")
-      .order("name")
+      .select("id,name:full_name,email")
+      .order("full_name")
       .then(({ data }) => setTeam(data ?? []));
     (
       supabase

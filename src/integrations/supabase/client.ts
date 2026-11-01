@@ -5,8 +5,8 @@ import { brokeredPreviewStorage } from './previewAuthStorage';
 
 // Public project URL and anon/publishable key are safe for browser use.
 // Environment variables override these defaults in each deployment.
-const DEFAULT_SUPABASE_URL = 'https://eicaveaosfqkssmrwujw.supabase.co';
-const DEFAULT_SUPABASE_PUBLISHABLE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVpY2F2ZWFvc2Zxa3NzbXJ3dWp3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQyNDU3NjgsImV4cCI6MjA3OTgyMTc2OH0.OwwIRIcDPU9F_7uuDniWYO1x6jEZLpPv6Gov6M4aR6A';
+const DEFAULT_SUPABASE_URL = 'https://jyrrxnyrpaqfpnifbbbb.supabase.co';
+const DEFAULT_SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_0EdfPgDQlP0WMXjer_I-eA_ubOQYWQp';
 
 function createSupabaseClient() {
   // Use import.meta.env for client-side (Vite build-time replacement)

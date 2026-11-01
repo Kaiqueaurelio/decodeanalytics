@@ -281,14 +281,13 @@ export const ellaChat = createServerFn({ method: "POST" })
     const supabase = context.supabase;
     const userId = context.userId;
 
-    const { data: profile, error: profileError } = await supabase
-      .from("profiles")
-      .select("role,is_active")
-      .eq("id", userId)
-      .maybeSingle();
-    if (profileError) throw new Error("Não foi possível verificar suas permissões.");
-    const staffRoles = ["admin", "super_admin", "administrador", "atendente", "producao", "financeiro", "vendedor"];
-    if (!profile || profile.is_active === false || !staffRoles.includes(profile.role ?? "")) {
+    const { data: roleRows, error: roleError } = await supabase
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", userId);
+    if (roleError) throw new Error("Não foi possível verificar suas permissões.");
+    const staffRoles = ["administrador", "atendente", "producao", "financeiro"];
+    if (!(roleRows ?? []).some((r) => staffRoles.includes(r.role))) {
       throw new Error("Acesso não liberado para esta conta.");
     }
 
@@ -778,35 +777,34 @@ export const ellaChat = createServerFn({ method: "POST" })
         description: "Lista usuários do sistema com seu cargo e status de acesso.",
         inputSchema: z.object({}),
         execute: async () => {
-          const { data: profiles, error } = await supabase
-            .from("profiles")
-            .select("id,name,email,role,is_active")
-            .order("name");
+          const [{ data: profiles, error }, { data: roleRows }] = await Promise.all([
+            supabase.from("profiles").select("id,name:full_name,email").order("full_name"),
+            supabase.from("user_roles").select("user_id,role"),
+          ]);
           if (error) return { error: error.message };
           return {
             users: (profiles ?? []).map((profile) => ({
               ...profile,
-              roles: profile.role ? [profile.role] : [],
+              roles: (roleRows ?? []).filter((r) => r.user_id === profile.id).map((r) => r.role),
             })),
           };
         },
       }),
       set_user_role: tool({
         description:
-          "Define o cargo de um usuário. Cargos suportados: admin, super_admin, atendente, producao, financeiro, vendedor, viewer, user ou aguardando_aprovacao. Pode ativar/desativar a conta com active.",
+          "Define o cargo de um usuário. Cargos suportados: administrador, atendente, producao ou financeiro. active=false remove o acesso.",
         inputSchema: z.object({
           userId: z.string().uuid(),
-          role: z.enum(["admin", "super_admin", "administrador", "atendente", "producao", "financeiro", "vendedor", "viewer", "user", "aguardando_aprovacao"]),
+          role: z.enum(["administrador", "atendente", "producao", "financeiro"]),
           active: z.boolean().optional(),
         }),
         execute: async ({ userId: uid, role, active = true }) => {
-          const normalizedRole = role === "administrador" ? "admin" : role;
-          const { error } = await supabase.rpc("admin_update_profile_access", {
-            _user_id: uid,
-            _role: normalizedRole,
-            _is_active: active,
-          });
-          if (error) return { error: error.message };
+          const { error: delError } = await supabase.from("user_roles").delete().eq("user_id", uid);
+          if (delError) return { error: delError.message };
+          if (active) {
+            const { error } = await supabase.from("user_roles").insert({ user_id: uid, role });
+            if (error) return { error: error.message };
+          }
           return { success: true };
         },
       }),
@@ -1188,7 +1186,7 @@ export const ellaChat = createServerFn({ method: "POST" })
     for (const att of attachments) {
       const mt = att.mimeType.toLowerCase();
       if (mt.startsWith("audio/")) {
-        const transcript = key ? await transcribeAttachment(key, att) : "";
+        const transcript = lovableKey ? await transcribeAttachment(lovableKey, att) : "";
         userText += transcript
           ? `\n\n[Áudio "${att.name}" — transcrição]: ${transcript}`
           : `\n\n[Áudio "${att.name}" enviado mas não foi possível transcrever.]`;
