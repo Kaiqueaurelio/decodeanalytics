@@ -36,14 +36,13 @@ export const ellaSandboxChat = createServerFn({ method: "POST" })
     const supabase = context.supabase;
     const userId = context.userId;
 
-    const { data: profile, error: profileError } = await supabase
-      .from("profiles")
-      .select("role,is_active")
-      .eq("id", userId)
-      .maybeSingle();
-    if (profileError) throw new Error("Não foi possível verificar suas permissões.");
-    const staffRoles = ["admin", "super_admin", "administrador", "atendente", "producao", "financeiro", "vendedor"];
-    if (!profile || profile.is_active === false || !staffRoles.includes(profile.role ?? "")) {
+    const { data: roleRows, error: roleError } = await supabase
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", userId);
+    if (roleError) throw new Error("Não foi possível verificar suas permissões.");
+    const staffRoles = ["administrador", "atendente", "producao", "financeiro"];
+    if (!(roleRows ?? []).some((r) => staffRoles.includes(r.role))) {
       throw new Error("Acesso não liberado para esta conta.");
     }
 

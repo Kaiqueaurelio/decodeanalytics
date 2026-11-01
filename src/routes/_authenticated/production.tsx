@@ -93,12 +93,12 @@ function ProductionBoard() {
         supabase
           .from("orders")
           .select(
-            "*, clients(name,whatsapp), assignee:profiles!orders_assigned_to_fkey(id,name,email)",
+            "*, clients(name,whatsapp), assignee:profiles!orders_assigned_to_fkey(id,name:full_name,email)",
           )
           .in("production_status", statuses as any)
           .order("urgent", { ascending: false })
           .order("deadline", { ascending: true }),
-        supabase.from("profiles").select("id,name,email").order("name"),
+        supabase.from("profiles").select("id,name:full_name,email").order("full_name"),
       ]);
       if (ordersResult.error) throw ordersResult.error;
       return { orders: (ordersResult.data ?? []) as any[], team: profilesResult.data ?? [] };
@@ -111,7 +111,7 @@ function ProductionBoard() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("production_updates" as any)
-        .select("*, author:profiles!production_updates_author_id_fkey(name,email)")
+        .select("*, author:profiles!production_updates_author_id_fkey(name:full_name,email)")
         .eq("order_id", selected.id)
         .order("created_at", { ascending: false });
       if (error) throw error;
