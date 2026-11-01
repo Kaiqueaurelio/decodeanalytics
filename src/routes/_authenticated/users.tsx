@@ -13,15 +13,11 @@ export const Route = createFileRoute("/_authenticated/users")({
 });
 
 const ROLES = [
-  { value: "admin", label: "Administrador" },
-  { value: "super_admin", label: "Administrador principal" },
+  { value: "administrador", label: "Administrador" },
   { value: "atendente", label: "Atendente" },
   { value: "producao", label: "Produção" },
   { value: "financeiro", label: "Financeiro" },
-  { value: "vendedor", label: "Vendedor" },
-  { value: "viewer", label: "Somente leitura" },
-  { value: "user", label: "Usuário comum" },
-  { value: "aguardando_aprovacao", label: "Aguardando aprovação" },
+  { value: "none", label: "Sem acesso" },
 ] as const;
 type Role = (typeof ROLES)[number]["value"];
 
@@ -48,18 +44,22 @@ function UsersPage() {
     staleTime: 0,
     enabled: isAdmin,
     queryFn: async (): Promise<Row[]> => {
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("id,name,email,role,is_active")
-        .order("created_at");
+      const [{ data, error }, { data: roleRows, error: roleError }] = await Promise.all([
+        supabase.from("profiles").select("id,full_name,email").order("created_at"),
+        supabase.from("user_roles").select("user_id,role"),
+      ]);
       if (error) throw error;
-      return (data ?? []).map((profile) => ({
-        id: profile.id,
-        name: profile.name?.trim() || "—",
-        email: profile.email || "—",
-        role: (profile.role || "user") as Role,
-        isActive: profile.is_active !== false,
-      }));
+      if (roleError) throw roleError;
+      return (data ?? []).map((profile) => {
+        const role = roleRows?.find((r) => r.user_id === profile.id)?.role;
+        return {
+          id: profile.id,
+          name: profile.full_name?.trim() || "—",
+          email: profile.email || "—",
+          role: (role ?? "none") as Role,
+          isActive: Boolean(role),
+        };
+      });
     },
   });
 
@@ -69,12 +69,12 @@ function UsersPage() {
     mutationFn: async ({ row, role }: { row: Row; role: Role }) => {
       if (row.id === user?.id)
         throw new Error("Não é permitido alterar o próprio acesso por esta tela.");
-      const { error } = await supabase.rpc("admin_update_profile_access", {
-        _user_id: row.id,
-        _role: role,
-        _is_active: true,
-      });
-      if (error) throw error;
+      const { error: delError } = await supabase.from("user_roles").delete().eq("user_id", row.id);
+      if (delError) throw delError;
+      if (role !== "none") {
+        const { error } = await supabase.from("user_roles").insert({ user_id: row.id, role });
+        if (error) throw error;
+      }
     },
     onSuccess: () => {
       refresh();
@@ -86,11 +86,7 @@ function UsersPage() {
   const revoke = useMutation({
     mutationFn: async (row: Row) => {
       if (row.id === user?.id) throw new Error("Não é permitido remover o próprio acesso.");
-      const { error } = await supabase.rpc("admin_update_profile_access", {
-        _user_id: row.id,
-        _role: "user",
-        _is_active: false,
-      });
+      const { error } = await supabase.from("user_roles").delete().eq("user_id", row.id);
       if (error) throw error;
     },
     onSuccess: () => {

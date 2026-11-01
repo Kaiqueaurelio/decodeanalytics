@@ -122,38 +122,19 @@ function AuthPage() {
         return;
       }
 
-      // This production Supabase project stores the canonical account role in
-      // profiles.role; it does not have a public.user_roles table.
-      const { data: userProfile, error: userProfileError } = await supabase
-        .from("profiles")
-        .select("role,is_active")
-        .eq("id", authData.user.id)
-        .maybeSingle();
-
-      let assignedRoles = userProfile?.role ? [userProfile.role] : [];
-      let accountActive = userProfile?.is_active !== false;
-
-      // Fallback for environments where permissions are stored in user_roles.
-      // Access is still granted only by a role explicitly assigned in the database.
-      if (userProfileError || !userProfile || !userProfile.role) {
-        console.error("[Auth] Consulta de profiles.role falhou ou não retornou cargo.", userProfileError);
-        const { data: roleRows, error: roleError } = await (supabase as any)
-          .from("user_roles")
-          .select("role")
-          .eq("user_id", authData.user.id);
-        if (roleError) {
-          console.error("[Auth] Consulta de user_roles também falhou.", roleError);
-          await clearSessionSafely();
-          emitAuthTelemetry("auth_submit_error", {
-            form: "login",
-            errorMessage: roleError.message,
-          });
-          toast.error("Não foi possível verificar as permissões da conta. Tente novamente.");
-          return;
-        }
-        assignedRoles = (roleRows ?? []).map((row: { role: string }) => row.role);
-        accountActive = true;
+      const { data: roleRows, error: roleError } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", authData.user.id);
+      if (roleError) {
+        console.error("[Auth] Consulta de user_roles falhou.", roleError);
+        await clearSessionSafely();
+        emitAuthTelemetry("auth_submit_error", { form: "login", errorMessage: roleError.message });
+        toast.error("Não foi possível verificar as permissões da conta. Tente novamente.");
+        return;
       }
+      const assignedRoles = (roleRows ?? []).map((row) => row.role);
+      const accountActive = true;
 
       if (!accountActive || !hasStaffAccess(assignedRoles)) {
         await clearSessionSafely();
