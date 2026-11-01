@@ -40,7 +40,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const requestId = ++roleRequest;
       setLoading(true);
       try {
-                const { data: roleRows, error: roleError } = await supabase
+        const { data: roleRows, error: roleError } = await supabase
           .from("user_roles")
           .select("role")
           .eq("user_id", userId);
