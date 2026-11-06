@@ -407,7 +407,7 @@ function OrdersPage() {
         ))}
       </div>
       <Tabs value={lifecycleTab} onValueChange={(v) => setLifecycleTab(v as any)}>
-        <TabsList className="w-full sm:w-auto flex flex-wrap gap-1">
+        <TabsList className="h-auto w-full flex-wrap justify-start gap-1 sm:w-auto">
           <TabsTrigger value="todas" className="text-xs">
             Todas <span className="ml-1 text-muted-foreground">({counts.todas})</span>
           </TabsTrigger>
@@ -520,7 +520,7 @@ function OrdersPage() {
       )}
       <Card>
         <div className="overflow-x-auto">
-          <table className="w-full text-sm">
+          <table className="w-full min-w-[680px] text-sm">
             <thead className="bg-muted text-muted-foreground">
               <tr>
                 <th className="text-left p-3">Nº</th>

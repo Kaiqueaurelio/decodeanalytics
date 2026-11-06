@@ -182,7 +182,7 @@ function ServicesPage() {
       </div>
       <Card>
         <div className="overflow-x-auto">
-          <table className="w-full text-sm">
+          <table className="w-full min-w-[680px] text-sm">
             <thead className="bg-muted text-muted-foreground"><tr><th className="text-left p-3">Serviço</th><th className="text-left p-3">Categoria</th><th className="text-right p-3">Preço</th><th className="text-center p-3">Ativo</th><th></th></tr></thead>
             <tbody>
               {(data ?? []).map((s) => (

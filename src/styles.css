@@ -339,7 +339,7 @@
   th,
   dd,
   dt {
-    overflow-wrap: anywhere;
+    overflow-wrap: break-word;
   }
 }
 
@@ -938,7 +938,7 @@ a {
   }
 
   /* Formulários permanecem utilizáveis em telas estreitas. */
-  input,
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
   textarea,
   select {
     width: 100%;
@@ -946,7 +946,7 @@ a {
   }
 
   /* Alvos de toque confortáveis sem aumentar controles já compactos demais. */
-  button,
+  button:not([role="tab"]):not([role="checkbox"]):not([role="switch"]),
   [role="button"] {
     min-height: 44px;
   }
@@ -1006,7 +1006,7 @@ html {
 }
 
 body {
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word;
 }
 
 :where(a, button, input, textarea, select, [role="button"], [tabindex]):focus-visible {
@@ -1029,7 +1029,7 @@ body {
 
   pre,
   code {
-    overflow-wrap: anywhere;
+    overflow-wrap: break-word;
     white-space: pre-wrap;
   }
 }
