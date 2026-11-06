@@ -86,7 +86,7 @@ function Page() {
     queryFn: async () => {
       const { data, error } = await (supabase
         .from("receivables" as any)
-        .select("*, clients(name, whatsapp), orders(number), service_contracts(number,title)")
+        .select("*, clients(name, whatsapp), orders(number)")
         .order("due_date", { ascending: true }) as any);
       if (error) throw error;
       return (data ?? []) as any[];

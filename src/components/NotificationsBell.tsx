@@ -25,7 +25,7 @@ export function NotificationsBell() {
           .limit(50),
         supabase
           .from("receivables")
-          .select("id,amount,status,due_date,description")
+          .select("id,amount,status,due_date,notes")
           .neq("status", "pago")
           .order("due_date", { ascending: true })
           .limit(50),
@@ -79,7 +79,7 @@ export function NotificationsBell() {
         list.push({
           id: `rec-${r.id}`,
           title: "A receber vencido",
-          detail: `${r.description ?? "Recebível"} · R$ ${Number(r.amount ?? 0).toFixed(2)}`,
+          detail: `${r.notes ?? "Recebível"} · R$ ${Number(r.amount ?? 0).toFixed(2)}`,
           to: "/receivables",
           tone: "danger",
         });
