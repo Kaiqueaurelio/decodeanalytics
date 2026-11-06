@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
-import { EllaAvatar } from "@/components/EllaAvatar";
+import { MessageCircle } from "lucide-react";
 
 type EllaFabProps = {
   audience?: "public" | "staff";
@@ -148,7 +148,7 @@ export function EllaFab({ audience = "public" }: EllaFabProps) {
       onPointerMove={moveDrag}
       onPointerUp={finishDrag}
       onPointerCancel={finishDrag}
-      title="Arraste para mover a Ella. Clique para abrir a conversa."
+      title="Fale com a gente"
     >
       <Link
         to={destination}
@@ -157,13 +157,9 @@ export function EllaFab({ audience = "public" }: EllaFabProps) {
         className="relative block rounded-full transition-transform hover:scale-105 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#22D3EE]/40"
         draggable={false}
       >
-        <EllaAvatar
-          size={58}
-          alt={label}
-          loading="lazy"
-          ringClassName="ring-2 ring-white shadow-xl"
-          imgClassName="h-[58px] w-[58px]"
-        />
+        <span className="grid h-14 w-14 place-items-center rounded-full bg-[#087CF0] text-white shadow-lg shadow-black/30 ring-1 ring-white/20">
+          <MessageCircle className="h-6 w-6" />
+        </span>
       </Link>
       <span
         aria-hidden="true"

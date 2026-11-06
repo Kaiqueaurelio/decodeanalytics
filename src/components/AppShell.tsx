@@ -25,6 +25,7 @@ import {
   X,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
+import { MoreHorizontal } from "lucide-react";
 import { useAuth, ROLE_LABEL, type AppRole } from "@/lib/auth";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -487,7 +488,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           collapsed ? "md:pl-20" : "md:pl-64 lg:pl-[17.5rem]",
         )}
       >
-        <header className="sticky top-0 z-30 h-16 border-b border-white/10 bg-[#0B1026]/95 text-white shadow-sm shadow-black/10 backdrop-blur-xl">
+        <header className="sticky top-0 z-30 h-[calc(4rem+env(safe-area-inset-top))] pt-[env(safe-area-inset-top)] border-b border-white/10 bg-[#0B1026]/95 text-white shadow-sm shadow-black/10 backdrop-blur-xl">
           <div className="flex h-full items-center justify-between px-4 md:px-6">
             <div className="flex items-center gap-3">
               <button
@@ -538,12 +539,55 @@ export function AppShell({ children }: { children: ReactNode }) {
           </div>
         </header>
 
-        <main className="min-w-0 flex-1 p-3 sm:p-4 lg:p-5 xl:p-6">
+        <main className="min-w-0 flex-1 p-3 pb-[calc(5.5rem+env(safe-area-inset-bottom))] sm:p-4 sm:pb-[calc(5.5rem+env(safe-area-inset-bottom))] md:pb-5 lg:p-5 xl:p-6">
           <div className="mx-auto w-full min-w-0 max-w-7xl [&>*]:min-w-0">{children}</div>
         </main>
       </div>
 
-      <EllaFab audience="staff" />
+      <div className="hidden md:block">
+        <EllaFab audience="staff" />
+      </div>
+
+      <nav
+        aria-label="Navegação rápida"
+        className="fixed inset-x-0 bottom-0 z-30 border-t border-white/10 bg-[#0B1026]/95 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl md:hidden"
+      >
+        <ul className="mx-auto grid max-w-md grid-cols-5">
+          {["/dashboard", "/orders", "/production", "/pdv"]
+            .map((to) => items.find((i) => i.to === to))
+            .filter((i): i is NonNullable<typeof i> => Boolean(i))
+            .slice(0, 4)
+            .map((item) => {
+              const active = path === item.to || (item.to !== "/dashboard" && path.startsWith(item.to));
+              const Icon = item.icon;
+              return (
+                <li key={item.to}>
+                  <Link
+                    to={item.to}
+                    aria-current={active ? "page" : undefined}
+                    className={cn(
+                      "flex h-16 flex-col items-center justify-center gap-1 text-[11px] font-medium transition-colors",
+                      active ? "text-[#22D3EE]" : "text-[#94A3B8] active:text-white",
+                    )}
+                  >
+                    <Icon className="h-5 w-5" />
+                    <span className="max-w-full truncate px-1">{item.label.split(" ")[0]}</span>
+                  </Link>
+                </li>
+              );
+            })}
+          <li className="col-start-5">
+            <button
+              type="button"
+              onClick={() => setOpen(true)}
+              className="flex h-16 w-full flex-col items-center justify-center gap-1 text-[11px] font-medium text-[#94A3B8] active:text-white"
+            >
+              <MoreHorizontal className="h-5 w-5" />
+              <span>Menu</span>
+            </button>
+          </li>
+        </ul>
+      </nav>
 
       {open && (
         <button
