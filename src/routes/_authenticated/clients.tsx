@@ -9,24 +9,24 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { Plus, Pencil, Trash2, Search } from "lucide-react";
+import { Plus, Pencil, Archive, RotateCcw, Search } from "lucide-react";
 import { fmtDate } from "@/lib/format";
 
 export const Route = createFileRoute("/_authenticated/clients")({ component: ClientsPage });
 
-type ClientRow = { id: string; name: string; document: string | null; whatsapp: string | null; email: string | null; address: string | null; district: string | null; city: string | null; notes: string | null; created_at: string };
+type ClientRow = { id: string; name: string; document: string | null; whatsapp: string | null; email: string | null; address: string | null; district: string | null; city: string | null; notes: string | null; created_at: string; archived_at: string | null };
 
 function ClientsPage() {
   const qc = useQueryClient();
   const [search, setSearch] = useState("");
   const [editing, setEditing] = useState<Partial<ClientRow> | null>(null);
   const [open, setOpen] = useState(false);
-  const [saving, setSaving] = useState(false);
+  const [saving, setSaving] = useState(false);\n  const [showArchived, setShowArchived] = useState(false);
 
   const { data: clients, isLoading } = useQuery({
-    queryKey: ["clients", search],
+    queryKey: ["clients", search, showArchived],
     queryFn: async () => {
-      let q = supabase.from("clients").select("*").order("name", { ascending: true });
+      let q = supabase.from("clients").select("*").order("name", { ascending: true });\n      q = showArchived ? q.not("archived_at", "is", null) : q.is("archived_at", null);
       if (search) q = q.ilike("name", `%${search.slice(0, 120).replace(/[\\%_]/g, "\\$&")}%`);
       const { data, error } = await q;
       if (error) throw error;
@@ -68,42 +68,27 @@ function ClientsPage() {
     }
   }
 
-  async function remove(id: string, name: string) {
-    if (!confirm(`Excluir cliente "${name}"?\n\nO histórico financeiro e operacional será preservado.`)) return;
-
-    // Check all known client references before attempting deletion. Do not delete
-    // financial/order history to force a client delete.
-    const checks = await Promise.all([
-      supabase.from("receivables").select("id", { count: "exact", head: true }).eq("client_id", id),
-      supabase.from("orders").select("id", { count: "exact", head: true }).eq("client_id", id),
-      supabase.from("service_contracts").select("id", { count: "exact", head: true }).eq("client_id", id),
-      supabase.from("quotes").select("id", { count: "exact", head: true }).eq("client_id", id),
-      supabase.from("cash_entries").select("id", { count: "exact", head: true }).eq("client_id", id),
-    ]);
-    const labels = ["recebimentos", "ordens de serviço", "contratos", "orçamentos", "lançamentos de caixa"];
-    const failed = checks.findIndex((result) => result.error);
-    if (failed >= 0) {
-      console.error("Erro ao verificar vínculos do cliente:", checks[failed].error);
-      return toast.error("Não foi possível verificar todos os vínculos. Nenhum dado foi excluído; tente novamente.");
-    }
-    const linked = checks.map((result, i) => ({ label: labels[i], count: result.count ?? 0 })).filter((item) => item.count > 0);
-    if (linked.length) {
-      const summary = linked.map((item) => `${item.count} ${item.label}`).join(", ");
-      return toast.error(`Cliente possui registros vinculados: ${summary}. O histórico foi preservado. Edite o cadastro ou mantenha o cliente.`);
-    }
-
-    const { error } = await supabase.from("clients").delete().eq("id", id);
+  async function archive(id: string, name: string) {
+    if (!confirm(`Arquivar cliente "${name}"?\n\nEle sairá da lista ativa, mas ordens, recebimentos e contratos serão preservados.`)) return;
+    const { error } = await supabase.from("clients").update({ archived_at: new Date().toISOString() }).eq("id", id);
     if (error) {
-      console.error("Erro ao excluir cliente:", error);
-      const msg = error.message.toLowerCase();
-      if (msg.includes("foreign key") || msg.includes("fkey") || msg.includes("constraint")) {
-        return toast.error("Há outros registros vinculados a este cliente. O banco protegeu o histórico; nenhum dado foi excluído.");
-      }
-      return toast.error("Erro ao excluir cliente: " + error.message);
+      console.error("Erro ao arquivar cliente:", error);
+      return toast.error("Não foi possível arquivar o cliente: " + error.message);
     }
-    toast.success("Cliente excluído");
+    toast.success("Cliente arquivado; histórico preservado");
     await qc.invalidateQueries({ queryKey: ["clients"] });
   }
+
+  async function restore(id: string, name: string) {
+    const { error } = await supabase.from("clients").update({ archived_at: null }).eq("id", id);
+    if (error) {
+      console.error("Erro ao restaurar cliente:", error);
+      return toast.error("Não foi possível restaurar o cliente: " + error.message);
+    }
+    toast.success(`Cliente "${name}" restaurado`);
+    await qc.invalidateQueries({ queryKey: ["clients"] });
+  }
+
 
   return (
     <div className="min-w-0 space-y-3 sm:space-y-4">
@@ -114,7 +99,7 @@ function ClientsPage() {
         </div>
         <Dialog open={open} onOpenChange={(o) => { setOpen(o); if (!o) setEditing(null); }}>
           <DialogTrigger asChild>
-            <Button onClick={() => setEditing({})} className="bg-primary"><Plus className="w-4 h-4 mr-1" /> Novo cliente</Button>
+            <div className="flex flex-wrap gap-2"><Button variant="outline" onClick={() => setShowArchived((v) => !v)}>{showArchived ? "Ver clientes ativos" : "Ver arquivados"}</Button><Button onClick={() => setEditing({})} className="bg-primary"><Plus className="w-4 h-4 mr-1" /> Novo cliente</Button></div>
           </DialogTrigger>
           <DialogContent className="max-w-2xl">
             <DialogHeader><DialogTitle>{editing?.id ? "Editar cliente" : "Novo cliente"}</DialogTitle></DialogHeader>
@@ -154,7 +139,7 @@ function ClientsPage() {
                   <td className="p-3 hidden lg:table-cell">{fmtDate(c.created_at)}</td>
                   <td className="p-3 flex gap-1 justify-end">
                     <Button size="icon" variant="ghost" aria-label={`Editar ${c.name}`} onClick={() => { setEditing({ ...c }); setOpen(true); }}><Pencil className="w-4 h-4" /></Button>
-                    <Button size="icon" variant="ghost" aria-label={`Excluir ${c.name}`} onClick={() => remove(c.id, c.name)}><Trash2 className="w-4 h-4 text-destructive" /></Button>
+                    {showArchived ? <Button size="icon" variant="ghost" aria-label={`Restaurar ${c.name}`} onClick={() => restore(c.id, c.name)}><RotateCcw className="w-4 h-4 text-primary" /></Button> : <Button size="icon" variant="ghost" aria-label={`Arquivar ${c.name}`} onClick={() => archive(c.id, c.name)}><Archive className="w-4 h-4 text-destructive" /></Button>}
                   </td>
                 </tr>
               ))}
