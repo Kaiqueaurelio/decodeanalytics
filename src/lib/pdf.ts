@@ -116,7 +116,7 @@ export async function generateOrderPDF(opts: {
   items: Item[];
 }) {
   const doc = new jsPDF();
-  const logo = await loadLogo(opts.company.logo_url);
+  const logo = await loadLogo("/brand/decode-logo.png");
   header(doc, opts.company, `Ordem de Serviço #${opts.order.number}`, logo);
 
   doc.setFontSize(10); doc.setFont("helvetica", "normal"); doc.setTextColor(50);
@@ -180,7 +180,7 @@ export async function generateQuotePDF(opts: {
   items: Item[];
 }) {
   const doc = new jsPDF();
-  const logo = await loadLogo(opts.company.logo_url);
+  const logo = await loadLogo("/brand/decode-logo.png");
   header(doc, opts.company, `Orçamento #${opts.quote.number}`, logo);
   doc.setFontSize(10); doc.setFont("helvetica", "normal"); doc.setTextColor(50);
   doc.text(`CNPJ: ${fmtCnpj(opts.company.document || DEFAULT_COMPANY_DOCUMENT)}`, 14, 51);
