@@ -626,9 +626,11 @@ export type Database = {
           paid: number
           payment_method: string | null
           payment_status: Database["public"]["Enums"]["payment_status"]
+          performed_on: string | null
           production_status: Database["public"]["Enums"]["production_status"]
           progress: number
           quote_id: string | null
+          service_contract_id: string | null
           service_segment: string
           technical_data: Json
           title: string | null
@@ -658,9 +660,11 @@ export type Database = {
           paid?: number
           payment_method?: string | null
           payment_status?: Database["public"]["Enums"]["payment_status"]
+          performed_on?: string | null
           production_status?: Database["public"]["Enums"]["production_status"]
           progress?: number
           quote_id?: string | null
+          service_contract_id?: string | null
           service_segment?: string
           technical_data?: Json
           title?: string | null
@@ -690,9 +694,11 @@ export type Database = {
           paid?: number
           payment_method?: string | null
           payment_status?: Database["public"]["Enums"]["payment_status"]
+          performed_on?: string | null
           production_status?: Database["public"]["Enums"]["production_status"]
           progress?: number
           quote_id?: string | null
+          service_contract_id?: string | null
           service_segment?: string
           technical_data?: Json
           title?: string | null
@@ -720,6 +726,13 @@ export type Database = {
             columns: ["quote_id"]
             isOneToOne: false
             referencedRelation: "quotes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orders_service_contract_id_fkey"
+            columns: ["service_contract_id"]
+            isOneToOne: false
+            referencedRelation: "service_contracts"
             referencedColumns: ["id"]
           },
         ]
@@ -904,6 +917,7 @@ export type Database = {
         Row: {
           amount: number
           client_id: string
+          competence_month: string | null
           created_at: string
           due_date: string | null
           id: string
@@ -911,12 +925,14 @@ export type Database = {
           order_id: string | null
           paid_at: string | null
           payment_method: string | null
+          service_contract_id: string | null
           status: Database["public"]["Enums"]["receivable_status"]
           updated_at: string
         }
         Insert: {
           amount: number
           client_id: string
+          competence_month?: string | null
           created_at?: string
           due_date?: string | null
           id?: string
@@ -924,12 +940,14 @@ export type Database = {
           order_id?: string | null
           paid_at?: string | null
           payment_method?: string | null
+          service_contract_id?: string | null
           status?: Database["public"]["Enums"]["receivable_status"]
           updated_at?: string
         }
         Update: {
           amount?: number
           client_id?: string
+          competence_month?: string | null
           created_at?: string
           due_date?: string | null
           id?: string
@@ -937,6 +955,7 @@ export type Database = {
           order_id?: string | null
           paid_at?: string | null
           payment_method?: string | null
+          service_contract_id?: string | null
           status?: Database["public"]["Enums"]["receivable_status"]
           updated_at?: string
         }
@@ -953,6 +972,13 @@ export type Database = {
             columns: ["order_id"]
             isOneToOne: false
             referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "receivables_service_contract_id_fkey"
+            columns: ["service_contract_id"]
+            isOneToOne: false
+            referencedRelation: "service_contracts"
             referencedColumns: ["id"]
           },
         ]
@@ -1007,6 +1033,238 @@ export type Database = {
             columns: ["related_order_id"]
             isOneToOne: false
             referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      service_contract_approval_links: {
+        Row: {
+          consumed_at: string | null
+          created_at: string
+          expires_at: string
+          id: string
+          token_hash: string
+          version_id: string
+        }
+        Insert: {
+          consumed_at?: string | null
+          created_at?: string
+          expires_at?: string
+          id?: string
+          token_hash: string
+          version_id: string
+        }
+        Update: {
+          consumed_at?: string | null
+          created_at?: string
+          expires_at?: string
+          id?: string
+          token_hash?: string
+          version_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "service_contract_approval_links_version_id_fkey"
+            columns: ["version_id"]
+            isOneToOne: true
+            referencedRelation: "service_contract_versions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      service_contract_templates: {
+        Row: {
+          active: boolean
+          body_template: string
+          confidentiality_clause: string
+          created_at: string
+          created_by: string | null
+          id: string
+          name: string
+          service_id: string
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          body_template: string
+          confidentiality_clause?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          name: string
+          service_id: string
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          body_template?: string
+          confidentiality_clause?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          name?: string
+          service_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "service_contract_templates_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: true
+            referencedRelation: "services"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      service_contract_versions: {
+        Row: {
+          amount: number
+          approval_name: string | null
+          billing_mode: string
+          content_snapshot: string
+          contract_id: string
+          created_at: string
+          id: string
+          responded_at: string | null
+          response_reason: string | null
+          sent_at: string
+          status: string
+          version: number
+        }
+        Insert: {
+          amount: number
+          approval_name?: string | null
+          billing_mode: string
+          content_snapshot: string
+          contract_id: string
+          created_at?: string
+          id?: string
+          responded_at?: string | null
+          response_reason?: string | null
+          sent_at?: string
+          status?: string
+          version: number
+        }
+        Update: {
+          amount?: number
+          approval_name?: string | null
+          billing_mode?: string
+          content_snapshot?: string
+          contract_id?: string
+          created_at?: string
+          id?: string
+          responded_at?: string | null
+          response_reason?: string | null
+          sent_at?: string
+          status?: string
+          version?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "service_contract_versions_contract_id_fkey"
+            columns: ["contract_id"]
+            isOneToOne: false
+            referencedRelation: "service_contracts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      service_contracts: {
+        Row: {
+          amount: number
+          approval_name: string | null
+          billing_mode: string
+          client_id: string
+          contract_text: string
+          created_at: string
+          created_by: string | null
+          due_day: number | null
+          end_date: string | null
+          id: string
+          notes: string | null
+          number: number
+          responded_at: string | null
+          response_reason: string | null
+          scope: string
+          sent_at: string | null
+          service_id: string
+          start_date: string | null
+          status: string
+          template_id: string | null
+          title: string
+          updated_at: string
+          version: number
+        }
+        Insert: {
+          amount?: number
+          approval_name?: string | null
+          billing_mode?: string
+          client_id: string
+          contract_text?: string
+          created_at?: string
+          created_by?: string | null
+          due_day?: number | null
+          end_date?: string | null
+          id?: string
+          notes?: string | null
+          number?: number
+          responded_at?: string | null
+          response_reason?: string | null
+          scope?: string
+          sent_at?: string | null
+          service_id: string
+          start_date?: string | null
+          status?: string
+          template_id?: string | null
+          title: string
+          updated_at?: string
+          version?: number
+        }
+        Update: {
+          amount?: number
+          approval_name?: string | null
+          billing_mode?: string
+          client_id?: string
+          contract_text?: string
+          created_at?: string
+          created_by?: string | null
+          due_day?: number | null
+          end_date?: string | null
+          id?: string
+          notes?: string | null
+          number?: number
+          responded_at?: string | null
+          response_reason?: string | null
+          scope?: string
+          sent_at?: string | null
+          service_id?: string
+          start_date?: string | null
+          status?: string
+          template_id?: string | null
+          title?: string
+          updated_at?: string
+          version?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "service_contracts_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_contracts_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "services"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_contracts_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "service_contract_templates"
             referencedColumns: ["id"]
           },
         ]
@@ -1100,6 +1358,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_public_service_contract: {
+        Args: { p_token_hash: string }
+        Returns: Json
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -1111,6 +1373,15 @@ export type Database = {
       replace_order_items: {
         Args: { _items: Json; _order_id: string }
         Returns: undefined
+      }
+      respond_to_public_service_contract: {
+        Args: {
+          p_approval_name: string
+          p_decision: string
+          p_reason?: string
+          p_token_hash: string
+        }
+        Returns: boolean
       }
     }
     Enums: {
