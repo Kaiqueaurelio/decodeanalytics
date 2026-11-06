@@ -97,13 +97,13 @@ export function DecodeLanding() {
           <div className="absolute -left-40 bottom-0 h-[30rem] w-[30rem] rounded-full bg-[#7138F5]/20 blur-[120px]" />
           <div className="absolute inset-0 opacity-[0.07]" style={{ backgroundImage: "linear-gradient(rgba(248,250,252,.4) 1px, transparent 1px), linear-gradient(90deg, rgba(248,250,252,.4) 1px, transparent 1px)", backgroundSize: "56px 56px", maskImage: "linear-gradient(to bottom, black, transparent 85%)" }} />
         </div>
-        <div className="grid w-full items-center gap-14 lg:grid-cols-[1.05fr_.95fr] lg:gap-20">
+        <div className="grid w-full min-w-0 items-center gap-14 lg:grid-cols-[1.05fr_.95fr] lg:gap-20 [&>*]:min-w-0">
           <div className="max-w-3xl">
             <div className="mb-7 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.06] px-4 py-2 text-xs font-semibold tracking-wide text-white/80 backdrop-blur">
               <Sparkles aria-hidden="true" className="h-4 w-4 text-[#22D3EE]" />
               Decode Analytics · Design & Soluções
             </div>
-            <h1 className="font-display text-5xl font-bold leading-[1.04] tracking-tight text-white sm:text-6xl lg:text-7xl">
+            <h1 className="font-display text-4xl font-bold leading-[1.04] sm:text-5xl tracking-tight text-white sm:text-6xl lg:text-7xl">
               Boas ideias merecem
               <span className="mt-2 block bg-gradient-to-r from-[#22D3EE] via-[#087CF0] to-[#9C7BFF] bg-clip-text text-transparent">soluções à altura.</span>
             </h1>

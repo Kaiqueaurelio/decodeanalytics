@@ -169,7 +169,7 @@ function Page() {
                 checked={form.show_prices !== false}
                 onChange={(e) => setForm({ ...form, show_prices: e.target.checked })}
               />
-              <span className="min-w-0 text-sm">
+              <span className="min-w-0 flex-1 text-sm">
                 <span className="font-medium">Exibir preços na landing page</span>
                 <span className="mt-0.5 block text-muted-foreground">
                   Desmarque para ocultar todos os valores no site público. Os clientes verão
