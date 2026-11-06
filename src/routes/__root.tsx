@@ -10,6 +10,7 @@ import {
 import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
+import mobileResponsiveCss from "../mobile-responsive.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { AuthProvider } from "@/lib/auth";
 import { CartProvider } from "@/lib/cart-context";
@@ -21,7 +22,7 @@ import { SafeAreaDebug } from "@/components/SafeAreaDebug";
 function NotFoundComponent() {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-[#080c16] px-4 text-white">
-      <div className="mb-8 rounded-2xl bg-black p-1 shadow-2xl"><img src="/brand/decode-logo.png" alt="Decode Analytics" className="brand-logo h-16 w-16 rounded-xl bg-black object-contain p-1" /></div>
+      <div className="mb-8 rounded-2xl bg-black p-1 shadow-2xl"><img src="/brand/decode-logo.png" alt="Decode Analytics" className="brand-logo h-16 w-16 rounded-xl bg-black object-contain p-1" /><span className="sr-only">Decode Analytics</span></div>
       <div className="max-w-md text-center">
         <h1 className="text-6xl font-black tracking-tighter text-white">404</h1>
         <h2 className="mt-4 text-2xl font-bold text-white/90">Página não encontrada</h2>
@@ -31,7 +32,7 @@ function NotFoundComponent() {
         <div className="mt-10">
           <Link
             to="/"
-            className="inline-flex h-12 items-center justify-center rounded-xl bg-brand-yellow px-8 text-sm font-bold text-[#080c16] transition-all hover:scale-105 active:scale-95 shadow-lg shadow-brand-yellow/10"
+            className="inline-flex h-12 items-center justify-center rounded-xl bg-brand-yellow px-8 text-sm font-bold text-[#080c16] transition-all hover:scale-105 active:scale-95 shadow-lg shadow-brand-yellow/20"
           >
             Voltar para o Início
           </Link>
@@ -118,12 +119,16 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         rel: "stylesheet",
         href: appCss,
       },
+      {
+        rel: "stylesheet",
+        href: mobileResponsiveCss,
+      },
       { rel: "icon", type: "image/png", href: "/favicon.png" },
       { rel: "icon", type: "image/png", sizes: "192x192", href: "/brand/app-icon-192.png" },
       { rel: "apple-touch-icon", sizes: "180x180", href: "/apple-touch-icon.png" },
       { rel: "manifest", href: "/manifest.webmanifest" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
-      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
+      { rel: "preconnect", href: "https://fonts.gstatic.com" as never, crossOrigin: "anonymous" },
       {
         rel: "stylesheet",
         href: "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap",
