@@ -583,7 +583,7 @@ export function AppShell({ children }: { children: ReactNode }) {
               className="flex h-16 w-full flex-col items-center justify-center gap-1 text-[11px] font-medium text-[#94A3B8] active:text-white"
             >
               <MoreHorizontal className="h-5 w-5" />
-              <span>Menu</span>
+              <span className="text-[11px] leading-none">Menu</span>
             </button>
           </li>
         </ul>
