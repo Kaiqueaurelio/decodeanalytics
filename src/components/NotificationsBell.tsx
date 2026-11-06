@@ -79,7 +79,7 @@ export function NotificationsBell() {
         list.push({
           id: `rec-${r.id}`,
           title: "A receber vencido",
-          detail: `${r.description ?? "Recebível"} · R$ ${Number(r.amount ?? 0).toFixed(2)}`,
+          detail: `${r.notes ?? "Recebível"} · R$ ${Number(r.amount ?? 0).toFixed(2)}`,
           to: "/receivables",
           tone: "danger",
         });
