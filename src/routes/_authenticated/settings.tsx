@@ -8,8 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
 import { toast } from "sonner";
-import { FileUp, Loader2 } from "lucide-react";
-import { safeFileName } from "@/lib/briefing";
+import { Loader2 } from "lucide-react";
 import { DEFAULT_COMPANY_DOCUMENT } from "@/lib/format";
 
 const DEFAULT_DOCUMENT = DEFAULT_COMPANY_DOCUMENT;
@@ -27,7 +26,6 @@ function Page() {
     },
   });
   const [form, setForm] = useState<any>({});
-  const [uploadingLogo, setUploadingLogo] = useState(false);
   useEffect(() => {
     if (data) setForm({ ...data, document: data.document?.trim() || DEFAULT_DOCUMENT });
   }, [data]);
@@ -41,7 +39,7 @@ function Page() {
         instagram: form.instagram,
         address: form.address,
         document: form.document?.trim() || DEFAULT_DOCUMENT,
-        logo_url: form.logo_url,
+        logo_url: "/brand/decode-logo.png",
         default_quote_text: form.default_quote_text,
         default_order_text: form.default_order_text,
         default_deadline_days: Number(form.default_deadline_days) || 3,
@@ -63,36 +61,6 @@ function Page() {
     qc.invalidateQueries({ queryKey: ["company_settings"] });
   }
 
-  async function uploadLogo(file?: File) {
-    if (!file) return;
-    const extension = file.name.split(".").pop()?.toLowerCase();
-    if (!extension || !["png", "pdf", "cdr", "svg"].includes(extension)) {
-      return toast.error("Envie a logo em PNG, PDF, CDR ou SVG.");
-    }
-    setUploadingLogo(true);
-    const path = `logos/${Date.now()}-${safeFileName(file.name)}`;
-    const { error } = await supabase.storage.from("company-assets").upload(path, file);
-    if (error) {
-      setUploadingLogo(false);
-      return toast.error(error.message);
-    }
-    const { data: signedData, error: signedError } = await supabase.storage
-      .from("company-assets")
-      .createSignedUrl(path, 60 * 60 * 24 * 365 * 10);
-    if (signedError || !signedData) {
-      setUploadingLogo(false);
-      return toast.error(signedError?.message ?? "Não foi possível gerar URL da logo");
-    }
-    const logoUrl = signedData.signedUrl;
-    const { error: updateError } = await supabase
-      .from("company_settings")
-      .update({ logo_url: logoUrl })
-      .eq("id", form.id);
-    setUploadingLogo(false);
-    if (updateError) return toast.error(updateError.message);
-    setForm({ ...form, logo_url: logoUrl });
-    toast.success("Logo enviada e salva.");
-  }
 
   if (isError) {
     return (
@@ -178,52 +146,12 @@ function Page() {
               </span>
             </label>
           </div>
-          <div className="md:col-span-2">
+          <div className="md:col-span-2 rounded-xl border p-4">
             <Label>Logo da empresa</Label>
-            <div className="mt-1 grid gap-3 rounded-xl border border-dashed p-4 md:grid-cols-[minmax(0,1fr)_auto] md:items-center">
-              <div className="min-w-0">
-                <p className="text-sm font-medium">Enviar logo em PNG, PDF, CDR ou SVG</p>
-                <p className="text-xs text-muted-foreground">
-                  PNG e SVG permitem pré-visualização. Arquivos técnicos ficam armazenados para
-                  download e uso futuro.
-                </p>
-                {form.logo_url && (
-                  <a
-                    href={form.logo_url}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="mt-2 block truncate text-xs text-primary underline"
-                  >
-                    {form.logo_url}
-                  </a>
-                )}
-              </div>
-              <label>
-                <Button type="button" variant="outline" asChild disabled={uploadingLogo}>
-                  <span>
-                    {uploadingLogo ? (
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    ) : (
-                      <FileUp className="mr-2 h-4 w-4" />
-                    )}
-                    {uploadingLogo ? "Enviando..." : "Selecionar logo"}
-                  </span>
-                </Button>
-                <input
-                  type="file"
-                  className="hidden"
-                  accept=".png,.pdf,.cdr,.svg"
-                  onChange={(e) => uploadLogo(e.target.files?.[0])}
-                />
-              </label>
+            <div className="mt-3 flex items-center gap-4">
+              <img src="/brand/decode-logo.png" alt="Logo oficial Decode Analytics" className="h-20 w-20 rounded-xl bg-black object-contain p-2" />
+              <p className="text-sm text-muted-foreground">Logo oficial Decode Analytics. O aplicativo não permite substituir por imagens antigas ou externas.</p>
             </div>
-            {form.logo_url && /\.(png|svg)(\?|$)/i.test(form.logo_url) && (
-              <img
-                src={form.logo_url}
-                alt="Logo atual"
-                className="mt-3 h-32 max-w-full rounded-xl border bg-white object-contain p-3"
-              />
-            )}
           </div>
           <div className="md:col-span-2">
             <Label>Texto padrão do orçamento</Label>
