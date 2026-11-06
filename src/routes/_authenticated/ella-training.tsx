@@ -235,10 +235,10 @@ function EllaTrainingPage() {
           <h1 className="text-2xl font-black tracking-tight flex items-center gap-3">
             <EllaAvatar
               size={42}
-              alt="Ella Ribeiro, assistente virtual de inteligência artificial"
+              alt="Assistente"
               ringClassName="ring-2 ring-primary/30"
             />
-            Ensinar Ella Ribeiro
+            Regras do assistente
           </h1>
           <p className="text-sm text-muted-foreground max-w-2xl">
             Cadastre informações aprovadas pela equipe para Ella consultar no painel e no atendimento

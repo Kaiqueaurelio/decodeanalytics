@@ -104,10 +104,10 @@ function AiLogsPage() {
           <h1 className="text-2xl font-black tracking-tight flex items-center gap-3">
             <EllaAvatar
               size={40}
-              alt="Ella Ribeiro, assistente virtual de inteligência artificial"
+              alt="Assistente"
               ringClassName="ring-2 ring-primary/30"
             />
-            IA da Ella Ribeiro
+            Registros do assistente
           </h1>
           <p className="text-sm text-muted-foreground">
             Monitoramento de chamadas e falhas do atendimento público e do painel interno.
