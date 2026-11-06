@@ -1,7 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRef, useState } from "react";
-import * as XLSX from "xlsx";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -57,7 +56,8 @@ function ServicesPage() {
     qc.invalidateQueries({ queryKey: ["services"] });
   }
 
-  function downloadTemplate() {
+  async function downloadTemplate() {
+    const XLSX = await import("xlsx");
     const ws = XLSX.utils.json_to_sheet([
       { name: "Cartão de visita 4x4", category: "Cartões", description: "Couché 300g", base_price: 80, unit: "milheiro", default_deadline_days: 3, active: true },
       { name: "Banner Lona 440g", category: "Banners", description: "Impressão digital", base_price: 60, unit: "m²", default_deadline_days: 2, active: true },
@@ -67,7 +67,8 @@ function ServicesPage() {
     XLSX.writeFile(wb, "modelo-produtos-servicos.xlsx");
   }
 
-  function exportCurrent() {
+  async function exportCurrent() {
+    const XLSX = await import("xlsx");
     const rows = (data ?? []).map((s) => ({
       name: s.name,
       category: s.category,
@@ -87,6 +88,7 @@ function ServicesPage() {
   }
 
   async function handleImportFile(file: File) {
+    const XLSX = await import("xlsx");
     setImporting(true);
     try {
       const buf = await file.arrayBuffer();
