@@ -31,6 +31,17 @@ export interface CompanyInfo {
   contactDescription: string;
 }
 
+function resolveCompanyLogo(value?: string | null) {
+  const logo = value?.trim();
+  if (!logo) return "/brand/decode-logo.png";
+  // Legacy public assets were copied from Alcateia'S; never show those as Decode branding.
+  const normalized = logo.toLowerCase();
+  if (normalized.includes("alcateia") || normalized.endsWith("/logo-full.png") || normalized.endsWith("/logo-full.webp")) {
+    return "/brand/decode-logo.png";
+  }
+  return logo;
+}
+
 function digitsOnly(v?: string | null) {
   return (v ?? "").replace(/\D+/g, "");
 }
@@ -78,7 +89,7 @@ export function useCompanyInfo(): CompanyInfo {
 
   return {
     name: data?.name ?? "Decode Analytics",
-    logoUrl: data?.logo_url ?? null,
+    logoUrl: resolveCompanyLogo(data?.logo_url),
     brandBackground: data?.brand_background ?? "#0B1026",
     brandPrimary: data?.brand_primary ?? "#22D3EE",
     brandSecondary: data?.brand_secondary ?? "#087CF0",
