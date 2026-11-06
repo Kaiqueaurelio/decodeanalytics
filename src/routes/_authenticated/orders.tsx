@@ -520,7 +520,7 @@ function OrdersPage() {
       )}
       <Card>
         <div className="overflow-x-auto">
-          <table className="w-full text-sm">
+          <table className="w-full min-w-[680px] text-sm">
             <thead className="bg-muted text-muted-foreground">
               <tr>
                 <th className="text-left p-3">Nº</th>

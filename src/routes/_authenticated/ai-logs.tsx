@@ -177,7 +177,7 @@ function AiLogsPage() {
         </div>
 
         <div className="overflow-x-auto">
-          <table className="w-full text-sm">
+          <table className="w-full min-w-[680px] text-sm">
             <thead className="text-left text-xs uppercase text-muted-foreground border-b">
               <tr>
                 <th className="py-2 pr-3">Quando</th>

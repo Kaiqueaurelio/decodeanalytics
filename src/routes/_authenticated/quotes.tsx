@@ -93,7 +93,7 @@ function QuotesPage() {
       </div>
       <Card>
         <div className="overflow-x-auto">
-          <table className="w-full text-sm">
+          <table className="w-full min-w-[680px] text-sm">
             <thead className="bg-muted text-muted-foreground"><tr>
               <th className="text-left p-3">Nº</th><th className="text-left p-3">Cliente</th><th className="text-left p-3">Produto / quantidade</th>
               <th className="text-left p-3 hidden md:table-cell">Status</th>

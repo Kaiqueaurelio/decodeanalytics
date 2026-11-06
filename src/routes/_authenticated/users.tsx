@@ -118,7 +118,7 @@ function UsersPage() {
       </div>
       <Card className="overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm">
+          <table className="w-full min-w-[720px] text-left text-sm">
             <thead className="border-b bg-muted/50 font-medium text-muted-foreground">
               <tr>
                 <th className="p-4">Nome</th>
