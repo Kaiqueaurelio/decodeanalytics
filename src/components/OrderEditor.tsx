@@ -22,7 +22,6 @@ import {
 import { Trash2, Plus, FileText, Laptop, Palette, ChevronLeft, ChevronRight } from "lucide-react";
 import { toast } from "sonner";
 import { brl, PAYMENT_METHODS, PRODUCTION_STATUS_LABEL, toIsoDate } from "@/lib/format";
-import { generateOrderPDF } from "@/lib/pdf";
 import { OSStatusBadge } from "@/components/OSStatusBadge";
 
 import { TechnicalIntake } from "@/components/TechnicalIntake";
@@ -372,6 +371,7 @@ export function OrderEditor({
       supabase.from("company_settings").select("*").limit(1).single(),
     ]);
     if (!o || !c || !comp) return toast.error("Dados incompletos");
+    const { generateOrderPDF } = await import("@/lib/pdf");
     generateOrderPDF({
       company: comp as any,
       order: o as any,
