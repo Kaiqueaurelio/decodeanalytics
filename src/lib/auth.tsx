@@ -35,15 +35,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     let active = true;
     let roleRequest = 0;
     let deferredLoad: ReturnType<typeof setTimeout> | undefined;
+    let currentUserId: string | null = null;
 
     async function loadRoles(userId: string) {
       const requestId = ++roleRequest;
+      currentUserId = userId;
       setLoading(true);
       try {
-        const { data: roleRows, error: roleError } = await supabase
+        let { data: roleRows, error: roleError } = await supabase
           .from("user_roles")
           .select("role")
           .eq("user_id", userId);
+        if (roleError) {
+          await new Promise((r) => setTimeout(r, 800));
+          ({ data: roleRows, error: roleError } = await supabase
+            .from("user_roles")
+            .select("role")
+            .eq("user_id", userId));
+        }
         if (!active || requestId !== roleRequest) return;
         if (roleError) {
           console.error("[Auth] Não foi possível carregar user_roles.", roleError);
@@ -70,6 +79,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const { data: sub } = supabase.auth.onAuthStateChange((_event, nextSession) => {
       setSession(nextSession);
+      // Keep roles on token refresh / tab focus for the same user.
+      if (nextSession?.user && nextSession.user.id === currentUserId) return;
       setRoles([]);
       if (deferredLoad) clearTimeout(deferredLoad);
       if (nextSession?.user) {
@@ -78,6 +89,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }, 0);
       } else {
         roleRequest += 1;
+        currentUserId = null;
         setLoading(false);
       }
     });
@@ -94,9 +106,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           return;
         }
         setSession(data.session);
-        if (data.session?.user) {
+        if (data.session?.user && data.session.user.id !== currentUserId) {
           void loadRoles(data.session.user.id);
-        } else {
+        } else if (!data.session?.user) {
           setRoles([]);
           setLoading(false);
         }
