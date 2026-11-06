@@ -21,6 +21,7 @@ function ClientsPage() {
   const [search, setSearch] = useState("");
   const [editing, setEditing] = useState<Partial<ClientRow> | null>(null);
   const [open, setOpen] = useState(false);
+  const [saving, setSaving] = useState(false);
 
   const { data: clients, isLoading } = useQuery({
     queryKey: ["clients", search],
@@ -28,42 +29,72 @@ function ClientsPage() {
       let q = supabase.from("clients").select("*").order("name", { ascending: true });
       if (search) q = q.ilike("name", `%${search.slice(0, 120).replace(/[\\%_]/g, "\\$&")}%`);
       const { data, error } = await q;
-      if (error) {
-        console.error("Erro ao buscar clientes:", error);
-        throw error;
-      }
+      if (error) throw error;
       return data as ClientRow[];
     },
-    staleTime: 0, // Garantir que sempre busque dados novos
+    staleTime: 0,
   });
 
   async function save() {
-    if (!editing?.name) return toast.error("Nome obrigatório");
-    const payload = {
-      name: editing.name,
-      document: editing.document || null,
-      whatsapp: editing.whatsapp || null,
-      email: editing.email || null,
-      address: editing.address || null,
-      district: editing.district || null,
-      city: editing.city || null,
-      notes: editing.notes || null,
-    };
-    const res = editing.id
-      ? await supabase.from("clients").update(payload).eq("id", editing.id)
-      : await supabase.from("clients").insert(payload);
-    if (res.error) return toast.error(res.error.message);
-    toast.success("Cliente salvo");
-    setOpen(false); setEditing(null);
-    qc.invalidateQueries({ queryKey: ["clients"] });
+    const name = editing?.name?.trim();
+    if (!name) return toast.error("Nome obrigatório");
+    if (saving) return;
+    setSaving(true);
+    try {
+      const payload = {
+        name,
+        document: editing.document?.trim() || null,
+        whatsapp: editing.whatsapp?.trim() || null,
+        email: editing.email?.trim() || null,
+        address: editing.address?.trim() || null,
+        district: editing.district?.trim() || null,
+        city: editing.city?.trim() || null,
+        notes: editing.notes?.trim() || null,
+      };
+      // Keep the original primary key unchanged while editing.
+      const res = editing.id
+        ? await supabase.from("clients").update(payload).eq("id", editing.id)
+        : await supabase.from("clients").insert(payload);
+      if (res.error) {
+        console.error("Erro ao salvar cliente:", res.error);
+        return toast.error(`Não foi possível salvar o cliente: ${res.error.message}`);
+      }
+      toast.success(editing.id ? "Cliente atualizado" : "Cliente cadastrado");
+      setOpen(false);
+      setEditing(null);
+      await qc.invalidateQueries({ queryKey: ["clients"] });
+    } finally {
+      setSaving(false);
+    }
   }
 
   async function remove(id: string, name: string) {
-    if (!confirm(`Excluir cliente "${name}"?`)) return;
+    if (!confirm(`Excluir cliente "${name}"?\n\nOs registros financeiros não serão apagados.`)) return;
+
+    // Receivables are financial history. Never delete them just to remove a client.
+    const { count, error: checkError } = await supabase
+      .from("receivables")
+      .select("id", { count: "exact", head: true })
+      .eq("client_id", id);
+    if (checkError) {
+      console.error("Erro ao verificar recebíveis do cliente:", checkError);
+      return toast.error("Não foi possível verificar os recebimentos vinculados. Nenhum dado foi excluído.");
+    }
+    if ((count ?? 0) > 0) {
+      return toast.error(`Este cliente possui ${count} recebimento(s) vinculado(s). Para preservar o histórico financeiro, não é possível excluí-lo. Você ainda pode editar o cadastro.`);
+    }
+
     const { error } = await supabase.from("clients").delete().eq("id", id);
-    if (error) return toast.error("Erro ao excluir cliente: " + error.message);
-    toast.success("Excluído");
-    qc.invalidateQueries({ queryKey: ["clients"] });
+    if (error) {
+      console.error("Erro ao excluir cliente:", error);
+      const msg = error.message.toLowerCase();
+      if (msg.includes("foreign key") || msg.includes("fkey") || msg.includes("constraint")) {
+        return toast.error("Este cliente possui registros vinculados (OS, contratos ou financeiro). O histórico foi preservado e o cliente não foi excluído.");
+      }
+      return toast.error("Erro ao excluir cliente: " + error.message);
+    }
+    toast.success("Cliente excluído");
+    await qc.invalidateQueries({ queryKey: ["clients"] });
   }
 
   return (
@@ -89,7 +120,7 @@ function ClientsPage() {
               <div><Label>Cidade</Label><Input value={editing?.city ?? ""} onChange={(e) => setEditing({ ...editing, city: e.target.value })} /></div>
               <div className="md:col-span-2"><Label>Observações</Label><Textarea value={editing?.notes ?? ""} onChange={(e) => setEditing({ ...editing, notes: e.target.value })} /></div>
             </div>
-            <DialogFooter className="sticky bottom-0 -mx-1 border-t bg-background/95 pt-3 backdrop-blur-sm"><Button onClick={save} className="w-full sm:w-auto">Salvar</Button></DialogFooter>
+            <DialogFooter className="sticky bottom-0 -mx-1 border-t bg-background/95 pt-3 backdrop-blur-sm"><Button onClick={save} disabled={saving} className="w-full sm:w-auto">{saving ? "Salvando..." : "Salvar"}</Button></DialogFooter>
           </DialogContent>
         </Dialog>
       </div>
@@ -114,7 +145,7 @@ function ClientsPage() {
                   <td className="p-3 hidden md:table-cell">{c.city ?? "—"}</td>
                   <td className="p-3 hidden lg:table-cell">{fmtDate(c.created_at)}</td>
                   <td className="p-3 flex gap-1 justify-end">
-                    <Button size="icon" variant="ghost" aria-label={`Editar ${c.name}`} onClick={() => { setEditing(c); setOpen(true); }}><Pencil className="w-4 h-4" /></Button>
+                    <Button size="icon" variant="ghost" aria-label={`Editar ${c.name}`} onClick={() => { setEditing({ ...c }); setOpen(true); }}><Pencil className="w-4 h-4" /></Button>
                     <Button size="icon" variant="ghost" aria-label={`Excluir ${c.name}`} onClick={() => remove(c.id, c.name)}><Trash2 className="w-4 h-4 text-destructive" /></Button>
                   </td>
                 </tr>
