@@ -25,7 +25,7 @@ export function NotificationsBell() {
           .limit(50),
         supabase
           .from("receivables")
-          .select("id,amount,status,due_date,description")
+          .select("id,amount,status,due_date,notes")
           .neq("status", "pago")
           .order("due_date", { ascending: true })
           .limit(50),
