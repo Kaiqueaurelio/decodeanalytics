@@ -259,6 +259,7 @@ export type Database = {
       }
       clients: {
         Row: {
+          archived_at: string | null
           address: string | null
           city: string | null
           created_at: string
