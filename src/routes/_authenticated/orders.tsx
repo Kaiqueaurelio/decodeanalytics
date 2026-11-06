@@ -407,7 +407,7 @@ function OrdersPage() {
         ))}
       </div>
       <Tabs value={lifecycleTab} onValueChange={(v) => setLifecycleTab(v as any)}>
-        <TabsList className="w-full sm:w-auto flex flex-wrap gap-1">
+        <TabsList className="h-auto w-full flex-wrap justify-start gap-1 sm:w-auto">
           <TabsTrigger value="todas" className="text-xs">
             Todas <span className="ml-1 text-muted-foreground">({counts.todas})</span>
           </TabsTrigger>

@@ -1006,7 +1006,7 @@ html {
 }
 
 body {
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word;
 }
 
 :where(a, button, input, textarea, select, [role="button"], [tabindex]):focus-visible {
