@@ -339,7 +339,7 @@
   th,
   dd,
   dt {
-    overflow-wrap: anywhere;
+    overflow-wrap: break-word;
   }
 }
 
@@ -1029,7 +1029,7 @@ body {
 
   pre,
   code {
-    overflow-wrap: anywhere;
+    overflow-wrap: break-word;
     white-space: pre-wrap;
   }
 }
