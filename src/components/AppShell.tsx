@@ -162,7 +162,7 @@ const NAV: NavItem[] = [
   },
   {
     to: "/ella",
-    label: "Ella Ribeiro",
+    label: "Assistente",
     description: "Assistente de IA da equipe",
     icon: LayoutDashboard,
     section: "Administração",

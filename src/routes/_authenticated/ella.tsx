@@ -175,7 +175,7 @@ function EllaPage() {
       id: "welcome",
       role: "assistant",
       content:
-        "Olá! 👋 Sou a **Ella Ribeiro**, assistente de inteligência artificial da Decode Analytics. Posso apoiar a equipe em ordens de serviço, clientes, cobranças, lembretes e consultas. Você pode falar por **áudio** 🎤 ou anexar **arquivos** 📎 para análise. Sou uma IA; quando algo exigir decisão humana, vou deixar isso claro.",
+        "Olá! Posso apoiar a equipe em ordens de serviço, clientes, cobranças, lembretes e consultas. Você pode falar por **áudio** ou anexar **arquivos** para análise.",
     },
   ]);
   const [input, setInput] = useState("");
@@ -362,12 +362,12 @@ function EllaPage() {
       <header className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 border-b pb-3 sm:pb-4">
         <EllaAvatar
           size={48}
-          alt="Ella Ribeiro, assistente virtual de inteligência artificial"
+          alt="Assistente"
           loading="eager"
           ringClassName="ring-2 ring-primary/30"
         />
         <div className="min-w-0">
-          <h1 className="truncate text-lg font-black tracking-tight sm:text-xl">Ella Ribeiro</h1>
+          <h1 className="truncate text-lg font-black tracking-tight sm:text-xl">Assistente</h1>
           <p className="text-xs text-muted-foreground sm:text-sm">
             Assistente administrativa · gestão, análises e operações internas
           </p>
@@ -572,7 +572,7 @@ function EllaPage() {
           </Button>
           <Textarea
             ref={inputRef}
-            aria-label="Mensagem para Ella Ribeiro"
+            aria-label="Mensagem para o assistente"
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => {
@@ -595,7 +595,7 @@ function EllaPage() {
             size="icon"
             disabled={loading || (!input.trim() && attachments.length === 0)}
             className="h-11 w-11 shrink-0 bg-brand-yellow hover:bg-brand-yellow/90 text-brand-blue"
-            aria-label="Enviar mensagem para Ella Ribeiro"
+            aria-label="Enviar mensagem para o assistente"
           >
             {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
           </Button>

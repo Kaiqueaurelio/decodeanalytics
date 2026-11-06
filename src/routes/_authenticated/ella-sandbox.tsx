@@ -80,11 +80,11 @@ function EllaSandboxPage() {
       <header className="flex items-start gap-3">
         <EllaAvatar
           size={48}
-          alt="Ella Ribeiro, assistente virtual de inteligência artificial"
+          alt="Assistente"
           ringClassName="ring-2 ring-primary/30"
         />
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Testar Ella Ribeiro</h1>
+          <h1 className="text-2xl font-semibold tracking-tight">Testar assistente</h1>
           <p className="text-sm text-muted-foreground">
             Teste as respostas da assistente de IA com os treinamentos atuais antes de disponibilizá-los.
           </p>
@@ -99,7 +99,7 @@ function EllaSandboxPage() {
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               placeholder="Digite sua pergunta aqui para testar o sistema..."
-              aria-label="Pergunta de teste para Ella Ribeiro"
+              aria-label="Pergunta de teste para o assistente"
               rows={4}
               onKeyDown={(e) => {
                 if ((e.metaKey || e.ctrlKey) && e.key === "Enter") submit();

@@ -16,16 +16,16 @@ export const Route = createFileRoute("/assistente")({
   component: AssistantePage,
   head: () => ({
     meta: [
-      { title: "Ella Ribeiro — Assistente de IA — Decode Analytics" },
+      { title: "Atendimento — Decode Analytics" },
       {
         name: "description",
         content:
-          "Converse com Ella Ribeiro, assistente virtual de IA da Decode Analytics, sobre produtos gráficos e serviços de design, tecnologia e presença digital.",
+          "Fale com o atendimento da Decode Analytics sobre produtos gráficos e serviços de design, tecnologia e presença digital.",
       },
-      { property: "og:title", content: "Ella Ribeiro — Assistente de IA — Decode Analytics" },
+      { property: "og:title", content: "Atendimento — Decode Analytics" },
       {
         property: "og:description",
-        content: "Tire dúvidas com Ella Ribeiro, assistente virtual de IA da Decode Analytics.",
+        content: "Tire dúvidas com o atendimento da Decode Analytics.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -53,7 +53,7 @@ function AssistantePage() {
       id: "welcome",
       role: "assistant",
       content:
-        "Oi! 👋 Eu sou a Ella Ribeiro, assistente virtual de inteligência artificial da Decode Analytics. Posso consultar nosso catálogo ativo, explicar detalhes dos produtos e mostrar como pedir orçamento ou comprar. Se você procura um serviço que não aparece no catálogo, encaminho sua dúvida para a equipe. O que você está buscando?",
+        "Olá! Aqui é o atendimento da Decode Analytics. Me conte o que você precisa — produto, serviço ou orçamento — que eu te ajudo ou encaminho para a nossa equipe.",
     },
   ]);
   const [input, setInput] = useState("");
@@ -98,19 +98,19 @@ function AssistantePage() {
         <header className="grid grid-cols-[auto_minmax(0,1fr)] items-center gap-3 border-b border-[var(--store-border)] pb-4">
           <EllaAvatar
             size={56}
-            alt="Ella Ribeiro, assistente virtual de inteligência artificial"
+            alt="Atendimento Decode Analytics"
             loading="eager"
             ringClassName="ring-2 ring-[var(--store-secondary)] shadow-sm"
           />
           <div className="min-w-0">
             <h1 className="truncate text-xl font-black tracking-tight text-[var(--store-primary)]">
-              Ella Ribeiro
+              Atendimento online
             </h1>
             <p className="text-sm text-[var(--store-text-muted)]">
-              Assistente virtual de IA · Decode Analytics
+              Decode Analytics
             </p>
             <p className="mt-0.5 text-xs text-[var(--store-text-muted)]">
-              Te ajudo com produtos e serviços; quando necessário, chamo a equipe humana.
+              Tire dúvidas sobre produtos, serviços e orçamentos.
             </p>
           </div>
         </header>
@@ -181,7 +181,7 @@ function AssistantePage() {
         >
           <Textarea
             ref={inputRef}
-            aria-label="Mensagem para Ella Ribeiro"
+            aria-label="Mensagem para o atendimento"
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => {
@@ -200,7 +200,7 @@ function AssistantePage() {
             size="icon"
             disabled={loading || !input.trim()}
             className="h-11 w-11 shrink-0 bg-[var(--store-primary)] hover:bg-[var(--store-primary-light)] text-white"
-            aria-label="Enviar mensagem para Ella Ribeiro"
+            aria-label="Enviar mensagem para o atendimento"
           >
             {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
           </Button>
