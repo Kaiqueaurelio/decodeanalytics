@@ -22,6 +22,13 @@
       "when": 1792715952903,
       "tag": "0002_repair_role_policy_recursion_and_order_edit",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1793999961421,
+      "tag": "0003_service_contracts_recurring",
+      "breakpoints": true
     }
   ]
 }
