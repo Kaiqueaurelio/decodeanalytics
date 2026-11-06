@@ -121,6 +121,7 @@ function ClientsPage() {
           </DialogContent>
         </Dialog>
       </div>
+      </div>
 
       <Card className="overflow-hidden">
         <div className="overflow-x-auto">
