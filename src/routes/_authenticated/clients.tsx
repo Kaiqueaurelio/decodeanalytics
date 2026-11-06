@@ -21,12 +21,14 @@ function ClientsPage() {
   const [search, setSearch] = useState("");
   const [editing, setEditing] = useState<Partial<ClientRow> | null>(null);
   const [open, setOpen] = useState(false);
-  const [saving, setSaving] = useState(false);\n  const [showArchived, setShowArchived] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [showArchived, setShowArchived] = useState(false);
 
   const { data: clients, isLoading } = useQuery({
     queryKey: ["clients", search, showArchived],
     queryFn: async () => {
-      let q = supabase.from("clients").select("*").order("name", { ascending: true });\n      q = showArchived ? q.not("archived_at", "is", null) : q.is("archived_at", null);
+      let q = supabase.from("clients").select("*").order("name", { ascending: true });
+      q = showArchived ? q.not("archived_at", "is", null) : q.is("archived_at", null);
       if (search) q = q.ilike("name", `%${search.slice(0, 120).replace(/[\\%_]/g, "\\$&")}%`);
       const { data, error } = await q;
       if (error) throw error;
@@ -97,10 +99,12 @@ function ClientsPage() {
           <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
           <Input placeholder="Buscar cliente" value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
         </div>
-        <Dialog open={open} onOpenChange={(o) => { setOpen(o); if (!o) setEditing(null); }}>
-          <DialogTrigger asChild>
-            <div className="flex flex-wrap gap-2"><Button variant="outline" onClick={() => setShowArchived((v) => !v)}>{showArchived ? "Ver clientes ativos" : "Ver arquivados"}</Button><Button onClick={() => setEditing({})} className="bg-primary"><Plus className="w-4 h-4 mr-1" /> Novo cliente</Button></div>
-          </DialogTrigger>
+        <div className="flex flex-wrap gap-2">
+          <Button variant="outline" onClick={() => setShowArchived((v) => !v)}>{showArchived ? "Ver clientes ativos" : "Ver arquivados"}</Button>
+          <Dialog open={open} onOpenChange={(o) => { setOpen(o); if (!o) setEditing(null); }}>
+            <DialogTrigger asChild>
+              <Button onClick={() => setEditing({})} className="bg-primary"><Plus className="w-4 h-4 mr-1" /> Novo cliente</Button>
+            </DialogTrigger>
           <DialogContent className="max-w-2xl">
             <DialogHeader><DialogTitle>{editing?.id ? "Editar cliente" : "Novo cliente"}</DialogTitle></DialogHeader>
             <div className="grid min-w-0 grid-cols-1 gap-2 sm:gap-3 md:grid-cols-2">
