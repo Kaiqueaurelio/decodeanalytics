@@ -5,6 +5,7 @@ import {
   BadgeCheck,
   FileSignature,
   LoaderCircle,
+  MessageCircle,
   Plus,
   Search,
   Send,
@@ -75,9 +76,11 @@ const BILLING: Record<string, string> = {
 const STATUS: Record<string, string> = {
   rascunho: "Rascunho",
   enviado: "Aguardando cliente",
-  aprovado: "Aprovado",
+  aprovado: "Ativo / Aprovado",
+  ativo: "Ativo",
+  pausado: "Pausado",
+  suspenso: "Pausado / Suspenso",
   recusado: "Recusado",
-  suspenso: "Suspenso",
   encerrado: "Encerrado",
 };
 
@@ -92,6 +95,7 @@ type FormState = {
   due_day: string;
   scope: string;
   notes: string;
+  confidentiality_clause: string;
 };
 const emptyForm = (): FormState => ({
   client_id: "",
@@ -104,6 +108,7 @@ const emptyForm = (): FormState => ({
   due_day: "",
   scope: "",
   notes: "",
+  confidentiality_clause: DEFAULT_CONFIDENTIALITY,
 });
 
 function templateText(
@@ -186,7 +191,7 @@ function ContractsPage() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("services")
-        .select("id,name,category,base_price,active")
+        .select("id,name,category,base_price,active,billing_type,description")
         .eq("active", true)
         .order("name");
       if (error) throw error;
@@ -226,8 +231,17 @@ function ContractsPage() {
     () =>
       (rows ?? []).filter((row: any) => {
         const term = search.trim().toLowerCase();
+        const matchesStatus =
+          status === "todos"
+            ? true
+            : status === "aprovado"
+              ? ["aprovado", "ativo"].includes(row.status)
+              : status === "suspenso"
+                ? ["suspenso", "pausado"].includes(row.status)
+                : row.status === status;
+
         return (
-          (status === "todos" || row.status === status) &&
+          matchesStatus &&
           (!term ||
             String(row.number).includes(term) ||
             row.title?.toLowerCase().includes(term) ||
@@ -259,6 +273,7 @@ function ContractsPage() {
       due_day: item.due_day ? String(item.due_day) : "",
       scope: item.scope ?? "",
       notes: item.notes ?? "",
+      confidentiality_clause: DEFAULT_CONFIDENTIALITY,
     });
     setCreateOpen(true);
   }
@@ -267,8 +282,8 @@ function ContractsPage() {
     const client = clients.find((item) => item.id === form.client_id),
       service = services.find((item) => item.id === form.service_id),
       template = templatesByService.get(form.service_id) as any;
-    if (!client || !service || !template)
-      return toast.error("Selecione cliente e serviço com modelo ativo.");
+    if (!client || !service)
+      return toast.error("Selecione cliente e serviço.");
     if (!form.title.trim() || !form.scope.trim())
       return toast.error("Informe o título e o escopo do serviço.");
     if (form.end_date && form.start_date && form.end_date < form.start_date)
@@ -277,7 +292,7 @@ function ContractsPage() {
     const payload = {
       client_id: form.client_id,
       service_id: form.service_id,
-      template_id: template.id,
+      template_id: template?.id || null,
       title: form.title.trim(),
       billing_mode: form.billing_mode,
       amount: Number(form.amount.replace(",", ".")) || 0,
@@ -287,10 +302,12 @@ function ContractsPage() {
       scope: form.scope.trim(),
       notes: form.notes.trim() || null,
     };
+    const bodyTemplate = template?.body_template || DEFAULT_BODY;
+    const clause = form.confidentiality_clause?.trim() || template?.confidentiality_clause || DEFAULT_CONFIDENTIALITY;
     const textFor = (number: number) =>
       templateText(
-        template.body_template,
-        template.confidentiality_clause,
+        bodyTemplate,
+        clause,
         form,
         client,
         service,
@@ -333,6 +350,56 @@ function ContractsPage() {
     toast.success(
       editing ? "Contrato atualizado; envie a nova versão para aprovação." : "Rascunho criado.",
     );
+  }
+  async function activateContract(item: any) {
+    if (!confirm(`Confirmar ativação direta do contrato #${item.number}?`)) return;
+    const { error } = await (supabase
+      .from("service_contracts" as any)
+      .update({
+        status: "aprovado",
+        responded_at: new Date().toISOString(),
+        approval_name: "Aprovação direta pela equipe",
+      })
+      .eq("id", item.id) as any);
+    if (error) return toast.error(error.message);
+    toast.success("Contrato ativado com sucesso!");
+    await qc.invalidateQueries({ queryKey: ["service-contracts"] });
+  }
+  async function togglePauseContract(item: any) {
+    const isPaused = item.status === "suspenso" || item.status === "pausado";
+    const nextStatus = isPaused ? "aprovado" : "suspenso";
+    const { error } = await (supabase
+      .from("service_contracts" as any)
+      .update({ status: nextStatus })
+      .eq("id", item.id) as any);
+    if (error) return toast.error(error.message);
+    toast.success(isPaused ? "Assinatura reativada!" : "Assinatura pausada.");
+    await qc.invalidateQueries({ queryKey: ["service-contracts"] });
+  }
+  async function terminateContract(item: any) {
+    if (!confirm(`Encerrar em definitivo o contrato #${item.number}?`)) return;
+    const { error } = await (supabase
+      .from("service_contracts" as any)
+      .update({ status: "encerrado" })
+      .eq("id", item.id) as any);
+    if (error) return toast.error(error.message);
+    toast.success("Contrato encerrado.");
+    await qc.invalidateQueries({ queryKey: ["service-contracts"] });
+  }
+  async function sendWhatsAppOrLink(item: any) {
+    const phone = item.clients?.whatsapp?.replace(/\D/g, "");
+    if (["aprovado", "ativo"].includes(item.status)) {
+      const msg = `Olá, ${item.clients?.name}! Segue o comprovante do seu contrato ativo #${item.number} (${item.title}):\n• Serviço: ${item.services?.name || "Serviço"}\n• Mensalidade: ${brl(item.amount)}/mês\n• Vencimento: todo dia ${item.due_day || 10}\n• Cláusula de Confidencialidade e Não Reutilização de Peças assegurada.\nDecode Analytics`;
+      if (phone) {
+        window.open(`https://wa.me/55${phone.replace(/^55/, "")}?text=${encodeURIComponent(msg)}`, "_blank", "noopener,noreferrer");
+        toast.success("WhatsApp aberto para envio.");
+      } else {
+        await navigator.clipboard.writeText(msg);
+        toast.success("Resumo copiado. Adicione o WhatsApp no cliente para envio direto.");
+      }
+      return;
+    }
+    await sendLink(item);
   }
   async function saveTemplate(event: FormEvent) {
     event.preventDefault();
@@ -451,7 +518,90 @@ function ContractsPage() {
             </TabsList>
           </Tabs>
         </div>
-        <div className="overflow-x-auto">
+        {/* Mobile View: Cards */}
+        <div className="grid gap-2.5 p-3 sm:hidden">
+          {filtered.map((item: any) => (
+            <Card key={item.id} className="p-3.5 border-border/70 space-y-2.5">
+              <div className="flex items-start justify-between gap-2">
+                <div className="min-w-0 flex-1">
+                  <button
+                    className="text-left font-bold text-foreground text-sm hover:underline line-clamp-1"
+                    onClick={() => setDetailId(item.id)}
+                  >
+                    #{item.number} · {item.title}
+                  </button>
+                  <p className="text-xs text-muted-foreground truncate">
+                    {item.clients?.name} · {item.services?.name}
+                  </p>
+                </div>
+                <Badge variant="outline" className="shrink-0 text-[10px]">
+                  {STATUS[item.status] ?? item.status}
+                </Badge>
+              </div>
+
+              <div className="flex items-baseline justify-between pt-1 border-t border-border/60 text-xs">
+                <div>
+                  <span className="font-mono font-bold text-primary text-sm">
+                    {brl(item.amount)}
+                  </span>
+                  {item.billing_mode === "mensal_fixo" && (
+                    <span className="text-[10px] text-muted-foreground"> / mês</span>
+                  )}
+                </div>
+                <span className="text-muted-foreground text-xs">
+                  {item.due_day ? `Vencimento dia ${item.due_day}` : BILLING[item.billing_mode]}
+                </span>
+              </div>
+
+              <div className="flex items-center justify-end gap-1.5 pt-1">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="h-8 text-xs text-emerald-700 dark:text-emerald-400 border-emerald-300"
+                  onClick={() => sendWhatsAppOrLink(item)}
+                >
+                  <MessageCircle className="w-3.5 h-3.5 mr-1" />
+                  WhatsApp
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="h-8 text-xs"
+                  onClick={() => setDetailId(item.id)}
+                >
+                  Ver Termo
+                </Button>
+                {["aprovado", "ativo"].includes(item.status) && (
+                  <Button
+                    size="sm"
+                    className="h-8 text-xs"
+                    onClick={() => setOrderId(item.id)}
+                  >
+                    Nova OS
+                  </Button>
+                )}
+                {canManage && ["rascunho", "enviado"].includes(item.status) && (
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    className="h-8 text-xs text-primary"
+                    onClick={() => activateContract(item)}
+                  >
+                    Ativar
+                  </Button>
+                )}
+              </div>
+            </Card>
+          ))}
+          {!filtered.length && !isLoading && (
+            <div className="p-8 text-center text-muted-foreground text-sm">
+              Nenhum contrato encontrado.
+            </div>
+          )}
+        </div>
+
+        {/* Desktop View: Tabela */}
+        <div className="hidden sm:block overflow-x-auto">
           <table className="w-full min-w-[720px] text-sm">
             <thead className="bg-muted/50 text-xs uppercase text-muted-foreground">
               <tr>
@@ -481,9 +631,11 @@ function ContractsPage() {
                     <div className="text-xs text-muted-foreground">{item.services?.name}</div>
                   </td>
                   <td className="p-3">
-                    <div className="font-medium">{brl(item.amount)}</div>
+                    <div className="font-semibold text-primary">
+                      {brl(item.amount)} {item.billing_mode === "mensal_fixo" ? "/ mês" : ""}
+                    </div>
                     <div className="text-xs text-muted-foreground">
-                      {BILLING[item.billing_mode]}
+                      {item.due_day ? `Vencimento dia ${item.due_day}` : BILLING[item.billing_mode]}
                     </div>
                   </td>
                   <td className="p-3">
@@ -494,9 +646,23 @@ function ContractsPage() {
                   </td>
                   <td className="p-3">
                     <div className="flex justify-end gap-1">
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        className="text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-950/40"
+                        title="Enviar pelo WhatsApp"
+                        onClick={() => sendWhatsAppOrLink(item)}
+                      >
+                        <MessageCircle className="h-4 w-4" />
+                      </Button>
                       {item.status === "aprovado" && (
                         <Button size="sm" variant="outline" onClick={() => setOrderId(item.id)}>
                           Nova OS
+                        </Button>
+                      )}
+                      {canManage && ["rascunho", "enviado"].includes(item.status) && (
+                        <Button size="sm" variant="ghost" onClick={() => activateContract(item)}>
+                          Ativar
                         </Button>
                       )}
                       {canManage &&
@@ -537,8 +703,7 @@ function ContractsPage() {
                     <FileSignature className="mx-auto mb-3 h-8 w-8 text-muted-foreground/60" />
                     <p className="font-medium">Nenhum contrato encontrado</p>
                     <p className="mt-1 text-sm text-muted-foreground">
-                      Configure um modelo para um serviço de prestação e cadastre o contrato do
-                      cliente.
+                      Cadastre novos contratos ou assinaturas pelo botão acima.
                     </p>
                   </td>
                 </tr>
@@ -577,16 +742,19 @@ function ContractsPage() {
                 </Select>
               </div>
               <div>
-                <Label>Serviço com modelo ativo *</Label>
+                <Label>Serviço vinculado *</Label>
                 <Select
                   value={form.service_id}
                   onValueChange={(v) => {
                     const svc = services.find((s) => s.id === v);
+                    const isMonthly = (svc as any)?.billing_type === "assinatura_mensal" || (svc as any)?.billing_type === "mensal";
                     setForm({
                       ...form,
                       service_id: v,
-                      title: form.title || svc?.name || "",
+                      title: form.title || `${svc?.name || "Serviço"} — ${isMonthly ? "Assinatura Mensal" : "Contrato de Prestação"}`,
                       amount: form.amount || String(svc?.base_price ?? ""),
+                      billing_mode: isMonthly ? "mensal_fixo" : form.billing_mode,
+                      scope: form.scope || (svc as any)?.description || "",
                     });
                   }}
                 >
@@ -594,13 +762,14 @@ function ContractsPage() {
                     <SelectValue placeholder="Selecione o serviço" />
                   </SelectTrigger>
                   <SelectContent>
-                    {services
-                      .filter((s) => templatesByService.has(s.id))
-                      .map((s) => (
+                    {services.map((s: any) => {
+                      const isMonthly = s.billing_type === "assinatura_mensal" || s.billing_type === "mensal";
+                      return (
                         <SelectItem key={s.id} value={s.id}>
-                          {s.name} · {s.category}
+                          {isMonthly ? "🔄 " : ""}{s.name} · {s.category} ({brl(s.base_price)}{isMonthly ? "/mês" : ""})
                         </SelectItem>
-                      ))}
+                      );
+                    })}
                   </SelectContent>
                 </Select>
               </div>
@@ -683,14 +852,21 @@ function ContractsPage() {
                   onChange={(e) => setForm({ ...form, notes: e.target.value })}
                 />
               </div>
-              {templatesByService.has(form.service_id) && (
-                <div className="sm:col-span-2 rounded-xl border bg-muted/30 p-3 text-sm">
-                  <p className="flex items-center gap-2 font-medium">
-                    <ShieldCheck className="h-4 w-4 text-primary" />O modelo deste serviço incluirá
-                    confidencialidade e não reutilização de conteúdo específico do cliente.
-                  </p>
+              <div className="sm:col-span-2 rounded-xl border bg-muted/30 p-3.5 text-sm space-y-2">
+                <div className="flex items-center gap-2 font-medium text-foreground">
+                  <ShieldCheck className="h-4 w-4 text-primary" />
+                  <span>Cláusula de Confidencialidade e Não Reutilização das Peças</span>
                 </div>
-              )}
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  Garante que materiais e conteúdos desenvolvidos especificamente para este cliente permanecerão sob sigilo e não serão reutilizados ou repassados a terceiros.
+                </p>
+                <Textarea
+                  rows={3}
+                  value={form.confidentiality_clause}
+                  onChange={(e) => setForm({ ...form, confidentiality_clause: e.target.value })}
+                  placeholder="Texto da cláusula de confidencialidade..."
+                />
+              </div>
             </div>
             <DialogFooter>
               <Button type="button" variant="outline" onClick={() => setCreateOpen(false)}>
@@ -799,6 +975,10 @@ function ContractsPage() {
         onEdit={editContract}
         onSend={sendLink}
         sendingId={sendingId}
+        onWhatsApp={sendWhatsAppOrLink}
+        onTogglePause={togglePauseContract}
+        onTerminate={terminateContract}
+        onActivate={activateContract}
         onSaved={async () => {
           await qc.invalidateQueries({ queryKey: ["service-contracts"] });
           await qc.invalidateQueries({ queryKey: ["receivables"] });
@@ -840,6 +1020,10 @@ function ContractDetails({
   onEdit,
   onSend,
   sendingId,
+  onWhatsApp,
+  onTogglePause,
+  onTerminate,
+  onActivate,
   onSaved,
   onCreateOrder,
 }: {
@@ -848,6 +1032,10 @@ function ContractDetails({
   onEdit: (c: any) => void;
   onSend: (c: any) => void;
   sendingId: string | null;
+  onWhatsApp?: (c: any) => void;
+  onTogglePause?: (c: any) => void;
+  onTerminate?: (c: any) => void;
+  onActivate?: (c: any) => void;
   onSaved: () => void;
   onCreateOrder: (id: string) => void;
 }) {
@@ -1026,35 +1214,88 @@ function ContractDetails({
               <div className="space-y-4">
                 <Card className="space-y-3 p-4">
                   <h2 className="font-semibold">Ações</h2>
-                  {canResend && (
-                    <>
-                      <Button
-                        className="w-full"
-                        onClick={() => onSend(contract)}
-                        disabled={sendingId === contract.id}
-                      >
-                        <Send className="mr-2 h-4 w-4" />
-                        {contract.status === "enviado"
-                          ? "Gerar nova versão e link"
-                          : "Gerar link de aprovação"}
-                      </Button>
-                      <Button variant="outline" className="w-full" onClick={() => onEdit(contract)}>
-                        Editar rascunho
-                      </Button>
-                    </>
-                  )}
-                  {contract.status === "aprovado" && (
+                  <div className="flex flex-col gap-2">
                     <Button
-                      className="w-full"
-                      onClick={() => {
-                        onOpenChange(false);
-                        onCreateOrder(contract.id);
-                      }}
+                      variant="outline"
+                      className="w-full text-emerald-700 dark:text-emerald-400 border-emerald-300 hover:bg-emerald-50 dark:hover:bg-emerald-950/40"
+                      onClick={() => onWhatsApp?.(contract)}
                     >
-                      <Plus className="mr-2 h-4 w-4" />
-                      Criar OS vinculada
+                      <MessageCircle className="mr-2 h-4 w-4" />
+                      Enviar pelo WhatsApp
                     </Button>
-                  )}
+                    {canResend && (
+                      <>
+                        <Button
+                          className="w-full"
+                          onClick={() => onSend(contract)}
+                          disabled={sendingId === contract.id}
+                        >
+                          <Send className="mr-2 h-4 w-4" />
+                          {contract.status === "enviado"
+                            ? "Gerar nova versão e link"
+                            : "Gerar link de aprovação"}
+                        </Button>
+                        <Button variant="outline" className="w-full" onClick={() => onEdit(contract)}>
+                          Editar rascunho
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          className="w-full text-primary"
+                          onClick={() => {
+                            onActivate?.(contract);
+                            onOpenChange(false);
+                          }}
+                        >
+                          Aprovar / Ativar diretamente
+                        </Button>
+                      </>
+                    )}
+                    {["aprovado", "ativo"].includes(contract.status) && (
+                      <>
+                        <Button
+                          className="w-full"
+                          onClick={() => {
+                            onOpenChange(false);
+                            onCreateOrder(contract.id);
+                          }}
+                        >
+                          <Plus className="mr-2 h-4 w-4" />
+                          Criar OS vinculada
+                        </Button>
+                        <Button
+                          variant="outline"
+                          className="w-full"
+                          onClick={() => {
+                            onTogglePause?.(contract);
+                            onOpenChange(false);
+                          }}
+                        >
+                          Pausar assinatura
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          className="w-full text-destructive hover:bg-destructive/10"
+                          onClick={() => {
+                            onTerminate?.(contract);
+                            onOpenChange(false);
+                          }}
+                        >
+                          Encerrar contrato
+                        </Button>
+                      </>
+                    )}
+                    {["suspenso", "pausado"].includes(contract.status) && (
+                      <Button
+                        className="w-full bg-emerald-600 hover:bg-emerald-700 text-white"
+                        onClick={() => {
+                          onTogglePause?.(contract);
+                          onOpenChange(false);
+                        }}
+                      >
+                        Reativar assinatura
+                      </Button>
+                    )}
+                  </div>
                 </Card>
                 <Card className="p-4">
                   <div className="mb-3 flex justify-between">

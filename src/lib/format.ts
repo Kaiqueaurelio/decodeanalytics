@@ -119,6 +119,8 @@ export const PAYMENT_METHODS = [
 export const CASH_IN_CATEGORIES = [
   "Venda de serviço",
   "Pagamento de OS",
+  "Pagamento de contrato",
+  "Assinatura recorrente",
   "Sinal/Entrada",
   "Outros",
 ];

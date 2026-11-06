@@ -82,7 +82,7 @@ function OrdersPage() {
       let q = supabase
         .from("orders" as any)
         .select(
-          "*, clients(name), assignee:profiles!orders_assigned_to_fkey(name:full_name,email)",
+          "*, clients(name), assignee:profiles!orders_assigned_to_fkey(name:full_name,email), service_contracts(number, title)",
         )
         .order("created_at", { ascending: false })
         .limit(200) as any;
@@ -518,7 +518,139 @@ function OrdersPage() {
           </button>
         </div>
       )}
-      <Card>
+      {/* Lista em cards touch-friendly para Mobile */}
+      <div className="grid gap-3 sm:hidden">
+        {(filtered ?? []).map((o: any) => (
+          <Card key={o.id} className="p-4 space-y-3">
+            <div className="flex items-start justify-between gap-2">
+              <div className="flex flex-wrap items-center gap-1.5">
+                <span className="font-mono font-bold text-sm">#{o.number}</span>
+                <Badge variant="outline" className="text-[10px]">
+                  {o.service_segment === "tecnologia" ? "Tecnologia" : "Gráfica"}
+                </Badge>
+                {o.service_contracts?.number && (
+                  <Badge variant="secondary" className="text-[10px]">
+                    Contrato #{o.service_contracts.number}
+                  </Badge>
+                )}
+                {o.urgent && (
+                  <Badge className="bg-destructive text-destructive-foreground text-[10px]">
+                    Urgente
+                  </Badge>
+                )}
+              </div>
+              <OSStatusBadge status={o.production_status} className="text-[10px] px-2 py-0.5" />
+            </div>
+
+            <div>
+              <div className="font-semibold text-base leading-snug flex items-center gap-1.5">
+                <span>{o.clients?.name || "Cliente não informado"}</span>
+                {isOverdue(o) && (
+                  <span className="inline-flex items-center gap-1 text-xs text-destructive font-medium">
+                    <AlertTriangle className="w-3.5 h-3.5" /> Atrasada
+                  </span>
+                )}
+              </div>
+              {o.current_activity && (
+                <p className="text-xs text-muted-foreground mt-0.5 line-clamp-1">
+                  {o.current_activity}
+                </p>
+              )}
+            </div>
+
+            <div className="grid grid-cols-2 gap-2 text-xs pt-1 border-t border-border/60">
+              <div>
+                <span className="text-muted-foreground block text-[11px]">Prazo</span>
+                <span className={`font-medium ${isOverdue(o) ? "text-destructive font-bold" : ""}`}>
+                  {fmtDate(o.deadline)}
+                </span>
+              </div>
+              <div>
+                <span className="text-muted-foreground block text-[11px]">Pagamento</span>
+                <span className="font-medium">{PAYMENT_STATUS_LABEL[o.payment_status] || "—"}</span>
+              </div>
+              <div className="col-span-2">
+                <div className="flex items-center justify-between text-[11px] text-muted-foreground mb-1">
+                  <span>Responsável: {o.assignee?.name || o.assignee?.email || "Sem responsável"}</span>
+                  <span>{o.progress || 0}%</span>
+                </div>
+                <div className="h-1.5 w-full bg-muted rounded-full overflow-hidden">
+                  <div className="h-full bg-gold" style={{ width: `${o.progress || 0}%` }} />
+                </div>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between pt-2 border-t border-border/60">
+              <div>
+                <span className="text-[11px] text-muted-foreground block">Total</span>
+                <span className="font-mono font-bold text-base text-foreground">{brl(o.total)}</span>
+              </div>
+              <div className="flex items-center gap-1">
+                {o.production_status !== "em_producao" &&
+                  o.production_status !== "entregue" &&
+                  o.production_status !== "cancelado" && (
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="h-8 px-2 text-blue-600 hover:text-blue-700"
+                      title="Mover para produção"
+                      onClick={() =>
+                        quickStatus(o.id, o.number, "em_producao", "movida para produção")
+                      }
+                    >
+                      <Play className="w-3.5 h-3.5 mr-1" />
+                      Produzir
+                    </Button>
+                  )}
+                {o.production_status !== "entregue" && o.production_status !== "cancelado" && (
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="h-8 px-2 text-emerald-600 hover:text-emerald-700"
+                    title="Concluir OS"
+                    onClick={() => {
+                      if (!confirm(`Concluir OS #${o.number}?`)) return;
+                      quickStatus(o.id, o.number, "entregue", "marcada como concluída");
+                    }}
+                  >
+                    <CheckCircle2 className="w-3.5 h-3.5 mr-1" />
+                    Concluir
+                  </Button>
+                )}
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  className="h-8 w-8"
+                  title="Editar"
+                  onClick={() => {
+                    setEditId(o.id);
+                    setOpen(true);
+                  }}
+                >
+                  <Pencil className="w-4 h-4" />
+                </Button>
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  className="h-8 w-8 text-destructive"
+                  title="Excluir"
+                  onClick={() => remove(o.id, o.number)}
+                >
+                  <Trash2 className="w-4 h-4" />
+                </Button>
+              </div>
+            </div>
+          </Card>
+        ))}
+        {!filtered?.length && (
+          <Card className="p-8 text-center text-muted-foreground text-sm">
+            Nenhuma OS cadastrada
+          </Card>
+        )}
+      </div>
+
+      {/* Tabela completa para Desktop (sm:table) */}
+      <Card className="hidden sm:block">
         <div className="overflow-x-auto">
           <table className="w-full min-w-[680px] text-sm">
             <thead className="bg-muted text-muted-foreground">

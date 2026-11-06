@@ -259,6 +259,7 @@ export type Database = {
       }
       clients: {
         Row: {
+active: boolean
           archived_at: string | null
           address: string | null
           city: string | null
@@ -274,6 +275,7 @@ export type Database = {
           whatsapp: string | null
         }
         Insert: {
+active?: boolean
           archived_at?: string | null
           address?: string | null
           city?: string | null
@@ -289,6 +291,7 @@ export type Database = {
           whatsapp?: string | null
         }
         Update: {
+active?: boolean
           archived_at?: string | null
           address?: string | null
           city?: string | null
@@ -1277,6 +1280,7 @@ export type Database = {
           active: boolean
           badge: string | null
           base_price: number
+          billing_type: string
           category: string
           created_at: string
           default_deadline_days: number | null
@@ -1297,6 +1301,7 @@ export type Database = {
           active?: boolean
           badge?: string | null
           base_price?: number
+          billing_type?: string
           category: string
           created_at?: string
           default_deadline_days?: number | null
@@ -1317,6 +1322,7 @@ export type Database = {
           active?: boolean
           badge?: string | null
           base_price?: number
+          billing_type?: string
           category?: string
           created_at?: string
           default_deadline_days?: number | null
@@ -1361,6 +1367,20 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      delete_or_archive_client: {
+        Args: {
+          p_client_id: string
+          p_force_cascade?: boolean
+        }
+        Returns: Json
+      }
+      generate_monthly_contract_receivables: {
+        Args: {
+          p_month: number
+          p_year: number
+        }
+        Returns: Json
+      }
       get_public_service_contract: {
         Args: { p_token_hash: string }
         Returns: Json

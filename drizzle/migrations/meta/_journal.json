@@ -29,6 +29,13 @@
       "when": 1793999961421,
       "tag": "0003_service_contracts_recurring",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1794010000000,
+      "tag": "0004_service_billing_type_and_monthly_generation",
+      "breakpoints": true
     }
   ]
 }

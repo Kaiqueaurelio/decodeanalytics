@@ -69,23 +69,23 @@ function CashPage() {
   return (
     <div className="space-y-4">
       {/* Saldo do Dia - Destaque Principal */}
-      <div className="bg-linear-to-r from-brand-yellow to-brand-orange rounded-2xl p-6 text-brand-blue shadow-lg border border-brand-yellow/30">
-        <div className="flex items-center justify-between flex-wrap gap-4">
+      <div className="bg-linear-to-r from-brand-yellow to-brand-orange rounded-2xl p-4 sm:p-6 text-brand-blue shadow-lg border border-brand-yellow/30">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <div className="flex items-center gap-2 mb-2">
-              <Calendar className="w-5 h-5 opacity-75" />
-              <p className="text-sm font-semibold opacity-90">SALDO DO DIA</p>
+            <div className="flex items-center gap-2 mb-1 sm:mb-2">
+              <Calendar className="w-4 h-4 sm:w-5 sm:h-5 opacity-75" />
+              <p className="text-xs sm:text-sm font-semibold opacity-90">SALDO DO DIA</p>
             </div>
-            <p className="text-4xl md:text-5xl font-black">{brl(todayTotals.in - todayTotals.out)}</p>
+            <p className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight">{brl(todayTotals.in - todayTotals.out)}</p>
           </div>
-          <div className="text-right">
-            <div className="mb-3">
-              <p className="text-sm opacity-75 mb-1">Entradas</p>
-              <p className="text-2xl font-bold text-emerald-600">{brl(todayTotals.in)}</p>
+          <div className="flex sm:flex-col justify-between sm:justify-start sm:text-right gap-3 pt-2 sm:pt-0 border-t sm:border-t-0 border-brand-blue/15">
+            <div>
+              <p className="text-xs opacity-75 mb-0.5 sm:mb-1">Entradas hoje</p>
+              <p className="text-lg sm:text-2xl font-bold text-emerald-700">{brl(todayTotals.in)}</p>
             </div>
             <div>
-              <p className="text-sm opacity-75 mb-1">Saídas</p>
-              <p className="text-2xl font-bold text-destructive">{brl(todayTotals.out)}</p>
+              <p className="text-xs opacity-75 mb-0.5 sm:mb-1">Saídas hoje</p>
+              <p className="text-lg sm:text-2xl font-bold text-destructive">{brl(todayTotals.out)}</p>
             </div>
           </div>
         </div>
@@ -149,8 +149,71 @@ function CashPage() {
         </Dialog>
       </div>
 
-      {/* Tabela de Lançamentos */}
-      <Card>
+      {/* Lista em cards touch-friendly para Mobile */}
+      <div className="grid gap-2.5 sm:hidden">
+        {(data ?? []).map((e) => (
+          <Card key={e.id} className="p-3.5 space-y-2.5">
+            <div className="flex items-start justify-between gap-2">
+              <div className="flex items-center gap-2">
+                {e.type === "entrada" ? (
+                  <ArrowDownCircle className="w-5 h-5 text-emerald-600 shrink-0" />
+                ) : (
+                  <ArrowUpCircle className="w-5 h-5 text-destructive shrink-0" />
+                )}
+                <div>
+                  <span className="font-semibold text-sm leading-tight block">{e.description}</span>
+                  <span className="text-xs text-muted-foreground">{fmtDate(e.entry_date)}</span>
+                </div>
+              </div>
+              <Button
+                size="icon"
+                variant="ghost"
+                className="h-8 w-8 text-destructive shrink-0"
+                aria-label="Excluir lançamento"
+                onClick={() => remove(e.id)}
+              >
+                <Trash2 className="w-4 h-4" />
+              </Button>
+            </div>
+
+            {e.clients?.name && (
+              <p className="text-xs text-muted-foreground">
+                Cliente: <span className="text-foreground font-medium">{e.clients.name}</span>
+              </p>
+            )}
+
+            <div className="flex items-center justify-between pt-1 border-t border-border/60">
+              <div className="flex flex-wrap items-center gap-1.5">
+                {e.category && (
+                  <Badge variant="outline" className="text-[10px]">
+                    {e.category}
+                  </Badge>
+                )}
+                {e.payment_method && (
+                  <Badge variant="secondary" className="text-[10px]">
+                    {e.payment_method}
+                  </Badge>
+                )}
+              </div>
+              <span
+                className={`font-mono font-bold text-sm ${
+                  e.type === "entrada" ? "text-emerald-600" : "text-destructive"
+                }`}
+              >
+                {e.type === "entrada" ? "+" : "-"} {brl(e.amount)}
+              </span>
+            </div>
+          </Card>
+        ))}
+        {!data?.length && (
+          <Card className="p-8 text-center text-muted-foreground text-sm">
+            Sem lançamentos
+          </Card>
+        )}
+      </div>
+
+      {/* Tabela completa para Desktop (sm:table) */}
+      <Card className="hidden sm:block">
         <div className="overflow-x-auto">
           <table className="w-full min-w-[680px] text-sm">
             <thead className="bg-muted text-muted-foreground">

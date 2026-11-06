@@ -91,7 +91,110 @@ function QuotesPage() {
         <Select value={statusFilter} onValueChange={setStatusFilter}><SelectTrigger className="w-full sm:w-48"><SelectValue placeholder="Filtrar status" /></SelectTrigger><SelectContent><SelectItem value="todos">Todos os status</SelectItem><SelectItem value="em_analise">Em análise</SelectItem><SelectItem value="enviado">Enviado</SelectItem><SelectItem value="aprovado">Aprovado</SelectItem><SelectItem value="recusado">Recusado</SelectItem></SelectContent></Select>
         <Button onClick={() => { setEditId(null); setOpen(true); }}><Plus className="w-4 h-4 mr-1" />Novo orçamento</Button>
       </div>
-      <Card>
+      {/* Lista em cards touch-friendly para Mobile */}
+      <div className="grid gap-3 sm:hidden">
+        {filtered.map((q: any) => (
+          <Card key={q.id} className="p-4 space-y-3">
+            <div className="flex items-start justify-between gap-2">
+              <span className="font-mono font-bold text-sm">#{q.number}</span>
+              <Badge variant="outline" className="text-xs">
+                {QUOTE_STATUS_LABEL[q.status] || q.status}
+              </Badge>
+            </div>
+
+            <div>
+              <div className="font-semibold text-base">{q.clients?.name || "Cliente não informado"}</div>
+              {q.validity_date && (
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  Válido até: {fmtDate(q.validity_date)}
+                </p>
+              )}
+            </div>
+
+            <div className="space-y-1 py-1 border-t border-border/60">
+              <p className="text-[11px] font-medium text-muted-foreground">Itens / Serviços:</p>
+              {(q.quote_items ?? []).map((item: any, idx: number) => (
+                <div key={`${q.id}-${idx}`} className="text-xs flex items-center justify-between">
+                  <span className="line-clamp-1">{item.description}</span>
+                  <span className="text-muted-foreground font-mono ml-2">× {item.quantity}</span>
+                </div>
+              ))}
+              {!q.quote_items?.length && (
+                <span className="text-xs text-muted-foreground italic">Nenhum item listado</span>
+              )}
+            </div>
+
+            <div className="flex items-center justify-between pt-2 border-t border-border/60">
+              <div>
+                <span className="text-[11px] text-muted-foreground block">Total</span>
+                <span className="font-mono font-bold text-base text-foreground">{brl(q.total)}</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="h-8 px-2 text-green-600 hover:text-green-700 hover:bg-green-50 dark:hover:bg-green-950/20"
+                  title="Enviar pelo WhatsApp"
+                  onClick={() => openWhatsApp(q)}
+                >
+                  <MessageCircle className="w-4 h-4 mr-1" />
+                  Whats
+                </Button>
+                {q.status === "aprovado" && (
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="h-8 px-2 text-primary"
+                    title="Gerar OS"
+                    onClick={() => setConvertFrom(q.id)}
+                  >
+                    <CheckCircle2 className="w-4 h-4 mr-1" />
+                    Gerar OS
+                  </Button>
+                )}
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  className="h-8 w-8"
+                  title="Imprimir orçamento"
+                  onClick={() => printQuote(q.id)}
+                >
+                  <FileText className="w-4 h-4" />
+                </Button>
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  className="h-8 w-8"
+                  title="Editar"
+                  onClick={() => {
+                    setEditId(q.id);
+                    setOpen(true);
+                  }}
+                >
+                  <Pencil className="w-4 h-4" />
+                </Button>
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  className="h-8 w-8 text-destructive"
+                  title="Excluir"
+                  onClick={() => remove(q.id, q.number)}
+                >
+                  <Trash2 className="w-4 h-4" />
+                </Button>
+              </div>
+            </div>
+          </Card>
+        ))}
+        {!filtered.length && (
+          <Card className="p-8 text-center text-muted-foreground text-sm">
+            Nenhum orçamento encontrado
+          </Card>
+        )}
+      </div>
+
+      {/* Tabela completa para Desktop (sm:table) */}
+      <Card className="hidden sm:block">
         <div className="overflow-x-auto">
           <table className="w-full min-w-[680px] text-sm">
             <thead className="bg-muted text-muted-foreground"><tr>
