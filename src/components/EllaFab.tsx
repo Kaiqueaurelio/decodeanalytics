@@ -14,7 +14,7 @@ const BUBBLE_SIZE = 64;
 export function EllaFab({ audience = "public" }: EllaFabProps) {
   const pathname = useRouterState({ select: (state) => state.location.pathname });
   const destination = audience === "staff" ? "/ella" : "/assistente";
-  const label = "Ella Ribeiro, assistente virtual";
+  const label = "Atendimento Decode Analytics";
   const [position, setPosition] = useState<Position | null>(null);
   const dragRef = useRef<DragState | null>(null);
   const didDragRef = useRef(false);
@@ -169,7 +169,7 @@ export function EllaFab({ audience = "public" }: EllaFabProps) {
         aria-hidden="true"
         className={`pointer-events-none absolute ${audience === "public" ? "left-[4.25rem]" : "right-[4.25rem]"} top-1/2 -translate-y-1/2 whitespace-nowrap rounded-lg bg-[#0B1026] px-3 py-2 text-xs font-semibold text-white opacity-0 shadow-lg transition-opacity group-hover:opacity-100 group-focus-within:opacity-100`}
       >
-        {audience === "public" ? "Tire dúvidas com Ella" : "Ella Ribeiro"}
+        {audience === "public" ? "Fale conosco" : "Assistente"}
       </span>
     </div>
   );

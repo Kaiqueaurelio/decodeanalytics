@@ -80,7 +80,7 @@ function EllaSandboxPage() {
       <header className="flex items-start gap-3">
         <EllaAvatar
           size={48}
-          alt="Ella Ribeiro, assistente virtual de inteligência artificial"
+          alt="Assistente"
           ringClassName="ring-2 ring-primary/30"
         />
         <div>
