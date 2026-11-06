@@ -109,7 +109,7 @@ function StoreHeader() {
           className="flex shrink-0 items-center gap-2 sm:gap-3 transition-transform hover:scale-[1.02]"
         >
           <img
-            src={info.logoUrl || "/brand/decode-logo.png"}
+            src="/brand/decode-logo.png"
             alt={info.name}
             className="h-10 w-auto brand-logo rounded-md bg-black p-1 object-contain sm:h-12 md:h-14"
           />
