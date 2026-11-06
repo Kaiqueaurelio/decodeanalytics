@@ -21,7 +21,7 @@ CREATE TABLE public.service_contract_templates (
   body_template text NOT NULL,
   confidentiality_clause text NOT NULL DEFAULT 'CONFIDENCIALIDADE E NÃO REUTILIZAÇÃO: A CONTRATADA manterá sob sigilo as informações, arquivos e materiais confidenciais fornecidos pelo CONTRATANTE. Não reutilizará, publicará, repassará ou utilizará em favor de terceiros os materiais ou conteúdos desenvolvidos especificamente para este cliente, sem autorização expressa do CONTRATANTE. Esta obrigação não abrange conhecimentos gerais, métodos, técnicas, ferramentas ou materiais de terceiros, desde que não revelem nem reproduzam conteúdo confidencial do CONTRATANTE.',
   active boolean NOT NULL DEFAULT true,
-  created_by uuid REFERENCES auth.users(id),
+  created_by uuid,
   created_at timestamptz NOT NULL DEFAULT now(),
   updated_at timestamptz NOT NULL DEFAULT now()
 );
@@ -29,12 +29,12 @@ ALTER TABLE public.service_contract_templates ENABLE ROW LEVEL SECURITY;
 GRANT SELECT, INSERT, UPDATE, DELETE ON public.service_contract_templates TO authenticated;
 GRANT ALL ON public.service_contract_templates TO service_role;
 CREATE POLICY "contract_templates_read_staff" ON public.service_contract_templates FOR SELECT TO authenticated
-  USING (public.is_admin(auth.uid()) OR public.has_role('atendente'::public.app_role, auth.uid()) OR public.has_role('financeiro'::public.app_role, auth.uid()));
+  USING (public.is_admin(auth.uid()) OR public.has_role(auth.uid(), 'atendente'::public.app_role) OR public.has_role(auth.uid(), 'financeiro'::public.app_role));
 CREATE POLICY "contract_templates_insert_staff" ON public.service_contract_templates FOR INSERT TO authenticated
-  WITH CHECK (public.is_admin(auth.uid()) OR public.has_role('atendente'::public.app_role, auth.uid()));
+  WITH CHECK (public.is_admin(auth.uid()) OR public.has_role(auth.uid(), 'atendente'::public.app_role));
 CREATE POLICY "contract_templates_update_staff" ON public.service_contract_templates FOR UPDATE TO authenticated
-  USING (public.is_admin(auth.uid()) OR public.has_role('atendente'::public.app_role, auth.uid()))
-  WITH CHECK (public.is_admin(auth.uid()) OR public.has_role('atendente'::public.app_role, auth.uid()));
+  USING (public.is_admin(auth.uid()) OR public.has_role(auth.uid(), 'atendente'::public.app_role))
+  WITH CHECK (public.is_admin(auth.uid()) OR public.has_role(auth.uid(), 'atendente'::public.app_role));
 CREATE POLICY "contract_templates_delete_admin" ON public.service_contract_templates FOR DELETE TO authenticated
   USING (public.is_admin(auth.uid()));
 CREATE TRIGGER trg_contract_templates_updated BEFORE UPDATE ON public.service_contract_templates
@@ -61,7 +61,7 @@ CREATE TABLE public.service_contracts (
   responded_at timestamptz,
   approval_name text,
   response_reason text,
-  created_by uuid REFERENCES auth.users(id),
+  created_by uuid,
   created_at timestamptz NOT NULL DEFAULT now(),
   updated_at timestamptz NOT NULL DEFAULT now(),
   CHECK (end_date IS NULL OR start_date IS NULL OR end_date >= start_date)
@@ -72,12 +72,12 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON public.service_contracts TO authenticate
 GRANT ALL ON public.service_contracts TO service_role;
 GRANT USAGE, SELECT ON SEQUENCE public.service_contract_number_seq TO authenticated, service_role;
 CREATE POLICY "service_contracts_read_staff" ON public.service_contracts FOR SELECT TO authenticated
-  USING (public.is_admin(auth.uid()) OR public.has_role('atendente'::public.app_role, auth.uid()) OR public.has_role('financeiro'::public.app_role, auth.uid()));
+  USING (public.is_admin(auth.uid()) OR public.has_role(auth.uid(), 'atendente'::public.app_role) OR public.has_role(auth.uid(), 'financeiro'::public.app_role));
 CREATE POLICY "service_contracts_insert_staff" ON public.service_contracts FOR INSERT TO authenticated
-  WITH CHECK (public.is_admin(auth.uid()) OR public.has_role('atendente'::public.app_role, auth.uid()));
+  WITH CHECK (public.is_admin(auth.uid()) OR public.has_role(auth.uid(), 'atendente'::public.app_role));
 CREATE POLICY "service_contracts_update_staff" ON public.service_contracts FOR UPDATE TO authenticated
-  USING (public.is_admin(auth.uid()) OR public.has_role('atendente'::public.app_role, auth.uid()) OR public.has_role('financeiro'::public.app_role, auth.uid()))
-  WITH CHECK (public.is_admin(auth.uid()) OR public.has_role('atendente'::public.app_role, auth.uid()) OR public.has_role('financeiro'::public.app_role, auth.uid()));
+  USING (public.is_admin(auth.uid()) OR public.has_role(auth.uid(), 'atendente'::public.app_role) OR public.has_role(auth.uid(), 'financeiro'::public.app_role))
+  WITH CHECK (public.is_admin(auth.uid()) OR public.has_role(auth.uid(), 'atendente'::public.app_role) OR public.has_role(auth.uid(), 'financeiro'::public.app_role));
 CREATE POLICY "service_contracts_delete_admin" ON public.service_contracts FOR DELETE TO authenticated
   USING (public.is_admin(auth.uid()));
 CREATE TRIGGER trg_service_contracts_updated BEFORE UPDATE ON public.service_contracts
@@ -103,15 +103,15 @@ GRANT SELECT, INSERT, UPDATE ON public.service_contract_versions TO authenticate
 GRANT ALL ON public.service_contract_versions TO service_role;
 CREATE POLICY "contract_versions_read_staff" ON public.service_contract_versions FOR SELECT TO authenticated
   USING (EXISTS (SELECT 1 FROM public.service_contracts c WHERE c.id = contract_id AND
-    (public.is_admin(auth.uid()) OR public.has_role('atendente'::public.app_role, auth.uid()) OR public.has_role('financeiro'::public.app_role, auth.uid()))));
+    (public.is_admin(auth.uid()) OR public.has_role(auth.uid(), 'atendente'::public.app_role) OR public.has_role(auth.uid(), 'financeiro'::public.app_role))));
 CREATE POLICY "contract_versions_write_staff" ON public.service_contract_versions FOR INSERT TO authenticated
   WITH CHECK (EXISTS (SELECT 1 FROM public.service_contracts c WHERE c.id = contract_id AND
-    (public.is_admin(auth.uid()) OR public.has_role('atendente'::public.app_role, auth.uid()))));
+    (public.is_admin(auth.uid()) OR public.has_role(auth.uid(), 'atendente'::public.app_role))));
 CREATE POLICY "contract_versions_update_staff" ON public.service_contract_versions FOR UPDATE TO authenticated
   USING (EXISTS (SELECT 1 FROM public.service_contracts c WHERE c.id = contract_id AND
-    (public.is_admin(auth.uid()) OR public.has_role('atendente'::public.app_role, auth.uid()))))
+    (public.is_admin(auth.uid()) OR public.has_role(auth.uid(), 'atendente'::public.app_role))))
   WITH CHECK (EXISTS (SELECT 1 FROM public.service_contracts c WHERE c.id = contract_id AND
-    (public.is_admin(auth.uid()) OR public.has_role('atendente'::public.app_role, auth.uid()))));
+    (public.is_admin(auth.uid()) OR public.has_role(auth.uid(), 'atendente'::public.app_role))));
 
 -- Hashes live in a table unavailable to browser sessions; links are short-lived and one-use.
 CREATE TABLE public.service_contract_approval_links (
