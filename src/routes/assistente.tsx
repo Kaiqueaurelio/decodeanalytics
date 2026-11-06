@@ -53,7 +53,7 @@ function AssistantePage() {
       id: "welcome",
       role: "assistant",
       content:
-        "Oi! 👋 Eu sou a Ella Ribeiro, assistente virtual de inteligência artificial da Decode Analytics. Posso consultar nosso catálogo ativo, explicar detalhes dos produtos e mostrar como pedir orçamento ou comprar. Se você procura um serviço que não aparece no catálogo, encaminho sua dúvida para a equipe. O que você está buscando?",
+        "Olá! Aqui é o atendimento da Decode Analytics. Me conte o que você precisa — produto, serviço ou orçamento — que eu te ajudo ou encaminho para a nossa equipe.",
     },
   ]);
   const [input, setInput] = useState("");
@@ -98,19 +98,19 @@ function AssistantePage() {
         <header className="grid grid-cols-[auto_minmax(0,1fr)] items-center gap-3 border-b border-[var(--store-border)] pb-4">
           <EllaAvatar
             size={56}
-            alt="Ella Ribeiro, assistente virtual de inteligência artificial"
+            alt="Atendimento Decode Analytics"
             loading="eager"
             ringClassName="ring-2 ring-[var(--store-secondary)] shadow-sm"
           />
           <div className="min-w-0">
             <h1 className="truncate text-xl font-black tracking-tight text-[var(--store-primary)]">
-              Ella Ribeiro
+              Atendimento online
             </h1>
             <p className="text-sm text-[var(--store-text-muted)]">
-              Assistente virtual de IA · Decode Analytics
+              Decode Analytics
             </p>
             <p className="mt-0.5 text-xs text-[var(--store-text-muted)]">
-              Te ajudo com produtos e serviços; quando necessário, chamo a equipe humana.
+              Tire dúvidas sobre produtos, serviços e orçamentos.
             </p>
           </div>
         </header>
