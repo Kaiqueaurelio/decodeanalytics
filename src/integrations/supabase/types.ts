@@ -274,6 +274,7 @@ export type Database = {
           whatsapp: string | null
         }
         Insert: {
+          archived_at?: string | null
           address?: string | null
           city?: string | null
           created_at?: string
@@ -288,6 +289,7 @@ export type Database = {
           whatsapp?: string | null
         }
         Update: {
+          archived_at?: string | null
           address?: string | null
           city?: string | null
           created_at?: string
