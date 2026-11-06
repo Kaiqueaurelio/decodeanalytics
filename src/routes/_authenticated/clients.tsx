@@ -69,19 +69,27 @@ function ClientsPage() {
   }
 
   async function remove(id: string, name: string) {
-    if (!confirm(`Excluir cliente "${name}"?\n\nOs registros financeiros não serão apagados.`)) return;
+    if (!confirm(`Excluir cliente "${name}"?\n\nO histórico financeiro e operacional será preservado.`)) return;
 
-    // Receivables are financial history. Never delete them just to remove a client.
-    const { count, error: checkError } = await supabase
-      .from("receivables")
-      .select("id", { count: "exact", head: true })
-      .eq("client_id", id);
-    if (checkError) {
-      console.error("Erro ao verificar recebíveis do cliente:", checkError);
-      return toast.error("Não foi possível verificar os recebimentos vinculados. Nenhum dado foi excluído.");
+    // Check all known client references before attempting deletion. Do not delete
+    // financial/order history to force a client delete.
+    const checks = await Promise.all([
+      supabase.from("receivables").select("id", { count: "exact", head: true }).eq("client_id", id),
+      supabase.from("orders").select("id", { count: "exact", head: true }).eq("client_id", id),
+      supabase.from("service_contracts").select("id", { count: "exact", head: true }).eq("client_id", id),
+      supabase.from("quotes").select("id", { count: "exact", head: true }).eq("client_id", id),
+      supabase.from("cash_entries").select("id", { count: "exact", head: true }).eq("client_id", id),
+    ]);
+    const labels = ["recebimentos", "ordens de serviço", "contratos", "orçamentos", "lançamentos de caixa"];
+    const failed = checks.findIndex((result) => result.error);
+    if (failed >= 0) {
+      console.error("Erro ao verificar vínculos do cliente:", checks[failed].error);
+      return toast.error("Não foi possível verificar todos os vínculos. Nenhum dado foi excluído; tente novamente.");
     }
-    if ((count ?? 0) > 0) {
-      return toast.error(`Este cliente possui ${count} recebimento(s) vinculado(s). Para preservar o histórico financeiro, não é possível excluí-lo. Você ainda pode editar o cadastro.`);
+    const linked = checks.map((result, i) => ({ label: labels[i], count: result.count ?? 0 })).filter((item) => item.count > 0);
+    if (linked.length) {
+      const summary = linked.map((item) => `${item.count} ${item.label}`).join(", ");
+      return toast.error(`Cliente possui registros vinculados: ${summary}. O histórico foi preservado. Edite o cadastro ou mantenha o cliente.`);
     }
 
     const { error } = await supabase.from("clients").delete().eq("id", id);
@@ -89,7 +97,7 @@ function ClientsPage() {
       console.error("Erro ao excluir cliente:", error);
       const msg = error.message.toLowerCase();
       if (msg.includes("foreign key") || msg.includes("fkey") || msg.includes("constraint")) {
-        return toast.error("Este cliente possui registros vinculados (OS, contratos ou financeiro). O histórico foi preservado e o cliente não foi excluído.");
+        return toast.error("Há outros registros vinculados a este cliente. O banco protegeu o histórico; nenhum dado foi excluído.");
       }
       return toast.error("Erro ao excluir cliente: " + error.message);
     }
