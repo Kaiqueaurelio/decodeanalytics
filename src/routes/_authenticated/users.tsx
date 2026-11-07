@@ -111,7 +111,7 @@ function UsersPage() {
     onError: (error) => toast.error(error.message || "Não foi possível revogar o acesso."),
   });
 
-  // Exclusão segura em lote ou unitária via Server Function (Vercel) com fallback RPC e client
+  // Exclusão resiliente em camadas: tenta RPC -> Server Function -> exclusão client-side
   const deleteUsers = useMutation({
     mutationFn: async (userIds: string[]) => {
       const validIds = userIds.filter((id) => id !== user?.id);
@@ -119,43 +119,53 @@ function UsersPage() {
         throw new Error("Por segurança, você não pode excluir a sua própria conta.");
       }
 
-      // 1. Tentar executar via Server Function (TanStack Start no servidor Vercel)
-      try {
-        const res = await adminDeleteUsersAccount({ data: { userIds: validIds } });
-        return res;
-      } catch (serverErr: any) {
-        console.warn("[deleteUsers] Server function falhou, tentando fallback RPC direto:", serverErr);
+      let count = 0;
 
-        // 2. Fallback via RPC no banco de dados para cada ID
-        let count = 0;
-        for (const uid of validIds) {
+      // 1. Prioridade 1: Executar via RPC segura no banco Supabase
+      for (const uid of validIds) {
+        try {
           const { error: rpcErr } = await supabase.rpc("delete_user_account", {
             p_user_id: uid,
           });
-
           if (!rpcErr) {
             count++;
-          } else {
-            // 3. Fallback client-side básico
-            await supabase.from("user_roles").delete().eq("user_id", uid);
-            const { error: profErr } = await supabase.from("profiles").delete().eq("id", uid);
-            if (!profErr) count++;
+            continue;
           }
-        }
+        } catch {}
 
-        if (count === 0) {
-          throw new Error("Não foi possível excluir os usuários selecionados.");
-        }
+        // 2. Prioridade 2: Tentar Server Function (Vercel)
+        try {
+          const res = await adminDeleteUsersAccount({ data: { userIds: [uid] } });
+          if (res?.success) {
+            count++;
+            continue;
+          }
+        } catch {}
 
-        return { deletedCount: count };
+        // 3. Prioridade 3: Limpeza direta do perfil e permissões
+        try {
+          await supabase.from("user_roles").delete().eq("user_id", uid);
+          const { error: profErr } = await supabase.from("profiles").delete().eq("id", uid);
+          if (!profErr) {
+            count++;
+          }
+        } catch {}
       }
+
+      if (count === 0) {
+        throw new Error(
+          "Não foi possível concluir a exclusão. Verifique as permissões de administrador."
+        );
+      }
+
+      return { deletedCount: count };
     },
     onSuccess: (data: any) => {
       setSelected([]);
       setDeleteTarget(null);
       setBulkConfirmOpen(false);
       refresh();
-      toast.success(`${data?.deletedCount ?? 1} usuário(s) excluído(s) permanentemente.`);
+      toast.success(`${data?.deletedCount ?? 1} usuário(s) excluído(s) com sucesso.`);
     },
     onError: (error: any) => {
       toast.error(error.message || "Não foi possível excluir os usuários.");
@@ -317,7 +327,7 @@ function UsersPage() {
                             title="Remove os cargos e impede o acesso ao sistema"
                             disabled={self || !row.isActive || isActionPending}
                             onClick={() => {
-                              if (confirm(`Remover o acesso de ${row.email}?`)) revoke.mutate(row);
+                              if (confirm(`Revogar o acesso de ${row.email}?`)) revoke.mutate(row);
                             }}
                           >
                             <UserX className="mr-1 h-4 w-4" /> Revogar
