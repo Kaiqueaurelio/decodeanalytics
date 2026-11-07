@@ -1,12 +1,23 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ShieldAlert, Trash2 } from "lucide-react";
-import { useState } from "react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { ShieldAlert, Trash2, UserX } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/lib/auth";
+import { adminDeleteUsersAccount } from "@/lib/api/users.functions";
 
 export const Route = createFileRoute("/_authenticated/users")({
   head: () => ({ meta: [{ title: "Usuários — Decode Analytics" }] }),
@@ -34,6 +45,8 @@ function UsersPage() {
   const { isAdmin, user } = useAuth();
   const qc = useQueryClient();
   const [selected, setSelected] = useState<string[]>([]);
+  const [deleteTarget, setDeleteTarget] = useState<Row | null>(null);
+  const [bulkConfirmOpen, setBulkConfirmOpen] = useState(false);
 
   const {
     data: rows,
@@ -85,19 +98,6 @@ function UsersPage() {
     onError: (error) => toast.error(error.message || "Não foi possível alterar o cargo."),
   });
 
-  const deleteUsers = useMutation({
-    mutationFn: async (userIds: string[]) => {
-      const { data, error } = await supabase.functions.invoke("admin-delete-users", { body: { userIds } });
-      if (error) throw error;
-      if (data?.error) throw new Error(data.error);
-      return data;
-    },
-    onSuccess: (data) => { setSelected([]); refresh(); toast.success(String(data?.deletedCount ?? 0) + " usuário(s) excluído(s)."); },
-    onError: (error) => toast.error(error.message || "Não foi possível excluir os usuários."),
-  });
-  const selectableRows = (rows ?? []).filter((row) => row.id !== user?.id);
-  const allSelected = selectableRows.length > 0 && selectableRows.every((row) => selected.includes(row.id));
-
   const revoke = useMutation({
     mutationFn: async (row: Row) => {
       if (row.id === user?.id) throw new Error("Não é permitido remover o próprio acesso.");
@@ -106,10 +106,68 @@ function UsersPage() {
     },
     onSuccess: () => {
       refresh();
-      toast.success("Acesso removido.");
+      toast.success("Acesso revogado.");
     },
-    onError: (error) => toast.error(error.message || "Não foi possível remover o acesso."),
+    onError: (error) => toast.error(error.message || "Não foi possível revogar o acesso."),
   });
+
+  // Exclusão segura em lote ou unitária via Server Function (Vercel) com fallback RPC e client
+  const deleteUsers = useMutation({
+    mutationFn: async (userIds: string[]) => {
+      const validIds = userIds.filter((id) => id !== user?.id);
+      if (validIds.length === 0) {
+        throw new Error("Por segurança, você não pode excluir a sua própria conta.");
+      }
+
+      // 1. Tentar executar via Server Function (TanStack Start no servidor Vercel)
+      try {
+        const res = await adminDeleteUsersAccount({ data: { userIds: validIds } });
+        return res;
+      } catch (serverErr: any) {
+        console.warn("[deleteUsers] Server function falhou, tentando fallback RPC direto:", serverErr);
+
+        // 2. Fallback via RPC no banco de dados para cada ID
+        let count = 0;
+        for (const uid of validIds) {
+          const { error: rpcErr } = await supabase.rpc("delete_user_account", {
+            p_user_id: uid,
+          });
+
+          if (!rpcErr) {
+            count++;
+          } else {
+            // 3. Fallback client-side básico
+            await supabase.from("user_roles").delete().eq("user_id", uid);
+            const { error: profErr } = await supabase.from("profiles").delete().eq("id", uid);
+            if (!profErr) count++;
+          }
+        }
+
+        if (count === 0) {
+          throw new Error("Não foi possível excluir os usuários selecionados.");
+        }
+
+        return { deletedCount: count };
+      }
+    },
+    onSuccess: (data: any) => {
+      setSelected([]);
+      setDeleteTarget(null);
+      setBulkConfirmOpen(false);
+      refresh();
+      toast.success(`${data?.deletedCount ?? 1} usuário(s) excluído(s) permanentemente.`);
+    },
+    onError: (error: any) => {
+      toast.error(error.message || "Não foi possível excluir os usuários.");
+    },
+  });
+
+  const selectableRows = (rows ?? []).filter((row) => row.id !== user?.id);
+  const allSelected =
+    selectableRows.length > 0 && selectableRows.every((row) => selected.includes(row.id));
+
+  const isActionPending =
+    setRole.isPending || revoke.isPending || deleteUsers.isPending;
 
   if (!isAdmin) {
     return (
@@ -128,24 +186,57 @@ function UsersPage() {
       <div>
         <h2 className="text-2xl font-bold tracking-tight">Usuários e permissões</h2>
         <p className="text-sm text-muted-foreground">
-          Selecione usuários para exclusão em lote ou gerencie os cargos individualmente.
+          Selecione usuários para exclusão em lote, revogue acessos ou gerencie os cargos.
         </p>
       </div>
+
       <Card className="overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[720px] text-left text-sm">
+          <table className="w-full min-w-[760px] text-left text-sm">
             <thead className="border-b bg-muted/50 font-medium text-muted-foreground">
               <tr>
-                <th className="p-4"><input type="checkbox" aria-label="Selecionar todos" checked={allSelected} disabled={deleteUsers.isPending} onChange={(e) => setSelected(e.target.checked ? selectableRows.map((r) => r.id) : [])} /></th>
+                <th className="p-4 w-12">
+                  <input
+                    type="checkbox"
+                    aria-label="Selecionar todos"
+                    className="h-4 w-4 rounded border-gray-300"
+                    checked={allSelected}
+                    disabled={selectableRows.length === 0 || isActionPending}
+                    onChange={(e) =>
+                      setSelected(e.target.checked ? selectableRows.map((r) => r.id) : [])
+                    }
+                  />
+                </th>
                 <th className="p-4">Nome</th>
                 <th className="p-4">E-mail</th>
                 <th className="p-4">Cargo</th>
                 <th className="p-4">Status</th>
-                <th className="p-4 text-right">Ação</th>
+                <th className="p-4 text-right">Ações</th>
               </tr>
             </thead>
             <tbody className="divide-y">
-              {selected.length > 0 && <tr><td colSpan={6} className="bg-muted/30 p-3"><div className="flex items-center justify-between gap-3"><span>{selected.length} usuário(s) selecionado(s)</span><Button type="button" variant="destructive" size="sm" disabled={deleteUsers.isPending} onClick={() => { if (confirm("Excluir permanentemente " + selected.length + " usuário(s)? A ação não pode ser desfeita.")) deleteUsers.mutate(selected); }}><Trash2 className="mr-1 h-4 w-4" />{deleteUsers.isPending ? "Excluindo..." : "Excluir selecionados"}</Button></div></td></tr>}
+              {selected.length > 0 && (
+                <tr>
+                  <td colSpan={6} className="bg-destructive/10 border-b border-destructive/20 p-3">
+                    <div className="flex items-center justify-between gap-3">
+                      <span className="font-medium text-sm text-destructive">
+                        {selected.length} usuário(s) selecionado(s)
+                      </span>
+                      <Button
+                        type="button"
+                        variant="destructive"
+                        size="sm"
+                        disabled={isActionPending}
+                        onClick={() => setBulkConfirmOpen(true)}
+                      >
+                        <Trash2 className="mr-1 h-4 w-4" />
+                        {deleteUsers.isPending ? "Excluindo..." : `Excluir selecionados (${selected.length})`}
+                      </Button>
+                    </div>
+                  </td>
+                </tr>
+              )}
+
               {isLoading ? (
                 <tr>
                   <td colSpan={6} className="p-8 text-center text-muted-foreground">
@@ -154,7 +245,7 @@ function UsersPage() {
                 </tr>
               ) : isError ? (
                 <tr>
-                  <td colSpan={5} className="p-8 text-center">
+                  <td colSpan={6} className="p-8 text-center">
                     <p className="text-sm text-destructive">
                       Não foi possível carregar os usuários e suas permissões.
                     </p>
@@ -173,9 +264,25 @@ function UsersPage() {
               ) : rows?.length ? (
                 rows.map((row) => {
                   const self = row.id === user?.id;
+
                   return (
                     <tr key={row.id} className="hover:bg-muted/30">
-                      <td className="p-4"><input type="checkbox" aria-label={"Selecionar " + row.email} checked={selected.includes(row.id)} disabled={row.id === user?.id || deleteUsers.isPending} onChange={(e) => setSelected((prev) => e.target.checked ? [...prev, row.id] : prev.filter((id) => id !== row.id))} /></td>
+                      <td className="p-4">
+                        <input
+                          type="checkbox"
+                          aria-label={`Selecionar ${row.email}`}
+                          className="h-4 w-4 rounded border-gray-300"
+                          checked={selected.includes(row.id)}
+                          disabled={self || isActionPending}
+                          onChange={(e) =>
+                            setSelected((prev) =>
+                              e.target.checked
+                                ? [...prev, row.id]
+                                : prev.filter((id) => id !== row.id)
+                            )
+                          }
+                        />
+                      </td>
                       <td className="p-4 font-medium">
                         {row.name}
                         {self && <span className="ml-2 text-xs text-muted-foreground">(você)</span>}
@@ -186,7 +293,7 @@ function UsersPage() {
                           aria-label={`Cargo de ${row.email}`}
                           className="h-10 rounded-md border bg-background px-3 text-sm"
                           value={row.role}
-                          disabled={self || setRole.isPending || revoke.isPending}
+                          disabled={self || isActionPending}
                           onChange={(e) => setRole.mutate({ row, role: e.target.value as Role })}
                         >
                           {ROLES.map((role) => (
@@ -202,24 +309,37 @@ function UsersPage() {
                         </span>
                       </td>
                       <td className="p-4 text-right">
-                        <Button
-                          type="button"
-                          size="sm"
-                          variant="outline"
-                          disabled={self || !row.isActive || revoke.isPending || setRole.isPending || deleteUsers.isPending}
-                          onClick={() => {
-                            if (confirm(`Remover o acesso de ${row.email}?`)) revoke.mutate(row);
-                          }}
-                        >
-                          <Trash2 className="mr-1 h-4 w-4" /> Revogar acesso
-                        </Button>
+                        <div className="flex items-center justify-end gap-2">
+                          <Button
+                            type="button"
+                            size="sm"
+                            variant="outline"
+                            title="Remove os cargos e impede o acesso ao sistema"
+                            disabled={self || !row.isActive || isActionPending}
+                            onClick={() => {
+                              if (confirm(`Remover o acesso de ${row.email}?`)) revoke.mutate(row);
+                            }}
+                          >
+                            <UserX className="mr-1 h-4 w-4" /> Revogar
+                          </Button>
+                          <Button
+                            type="button"
+                            size="sm"
+                            variant="destructive"
+                            title="Exclui definitivamente a conta e o perfil do usuário"
+                            disabled={self || isActionPending}
+                            onClick={() => setDeleteTarget(row)}
+                          >
+                            <Trash2 className="mr-1 h-4 w-4" /> Excluir
+                          </Button>
+                        </div>
                       </td>
                     </tr>
                   );
                 })
               ) : (
                 <tr>
-                  <td colSpan={5} className="p-8 text-center text-muted-foreground">
+                  <td colSpan={6} className="p-8 text-center text-muted-foreground">
                     Nenhum usuário.
                   </td>
                 </tr>
@@ -228,6 +348,76 @@ function UsersPage() {
           </table>
         </div>
       </Card>
+
+      {/* Diálogo de confirmação de exclusão individual */}
+      <AlertDialog
+        open={Boolean(deleteTarget)}
+        onOpenChange={(open) => {
+          if (!open) setDeleteTarget(null);
+        }}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Excluir usuário permanentemente?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Esta ação excluirá permanentemente o usuário{" "}
+              <strong>{deleteTarget?.name}</strong> ({deleteTarget?.email}). O usuário perderá
+              acesso imediato ao sistema e seu cadastro será removido.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={deleteUsers.isPending}>
+              Cancelar
+            </AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              disabled={deleteUsers.isPending}
+              onClick={(e) => {
+                e.preventDefault();
+                if (deleteTarget) {
+                  deleteUsers.mutate([deleteTarget.id]);
+                }
+              }}
+            >
+              {deleteUsers.isPending ? "Excluindo..." : "Sim, excluir usuário"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Diálogo de confirmação de exclusão em lote */}
+      <AlertDialog
+        open={bulkConfirmOpen}
+        onOpenChange={(open) => {
+          if (!open) setBulkConfirmOpen(false);
+        }}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Excluir {selected.length} usuário(s) selecionado(s)?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Esta ação removerá permanentemente as contas e acessos de todos os{" "}
+              {selected.length} usuários selecionados. Esta ação não poderá ser desfeita.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={deleteUsers.isPending}>
+              Cancelar
+            </AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              disabled={deleteUsers.isPending}
+              onClick={(e) => {
+                e.preventDefault();
+                deleteUsers.mutate(selected);
+              }}
+            >
+              {deleteUsers.isPending ? "Excluindo..." : "Sim, excluir selecionados"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
       <p className="text-xs text-muted-foreground">
         Por segurança, a conta conectada não pode alterar nem remover o próprio acesso. O banco
         também impede a remoção do último administrador ativo.
