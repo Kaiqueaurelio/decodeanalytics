@@ -259,8 +259,7 @@ export type Database = {
       }
       clients: {
         Row: {
-active: boolean
-          archived_at: string | null
+          active: boolean
           address: string | null
           city: string | null
           created_at: string
@@ -275,8 +274,7 @@ active: boolean
           whatsapp: string | null
         }
         Insert: {
-active?: boolean
-          archived_at?: string | null
+          active?: boolean
           address?: string | null
           city?: string | null
           created_at?: string
@@ -291,8 +289,7 @@ active?: boolean
           whatsapp?: string | null
         }
         Update: {
-active?: boolean
-          archived_at?: string | null
+          active?: boolean
           address?: string | null
           city?: string | null
           created_at?: string
@@ -1368,17 +1365,11 @@ active?: boolean
     }
     Functions: {
       delete_or_archive_client: {
-        Args: {
-          p_client_id: string
-          p_force_cascade?: boolean
-        }
+        Args: { p_client_id: string; p_force_cascade?: boolean }
         Returns: Json
       }
       generate_monthly_contract_receivables: {
-        Args: {
-          p_month: number
-          p_year: number
-        }
+        Args: { p_month: number; p_year: number }
         Returns: Json
       }
       get_public_service_contract: {
