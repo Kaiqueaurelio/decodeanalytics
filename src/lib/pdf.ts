@@ -217,3 +217,148 @@ export async function generateQuotePDF(opts: {
   footer(doc, opts.company);
   doc.save(`Orcamento-${opts.quote.number}.pdf`);
 }
+
+export async function generateClosureReceiptPDF(opts: {
+  company: Company;
+  closure: {
+    closure_date: string;
+    closed_at?: string | null;
+    operator?: string | null;
+    initial_amount: number;
+    expected_cash: number;
+    counted_cash: number;
+    difference: number;
+    total_in: number;
+    total_out: number;
+    by_method?: { cash?: number; pix?: number; debit?: number; credit?: number; other?: number };
+    entries_count: number;
+    notes?: string | null;
+  };
+  items?: any[];
+}) {
+  const doc = new jsPDF();
+  const logo = await loadLogo("/brand/decode-logo.png");
+  const c = opts.closure;
+  const m = c.by_method || {};
+  const ok = Math.abs(Number(c.difference || 0)) < 0.01;
+  const dateFormatted = new Date(c.closure_date + "T12:00:00").toLocaleDateString("pt-BR");
+  const closedAtFormatted = c.closed_at
+    ? new Date(c.closed_at).toLocaleString("pt-BR")
+    : new Date().toLocaleString("pt-BR");
+
+  header(doc, opts.company, `Fechamento de Caixa - ${dateFormatted}`, logo);
+
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.setTextColor(50);
+  doc.text(`CNPJ: ${fmtCnpj(opts.company.document || DEFAULT_COMPANY_DOCUMENT)}`, 14, 51);
+  doc.text(`Data do Caixa: ${dateFormatted}`, 14, 57);
+  doc.text(`Fechado em: ${closedAtFormatted}`, 75, 57);
+  doc.text(`Operador: ${c.operator || "—"}`, 145, 57);
+
+  // Status badge
+  doc.setFont("helvetica", "bold");
+  if (ok) {
+    doc.setTextColor(5, 150, 105);
+    doc.text("SITUAÇÃO: CAIXA BATE (SEM DIFERENÇAS)", 14, 65);
+  } else {
+    doc.setTextColor(180, 83, 9);
+    doc.text(`SITUAÇÃO: COM DIFERENÇA DE ${brl(c.difference)}`, 14, 65);
+  }
+
+  // Summary Table
+  const balance = Number(c.total_in || 0) - Number(c.total_out || 0);
+  autoTable(doc, {
+    startY: 70,
+    head: [["Resumo Financeiro", "Valor"]],
+    body: [
+      ["Troco Inicial (Fundo de Caixa)", brl(c.initial_amount)],
+      ["Total de Entradas", brl(c.total_in)],
+      ["Total de Saídas / Despesas", brl(c.total_out)],
+      ["Saldo Líquido do Dia", brl(balance)],
+      ["Quantidade de Lançamentos", String(c.entries_count || 0)],
+    ],
+    headStyles: { fillColor: [34, 38, 70], textColor: 255 },
+    styles: { fontSize: 9 },
+    columnStyles: { 0: { cellWidth: 120 }, 1: { cellWidth: 60, halign: "right" } },
+  });
+
+  // Payment methods Table
+  const paymentRows: string[][] = [
+    ["Dinheiro", brl(m.cash || 0)],
+    ["PIX", brl(m.pix || 0)],
+    ["Cartão de Débito", brl(m.debit || 0)],
+    ["Cartão de Crédito", brl(m.credit || 0)],
+  ];
+  if (m.other) {
+    paymentRows.push(["Outros / Mistos", brl(m.other)]);
+  }
+
+  const yAfterSummary = (doc as any).lastAutoTable.finalY + 6;
+  autoTable(doc, {
+    startY: yAfterSummary,
+    head: [["Entradas por Forma de Pagamento", "Total"]],
+    body: paymentRows,
+    headStyles: { fillColor: [45, 55, 72], textColor: 255 },
+    styles: { fontSize: 9 },
+    columnStyles: { 0: { cellWidth: 120 }, 1: { cellWidth: 60, halign: "right" } },
+  });
+
+  // Physical cash reconciliation table
+  const yAfterPayments = (doc as any).lastAutoTable.finalY + 6;
+  autoTable(doc, {
+    startY: yAfterPayments,
+    head: [["Conferência do Dinheiro em Espécie (Gaveta)", "Valor"]],
+    body: [
+      ["Esperado em Dinheiro (Entradas + Troco Inicial)", brl(c.expected_cash)],
+      ["Contado na Gaveta", brl(c.counted_cash)],
+      ["Diferença de Caixa", brl(c.difference)],
+    ],
+    headStyles: { fillColor: [34, 38, 70], textColor: 255 },
+    styles: { fontSize: 9 },
+    columnStyles: { 0: { cellWidth: 120 }, 1: { cellWidth: 60, halign: "right" } },
+  });
+
+  let currentY = (doc as any).lastAutoTable.finalY + 6;
+
+  if (c.notes) {
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor(34, 38, 70);
+    doc.setFontSize(9);
+    doc.text("Observações:", 14, currentY);
+    doc.setFont("helvetica", "normal");
+    doc.setTextColor(70);
+    const splitNotes = doc.splitTextToSize(String(c.notes), 180);
+    doc.text(splitNotes, 14, currentY + 5);
+    currentY += 8 + splitNotes.length * 4;
+  }
+
+  // Items table if present
+  if (opts.items && opts.items.length > 0) {
+    const itemRows = opts.items.map((it) => {
+      const time = new Date(it.created_at).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+      const sign = it.type === "saida" ? "-" : "+";
+      const desc = it.description || it.category || "Lançamento";
+      const pm = it.payment_method ? ` (${it.payment_method})` : "";
+      return [time, `${desc}${pm}`, `${sign}${brl(it.amount)}`];
+    });
+
+    autoTable(doc, {
+      startY: currentY,
+      head: [["Hora", "Lançamento / Método", "Valor"]],
+      body: itemRows,
+      headStyles: { fillColor: [34, 38, 70], textColor: 255 },
+      styles: { fontSize: 8 },
+      columnStyles: { 0: { cellWidth: 25 }, 1: { cellWidth: 115 }, 2: { cellWidth: 40, halign: "right" } },
+      margin: { bottom: 26 },
+    });
+  }
+
+  for (let page = 1; page <= doc.getNumberOfPages(); page++) {
+    doc.setPage(page);
+    footer(doc, opts.company);
+  }
+
+  const safeDate = c.closure_date.replace(/[^0-9-]/g, "");
+  doc.save(`Fechamento-Caixa-${safeDate}.pdf`);
+}

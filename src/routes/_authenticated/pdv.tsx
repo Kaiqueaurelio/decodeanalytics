@@ -38,6 +38,8 @@ import {
   Coffee,
   Gift,
   Activity,
+  Download,
+  Loader2,
 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -46,6 +48,8 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { generateClosureReceiptPDF } from "@/lib/pdf";
+import { useCompanyInfo } from "@/hooks/useCompanyInfo";
 import {
   Dialog,
   DialogContent,
@@ -155,10 +159,25 @@ ${c.notes ? `<h2>Observações</h2><p style="font-size:12px">${escapeReceiptHtml
 </body></html>`;
 }
 
-function openClosureReceipt(c: any, items: any[]) {
+function openClosureReceipt(c: any, items: any[], companyInfo?: any) {
   const html = buildClosureReceiptHtml(c, items);
   const w = window.open("", "_blank", "width=560,height=760");
-  if (!w) return;
+  if (!w) {
+    if (companyInfo) {
+      generateClosureReceiptPDF({
+        company: {
+          name: companyInfo.name,
+          whatsapp: companyInfo.whatsappDigits,
+          address: companyInfo.address,
+          document: "58.294.735/0001-55",
+          logo_url: "/brand/decode-logo.png",
+        },
+        closure: c,
+        items,
+      }).catch((err) => console.error(err));
+    }
+    return;
+  }
   w.document.write(html);
   w.document.close();
 }
@@ -278,6 +297,8 @@ function toNumber(value: unknown) {
 
 function PDVPage() {
   const qc = useQueryClient();
+  const companyInfo = useCompanyInfo();
+  const [downloadingClosurePdf, setDownloadingClosurePdf] = useState(false);
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("Todos");
   const [cart, setCart] = useState<any[]>([]);
@@ -652,7 +673,11 @@ function PDVPage() {
       setCashSession(null);
       setShowCloseCash(false);
       qc.invalidateQueries({ queryKey: ["cash_closures"] });
-      openClosureReceipt({ ...payload, closed_at: new Date().toISOString() }, todayEntries);
+      openClosureReceipt(
+        { ...payload, closed_at: new Date().toISOString() },
+        todayEntries,
+        companyInfo,
+      );
       toast.success(
         Math.abs(diff) < 0.01
           ? "Caixa fechado certinho!"
@@ -1802,14 +1827,14 @@ function PDVPage() {
         </DialogContent>
       </Dialog>
       <Dialog open={showOpenCash} onOpenChange={setShowOpenCash}>
-        <DialogContent className="rounded-[2rem] border-2 border-[#080c16] p-0 overflow-hidden sm:max-w-md">
-          <div className="bg-[#080c16] p-6 text-white text-center">
+        <DialogContent className="rounded-2xl sm:rounded-[2rem] border border-slate-700/50 sm:border-2 sm:border-[#080c16] p-0 overflow-hidden sm:max-w-md max-h-[92dvh] flex flex-col">
+          <div className="bg-[#080c16] p-4 sm:p-6 text-white text-center shrink-0">
             <DialogHeader>
               <DialogTitle className="text-xl font-black text-brand-yellow text-center">Abertura de Caixa</DialogTitle>
               <p className="text-xs font-bold text-white/60">Informe os dados para iniciar as vendas</p>
             </DialogHeader>
           </div>
-          <div className="p-6 space-y-4">
+          <div className="p-4 sm:p-6 space-y-4 overflow-y-auto flex-1">
             <div>
               <Label>Operador</Label>
               <Input
@@ -1826,50 +1851,50 @@ function PDVPage() {
               />
             </div>
           </div>
-          <DialogFooter className="pt-4">
-            <Button className="h-12 w-full rounded-xl bg-[#080c16] font-black text-brand-yellow hover:bg-[#1a202c]" onClick={openCash}>
+          <DialogFooter className="p-4 sm:p-6 bg-slate-50 border-t border-slate-100 shrink-0">
+            <Button className="h-11 sm:h-12 w-full rounded-xl bg-[#080c16] font-black text-brand-yellow hover:bg-[#1a202c]" onClick={openCash}>
               ABRIR CAIXA
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
       <Dialog open={showCloseCash} onOpenChange={setShowCloseCash}>
-        <DialogContent className="max-w-2xl rounded-[2rem] border-2 border-[#080c16] p-0 overflow-hidden">
-          <div className="bg-[#080c16] p-6 text-white">
+        <DialogContent className="max-w-2xl rounded-2xl sm:rounded-[2rem] border border-slate-700/50 sm:border-2 sm:border-[#080c16] p-0 overflow-hidden max-h-[92dvh] flex flex-col">
+          <div className="bg-[#080c16] p-4 sm:p-6 text-white shrink-0">
             <DialogHeader>
-              <DialogTitle className="text-xl font-black text-brand-yellow">Fechar Caixa</DialogTitle>
+              <DialogTitle className="text-lg sm:text-xl font-black text-brand-yellow">Fechar Caixa</DialogTitle>
               <p className="text-xs font-bold text-white/60">Confira os valores antes de salvar o fechamento</p>
             </DialogHeader>
           </div>
-          <div className="p-6 space-y-4 max-h-[70vh] overflow-y-auto">
-            <div className="rounded-2xl bg-[#080c16] p-5 text-white shadow-xl shadow-black/10">
+          <div className="p-4 sm:p-6 space-y-4 overflow-y-auto flex-1 overscroll-contain">
+            <div className="rounded-2xl bg-[#080c16] p-4 sm:p-5 text-white shadow-xl shadow-black/10">
               <p className="text-xs font-bold uppercase tracking-wider text-blue-200">
                 Resultado do dia
               </p>
-              <p className="mt-1 text-3xl font-black">{brl(dayBalance)}</p>
+              <p className="mt-1 text-2xl sm:text-3xl font-black">{brl(dayBalance)}</p>
               <p className="mt-1 text-xs text-blue-100">
                 {brl(totalToday)} em entradas e {brl(expenseTotal)} em saídas.
               </p>
             </div>
             <div className="grid grid-cols-2 gap-2 text-sm">
-              <div className="rounded-xl bg-slate-100 p-3">
+              <div className="rounded-xl bg-slate-100 p-2.5 sm:p-3">
                 <span className="block text-xs text-slate-500">Dinheiro</span>
                 <strong>{brl(paymentTotals.cash)}</strong>
               </div>
-              <div className="rounded-xl bg-slate-100 p-3">
+              <div className="rounded-xl bg-slate-100 p-2.5 sm:p-3">
                 <span className="block text-xs text-slate-500">PIX</span>
                 <strong>{brl(paymentTotals.pix)}</strong>
               </div>
-              <div className="rounded-xl bg-slate-100 p-3">
+              <div className="rounded-xl bg-slate-100 p-2.5 sm:p-3">
                 <span className="block text-xs text-slate-500">Débito</span>
                 <strong>{brl(paymentTotals.debit)}</strong>
               </div>
-              <div className="rounded-xl bg-slate-100 p-3">
+              <div className="rounded-xl bg-slate-100 p-2.5 sm:p-3">
                 <span className="block text-xs text-slate-500">Crédito</span>
                 <strong>{brl(paymentTotals.credit)}</strong>
               </div>
               {paymentTotals.other > 0 && (
-                <div className="col-span-2 rounded-xl bg-slate-100 p-3">
+                <div className="col-span-2 rounded-xl bg-slate-100 p-2.5 sm:p-3">
                   <span className="block text-xs text-slate-500">Outros ou mistos</span>
                   <strong>{brl(paymentTotals.other)}</strong>
                 </div>
@@ -1920,7 +1945,7 @@ function PDVPage() {
                 </p>
                 <span className="text-xs text-slate-500">{brl(totalToday)} entrada · {brl(expenseTotal)} saída</span>
               </div>
-              <div className="max-h-56 overflow-y-auto divide-y divide-slate-100">
+              <div className="max-h-48 sm:max-h-56 overflow-y-auto divide-y divide-slate-100">
                 {todayEntries.length ? (
                   todayEntries.map((entry) => (
                     <div key={entry.id} className="flex items-start justify-between gap-3 px-3 py-2 text-sm">
@@ -1950,37 +1975,63 @@ function PDVPage() {
               />
             </div>
           </div>
-          <DialogFooter className="flex-col-reverse gap-2 sm:flex-row">
-            <Button variant="outline" onClick={() => setShowCloseCash(false)}>
+          <DialogFooter className="p-4 sm:p-6 bg-slate-50 border-t border-slate-100 flex-col-reverse sm:flex-row gap-2 shrink-0">
+            <Button variant="outline" className="w-full sm:w-auto" onClick={() => setShowCloseCash(false)}>
               Cancelar
             </Button>
             <Button
               variant="outline"
-              onClick={() => {
+              className="w-full sm:w-auto"
+              disabled={downloadingClosurePdf}
+              onClick={async () => {
                 const counted = toNumber(sessionForm.informedCash);
                 const expectedCash = paymentTotals.cash + Number(cashSession?.initialAmount || 0);
-                openClosureReceipt(
-                  {
-                    closure_date: today(),
-                    closed_at: new Date().toISOString(),
-                    operator: cashSession?.operator || sessionForm.operator || "Operador",
-                    initial_amount: Number(cashSession?.initialAmount || 0),
-                    expected_cash: expectedCash,
-                    counted_cash: counted,
-                    difference: counted - expectedCash,
-                    total_in: totalToday,
-                    total_out: expenseTotal,
-                    by_method: { cash: paymentTotals.cash, pix: paymentTotals.pix, debit: paymentTotals.debit, credit: paymentTotals.credit, other: paymentTotals.other },
-                    entries_count: todayEntries.length,
-                    notes: sessionForm.notes || null,
-                  },
-                  todayEntries,
-                );
+                const closureData = {
+                  closure_date: today(),
+                  closed_at: new Date().toISOString(),
+                  operator: cashSession?.operator || sessionForm.operator || "Operador",
+                  initial_amount: Number(cashSession?.initialAmount || 0),
+                  expected_cash: expectedCash,
+                  counted_cash: counted,
+                  difference: counted - expectedCash,
+                  total_in: totalToday,
+                  total_out: expenseTotal,
+                  by_method: { cash: paymentTotals.cash, pix: paymentTotals.pix, debit: paymentTotals.debit, credit: paymentTotals.credit, other: paymentTotals.other },
+                  entries_count: todayEntries.length,
+                  notes: sessionForm.notes || null,
+                };
+
+                try {
+                  setDownloadingClosurePdf(true);
+                  await generateClosureReceiptPDF({
+                    company: {
+                      name: companyInfo.name,
+                      whatsapp: companyInfo.whatsappDigits,
+                      address: companyInfo.address,
+                      document: "58.294.735/0001-55",
+                      logo_url: "/brand/decode-logo.png",
+                    },
+                    closure: closureData,
+                    items: todayEntries,
+                  });
+                  toast.success("Comprovante PDF baixado!");
+                } catch (err: any) {
+                  console.error(err);
+                  // Fallback para janela de impressão
+                  openClosureReceipt(closureData, todayEntries, companyInfo);
+                } finally {
+                  setDownloadingClosurePdf(false);
+                }
               }}
             >
-              Imprimir prévia
+              {downloadingClosurePdf ? (
+                <Loader2 className="w-4 h-4 mr-1 animate-spin" />
+              ) : (
+                <Download className="w-4 h-4 mr-1" />
+              )}
+              Baixar comprovante PDF
             </Button>
-            <Button className="h-12 rounded-xl bg-[#080c16] font-black text-brand-yellow hover:bg-[#1a202c]" onClick={closeCashAndSave}>
+            <Button className="h-11 sm:h-12 w-full sm:w-auto rounded-xl bg-[#080c16] font-black text-brand-yellow hover:bg-[#1a202c]" onClick={closeCashAndSave}>
               Fechar e salvar
             </Button>
           </DialogFooter>

@@ -1,13 +1,15 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { autoCloseMissingDays } from "@/lib/auto-close-cash";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { brl, fmtDate, fmtDateTime } from "@/lib/format";
-import { Printer, Wallet, ArrowDownCircle, ArrowUpCircle, AlertTriangle, CheckCircle2, Sparkles, MinusCircle } from "lucide-react";
+import { generateClosureReceiptPDF } from "@/lib/pdf";
+import { useCompanyInfo } from "@/hooks/useCompanyInfo";
+import { Printer, Download, Wallet, ArrowDownCircle, ArrowUpCircle, AlertTriangle, CheckCircle2, Sparkles, MinusCircle, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/closures")({ component: ClosuresPage });
@@ -15,6 +17,9 @@ export const Route = createFileRoute("/_authenticated/closures")({ component: Cl
 function ClosuresPage() {
   const qc = useQueryClient();
   const ran = useRef(false);
+  const companyInfo = useCompanyInfo();
+  const [downloadingId, setDownloadingId] = useState<string | null>(null);
+
   const { data } = useQuery({
     queryKey: ["cash_closures"],
     queryFn: async () => {
@@ -42,6 +47,28 @@ function ClosuresPage() {
       })
       .catch((err) => console.error("[auto-close]", err));
   }, [qc]);
+
+  async function downloadPdf(c: any) {
+    try {
+      setDownloadingId(c.id || c.closure_date);
+      await generateClosureReceiptPDF({
+        company: {
+          name: companyInfo.name,
+          whatsapp: companyInfo.whatsappDigits,
+          address: companyInfo.address,
+          document: "58.294.735/0001-55",
+          logo_url: "/brand/decode-logo.png",
+        },
+        closure: c,
+      });
+      toast.success("Comprovante PDF baixado com sucesso!");
+    } catch (err: any) {
+      console.error("[downloadPdf] error", err);
+      toast.error(err?.message || "Erro ao gerar PDF.");
+    } finally {
+      setDownloadingId(null);
+    }
+  }
 
   function printOne(c: any) {
     const m = c.by_method || {};
@@ -82,7 +109,10 @@ function ClosuresPage() {
     <script>setTimeout(()=>window.print(),300)</script>
     </body></html>`;
     const w = window.open("", "_blank", "width=520,height=720");
-    if (!w) return;
+    if (!w) {
+      downloadPdf(c);
+      return;
+    }
     w.document.write(html);
     w.document.close();
   }
@@ -196,10 +226,30 @@ function ClosuresPage() {
                 <p className="text-xs text-muted-foreground italic border-l-2 border-slate-200 pl-2">{c.notes}</p>
               )}
 
-              <Button size="sm" variant="outline" className="w-full" onClick={() => printOne(c)}>
-                <Printer className="w-4 h-4 mr-1" />
-                Imprimir / PDF
-              </Button>
+              <div className="grid grid-cols-2 gap-2 pt-1">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="w-full text-xs"
+                  onClick={() => printOne(c)}
+                >
+                  <Printer className="w-3.5 h-3.5 mr-1" />
+                  Imprimir
+                </Button>
+                <Button
+                  size="sm"
+                  className="w-full text-xs bg-slate-900 text-white hover:bg-slate-800"
+                  disabled={downloadingId === (c.id || c.closure_date)}
+                  onClick={() => downloadPdf(c)}
+                >
+                  {downloadingId === (c.id || c.closure_date) ? (
+                    <Loader2 className="w-3.5 h-3.5 mr-1 animate-spin" />
+                  ) : (
+                    <Download className="w-3.5 h-3.5 mr-1" />
+                  )}
+                  Baixar PDF
+                </Button>
+              </div>
             </Card>
           );
         })}
