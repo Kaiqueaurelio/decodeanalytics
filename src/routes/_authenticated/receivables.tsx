@@ -225,46 +225,16 @@ function Page() {
   async function markPaid(r: any) {
     if (!confirm(`Confirmar recebimento de ${brl(r.amount)} e lançar baixa no caixa?`)) return;
 
-    const contractNumber = r.service_contracts?.number;
-    const contractTitle = r.service_contracts?.title;
-    const description = contractNumber
-      ? `Pagamento contrato #${contractNumber}${contractTitle ? ` · ${contractTitle}` : ""}`
-      : `Pagamento OS #${r.orders?.number ?? ""}`;
-
-    const category = contractNumber ? "Pagamento de contrato" : "Pagamento de OS";
-
-    const updates: any[] = [
-      supabase
-        .from("receivables")
-        .update({ status: "pago", paid_at: new Date().toISOString() })
-        .eq("id", r.id),
-      supabase.from("cash_entries").insert({
-        type: "entrada",
-        description,
-        category,
-        amount: r.amount,
-        client_id: r.client_id,
-        order_id: r.order_id,
-        receivable_id: r.id,
-        payment_method: r.payment_method || "pix",
-      }),
-    ];
-
-    if (r.order_id) {
-      const { data: o } = await supabase
-        .from("orders")
-        .select("paid,total")
-        .eq("id", r.order_id)
-        .single();
-      if (o)
-        updates.push(supabase.from("orders").update({ paid: o.total }).eq("id", r.order_id) as any);
-    }
-
-    const results = await Promise.all(updates);
-    const err = results.find((x: any) => x.error);
-    if (err) return toast.error((err as any).error.message);
-
-    toast.success("Recebimento confirmado e baixado no caixa!");
+    const { data: paymentData, error: paymentError } = await (supabase.rpc as any)(
+      "settle_receivable_and_cash",
+      { p_receivable_id: r.id, p_payment_method: r.payment_method || "pix" },
+    );
+    if (paymentError) return toast.error(paymentError.message);
+    toast.success(
+      paymentData?.already_paid
+        ? "Esta cobrança já estava baixada no caixa."
+        : "Recebimento confirmado e baixado no caixa!",
+    );
     qc.invalidateQueries({ queryKey: ["receivables"] });
     qc.invalidateQueries({ queryKey: ["cash"] });
     qc.invalidateQueries({ queryKey: ["orders"] });
