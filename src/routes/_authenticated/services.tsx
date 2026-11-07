@@ -73,15 +73,18 @@ function ServicesPage() {
 
   async function save() {
     if (!edit?.name || !edit.category) return toast.error("Nome e categoria são obrigatórios");
+    if (isRecurring(edit.billing_type) && !(Number(edit.base_price) > 0))
+      return toast.error("Informe o valor mensal da assinatura.");
+    const recurring = isRecurring(edit.billing_type);
     const payload = {
       name: edit.name,
       category: edit.category,
       description: edit.description || null,
       base_price: Number(edit.base_price) || 0,
-      unit: edit.unit || (isRecurring(edit.billing_type) ? "mês" : "un"),
-      default_deadline_days: Number(edit.default_deadline_days) || 3,
+      unit: recurring ? "mês" : edit.unit || "un",
+      default_deadline_days: Number(edit.default_deadline_days) || (recurring ? 30 : 3),
       active: edit.active ?? true,
-      billing_type: edit.billing_type || "avulso",
+      billing_type: recurring ? "assinatura_mensal" : "avulso",
     };
     const res = edit.id
       ? await supabase.from("services").update(payload).eq("id", edit.id)
