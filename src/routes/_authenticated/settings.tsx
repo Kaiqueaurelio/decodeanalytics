@@ -43,6 +43,7 @@ function Page() {
         default_quote_text: form.default_quote_text,
         default_order_text: form.default_order_text,
         default_deadline_days: Number(form.default_deadline_days) || 3,
+        pix_key: form.pix_key?.trim() || null,
         show_prices: form.show_prices !== false,
         hero_title: form.hero_title,
         hero_subtitle: form.hero_subtitle,
@@ -127,6 +128,17 @@ function Page() {
               value={form.default_deadline_days ?? 3}
               onChange={(e) => setForm({ ...form, default_deadline_days: e.target.value })}
             />
+          </div>
+          <div className="md:col-span-2">
+            <Label>Chave PIX para cobranças</Label>
+            <Input
+              value={form.pix_key ?? ""}
+              onChange={(e) => setForm({ ...form, pix_key: e.target.value })}
+              placeholder="Informe a chave PIX usada para receber pagamentos"
+            />
+            <p className="mt-1 text-xs text-muted-foreground">
+              Esta chave será incluída nas mensagens de cobrança via WhatsApp.
+            </p>
           </div>
           <div className="md:col-span-2">
             <Label>Preços na loja online</Label>
