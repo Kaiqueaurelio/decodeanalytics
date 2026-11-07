@@ -223,6 +223,11 @@ CREATE UNIQUE INDEX IF NOT EXISTS receivables_contract_competence_unique
   ON public.receivables (service_contract_id, competence_month)
   WHERE service_contract_id IS NOT NULL AND competence_month IS NOT NULL;
 
+-- Ensure a cash settlement can never create a second ledger entry for the same invoice.
+CREATE UNIQUE INDEX IF NOT EXISTS cash_entries_receivable_id_unique
+  ON public.cash_entries (receivable_id)
+  WHERE receivable_id IS NOT NULL;
+
 -- 9. Lock eligible subscriptions and ignore a duplicate conflict as a final safety net.
 CREATE OR REPLACE FUNCTION public.generate_monthly_contract_receivables(
   p_year integer,
