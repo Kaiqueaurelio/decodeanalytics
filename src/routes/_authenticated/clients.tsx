@@ -128,10 +128,22 @@ function ClientsPage() {
       city: editing.city?.trim() || null,
       notes: editing.notes?.trim() || null,
       active: editing.active ?? true,
+      archived_at: editing.active === false ? new Date().toISOString() : null,
     };
-    const res = editing.id
+    let res = editing.id
       ? await supabase.from("clients").update(payload).eq("id", editing.id)
       : await supabase.from("clients").insert(payload);
+
+    // Se der erro por falta da coluna active ou archived_at
+    if (res.error && (res.error.code === "42703" || res.error.message?.includes("active") || res.error.message?.includes("archived_at"))) {
+      const cleanPayload = { ...payload };
+      delete cleanPayload.active;
+      delete cleanPayload.archived_at;
+      res = editing.id
+        ? await supabase.from("clients").update(cleanPayload).eq("id", editing.id)
+        : await supabase.from("clients").insert(cleanPayload);
+    }
+
     if (res.error) return toast.error(res.error.message);
     toast.success("Cliente salvo com sucesso");
     setOpen(false);
@@ -171,6 +183,36 @@ function ClientsPage() {
     }
   }
 
+  // Helper para atualizar o status do cliente (tenta com active e fallback para archived_at)
+  async function setClientStatus(clientId: string, active: boolean) {
+    const nowIso = new Date().toISOString();
+    // 1. Tenta atualizar active e archived_at
+    let { error } = await supabase
+      .from("clients")
+      .update({ active, archived_at: active ? null : nowIso } as any)
+      .eq("id", clientId);
+
+    // Se a coluna active não existir ainda no banco, tenta apenas com archived_at
+    if (error && (error.code === "42703" || error.message?.includes("active"))) {
+      const res = await supabase
+        .from("clients")
+        .update({ archived_at: active ? null : nowIso } as any)
+        .eq("id", clientId);
+      error = res.error;
+    }
+
+    // Se archived_at não existir, tenta apenas com active
+    if (error && (error.code === "42703" || error.message?.includes("archived_at"))) {
+      const res = await supabase
+        .from("clients")
+        .update({ active } as any)
+        .eq("id", clientId);
+      error = res.error;
+    }
+
+    return { error };
+  }
+
   // Executa exclusão direta ou arquivamento
   async function executeRemove(forceCascade = false) {
     const c = deleteDialog.client;
@@ -187,15 +229,49 @@ function ClientsPage() {
         toast.success(rpcRes.message || "Ação concluída com sucesso.");
         setDeleteDialog({ open: false, client: null });
         qc.invalidateQueries({ queryKey: ["clients"] });
+        qc.invalidateQueries({ queryKey: ["clients-for-contract"] });
         return;
       }
     } catch {
       // Prossegue para fallback direto caso a RPC ainda não esteja implantada
     }
 
-    // Fallback: se tem registros vinculados ou usuário optou por desativar
-    if (deleteDialog.hasRecords && !forceCascade) {
-      const { error } = await supabase.from("clients").update({ active: false } as any).eq("id", c.id);
+    // 2. Se o usuário (ou admin) solicitou exclusão forçada com limpeza de registros vinculados
+    if (forceCascade) {
+      try {
+        // Remove registros vinculados na ordem correta para não violar chaves estrangeiras
+        await supabase.from("receivables").delete().eq("client_id", c.id);
+        await supabase.from("service_contracts" as any).delete().eq("client_id", c.id);
+        await supabase.from("quotes").delete().eq("client_id", c.id);
+        await supabase.from("orders").delete().eq("client_id", c.id);
+        await supabase.from("order_files").delete().eq("client_id", c.id);
+        await supabase.from("cash_entries").update({ client_id: null } as any).eq("client_id", c.id);
+
+        const { error: delErr } = await supabase.from("clients").delete().eq("id", c.id);
+        if (delErr) {
+          throw delErr;
+        }
+
+        toast.success(`Cliente "${c.name}" e seus registros foram excluídos permanentemente.`);
+        setDeleteDialog({ open: false, client: null });
+        qc.invalidateQueries({ queryKey: ["clients"] });
+        qc.invalidateQueries({ queryKey: ["clients-for-contract"] });
+        return;
+      } catch (err: any) {
+        console.error("[forceCascade error]", err);
+        // Se ainda falhar na exclusão física, desativa/arquiva
+        await setClientStatus(c.id, false);
+        toast.info(`Cliente desativado/arquivado com sucesso para proteger integridade.`);
+        setDeleteDialog({ open: false, client: null });
+        qc.invalidateQueries({ queryKey: ["clients"] });
+        qc.invalidateQueries({ queryKey: ["clients-for-contract"] });
+        return;
+      }
+    }
+
+    // 3. Fallback: se tem registros vinculados ou usuário optou por desativar/arquivar
+    if (deleteDialog.hasRecords) {
+      const { error } = await setClientStatus(c.id, false);
       if (error) {
         toast.error("Erro ao desativar cliente: " + error.message);
       } else {
@@ -203,24 +279,22 @@ function ClientsPage() {
       }
       setDeleteDialog({ open: false, client: null });
       qc.invalidateQueries({ queryKey: ["clients"] });
+      qc.invalidateQueries({ queryKey: ["clients-for-contract"] });
       return;
     }
 
-    // Fallback: exclusão direta
+    // 4. Fallback: exclusão direta sem registros
     const { error } = await supabase.from("clients").delete().eq("id", c.id);
     if (error) {
-      // Se deu erro de chave estrangeira (foreign key violation)
+      // Se deu erro de chave estrangeira (foreign key constraint como receivables_client_id_fkey)
       if (error.code === "23503" || error.message?.includes("foreign key")) {
-        const { error: archiveError } = await supabase
-          .from("clients")
-          .update({ active: false } as any)
-          .eq("id", c.id);
+        const { error: archiveError } = await setClientStatus(c.id, false);
         if (!archiveError) {
           toast.info(
-            `Cliente possui histórico e não pode ser deletado do banco. Foi arquivado/desativado com sucesso.`,
+            `Cliente possui histórico financeiro e não pode ser deletado do banco. Foi desativado/arquivado com sucesso.`,
           );
         } else {
-          toast.error("Não foi possível excluir nem arquivar: " + error.message);
+          toast.error("Não foi possível excluir nem arquivar: " + archiveError.message);
         }
       } else {
         toast.error("Erro ao excluir: " + error.message);
@@ -231,18 +305,17 @@ function ClientsPage() {
 
     setDeleteDialog({ open: false, client: null });
     qc.invalidateQueries({ queryKey: ["clients"] });
+    qc.invalidateQueries({ queryKey: ["clients-for-contract"] });
   }
 
   // Alterna status ativo/inativo
   async function toggleActive(c: ClientRow) {
     const nextActive = !c.active;
-    const { error } = await supabase
-      .from("clients")
-      .update({ active: nextActive } as any)
-      .eq("id", c.id);
+    const { error } = await setClientStatus(c.id, nextActive);
     if (error) return toast.error(error.message);
     toast.success(nextActive ? `Cliente "${c.name}" reativado!` : `Cliente "${c.name}" desativado!`);
     qc.invalidateQueries({ queryKey: ["clients"] });
+    qc.invalidateQueries({ queryKey: ["clients-for-contract"] });
   }
 
   return (
