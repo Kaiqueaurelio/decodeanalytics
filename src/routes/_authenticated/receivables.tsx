@@ -169,66 +169,24 @@ function Page() {
     setGenerating(true);
 
     const [yearStr, monthStr] = targetMonth.split("-");
-    const p_year = parseInt(yearStr, 10);
-    const p_month = parseInt(monthStr, 10);
+    const p_year = Number(yearStr);
+    const p_month = Number(monthStr);
 
     try {
-      // 1. Tenta executar via RPC Postgres
-      const { data: rpcRes, error: rpcErr } = await (supabase.rpc as any)(
+      const { data: rpcRes, error } = await (supabase.rpc as any)(
         "generate_monthly_contract_receivables",
         { p_year, p_month },
       );
-
-      if (!rpcErr && rpcRes) {
-        toast.success(
-          `${rpcRes.created_count} cobrança(s) mensal(is) gerada(s) para ${p_month}/${p_year}! (Total: ${brl(rpcRes.total_amount)})`,
-        );
-        setBatchOpen(false);
-        qc.invalidateQueries({ queryKey: ["receivables"] });
-        return;
-      }
-    } catch {
-      // Prossegue para o fallback caso a RPC não esteja implantada
-    }
-
-    // 2. Fallback direto via Supabase client
-    try {
-      if (!unbilledContracts.length) {
-        toast.info("Todos os contratos ativos já foram lançados para este mês!");
-        setBatchOpen(false);
-        return;
-      }
-
-      const daysInMonth = new Date(p_year, p_month, 0).getDate();
-      const competenceDate = `${targetMonth}-01`;
-
-      const inserts = unbilledContracts.map((c: any) => {
-        let day = Number(c.due_day) || 10;
-        if (day > daysInMonth) day = daysInMonth;
-        if (day < 1) day = 1;
-        const dueFormatted = `${targetMonth}-${String(day).padStart(2, "0")}`;
-
-        return {
-          client_id: c.client_id,
-          service_contract_id: c.id,
-          competence_month: competenceDate,
-          due_date: dueFormatted,
-          amount: Number(c.amount) || 0,
-          status: "pendente",
-          notes: `Mensalidade ${String(p_month).padStart(2, "0")}/${p_year} - Contrato #${c.number} (${c.title})`,
-        };
-      });
-
-      const { error: insertErr } = await (supabase.from("receivables" as any).insert(inserts) as any);
-      if (insertErr) throw insertErr;
+      if (error) throw error;
 
       toast.success(
-        `${inserts.length} cobrança(s) gerada(s) com sucesso para ${p_month}/${p_year}! Total: ${brl(totalUnbilledAmount)}`,
+        `${rpcRes?.created_count ?? 0} fatura(s) gerada(s) para ${String(p_month).padStart(2, "0")}/${p_year}. ${rpcRes?.skipped_count ?? 0} já existiam.`,
       );
       setBatchOpen(false);
-      qc.invalidateQueries({ queryKey: ["receivables"] });
+      await qc.invalidateQueries({ queryKey: ["receivables"] });
+      await qc.invalidateQueries({ queryKey: ["active-contracts-for-billing"] });
     } catch (err: any) {
-      toast.error("Erro ao gerar mensalidades: " + err.message);
+      toast.error("Não foi possível gerar as faturas: " + (err?.message || "erro inesperado"));
     } finally {
       setGenerating(false);
     }
