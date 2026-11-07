@@ -473,6 +473,16 @@ function ContractsPage() {
             >
               <FileSignature className="mr-2 h-4 w-4" /> Modelos por serviço
             </Button>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setEditing(null);
+                setForm({ ...emptyForm(), title: "Nova Assinatura Mensal" });
+                setCreateOpen(true);
+              }}
+            >
+              <Repeat className="mr-2 h-4 w-4" /> Nova Assinatura Mensal
+            </Button>
             <Button onClick={newContract}>
               <Plus className="mr-2 h-4 w-4" /> Novo contrato
             </Button>
@@ -823,6 +833,9 @@ function ContractsPage() {
                   value={form.end_date}
                   onChange={(e) => setForm({ ...form, end_date: e.target.value })}
                 />
+                <p className="mt-1 text-xs text-muted-foreground">
+                  Deixe em branco para vigência por tempo indeterminado, até o cliente solicitar o cancelamento.
+                </p>
               </div>
               <div>
                 <Label>Dia de vencimento</Label>
