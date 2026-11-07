@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
 import { MessageCircle } from "lucide-react";
+import { EllaAvatar } from "./EllaAvatar";
 
 type EllaFabProps = {
   audience?: "public" | "staff";
@@ -8,13 +9,13 @@ type EllaFabProps = {
 type Position = { left: number; top: number };
 type DragState = { pointerId: number; x: number; y: number; left: number; top: number; moved: boolean };
 
-const EDGE_GAP = 8;
-const BUBBLE_SIZE = 64;
+const EDGE_GAP = 12;
+const BUBBLE_SIZE = 58;
 
 export function EllaFab({ audience = "public" }: EllaFabProps) {
   const pathname = useRouterState({ select: (state) => state.location.pathname });
   const destination = audience === "staff" ? "/ella" : "/assistente";
-  const label = "Atendimento Decode Analytics";
+  const label = "Atendimento Ella • Decode Analytics";
   const [position, setPosition] = useState<Position | null>(null);
   const dragRef = useRef<DragState | null>(null);
   const didDragRef = useRef(false);
@@ -135,7 +136,7 @@ export function EllaFab({ audience = "public" }: EllaFabProps) {
         ...(position
           ? { left: position.left, top: position.top }
           : {
-              bottom: "calc(env(safe-area-inset-bottom) + 1.25rem)",
+              bottom: "calc(env(safe-area-inset-bottom) + 5rem)",
               ...(audience === "public"
                 ? { left: "calc(env(safe-area-inset-left) + 1.25rem)" }
                 : { right: "calc(env(safe-area-inset-right) + 1.25rem)" }),
@@ -148,24 +149,39 @@ export function EllaFab({ audience = "public" }: EllaFabProps) {
       onPointerMove={moveDrag}
       onPointerUp={finishDrag}
       onPointerCancel={finishDrag}
-      title="Fale com a gente"
+      title="Fale com a Ella"
     >
       <Link
         to={destination}
         onClick={suppressClick}
         aria-label={`Conversar com ${label}`}
-        className="relative block rounded-full transition-transform hover:scale-105 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#22D3EE]/40"
+        className="relative block rounded-full transition-transform hover:scale-105 active:scale-95 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#22D3EE]/50"
         draggable={false}
       >
-        <span className="grid h-14 w-14 place-items-center rounded-full bg-[#087CF0] text-white shadow-lg shadow-black/30 ring-1 ring-white/20">
-          <MessageCircle className="h-6 w-6" />
-        </span>
+        <div className="relative flex items-center justify-center rounded-full p-0.5 bg-gradient-to-tr from-[#087CF0] via-[#22D3EE] to-[#7138F5] shadow-[0_8px_24px_rgba(8,124,240,0.4)]">
+          <EllaAvatar
+            size={56}
+            alt="Ella Assistente Virtual"
+            ringClassName="ring-2 ring-[#0B1026]"
+            className="rounded-full shadow-inner"
+          />
+          <span
+            aria-hidden="true"
+            className="absolute -bottom-1 -right-1 grid h-5 w-5 place-items-center rounded-full bg-[#087CF0] text-white shadow-md ring-2 ring-[#0B1026]"
+          >
+            <MessageCircle className="h-3 w-3" />
+          </span>
+          <span
+            aria-hidden="true"
+            className="absolute top-0 right-0 h-3 w-3 rounded-full bg-emerald-400 ring-2 ring-[#0B1026]"
+          />
+        </div>
       </Link>
       <span
         aria-hidden="true"
         className={`pointer-events-none absolute ${audience === "public" ? "left-[4.25rem]" : "right-[4.25rem]"} top-1/2 -translate-y-1/2 whitespace-nowrap rounded-lg bg-[#0B1026] px-3 py-2 text-xs font-semibold text-white opacity-0 shadow-lg transition-opacity group-hover:opacity-100 group-focus-within:opacity-100`}
       >
-        {audience === "public" ? "Fale conosco" : "Assistente"}
+        {audience === "public" ? "Fale com a Ella" : "Assistente Ella"}
       </span>
     </div>
   );

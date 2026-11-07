@@ -15,6 +15,7 @@ import {
   PanelLeftClose,
   PanelLeftOpen,
   Receipt,
+  Repeat,
   Search,
   Settings,
   ShoppingCart,
@@ -110,6 +111,14 @@ const NAV: NavItem[] = [
     label: "Contas a Receber",
     description: "Cobranças e vencimentos",
     icon: Receipt,
+    section: "Financeiro",
+    roles: ["administrador", "financeiro", "atendente"],
+  },
+  {
+    to: "/subscriptions",
+    label: "Assinaturas & Recorrência",
+    description: "Clientes recorrentes e cobranças programadas",
+    icon: Repeat,
     section: "Financeiro",
     roles: ["administrador", "financeiro", "atendente"],
   },
@@ -544,9 +553,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         </main>
       </div>
 
-      <div className="hidden md:block">
-        <EllaFab audience="staff" />
-      </div>
+      <EllaFab audience="staff" />
 
       <nav
         aria-label="Navegação rápida"
