@@ -135,7 +135,7 @@ function Page() {
         .filter((r) => r.service_contract_id && r.competence_month?.startsWith(targetMonth))
         .map((r) => r.service_contract_id),
     );
-    return activeContracts.filter((c: any) => !existingContractIds.has(c.id));
+    return activeContracts.filter((c: any) => {\n      if (existingContractIds.has(c.id)) return false;\n      const monthStart = `${targetMonth}-01`;\n      const monthEnd = `${targetMonth}-${String(new Date(Number(targetMonth.slice(0, 4)), Number(targetMonth.slice(5, 7)), 0).getDate()).padStart(2, "0")}`;\n      if (c.start_date && c.start_date > monthEnd) return false;\n      if (c.end_date && c.end_date < monthStart) return false;\n      return true;\n    });
   }, [activeContracts, data, targetMonth]);
 
   const totalUnbilledAmount = useMemo(
@@ -387,7 +387,7 @@ function Page() {
           className="bg-primary text-primary-foreground shadow-sm flex items-center gap-2"
         >
           <Sparkles className="w-4 h-4 text-yellow-300" />
-          <span>Lançar cobranças do mês</span>
+          <span>Gerar Faturas do Mês</span>
         </Button>
       </div>
 
