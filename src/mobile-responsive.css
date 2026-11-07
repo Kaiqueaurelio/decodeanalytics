@@ -90,3 +90,28 @@
     margin-bottom: 0.75rem;
   }
 }
+
+
+/* Responsive containment for app pages and data grids (phones 320px–767px). */
+@media (max-width: 767px) {
+  html, body, #root { width: 100%; max-width: 100%; overflow-x: clip; }
+  #root, #root > *, main, main > *, main [class*="grid"], main [class*="flex"] { min-width: 0; }
+  main { width: 100%; max-width: 100%; overflow-x: clip; }
+  main > div { width: 100%; max-width: 100%; min-width: 0; }
+  main [role="table"], main .table-scroll { max-width: 100%; min-width: 0; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  main table { max-width: none; }
+  main input, main select, main textarea { max-width: 100%; min-width: 0; }
+  main button, main a { overflow-wrap: anywhere; }
+  header > div { min-width: 0; gap: .5rem; }
+  header > div > div:first-child { min-width: 0; }
+  header > div > div:last-child { min-width: 0; flex-shrink: 0; }
+  header h1 { max-width: min(36vw, 10rem); }
+  [data-radix-popper-content-wrapper] { max-width: calc(100vw - 1rem); }
+  .app-page { padding-inline: .75rem; }
+}
+
+@media (max-width: 359px) {
+  main { padding-inline: .5rem !important; }
+  header > div { padding-inline: .5rem !important; }
+  header > div > div:last-child { gap: .25rem; }
+}
