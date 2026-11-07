@@ -367,15 +367,17 @@ BEGIN
   SET status = 'pago', paid_at = now(), payment_method = COALESCE(NULLIF(p_payment_method, ''), 'pix')
   WHERE id = p_receivable_id;
 
-  INSERT INTO public.cash_entries (
-    type, description, category, amount, client_id, order_id, receivable_id, payment_method
-  ) VALUES (
-    'entrada', v_description, v_category, v_receivable.amount,
-    v_receivable.client_id, v_receivable.order_id, v_receivable.id,
-    COALESCE(NULLIF(p_payment_method, ''), 'pix')
-  )
-  ON CONFLICT (receivable_id) WHERE receivable_id IS NOT NULL
-  DO NOTHING;
+  IF NOT EXISTS (
+    SELECT 1 FROM public.cash_entries WHERE receivable_id = p_receivable_id
+  ) THEN
+    INSERT INTO public.cash_entries (
+      type, description, category, amount, client_id, order_id, receivable_id, payment_method
+    ) VALUES (
+      'entrada', v_description, v_category, v_receivable.amount,
+      v_receivable.client_id, v_receivable.order_id, v_receivable.id,
+      COALESCE(NULLIF(p_payment_method, ''), 'pix')
+    );
+  END IF;
 
   IF v_receivable.order_id IS NOT NULL THEN
     UPDATE public.orders SET paid = total WHERE id = v_receivable.order_id;
