@@ -158,6 +158,7 @@ function UsersPage() {
                   const self = row.id === user?.id;
                   return (
                     <tr key={row.id} className="hover:bg-muted/30">
+                      <td className="p-4"><input type="checkbox" aria-label={"Selecionar " + row.email} checked={selected.includes(row.id)} disabled={row.id === user?.id || deleteUsers.isPending} onChange={(e) => setSelected((prev) => e.target.checked ? [...prev, row.id] : prev.filter((id) => id !== row.id))} /></td>
                       <td className="p-4 font-medium">
                         {row.name}
                         {self && <span className="ml-2 text-xs text-muted-foreground">(você)</span>}
