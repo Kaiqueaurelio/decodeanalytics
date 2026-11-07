@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ShieldAlert, Trash2 } from "lucide-react";
+import { useState } from "react";
 import { toast } from "sonner";
 import { useAuth } from "@/lib/auth";
 
@@ -32,6 +33,7 @@ interface Row {
 function UsersPage() {
   const { isAdmin, user } = useAuth();
   const qc = useQueryClient();
+  const [selected, setSelected] = useState<string[]>([]);
 
   const {
     data: rows,
@@ -83,6 +85,19 @@ function UsersPage() {
     onError: (error) => toast.error(error.message || "Não foi possível alterar o cargo."),
   });
 
+  const deleteUsers = useMutation({
+    mutationFn: async (userIds: string[]) => {
+      const { data, error } = await supabase.functions.invoke("admin-delete-users", { body: { userIds } });
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+      return data;
+    },
+    onSuccess: (data) => { setSelected([]); refresh(); toast.success(String(data?.deletedCount ?? 0) + " usuário(s) excluído(s)."); },
+    onError: (error) => toast.error(error.message || "Não foi possível excluir os usuários."),
+  });
+  const selectableRows = (rows ?? []).filter((row) => row.id !== user?.id);
+  const allSelected = selectableRows.length > 0 && selectableRows.every((row) => selected.includes(row.id));
+
   const revoke = useMutation({
     mutationFn: async (row: Row) => {
       if (row.id === user?.id) throw new Error("Não é permitido remover o próprio acesso.");
@@ -113,7 +128,7 @@ function UsersPage() {
       <div>
         <h2 className="text-2xl font-bold tracking-tight">Usuários e permissões</h2>
         <p className="text-sm text-muted-foreground">
-          Defina o cargo de cada pessoa ou remova o acesso ao sistema.
+          Selecione usuários para exclusão em lote ou gerencie os cargos individualmente.
         </p>
       </div>
       <Card className="overflow-hidden">
@@ -121,6 +136,7 @@ function UsersPage() {
           <table className="w-full min-w-[720px] text-left text-sm">
             <thead className="border-b bg-muted/50 font-medium text-muted-foreground">
               <tr>
+                <th className="p-4"><input type="checkbox" aria-label="Selecionar todos" checked={allSelected} disabled={deleteUsers.isPending} onChange={(e) => setSelected(e.target.checked ? selectableRows.map((r) => r.id) : [])} /></th>
                 <th className="p-4">Nome</th>
                 <th className="p-4">E-mail</th>
                 <th className="p-4">Cargo</th>
@@ -129,9 +145,10 @@ function UsersPage() {
               </tr>
             </thead>
             <tbody className="divide-y">
+              {selected.length > 0 && <tr><td colSpan={6} className="bg-muted/30 p-3"><div className="flex items-center justify-between gap-3"><span>{selected.length} usuário(s) selecionado(s)</span><Button type="button" variant="destructive" size="sm" disabled={deleteUsers.isPending} onClick={() => { if (confirm("Excluir permanentemente " + selected.length + " usuário(s)? A ação não pode ser desfeita.")) deleteUsers.mutate(selected); }}><Trash2 className="mr-1 h-4 w-4" />{deleteUsers.isPending ? "Excluindo..." : "Excluir selecionados"}</Button></div></td></tr>}
               {isLoading ? (
                 <tr>
-                  <td colSpan={5} className="p-8 text-center text-muted-foreground">
+                  <td colSpan={6} className="p-8 text-center text-muted-foreground">
                     Carregando...
                   </td>
                 </tr>
@@ -189,7 +206,7 @@ function UsersPage() {
                           type="button"
                           size="sm"
                           variant="outline"
-                          disabled={self || !row.isActive || revoke.isPending || setRole.isPending}
+                          disabled={self || !row.isActive || revoke.isPending || setRole.isPending || deleteUsers.isPending}
                           onClick={() => {
                             if (confirm(`Remover o acesso de ${row.email}?`)) revoke.mutate(row);
                           }}
