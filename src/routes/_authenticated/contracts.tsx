@@ -525,6 +525,7 @@ function ContractsPage() {
               <TabsTrigger value="aprovado">Aprovados</TabsTrigger>
               <TabsTrigger value="recusado">Recusados</TabsTrigger>
               <TabsTrigger value="encerrado">Encerrados</TabsTrigger>
+              <TabsTrigger value="suspenso">Pausadas</TabsTrigger>
             </TabsList>
           </Tabs>
         </div>
@@ -598,6 +599,16 @@ function ContractsPage() {
                     onClick={() => activateContract(item)}
                   >
                     Ativar
+                  </Button>
+                )}
+                {canManage && ["aprovado", "ativo"].includes(item.status) && (
+                  <Button size="sm" variant="ghost" className="h-8 text-xs" onClick={() => togglePauseContract(item)}>
+                    Pausar
+                  </Button>
+                )}
+                {canManage && ["suspenso", "pausado"].includes(item.status) && (
+                  <Button size="sm" variant="ghost" className="h-8 text-xs text-emerald-600" onClick={() => togglePauseContract(item)}>
+                    Reativar
                   </Button>
                 )}
               </div>
