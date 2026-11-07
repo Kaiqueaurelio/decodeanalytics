@@ -38,6 +38,19 @@ export function createLovableGateway(apiKey: string) {
   });
 }
 
+// Provider direto da NVIDIA NIM (endpoint OpenAI-compatível).
+// Usa NVIDIA_API_KEY do usuário (nvapi-...)
+export function createNvidiaProvider(apiKey: string, baseURL = "https://integrate.api.nvidia.com/v1") {
+  return createOpenAICompatible({
+    name: "nvidia",
+    baseURL,
+    supportsStructuredOutputs: false,
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+    },
+  });
+}
+
 // Provider direto do Google Gemini (endpoint OpenAI-compatível).
 // NVIDIA_API_KEY, quando configurada no servidor, tem prioridade.
 export function createGeminiProvider(apiKey: string) {

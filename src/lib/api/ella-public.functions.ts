@@ -2,7 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { createClient } from "@supabase/supabase-js";
 import { generateText, tool, stepCountIs } from "ai";
 import { z } from "zod";
-import { createLovableGateway } from "@/lib/ai-gateway.server";
+import { createGeminiProvider, createLovableGateway, createNvidiaProvider } from "@/lib/ai-gateway.server";
 import type { Database } from "@/integrations/supabase/types";
 import { getRequestIP } from "@tanstack/react-start/server";
 import { PUBLIC_SYSTEM_PROMPT } from "./ella.helpers.server";
@@ -29,7 +29,10 @@ export const ellaPublicChat = createServerFn({ method: "POST" })
     } catch {
       ipKey = "unknown";
     }
-    const key = process.env.LOVABLE_API_KEY;
+    const nvidiaKey = process.env.NVIDIA_API_KEY;
+    const geminiKey = process.env.GEMINI_API_KEY;
+    const lovableKey = process.env.LOVABLE_API_KEY;
+    const key = nvidiaKey || geminiKey || lovableKey;
     const url = process.env.SUPABASE_URL;
     const anonKey = process.env.SUPABASE_PUBLISHABLE_KEY;
     if (!key || !url || !anonKey) throw new Error("Configuração de servidor ausente.");
@@ -57,7 +60,13 @@ export const ellaPublicChat = createServerFn({ method: "POST" })
       };
     }
 
-    const model = createLovableGateway(key)("google/gemini-2.5-flash");
+    const nvidiaModel = process.env.NVIDIA_MODEL || "mistralai/mistral-large-4-1t-a52b";
+    const nvidiaBaseUrl = process.env.NVIDIA_BASE_URL || "https://integrate.api.nvidia.com/v1";
+    const model = nvidiaKey
+      ? createNvidiaProvider(nvidiaKey, nvidiaBaseUrl)(nvidiaModel)
+      : geminiKey
+      ? createGeminiProvider(geminiKey)("gemini-2.5-flash")
+      : createLovableGateway(lovableKey!)("google/gemini-2.5-flash");
     const traceId = newTraceId();
     const startedAt = Date.now();
 

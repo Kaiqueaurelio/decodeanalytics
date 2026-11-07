@@ -2,7 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { generateText, tool, stepCountIs } from "ai";
 import { z } from "zod";
-import { createGeminiProvider, createLovableGateway } from "@/lib/ai-gateway.server";
+import { createGeminiProvider, createLovableGateway, createNvidiaProvider } from "@/lib/ai-gateway.server";
 import {
   ADMIN_SYSTEM_PROMPT,
   STATUS_ENUM,
@@ -276,6 +276,7 @@ export const ellaChat = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((v: unknown) => InputSchema.parse(v))
   .handler(async ({ data, context }) => {
+    const nvidiaKey = process.env['NVIDIA_API_KEY'];
     const geminiKey = process.env['GEMINI_API_KEY'];
     const lovableKey = process.env['LOVABLE_API_KEY'];
     const supabase = context.supabase;
@@ -291,7 +292,7 @@ export const ellaChat = createServerFn({ method: "POST" })
       throw new Error("Acesso não liberado para esta conta.");
     }
 
-    if (!geminiKey && !lovableKey) {
+    if (!nvidiaKey && !geminiKey && !lovableKey) {
       const fallback = await ellaLocalFallback({
         message: data.message,
         supabase,
@@ -303,7 +304,11 @@ export const ellaChat = createServerFn({ method: "POST" })
       };
     }
 
-    const model = geminiKey
+    const nvidiaModel = process.env['NVIDIA_MODEL'] || "mistralai/mistral-large-4-1t-a52b";
+    const nvidiaBaseUrl = process.env['NVIDIA_BASE_URL'] || "https://integrate.api.nvidia.com/v1";
+    const model = nvidiaKey
+      ? createNvidiaProvider(nvidiaKey, nvidiaBaseUrl)(nvidiaModel)
+      : geminiKey
       ? createGeminiProvider(geminiKey)("gemini-2.5-flash")
       : createLovableGateway(lovableKey!)("google/gemini-2.5-flash");
     const traceId = newTraceId();

@@ -2,7 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { generateText } from "ai";
 import { z } from "zod";
-import { createGeminiProvider, createLovableGateway } from "@/lib/ai-gateway.server";
+import { createGeminiProvider, createLovableGateway, createNvidiaProvider } from "@/lib/ai-gateway.server";
 import { ADMIN_SYSTEM_PROMPT, PUBLIC_SYSTEM_PROMPT } from "./ella.helpers.server";
 import { classifyAiError, logAiEvent, newTraceId } from "./ai-logs.server";
 
@@ -97,15 +97,28 @@ export const ellaSandboxChat = createServerFn({ method: "POST" })
       user_id: userId,
     };
 
-    // Prefer the Google AI Studio key when configured; otherwise use the Lovable gateway.
+    // Prefer NVIDIA NIM when configured, then Google AI Studio, then Lovable gateway.
+    const nvidiaKey = process.env.NVIDIA_API_KEY;
     const geminiKey = process.env.GEMINI_API_KEY;
     const lovableKey = process.env.LOVABLE_API_KEY;
-    const providerName = geminiKey ? "Google Gemini" : lovableKey ? "Lovable AI Gateway" : "Modo básico (sem chave configurada)";
-    const model = geminiKey
+    const nvidiaModel = process.env.NVIDIA_MODEL || "mistralai/mistral-large-4-1t-a52b";
+    const nvidiaBaseUrl = process.env.NVIDIA_BASE_URL || "https://integrate.api.nvidia.com/v1";
+
+    const providerName = nvidiaKey
+      ? `NVIDIA NIM (${nvidiaModel})`
+      : geminiKey
+      ? "Google Gemini"
+      : lovableKey
+      ? "Lovable AI Gateway"
+      : "Modo básico (sem chave configurada)";
+
+    const model = nvidiaKey
+      ? createNvidiaProvider(nvidiaKey, nvidiaBaseUrl)(nvidiaModel)
+      : geminiKey
       ? createGeminiProvider(geminiKey)("gemini-2.5-flash")
       : lovableKey
-        ? createLovableGateway(lovableKey)(modelName)
-        : null;
+      ? createLovableGateway(lovableKey)(modelName)
+      : null;
 
     const scopes = data.scope === "admin" ? ["admin", "both"] : ["public", "both"];
     const { data: kbRaw } = await step("load_knowledge", async () => supabase

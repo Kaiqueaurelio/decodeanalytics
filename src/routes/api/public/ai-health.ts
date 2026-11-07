@@ -8,20 +8,34 @@ export const Route = createFileRoute("/api/public/ai-health")({
   server: {
     handlers: {
       GET: async () => {
-        const configured = Boolean(process.env.LOVABLE_API_KEY);
+        const configured = Boolean(
+          process.env.NVIDIA_API_KEY || process.env.GEMINI_API_KEY || process.env.LOVABLE_API_KEY
+        );
+        const gatewayName = process.env.NVIDIA_API_KEY
+          ? "nvidia"
+          : process.env.GEMINI_API_KEY
+          ? "gemini"
+          : "lovable";
         return new Response(null, {
           status: configured ? 200 : 503,
           headers: {
             "cache-control": "no-store",
-            "x-ai-gateway": "lovable",
+            "x-ai-gateway": gatewayName,
           },
         });
       },
       HEAD: async () => {
-        const configured = Boolean(process.env.LOVABLE_API_KEY);
+        const configured = Boolean(
+          process.env.NVIDIA_API_KEY || process.env.GEMINI_API_KEY || process.env.LOVABLE_API_KEY
+        );
+        const gatewayName = process.env.NVIDIA_API_KEY
+          ? "nvidia"
+          : process.env.GEMINI_API_KEY
+          ? "gemini"
+          : "lovable";
         return new Response(null, {
           status: configured ? 200 : 503,
-          headers: { "cache-control": "no-store", "x-ai-gateway": "lovable" },
+          headers: { "cache-control": "no-store", "x-ai-gateway": gatewayName },
         });
       },
     },
