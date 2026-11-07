@@ -654,7 +654,36 @@ function Dashboard() {
             </div>
             <Badge variant="destructive">{attentionOrders.length}</Badge>
           </div>
-          <div className="overflow-x-auto">
+          {/* Mobile View: Cards */}
+          <div className="grid gap-2.5 sm:hidden p-4">
+            {attentionOrders.map((order) => (
+              <Card key={order.id} className="p-3 space-y-2">
+                <div className="flex items-start justify-between gap-2">
+                  <div>
+                    <p className="font-semibold text-sm text-foreground">OS #{order.number}</p>
+                    <p className="text-xs text-muted-foreground">{order.clients?.name || order.title}</p>
+                  </div>
+                  <Badge variant="outline" className="font-normal text-xs shrink-0">
+                    {PRODUCTION_STATUS_LABEL[order.production_status] || order.production_status}
+                  </Badge>
+                </div>
+                <div className="flex items-center justify-between text-xs text-muted-foreground pt-1.5 border-t">
+                  <span>{order.assignee?.name || order.assignee?.email || "Não definido"}</span>
+                  <span className={`font-medium ${order.deadline && new Date(`${order.deadline}T23:59:59`) < new Date() ? "text-destructive" : ""}`}>
+                    {order.deadline ? fmtDate(order.deadline) : "Sem prazo"}
+                  </span>
+                </div>
+              </Card>
+            ))}
+            {!attentionOrders.length && (
+              <div className="py-6 text-center text-xs text-muted-foreground">
+                Nenhuma ordem precisando de atenção imediata.
+              </div>
+            )}
+          </div>
+
+          {/* Desktop View: Tabela */}
+          <div className="hidden sm:block overflow-x-auto">
             <table className="w-full min-w-[620px] text-left text-sm">
               <thead className="bg-muted/60 text-[11px] uppercase tracking-wide text-muted-foreground">
                 <tr>

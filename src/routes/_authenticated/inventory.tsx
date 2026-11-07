@@ -391,7 +391,39 @@ function InventoryPage() {
         )}
       </Card>
 
-      <Card className="overflow-hidden border-border/80">
+      {/* Mobile View: Histórico recente */}
+      <div className="grid gap-2.5 sm:hidden">
+        <h3 className="font-extrabold text-brand-blue text-sm px-1">Histórico recente</h3>
+        {movements.map((move) => (
+          <Card key={move.id} className="p-3 space-y-2">
+            <div className="flex items-center justify-between text-xs">
+              <span className="font-semibold text-foreground">{move.inventory_items?.name || "Item"}</span>
+              <MovementBadge type={move.type} />
+            </div>
+            <div className="flex items-center justify-between text-xs text-muted-foreground pt-1 border-t">
+              <span>{new Date(move.created_at).toLocaleString("pt-BR", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" })}</span>
+              <div className="font-mono">
+                <span>{move.previous_quantity}</span>
+                <span className="mx-1">→</span>
+                <span className="font-bold text-foreground">{move.new_quantity}</span>
+              </div>
+            </div>
+            {(move.reason || move.reference) && (
+              <p className="text-[11px] text-muted-foreground italic bg-muted/40 px-2 py-1 rounded">
+                {move.reason || move.reference}
+              </p>
+            )}
+          </Card>
+        ))}
+        {!movements.length && (
+          <Card className="p-6 text-center text-xs text-muted-foreground">
+            Nenhuma movimentação registrada ainda.
+          </Card>
+        )}
+      </div>
+
+      {/* Desktop View: Tabela Tradicional */}
+      <Card className="hidden sm:block overflow-hidden border-border/80">
         <div className="border-b p-3">
           <h3 className="font-extrabold text-brand-blue">Historico recente</h3>
         </div>

@@ -176,7 +176,44 @@ function AiLogsPage() {
           </div>
         </div>
 
-        <div className="overflow-x-auto">
+        {/* Mobile View: Cards responsivos */}
+        <div className="grid gap-2.5 sm:hidden p-3 pt-0">
+          {isLoading && (
+            <div className="py-8 text-center text-xs text-muted-foreground">Carregando…</div>
+          )}
+          {!isLoading && (data ?? []).length === 0 && (
+            <div className="py-8 text-center text-xs text-muted-foreground">Nenhum registro.</div>
+          )}
+          {(data ?? []).map((r) => (
+            <Card key={r.id} className="p-3 space-y-2 text-xs">
+              <div className="flex items-center justify-between">
+                <span className="font-mono text-[11px] font-semibold text-primary">{r.endpoint}</span>
+                {r.status === "success" ? (
+                  <Badge variant="secondary" className="bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300 border-0 text-[10px]">
+                    sucesso
+                  </Badge>
+                ) : (
+                  <Badge variant="destructive" className="text-[10px]">falha</Badge>
+                )}
+              </div>
+              <div className="flex items-center justify-between text-muted-foreground text-[11px]">
+                <span>{r.provider} / {r.model ?? "—"}</span>
+                <span className="font-mono font-medium">{r.latency_ms != null ? `${r.latency_ms} ms` : "—"}</span>
+              </div>
+              <div className="text-[11px] text-muted-foreground">
+                {new Date(r.occurred_at).toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo" })}
+              </div>
+              {r.error_message && (
+                <p className="text-[11px] text-destructive bg-destructive/10 p-2 rounded">
+                  {r.error_message}
+                </p>
+              )}
+            </Card>
+          ))}
+        </div>
+
+        {/* Desktop View: Tabela Tradicional */}
+        <div className="hidden sm:block overflow-x-auto">
           <table className="w-full min-w-[680px] text-sm">
             <thead className="text-left text-xs uppercase text-muted-foreground border-b">
               <tr>

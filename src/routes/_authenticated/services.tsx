@@ -427,7 +427,85 @@ function ServicesPage() {
         </div>
       </div>
 
-      <Card>
+      {/* Mobile View: Cards responsivos */}
+      <div className="grid gap-3 sm:hidden">
+        {filtered.map((s) => {
+          const recurring = isRecurring(s.billing_type);
+          return (
+            <Card key={s.id} className="p-4 space-y-3">
+              <div className="flex items-start justify-between gap-2">
+                <div className="min-w-0 flex-1">
+                  <h3 className="font-semibold text-base text-foreground leading-snug">{s.name}</h3>
+                  <div className="flex flex-wrap items-center gap-1.5 mt-1">
+                    <span className="text-xs text-muted-foreground font-medium bg-muted px-2 py-0.5 rounded">
+                      {s.category}
+                    </span>
+                    {recurring ? (
+                      <Badge variant="outline" className="bg-primary/10 text-primary border-primary/30 text-xs flex items-center gap-1">
+                        <Repeat className="w-3 h-3" /> Mensal
+                      </Badge>
+                    ) : (
+                      <Badge variant="outline" className="text-muted-foreground text-xs">
+                        Avulso
+                      </Badge>
+                    )}
+                    <span className={cn("text-xs font-semibold px-1.5 py-0.5 rounded", s.active ? "text-emerald-700 bg-emerald-50 dark:bg-emerald-950/40" : "text-muted-foreground bg-muted")}>
+                      {s.active ? "Ativo" : "Inativo"}
+                    </span>
+                  </div>
+                </div>
+                <div className="text-right shrink-0">
+                  <div className="font-mono font-bold text-primary text-base">
+                    {brl(s.base_price)}
+                  </div>
+                  <span className="text-[11px] text-muted-foreground">/{s.unit || (recurring ? "mês" : "un")}</span>
+                </div>
+              </div>
+
+              {s.description && (
+                <p className="text-xs text-muted-foreground line-clamp-2 bg-muted/30 p-2 rounded">
+                  {s.description}
+                </p>
+              )}
+
+              <div className="flex items-center justify-end gap-2 pt-2 border-t">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="h-8 text-xs"
+                  onClick={() => {
+                    setEdit(s);
+                    setOpen(true);
+                  }}
+                >
+                  <Pencil className="w-3.5 h-3.5 mr-1" /> Editar
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="h-8 text-xs text-destructive hover:bg-destructive/10"
+                  onClick={() => remove(s.id)}
+                >
+                  <Trash2 className="w-3.5 h-3.5 mr-1" /> Excluir
+                </Button>
+              </div>
+            </Card>
+          );
+        })}
+        {!filtered.length && (
+          <Card className="p-8 text-center text-muted-foreground">
+            <p className="font-medium text-sm">Nenhum serviço encontrado</p>
+            <p className="text-xs mt-1 text-muted-foreground/80">
+              {search || billingFilter !== "todos"
+                ? "Tente ajustar a busca ou os filtros."
+                : "Cadastre novos serviços."}
+            </p>
+          </Card>
+        )}
+      </div>
+
+      {/* Desktop View: Tabela Tradicional */}
+      <Card className="hidden sm:block">
         <div className="overflow-x-auto">
           <table className="w-full min-w-[720px] text-sm">
             <thead className="bg-muted/60 text-muted-foreground text-xs uppercase">

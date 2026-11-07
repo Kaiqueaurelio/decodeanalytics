@@ -17,6 +17,7 @@ import {
 import { ShieldAlert, Trash2, UserX } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/lib/auth";
+import { cn } from "@/lib/utils";
 import { adminDeleteUsersAccount } from "@/lib/api/users.functions";
 
 export const Route = createFileRoute("/_authenticated/users")({
@@ -200,7 +201,138 @@ function UsersPage() {
         </p>
       </div>
 
-      <Card className="overflow-hidden">
+      {/* Mobile View: Cards responsivos */}
+      <div className="grid gap-3 sm:hidden">
+        {selected.length > 0 && (
+          <div className="rounded-lg bg-destructive/10 border border-destructive/20 p-3 flex items-center justify-between gap-3">
+            <span className="font-medium text-xs text-destructive">
+              {selected.length} selecionado(s)
+            </span>
+            <Button
+              type="button"
+              variant="destructive"
+              size="sm"
+              className="h-8 text-xs"
+              disabled={isActionPending}
+              onClick={() => setBulkConfirmOpen(true)}
+            >
+              <Trash2 className="mr-1 h-3.5 w-3.5" /> Excluir selecionados
+            </Button>
+          </div>
+        )}
+
+        {selectableRows.length > 0 && (
+          <div className="flex items-center gap-2 px-1 text-xs text-muted-foreground">
+            <input
+              type="checkbox"
+              id="select-all-mobile"
+              className="h-4 w-4 rounded border-gray-300"
+              checked={allSelected}
+              disabled={isActionPending}
+              onChange={(e) =>
+                setSelected(e.target.checked ? selectableRows.map((r) => r.id) : [])
+              }
+            />
+            <label htmlFor="select-all-mobile">Selecionar todos para ação em lote</label>
+          </div>
+        )}
+
+        {isLoading ? (
+          <Card className="p-8 text-center text-sm text-muted-foreground">Carregando...</Card>
+        ) : isError ? (
+          <Card className="p-8 text-center space-y-3">
+            <p className="text-sm text-destructive">Não foi possível carregar os usuários.</p>
+            <Button type="button" variant="outline" size="sm" onClick={() => void refetch()}>
+              Tentar novamente
+            </Button>
+          </Card>
+        ) : rows?.length ? (
+          rows.map((row) => {
+            const self = row.id === user?.id;
+            return (
+              <Card key={row.id} className="p-4 space-y-3">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex items-start gap-2.5 min-w-0 flex-1">
+                    {!self && (
+                      <input
+                        type="checkbox"
+                        aria-label={`Selecionar ${row.email}`}
+                        className="mt-1 h-4 w-4 shrink-0 rounded border-gray-300"
+                        checked={selected.includes(row.id)}
+                        disabled={isActionPending}
+                        onChange={(e) =>
+                          setSelected((prev) =>
+                            e.target.checked ? [...prev, row.id] : prev.filter((id) => id !== row.id)
+                          )
+                        }
+                      />
+                    )}
+                    <div className="min-w-0 flex-1">
+                      <p className="font-semibold text-sm text-foreground truncate">
+                        {row.name}
+                        {self && <span className="ml-1.5 text-xs text-muted-foreground font-normal">(você)</span>}
+                      </p>
+                      <p className="text-xs text-muted-foreground truncate">{row.email}</p>
+                    </div>
+                  </div>
+                  <span className={cn("text-xs font-semibold px-2 py-0.5 rounded shrink-0", row.isActive ? "text-emerald-700 bg-emerald-50 dark:bg-emerald-950/40" : "text-amber-700 bg-amber-50 dark:bg-amber-950/40")}>
+                    {row.isActive ? "Ativo" : "Desativado"}
+                  </span>
+                </div>
+
+                <div className="flex flex-col gap-1.5 pt-1">
+                  <label className="text-[11px] font-medium text-muted-foreground">Cargo no sistema:</label>
+                  <select
+                    aria-label={`Cargo de ${row.email}`}
+                    className="h-9 w-full rounded-md border bg-background px-3 text-xs"
+                    value={row.role}
+                    disabled={self || isActionPending}
+                    onChange={(e) => setRole.mutate({ row, role: e.target.value as Role })}
+                  >
+                    {ROLES.map((role) => (
+                      <option key={role.value} value={role.value}>
+                        {role.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {!self && (
+                  <div className="flex items-center justify-end gap-2 pt-2 border-t">
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="outline"
+                      className="h-8 text-xs"
+                      disabled={!row.isActive || isActionPending}
+                      onClick={() => {
+                        if (confirm(`Revogar o acesso de ${row.email}?`)) revoke.mutate(row);
+                      }}
+                    >
+                      <UserX className="mr-1 h-3.5 w-3.5" /> Revogar
+                    </Button>
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="destructive"
+                      className="h-8 text-xs"
+                      disabled={isActionPending}
+                      onClick={() => setDeleteTarget(row)}
+                    >
+                      <Trash2 className="mr-1 h-3.5 w-3.5" /> Excluir
+                    </Button>
+                  </div>
+                )}
+              </Card>
+            );
+          })
+        ) : (
+          <Card className="p-8 text-center text-sm text-muted-foreground">Nenhum usuário cadastrado.</Card>
+        )}
+      </div>
+
+      {/* Desktop View: Tabela Tradicional */}
+      <Card className="hidden sm:block overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full min-w-[760px] text-left text-sm">
             <thead className="border-b bg-muted/50 font-medium text-muted-foreground">
