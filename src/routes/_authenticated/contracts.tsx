@@ -7,6 +7,7 @@ import {
   LoaderCircle,
   MessageCircle,
   Plus,
+  Repeat,
   Search,
   Send,
   ShieldCheck,
@@ -772,7 +773,10 @@ function ContractsPage() {
                     setForm({
                       ...form,
                       service_id: v,
-                      title: form.title || `${svc?.name || "Serviço"} — ${isMonthly ? "Assinatura Mensal" : "Contrato de Prestação"}`,
+                      title:
+                        !form.title || form.title === "Nova Assinatura Mensal"
+                          ? `${svc?.name || "Serviço"} — ${isMonthly ? "Assinatura Mensal" : "Contrato de Prestação"}`
+                          : form.title,
                       amount: form.amount || String(svc?.base_price ?? ""),
                       billing_mode: isMonthly ? "mensal_fixo" : form.billing_mode,
                       scope: form.scope || (svc as any)?.description || "",
