@@ -97,6 +97,18 @@ function Page() {
   const [batchOpen, setBatchOpen] = useState(false);
   const [targetMonth, setTargetMonth] = useState(() => new Date().toISOString().slice(0, 7)); // YYYY-MM
   const [generating, setGenerating] = useState(false);
+  const { data: company } = useQuery({
+    queryKey: ["company-settings-pix-billing"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("company_settings")
+        .select("pix_key,whatsapp")
+        .limit(1)
+        .maybeSingle();
+      if (error) throw error;
+      return data;
+    },
+  });
 
   const { data } = useQuery({
     queryKey: ["receivables"],
@@ -220,6 +232,29 @@ function Page() {
     } finally {
       setGenerating(false);
     }
+  }
+
+  function chargeByWhatsApp(r: any) {
+    const phone = String(r.clients?.whatsapp || "").replace(/\D/g, "");
+    if (!phone) return toast.error("Cadastre o WhatsApp do cliente para enviar a cobrança.");
+    const pixKey = company?.pix_key?.trim();
+    const competence = r.competence_month
+      ? new Date(`${r.competence_month}T00:00:00`).toLocaleDateString("pt-BR", { month: "long", year: "numeric" })
+      : "";
+    const message = [
+      `Olá, ${r.clients?.name || "tudo bem"}! Segue a cobrança da Decode Analytics.`,
+      r.service_contracts?.title ? `Serviço: ${r.service_contracts.title}` : "",
+      competence ? `Referência: ${competence}` : "",
+      `Valor: ${brl(r.amount)}`,
+      r.due_date ? `Vencimento: ${fmtDate(r.due_date)}` : "",
+      pixKey ? `Chave PIX: ${pixKey}` : "Solicite a chave PIX para concluir o pagamento.",
+      "Após o pagamento, envie o comprovante por aqui. Obrigado!",
+    ].filter(Boolean).join("\\n");
+    window.open(
+      `https://wa.me/55${phone.replace(/^55/, "")}?text=${encodeURIComponent(message)}`,
+      "_blank",
+      "noopener,noreferrer",
+    );
   }
 
   async function markPaid(r: any) {
@@ -504,6 +539,16 @@ function Page() {
                         </div>
                       </div>
 
+                      {b !== "paid" && r.service_contracts?.number && (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="w-full mt-3"
+                          onClick={() => chargeByWhatsApp(r)}
+                        >
+                          Enviar cobrança via WhatsApp
+                        </Button>
+                      )}
                       {b !== "paid" && (
                         <Button
                           size="sm"
