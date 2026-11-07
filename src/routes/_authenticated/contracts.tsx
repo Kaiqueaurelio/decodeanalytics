@@ -524,8 +524,8 @@ function ContractsPage() {
               <TabsTrigger value="enviado">Enviados</TabsTrigger>
               <TabsTrigger value="aprovado">Aprovados</TabsTrigger>
               <TabsTrigger value="recusado">Recusados</TabsTrigger>
-              <TabsTrigger value="encerrado">Encerrados</TabsTrigger>
               <TabsTrigger value="suspenso">Pausadas</TabsTrigger>
+              <TabsTrigger value="encerrado">Encerrados</TabsTrigger>
             </TabsList>
           </Tabs>
         </div>
