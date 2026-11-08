@@ -660,15 +660,15 @@ const PHYSICAL_PRODUCT_IMAGES: Record<string, string> = {
 
 // Fotografias reais de referência (Unsplash), separadas por categoria.
 export const CATEGORY_IMAGES: Record<string, string> = {
-  Cartões: "https://images.unsplash.com/photo-1589330694653-ded6le3f8a6f?auto=format&fit=crop&w=900&q=85",
+  Cartões: "https://images.unsplash.com/photo-154紙?auto=format&fit=crop&w=900&q=85",
   Panfletos: "https://images.unsplash.com/photo-1586953208448-b95a79798f07?auto=format&fit=crop&w=900&q=85",
   Adesivos: "https://images.unsplash.com/photo-1618005198919-d3d4b5a92ead?auto=format&fit=crop&w=900&q=85",
   Banners: "https://images.unsplash.com/photo-1557683316-973673baf926?auto=format&fit=crop&w=900&q=85",
-  Camisetas: "https://images.unsplash.com/photo-152937와?auto=format&fit=crop&w=900&q=85",
+  Camisetas: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=900&q=85",
   Canecas: "https://images.unsplash.com/photo-1514228742587-6b1558fcae9e?auto=format&fit=crop&w=900&q=85",
   Brindes: "https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&w=900&q=85",
   Embalagens: "https://images.unsplash.com/photo-1607082349566-187342175e2f?auto=format&fit=crop&w=900&q=85",
-  Plotagem: "https://images.unsplash.com/photo-150 想?auto=format&fit=crop&w=900&q=85",
+  Plotagem: "https://images.unsplash.com/photo-1541701494587-cb58502866ab?auto=format&fit=crop&w=900&q=85",
   "Manutenção de Computadores": "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=900&q=85",
   Programação: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=900&q=85",
   "Social Media": "https://images.unsplash.com/photo-1611162616475-46b635cb6868?auto=format&fit=crop&w=900&q=85",
