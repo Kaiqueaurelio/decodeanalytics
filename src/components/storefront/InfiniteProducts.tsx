@@ -8,12 +8,26 @@ import type { StoreProduct } from "./ProductCard";
 import { useShowPrices } from "@/hooks/useCompanyInfo";
 import { SmartImage } from "./SmartImage";
 import { trackCardClick, trackCta, trackInfinitePage } from "@/lib/analytics";
+import { resolveProductImage } from "./productImages";
 
 const PAGE = 8;
 
 export function InfiniteProducts() {
   const { data, isLoading, isError, refetch, isFetching } = useStoreProducts();
-  const all = useMemo(() => data ?? [], [data]);
+  // Reforça o fallback visual na vitrine inicial mesmo quando image_url vier vazio
+  // ou com um caminho legado que não existe mais no armazenamento.
+  const all = useMemo(
+    () =>
+      (data ?? []).map((product) => ({
+        ...product,
+        image_url: resolveProductImage(
+          product.image_url,
+          product.category,
+          product.slug ?? product.id ?? product.name,
+        ),
+      })),
+    [data],
+  );
   const [visibleCount, setVisibleCount] = useState(PAGE);
   const sentinel = useRef<HTMLDivElement>(null);
   const hasMore = visibleCount < all.length;
