@@ -43,7 +43,6 @@ function Page() {
         default_quote_text: form.default_quote_text,
         default_order_text: form.default_order_text,
         default_deadline_days: Number(form.default_deadline_days) || 3,
-        pix_key: form.pix_key?.trim() || null,
         show_prices: form.show_prices !== false,
         hero_title: form.hero_title,
         hero_subtitle: form.hero_subtitle,
