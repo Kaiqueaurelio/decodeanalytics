@@ -42,7 +42,8 @@ export function EllaAvatar({
     };
   }, []);
 
-  const src = attempt === 0 ? ellaAvatar : `${ellaAvatar}?retry=${attempt}`;
+  const primarySrc = ellaAvatar || "/brand/ella-avatar.jpg";
+  const src = attempt === 0 ? primarySrc : (attempt === 1 ? "/brand/ella-avatar.jpg" : `${primarySrc}?retry=${attempt}`);
 
   const handleError = () => {
     if (attempt >= maxRetries) {

@@ -153,10 +153,10 @@ function StoreHeader() {
           </button>
         </form>
 
-        <nav className="hidden items-center gap-1 md:flex">
+        <nav className="hidden items-center gap-2 md:flex">
           <Link
             to="/orcamento"
-            className="flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-semibold text-[#22D3EE] hover:bg-[#22D3EE]/10 transition"
+            className="flex items-center gap-1.5 rounded-lg border border-[#22D3EE]/30 bg-[#22D3EE]/10 px-3 py-2 text-sm font-bold text-[#22D3EE] transition hover:bg-[#22D3EE]/20"
           >
             <FileText className="h-4 w-4 text-[#22D3EE]" />
             Orçamento
@@ -177,7 +177,6 @@ function StoreHeader() {
             <User className="h-4 w-4" />
             Entrar
           </a>
-          <Link to="/orcamento" className="rounded-lg border border-[#22D3EE]/30 px-3 py-2 text-sm font-bold text-[#22D3EE] hover:bg-[#22D3EE]/10">Orçamento</Link>
           <CartButton />
         </nav>
 

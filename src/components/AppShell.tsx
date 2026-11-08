@@ -32,6 +32,7 @@ import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { NotificationsBell } from "@/components/NotificationsBell";
 import { EllaFab } from "@/components/EllaFab";
+import { EllaAvatar } from "@/components/EllaAvatar";
 
 type NavItem = {
   to: string;
@@ -172,11 +173,11 @@ const NAV: NavItem[] = [
   },
   {
     to: "/ella",
-    label: "Assistente",
+    label: "Assistente Ella",
     description: "Assistente de IA da equipe",
     icon: LayoutDashboard,
     section: "Administração",
-    roles: ["administrador"],
+    roles: ["administrador", "atendente", "financeiro", "producao", "vendedor"],
   },
   {
     to: "/ella-training",
@@ -519,6 +520,15 @@ export function AppShell({ children }: { children: ReactNode }) {
             </div>
 
             <div className="flex items-center gap-2 md:gap-3">
+              <Link
+                to="/ella"
+                aria-label="Falar com a Ella"
+                title="Assistente Ella"
+                className="flex items-center gap-1.5 rounded-full border border-[#22D3EE]/30 bg-[#22D3EE]/10 p-1 pr-2.5 text-xs font-bold text-white transition hover:bg-[#22D3EE]/20 hover:border-[#22D3EE]/60"
+              >
+                <EllaAvatar size={26} alt="Ella" ringClassName="ring-1 ring-[#22D3EE]" />
+                <span className="hidden sm:inline text-[#22D3EE]">Ella</span>
+              </Link>
               <ThemeToggle className="border-white/10 bg-white/[0.05] text-[#CBD5E1] shadow-none hover:bg-white/10 hover:text-white dark:text-[#CBD5E1]" />
               <NotificationsBell />
               <div className="mx-1 h-4 w-px bg-white/10 md:mx-2" />

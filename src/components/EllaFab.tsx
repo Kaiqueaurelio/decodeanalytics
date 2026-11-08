@@ -21,7 +21,7 @@ export function EllaFab({ audience = "public" }: EllaFabProps) {
   const didDragRef = useRef(false);
   const resetDragClickTimer = useRef<number | null>(null);
   const bubbleRef = useRef<HTMLDivElement>(null);
-  const storageKey = `ella-bubble-position-${audience}`;
+  const storageKey = `ella-bubble-pos-v2-${audience}`;
 
   const clampPosition = useCallback((left: number, top: number, width = BUBBLE_SIZE, height = BUBBLE_SIZE): Position => ({
     left: Math.max(EDGE_GAP, Math.min(left, window.innerWidth - width - EDGE_GAP)),
@@ -131,12 +131,12 @@ export function EllaFab({ audience = "public" }: EllaFabProps) {
   return (
     <div
       ref={bubbleRef}
-      className="group fixed z-50 touch-none select-none"
+      className="group fixed z-[9999] touch-none select-none"
       style={{
         ...(position
           ? { left: position.left, top: position.top }
           : {
-              bottom: "calc(env(safe-area-inset-bottom) + 5rem)",
+              bottom: "calc(env(safe-area-inset-bottom) + 5.5rem)",
               ...(audience === "public"
                 ? { left: "calc(env(safe-area-inset-left) + 1.25rem)" }
                 : { right: "calc(env(safe-area-inset-right) + 1.25rem)" }),
@@ -158,12 +158,13 @@ export function EllaFab({ audience = "public" }: EllaFabProps) {
         className="relative block rounded-full transition-transform hover:scale-105 active:scale-95 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#22D3EE]/50"
         draggable={false}
       >
-        <div className="relative flex items-center justify-center rounded-full p-0.5 bg-gradient-to-tr from-[#087CF0] via-[#22D3EE] to-[#7138F5] shadow-[0_8px_24px_rgba(8,124,240,0.4)]">
+        <div className="relative flex items-center justify-center rounded-full p-0.5 bg-gradient-to-tr from-[#087CF0] via-[#22D3EE] to-[#7138F5] shadow-[0_8px_24px_rgba(8,124,240,0.5)]">
           <EllaAvatar
             size={56}
             alt="Ella Assistente Virtual"
             ringClassName="ring-2 ring-[#0B1026]"
             className="rounded-full shadow-inner"
+            loading="eager"
           />
           <span
             aria-hidden="true"
