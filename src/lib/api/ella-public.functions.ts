@@ -156,7 +156,7 @@ export const ellaPublicChat = createServerFn({ method: "POST" })
         : "";
 
     // Client-supplied history is untrusted context; cap both turns and message size.
-    const history = (data.conversationHistory ?? []).slice(-12).map((m) => ({
+    const history = (data.conversationHistory ?? []).slice(-20).map((m) => ({
       role: m.role as "user" | "assistant",
       content: m.content.slice(-1000),
     }));
