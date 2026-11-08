@@ -125,7 +125,7 @@ function UsersPage() {
       // 1. Prioridade 1: Executar via RPC segura no banco Supabase
       for (const uid of validIds) {
         try {
-          const { error: rpcErr } = await supabase.rpc("delete_user_account", {
+          const { error: rpcErr } = await (supabase.rpc as any)("delete_user_account", {
             p_user_id: uid,
           });
           if (!rpcErr) {
