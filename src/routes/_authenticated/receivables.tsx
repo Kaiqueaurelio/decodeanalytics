@@ -160,7 +160,7 @@ function Page() {
   }, [activeContracts, data, targetMonth]);
 
   const totalUnbilledAmount = useMemo(
-    () => unbilledContracts.reduce((acc, c: any) => acc + Number(c.amount || 0), 0),
+    () => unbilledContracts.reduce((acc: number, c: any) => acc + Number(c.amount || 0), 0),
     [unbilledContracts],
   );
 
@@ -195,7 +195,7 @@ function Page() {
   function chargeByWhatsApp(r: any) {
     const phone = String(r.clients?.whatsapp || "").replace(/\D/g, "");
     if (!phone) return toast.error("Cadastre o WhatsApp do cliente para enviar a cobrança.");
-    const pixKey = company?.pix_key?.trim();
+    const pixKey = (company as any)?.pix_key?.trim();
     const competence = r.competence_month
       ? new Date(`${r.competence_month}T00:00:00`).toLocaleDateString("pt-BR", { month: "long", year: "numeric" })
       : "";

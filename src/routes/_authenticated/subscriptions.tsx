@@ -171,7 +171,7 @@ export function SubscriptionsPage() {
       return;
     }
 
-    const pixKey = company?.pix_key?.trim();
+    const pixKey = (company as any)?.pix_key?.trim();
     const amount = rec ? rec.amount : c.amount;
     const dueDate = rec?.due_date || c.nextDueDate;
     const formattedDue = dueDate ? fmtDate(dueDate) : "a combinar";
@@ -198,7 +198,7 @@ export function SubscriptionsPage() {
 
   // Copiar chave PIX
   function copyPixKey() {
-    const key = company?.pix_key?.trim();
+    const key = (company as any)?.pix_key?.trim();
     if (!key) return toast.error("Chave PIX não configurada em Configurações.");
     navigator.clipboard.writeText(key);
     toast.success("Chave PIX copiada para a área de transferência!");

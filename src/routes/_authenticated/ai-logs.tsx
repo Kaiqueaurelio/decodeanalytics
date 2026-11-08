@@ -198,7 +198,7 @@ function AiLogsPage() {
               </div>
               <div className="flex items-center justify-between text-muted-foreground text-[11px]">
                 <span>{r.provider} / {r.model ?? "—"}</span>
-                <span className="font-mono font-medium">{r.latency_ms != null ? `${r.latency_ms} ms` : "—"}</span>
+                <span className="font-mono font-medium">{(r as any).latency_ms != null ? `${(r as any).latency_ms} ms` : "—"}</span>
               </div>
               <div className="text-[11px] text-muted-foreground">
                 {new Date(r.occurred_at).toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo" })}
