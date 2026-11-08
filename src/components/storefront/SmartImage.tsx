@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, memo } from "react";
 import { Image as ImageIcon } from "lucide-react";
 
 interface SmartImageProps extends Omit<React.ImgHTMLAttributes<HTMLImageElement>, "src"> {
@@ -7,24 +7,26 @@ interface SmartImageProps extends Omit<React.ImgHTMLAttributes<HTMLImageElement>
   fallbackSrc?: string | null;
 }
 
-export function SmartImage({
+export const SmartImage = memo(function SmartImage({
   src,
   alt,
   className,
   fallbackClass = "bg-gradient-to-br from-[#10162E] via-[#0B1026] to-[#050505]",
   fallbackSrc,
+  loading = "lazy",
+  decoding = "async",
   onLoad,
   onError,
   ...props
 }: SmartImageProps) {
   const [error, setError] = useState(false);
   const [fallbackAttempted, setFallbackAttempted] = useState(false);
-  const [loading, setLoading] = useState(Boolean(src));
+  const [imgLoading, setImgLoading] = useState(Boolean(src));
 
   useEffect(() => {
     setError(false);
     setFallbackAttempted(false);
-    setLoading(Boolean(src || fallbackSrc));
+    setImgLoading(Boolean(src || fallbackSrc));
   }, [src, fallbackSrc]);
 
   if (error || (!src && !fallbackSrc)) {
@@ -47,34 +49,44 @@ export function SmartImage({
     );
   }
 
+  const finalSrc = (fallbackAttempted ? (fallbackSrc ?? src) : (src ?? fallbackSrc)) ?? undefined;
+
   return (
     <div className={`relative h-full w-full overflow-hidden ${className ?? ""}`}>
-      {loading && (
+      {imgLoading && (
         <div
           aria-hidden="true"
           className="absolute inset-0 animate-pulse bg-gradient-to-br from-[#111A38] via-[#172244] to-[#0B1026]"
         />
       )}
-      <img
-        src={(fallbackAttempted ? (fallbackSrc ?? src) : (src ?? fallbackSrc)) ?? undefined}
-        alt={alt}
-        className={`h-full w-full object-cover transition-opacity duration-300 ${loading ? "opacity-0" : "opacity-100"}`}
-        onLoad={(event) => {
-          setLoading(false);
-          onLoad?.(event);
-        }}
-        onError={(event) => {
-          setLoading(false);
-          if (fallbackSrc && !fallbackAttempted && src !== fallbackSrc) {
-            setFallbackAttempted(true);
-            setLoading(true);
-          } else {
-            setError(true);
-          }
-          onError?.(event);
-        }}
-        {...props}
-      />
+      <picture>
+        {/* Caso a imagem original seja de um CDN ou URL com suporte a WebP/AVIF */}
+        {finalSrc && typeof finalSrc === "string" && !finalSrc.startsWith("data:") && (
+          <source type="image/webp" srcSet={finalSrc} />
+        )}
+        <img
+          src={finalSrc}
+          alt={alt}
+          loading={loading}
+          decoding={decoding}
+          className={`h-full w-full object-cover transition-opacity duration-300 ${imgLoading ? "opacity-0" : "opacity-100"}`}
+          onLoad={(event) => {
+            setImgLoading(false);
+            onLoad?.(event);
+          }}
+          onError={(event) => {
+            setImgLoading(false);
+            if (fallbackSrc && !fallbackAttempted && src !== fallbackSrc) {
+              setFallbackAttempted(true);
+              setImgLoading(true);
+            } else {
+              setError(true);
+            }
+            onError?.(event);
+          }}
+          {...props}
+        />
+      </picture>
     </div>
   );
-}
+});

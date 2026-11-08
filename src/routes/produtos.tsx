@@ -14,6 +14,7 @@ import {
 import { STORE_CATEGORIES } from "@/components/storefront/tokens";
 import { resolveProductImage } from "@/components/storefront/productImages";
 import { isComputerService, isOfferedProduct } from "@/components/storefront/useStoreProducts";
+import { useDebounce } from "@/hooks/useDebounce";
 
 type Search = { cat?: string; q?: string };
 
@@ -39,10 +40,13 @@ export const Route = createFileRoute("/produtos")({
 function ProdutosPage() {
   const search = useSearch({ from: "/produtos" });
   const [text, setText] = useState(search.q ?? "");
+  const debouncedText = useDebounce(text, 250);
   const cat = search.cat ?? "todos";
 
   const { data, isLoading } = useQuery({
     queryKey: ["store-catalog"],
+    staleTime: 60_000,
+    gcTime: 10 * 60_000,
     queryFn: async () => {
       const { data, error } = await supabase
         .from("services")
@@ -64,7 +68,7 @@ function ProdutosPage() {
 
   const filtered = useMemo(() => {
     const list = data ?? [];
-    const term = text.trim().toLowerCase();
+    const term = debouncedText.trim().toLowerCase();
     return list.filter((p) => {
       const catOk = cat === "todos" || p.category === cat;
       const termOk =
@@ -72,7 +76,7 @@ function ProdutosPage() {
         `${p.name} ${p.category ?? ""} ${p.short_description ?? ""}`.toLowerCase().includes(term);
       return catOk && termOk;
     });
-  }, [data, cat, text]);
+  }, [data, cat, debouncedText]);
 
   return (
     <StoreShell>

@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState, useMemo } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { useDebounce } from "@/hooks/useDebounce";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -66,6 +67,7 @@ function ClientsPage() {
   const qc = useQueryClient();
   const { isAdmin } = useAuth();
   const [search, setSearch] = useState("");
+  const debouncedSearch = useDebounce(search, 250);
   const [statusFilter, setStatusFilter] = useState<"todos" | "ativos" | "inativos">("ativos");
   const [editing, setEditing] = useState<Partial<ClientRow> | null>(null);
   const [open, setOpen] = useState(false);
@@ -81,10 +83,12 @@ function ClientsPage() {
 
   const { data: clients, isLoading } = useQuery({
     queryKey: ["clients"],
+    staleTime: 30_000,
+    gcTime: 5 * 60_000,
     queryFn: async () => {
       const { data, error } = await supabase
         .from("clients")
-        .select("*")
+        .select("id,name,document,whatsapp,email,address,district,city,notes,created_at,archived_at")
         .order("name", { ascending: true });
       if (error) {
         console.error("Erro ao buscar clientes:", error);
@@ -104,7 +108,7 @@ function ClientsPage() {
       if (statusFilter === "inativos" && c.active !== false) return false;
 
       // Filtro de busca
-      const term = search.trim().toLowerCase();
+      const term = debouncedSearch.trim().toLowerCase();
       if (!term) return true;
       return (
         c.name.toLowerCase().includes(term) ||
@@ -114,7 +118,7 @@ function ClientsPage() {
         (c.email ?? "").toLowerCase().includes(term)
       );
     });
-  }, [clients, search, statusFilter]);
+  }, [clients, debouncedSearch, statusFilter]);
 
   async function save() {
     if (!editing?.name?.trim()) return toast.error("Nome é obrigatório");
