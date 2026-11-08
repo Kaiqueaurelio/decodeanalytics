@@ -660,7 +660,7 @@ const PHYSICAL_PRODUCT_IMAGES: Record<string, string> = {
 
 // Fotografias reais de referência (Unsplash), separadas por categoria.
 export const CATEGORY_IMAGES: Record<string, string> = {
-  Cartões: "https://images.unsplash.com/photo-154紙?auto=format&fit=crop&w=900&q=85",
+  Cartões: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=900&q=85",
   Panfletos: "https://images.unsplash.com/photo-1586953208448-b95a79798f07?auto=format&fit=crop&w=900&q=85",
   Adesivos: "https://images.unsplash.com/photo-1618005198919-d3d4b5a92ead?auto=format&fit=crop&w=900&q=85",
   Banners: "https://images.unsplash.com/photo-1557683316-973673baf926?auto=format&fit=crop&w=900&q=85",
