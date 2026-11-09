@@ -724,6 +724,16 @@ export function resolveProductImage(
 
   // 1. Verificar se o registro possui imagem
   const normalizedUrl = imageUrl?.trim();
+
+  // Fotos genéricas de categoria (ex.: cartoes.jpg) ou caminhos __l5e não devem
+  // sobrepor a foto específica do produto quando ela existe.
+  const isGenericOrLegacy =
+    !!normalizedUrl &&
+    (normalizedUrl.startsWith("/__l5e/") || !!getImageFromFileName(normalizedUrl));
+  if ((!normalizedUrl || isGenericOrLegacy) && normKey && PHYSICAL_PRODUCT_IMAGES[normKey]) {
+    return PHYSICAL_PRODUCT_IMAGES[normKey];
+  }
+
   if (normalizedUrl) {
     // Se for um caminho legado (__l5e ou /assets/products/), mapeia para o asset local real de alta resolução
     const localAssetFromPath = getImageFromFileName(normalizedUrl);
