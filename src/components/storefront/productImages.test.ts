@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { resolveProductImage } from "./productImages";
+import { resolveProductFallbackImage, resolveProductImage } from "./productImages";
 import { resolveSmartImageSrc } from "./SmartImage";
 
 describe("resolveProductImage", () => {
@@ -31,6 +31,12 @@ describe("resolveProductImage", () => {
 
   it("uses a category photo for an unknown product instead of an empty source", () => {
     expect(resolveProductImage(null, "Social Media", "servico-novo")).toBeTruthy();
+  });
+
+  it("provides a local category photo as a secondary fallback for failed remote images", () => {
+    const fallback = resolveProductFallbackImage("Manutenção de Computadores");
+    expect(fallback).toBeTruthy();
+    expect(fallback).not.toMatch(/^https?:\\/\\//);
   });
 
   it("always returns a final fallback even when the product has no metadata", () => {

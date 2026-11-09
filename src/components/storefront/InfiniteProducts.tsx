@@ -7,7 +7,7 @@ import { brl } from "./tokens";
 import type { StoreProduct } from "./ProductCard";
 import { useShowPrices } from "@/hooks/useCompanyInfo";
 import { SmartImage } from "./SmartImage";
-import { resolveProductImage } from "./productImages";
+import { resolveProductFallbackImage, resolveProductImage } from "./productImages";
 import { trackCardClick, trackCta, trackInfinitePage } from "@/lib/analytics";
 
 const PAGE = 8;
@@ -187,7 +187,7 @@ function FeedCard({
       <div className="relative mb-3 aspect-square overflow-hidden rounded-[var(--store-radius-md)] bg-white/5">
         <SmartImage 
           src={product.image_url} 
-          fallbackSrc={resolveProductImage(null, product.category, product.slug ?? product.name)}
+          fallbackSrc={resolveProductFallbackImage(product.category)}
           alt={product.name}
           className="brightness-[1.02] contrast-[1.05] saturate-[1.08] transition-transform duration-500 group-hover:scale-110"
         />

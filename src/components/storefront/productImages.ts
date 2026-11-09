@@ -917,3 +917,9 @@ export function resolveProductImage(
     icon: "💎",
   });
 }
+
+
+/** Retorna uma imagem local de categoria para servir como segunda tentativa. */
+export function resolveProductFallbackImage(category: string | null | undefined): string {
+  return resolveProductImage(null, category, null);
+}

@@ -24,7 +24,7 @@ import {
   type StoreProduct,
 } from "@/components/storefront/ProductCard";
 import { SmartImage } from "@/components/storefront/SmartImage";
-import { resolveProductImage } from "@/components/storefront/productImages";
+import { resolveProductFallbackImage, resolveProductImage } from "@/components/storefront/productImages";
 import { isOfferedProduct } from "@/components/storefront/useStoreProducts";
 
 export const Route = createFileRoute("/produto/$slug")({
@@ -146,7 +146,7 @@ function ProductPage() {
         </nav>
 
         <div className="grid gap-8 lg:grid-cols-[1.1fr_.9fr]">
-          <Gallery image={product.image_url} alt={product.name} />
+          <Gallery image={product.image_url} fallbackSrc={resolveProductFallbackImage(product.category)} alt={product.name} />
           <BuyBox product={product} />
         </div>
 
@@ -205,11 +205,11 @@ function ProductPage() {
   );
 }
 
-function Gallery({ image, alt }: { image: string | null | undefined; alt: string }) {
+function Gallery({ image, alt, fallbackSrc }: { image: string | null | undefined; alt: string; fallbackSrc: string }) {
   return (
     <div className="space-y-3">
       <div className="aspect-square overflow-hidden rounded-[var(--store-radius-xl)] border border-[var(--store-border)] bg-[var(--store-surface-soft)]">
-        <SmartImage src={image} alt={alt} />
+        <SmartImage src={image} fallbackSrc={fallbackSrc} alt={alt} />
       </div>
     </div>
   );
