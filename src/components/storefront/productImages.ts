@@ -658,6 +658,28 @@ const PHYSICAL_PRODUCT_IMAGES: Record<string, string> = {
   "poster-fine-art": imgPoster,
 };
 
+// Mapeamento de imagens padrão por nome de arquivo quando o banco traz referências do tipo __l5e ou paths legados
+const PRODUCT_IMAGES_BY_FILE: Record<string, string> = {
+  "adesivos.jpg": imgAdesivos,
+  "banners.jpg": imgBanners,
+  "brindes.jpg": imgBrindes,
+  "camisetas.jpg": imgCamisetas,
+  "canecas.jpg": imgCanecas,
+  "cartoes.jpg": imgCartoes,
+  "embalagens.jpg": imgEmbalagens,
+  "panfletos.jpg": imgPanfletos,
+  "plotagem.jpg": imgPlotagem,
+  "design.jpg": imgDesign,
+  "manutencao.jpg": imgManutencao,
+  "programacao.jpg": imgProgramacao,
+  "socialmedia.jpg": imgSocialMedia,
+};
+
+function getImageFromFileName(imageUrl: string): string | undefined {
+  const fileName = imageUrl.split(/[?#]/)[0]?.split("/").pop()?.toLowerCase();
+  return fileName ? PRODUCT_IMAGES_BY_FILE[fileName] : undefined;
+}
+
 export const CATEGORY_IMAGES: Record<string, string> = {
   Cartões: imgCartoes,
   Panfletos: imgPanfletos,
@@ -700,9 +722,15 @@ export function resolveProductImage(
 ): string {
   const normKey = slugOrName ? normalizeKey(slugOrName) : "";
 
-  // 1. Verificar se é uma imagem externa válida/própria enviada pelo usuário (ex: S3, Supabase Storage, CDN)
+  // 1. Verificar se o registro possui imagem
   const normalizedUrl = imageUrl?.trim();
   if (normalizedUrl) {
+    // Se for um caminho legado (__l5e ou /assets/products/), mapeia para o asset local real de alta resolução
+    const localAssetFromPath = getImageFromFileName(normalizedUrl);
+    if (localAssetFromPath) {
+      return localAssetFromPath;
+    }
+
     const isLegacyAssetPath =
       normalizedUrl.startsWith("/__l5e/") ||
       normalizedUrl.startsWith("/products/") ||
@@ -711,10 +739,12 @@ export function resolveProductImage(
       normalizedUrl.startsWith("https://") ||
       normalizedUrl.startsWith("http://") ||
       normalizedUrl.startsWith("data:") ||
-      normalizedUrl.startsWith("blob:");
-    // Preserve paths stored in the catalog: the app's static server resolves
-    // legacy /__l5e assets as well as current product asset paths.
-    if (isLegacyAssetPath || isSupportedImageUrl) {
+      normalizedUrl.startsWith("blob:") ||
+      normalizedUrl.startsWith("/");
+    // Se for URL válida externa ou caminho relativo suportado, preserva
+    if (isSupportedImageUrl) {
+      return normalizedUrl;
+    }
       return normalizedUrl;
     }
   }
