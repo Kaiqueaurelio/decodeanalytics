@@ -67,6 +67,8 @@ import {
 import { brl } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import { PdvCalculator } from "@/components/pdv/PdvCalculator";
+import { SmartImage } from "@/components/storefront/SmartImage";
+import { resolveProductFallbackImage, resolveProductImage } from "@/components/storefront/productImages";
 
 export const Route = createFileRoute("/_authenticated/pdv")({ component: PDVPage });
 
@@ -186,7 +188,7 @@ const QUICK_PRODUCTS = [
   {
     id: "quick-card",
     name: "Cartão de Visita",
-    category: "Impressão",
+    category: "Cartões",
     price: 59.9,
     detail: "4x4 cores • Couchê 300g",
     imageUrl: undefined,
@@ -195,7 +197,7 @@ const QUICK_PRODUCTS = [
   {
     id: "quick-flyer",
     name: "Panfleto",
-    category: "Impressão",
+    category: "Panfletos",
     price: 129.9,
     detail: "15x21cm • Couchê 90g",
     imageUrl: undefined,
@@ -355,7 +357,7 @@ function PDVPage() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("services")
-        .select("id, name, category, base_price, description, image_url, active")
+        .select("id, name, slug, category, base_price, description, image_url, active")
         .eq("active", true)
         .order("name", { ascending: true });
       if (error) throw error;
@@ -365,7 +367,7 @@ function PDVPage() {
         category: s.category,
         price: Number(s.base_price || 0),
         detail: s.description || "",
-        imageUrl: s.image_url,
+        imageUrl: resolveProductImage(s.image_url, s.category, s.slug ?? s.id ?? s.name),
       }));
     },
   });
@@ -447,10 +449,7 @@ function PDVPage() {
   }
 
   const products = useMemo(() => {
-    const serviceProducts = services.map((service) => ({
-      ...service,
-      image: "linear-gradient(135deg,#f3f4f6,#080c16)", // fallback solid gradient
-    }));
+    const serviceProducts = services.map((service) => ({ ...service }));
     return serviceProducts.length ? serviceProducts : QUICK_PRODUCTS;
   }, [services]);
 
@@ -1054,16 +1053,14 @@ function PDVPage() {
                 key={product.id}
                 className="group overflow-hidden rounded-[2rem] border-2 border-slate-100 bg-white p-0 shadow-sm transition-all hover:-translate-y-1 hover:border-[#080c16]/20 hover:shadow-xl"
               >
-                <div
-                  className="relative h-32 w-full bg-slate-50"
-                  style={{
-                    background: (product as any).imageUrl ? undefined : (product as any).image,
-                    backgroundImage: (product as any).imageUrl ? `url(${(product as any).imageUrl})` : (product as any).image,
-                    backgroundSize: "cover",
-                    backgroundPosition: "center",
-                  }}
-                >
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
+                <div className="relative h-32 w-full overflow-hidden bg-slate-50">
+                  <SmartImage
+                    src={(product as any).imageUrl}
+                    fallbackSrc={resolveProductFallbackImage((product as any).category)}
+                    alt={(product as any).name}
+                    className="h-full w-full"
+                  />
+                  <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
                 </div>
                 <div className="space-y-3 p-4">
                   <div>
