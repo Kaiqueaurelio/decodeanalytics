@@ -731,10 +731,6 @@ export function resolveProductImage(
       return localAssetFromPath;
     }
 
-    const isLegacyAssetPath =
-      normalizedUrl.startsWith("/__l5e/") ||
-      normalizedUrl.startsWith("/products/") ||
-      normalizedUrl.startsWith("/assets/products/");
     const isSupportedImageUrl =
       normalizedUrl.startsWith("https://") ||
       normalizedUrl.startsWith("http://") ||
@@ -743,8 +739,6 @@ export function resolveProductImage(
       normalizedUrl.startsWith("/");
     // Se for URL válida externa ou caminho relativo suportado, preserva
     if (isSupportedImageUrl) {
-      return normalizedUrl;
-    }
       return normalizedUrl;
     }
   }
