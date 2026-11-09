@@ -479,6 +479,7 @@ const PHYSICAL_PRODUCT_IMAGES: Record<string, string> = {
   // Banners & Fachadas
   "banner-lona-440g": imgBanners,
   "banner-vinil-280g": imgBannerBacklight,
+  "banner-backlight": imgBannerBacklight,
   "fachada-acm": imgBannerBacklight,
   "lona-front-light": imgBanners,
 
@@ -500,6 +501,9 @@ const PHYSICAL_PRODUCT_IMAGES: Record<string, string> = {
   "dtf-uv": imgAdesivos,
   "adesivo-dtf-uv": imgAdesivos,
   "plotagem-a3": imgPlotagem,
+  "chaveiro-personalizado": imgKeychain,
+  "avental": imgEcobag,
+  "adesivo-holografico": imgHoloSticker,
   "manutencao-de-computadores": imgManutencao,
   "criacao-de-sites": imgProgramacao,
   "sites-landing-pages": imgProgramacao,
@@ -515,6 +519,9 @@ const PHYSICAL_PRODUCT_IMAGES: Record<string, string> = {
   // Vestuário
   "camiseta-dtf": imgCamisetas,
   "camiseta-sublimada": imgCamisetas,
+  "camiseta-silk": imgPolo,
+  "polo-bordada": imgPolo,
+  "camiseta-personalizada": imgCamisetas,
 
   // Canecas
   "caneca-plastico": imgCanecas,
@@ -537,6 +544,7 @@ const PHYSICAL_PRODUCT_IMAGES: Record<string, string> = {
   // Embalagens
   "caixa-delivery": imgDeliveryBox,
   "embalagem-personalizada": imgDeliveryBox,
+  "embalagem-hot-stamping": imgDeliveryBox,
   "sacola-kraft": imgKraftBag,
 
   // Panfletos, Menus e Folders
@@ -552,6 +560,124 @@ const PHYSICAL_PRODUCT_IMAGES: Record<string, string> = {
   "plotagem-a2-pb": imgPlotBw,
   "plotagem-a3-colorida": imgPlotagem,
   "poster-fine-art": imgPoster,
+};
+
+/**
+ * Fotografias reais de alta definição para todos os serviços técnicos, digitais e soluções Decode Analytics.
+ * Cada serviço possui sua fotografia real de bancada técnica, profissionais e equipamentos especializados.
+ */
+const SERVICE_REAL_PHOTOS: Record<string, string> = {
+  // Manutenção & Formatação de Computadores, Notebooks e Smartphones
+  "formatacao-de-android":
+    "https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=900&q=80",
+  "formatacao-de-android-rapida":
+    "https://images.unsplash.com/photo-1580910051074-3eb694886505?auto=format&fit=crop&w=900&q=80",
+  "formatacao-de-ios-iphone-com-backup":
+    "https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?auto=format&fit=crop&w=900&q=80",
+  "formatacao-de-computadores-e-notebooks-com-backup":
+    "https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?auto=format&fit=crop&w=900&q=80",
+  "formatacao-de-computadores-e-notebooks-sem-backup":
+    "https://images.unsplash.com/photo-1591799264318-7e6ef8ddb7ea?auto=format&fit=crop&w=900&q=80",
+  "formatacao-otimizacao":
+    "https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?auto=format&fit=crop&w=900&q=80",
+  "limpeza-pasta-termica":
+    "https://images.unsplash.com/photo-1597872200969-2b65d56bd16b?auto=format&fit=crop&w=900&q=80",
+  "upgrade-ssd-ram":
+    "https://images.unsplash.com/photo-1591799264318-7e6ef8ddb7ea?auto=format&fit=crop&w=900&q=80",
+  "diagnostico-hardware":
+    "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=900&q=80",
+  "manutencao-de-computadores":
+    "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=900&q=80",
+  "pacote-office-365-personal-plus":
+    "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=900&q=80",
+
+  // Programação, Softwares, Web & IA
+  "criacao-de-sites":
+    "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=900&q=80",
+  "sites-landing-pages":
+    "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=900&q=80",
+  "criacao-de-apps":
+    "https://images.unsplash.com/photo-1551650975-87deedd944c3?auto=format&fit=crop&w=900&q=80",
+  "loja-virtual":
+    "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=900&q=80",
+  "sistemas-sob-medida":
+    "https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=900&q=80",
+  "automacoes-integracoes":
+    "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=900&q=80",
+  "hackprompt-chatgpt":
+    "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&w=900&q=80",
+
+  // Design Gráfico & Audiovisual
+  "criacao-de-identidade-visual":
+    "https://images.unsplash.com/photo-1626785774573-4b799315345d?auto=format&fit=crop&w=900&q=80",
+  "identidade-visual":
+    "https://images.unsplash.com/photo-1626785774573-4b799315345d?auto=format&fit=crop&w=900&q=80",
+  "design-pecas":
+    "https://images.unsplash.com/photo-1558655146-d09347e92766?auto=format&fit=crop&w=900&q=80",
+  "apresentacoes-catalogos":
+    "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=900&q=80",
+  "edicao-de-videos":
+    "https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?auto=format&fit=crop&w=900&q=80",
+  "edicao-de-audio":
+    "https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?auto=format&fit=crop&w=900&q=80",
+  "animacao-de-fotos-antigas":
+    "https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&w=900&q=80",
+  "restauracao-de-imagens":
+    "https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&w=900&q=80",
+  "remocao-de-fundo-de-imagens":
+    "https://images.unsplash.com/photo-1572044162444-ad60f128bdea?auto=format&fit=crop&w=900&q=80",
+  "remocao-de-objetos-e-pessoas":
+    "https://images.unsplash.com/photo-1572044162444-ad60f128bdea?auto=format&fit=crop&w=900&q=80",
+  "tratamento-de-pele-photoshop":
+    "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=900&q=80",
+  "cobertura-de-eventos-e-festas":
+    "https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&w=900&q=80",
+
+  // Social Media & Marketing
+  "gestao-de-midias-sociais":
+    "https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?auto=format&fit=crop&w=900&q=80",
+  "gestao-redes-sociais":
+    "https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?auto=format&fit=crop&w=900&q=80",
+  "planejamento-social-media":
+    "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=900&q=80",
+  "design-para-midias-sociais-mensal":
+    "https://images.unsplash.com/photo-1611162616475-46b635cb6868?auto=format&fit=crop&w=900&q=80",
+  "design-para-midias-sociais-avulso":
+    "https://images.unsplash.com/photo-1611162616475-46b635cb6868?auto=format&fit=crop&w=900&q=80",
+  "pacote-artes-feed-stories":
+    "https://images.unsplash.com/photo-1611162616475-46b635cb6868?auto=format&fit=crop&w=900&q=80",
+  "trafego-pago":
+    "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=900&q=80",
+  "edicao-reels":
+    "https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?auto=format&fit=crop&w=900&q=80",
+
+  // Acadêmicos, Templates & Documentos
+  "trabalho-academico":
+    "https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?auto=format&fit=crop&w=900&q=80",
+  "banners-academicos":
+    "https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?auto=format&fit=crop&w=900&q=80",
+  "encadernacao-de-tcc-capa-mole":
+    "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&w=900&q=80",
+  "caderno-de-estudos-digital":
+    "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&w=900&q=80",
+  "planner-2025-administrando-sua-vida":
+    "https://images.unsplash.com/photo-1506784365847-bbad939e9335?auto=format&fit=crop&w=900&q=80",
+  "planner-book-template":
+    "https://images.unsplash.com/photo-1506784365847-bbad939e9335?auto=format&fit=crop&w=900&q=80",
+  "planner-de-estudos-template":
+    "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&w=900&q=80",
+  "game-dash-v1-0-template":
+    "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=900&q=80",
+  "cards-advanced-template":
+    "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=900&q=80",
+  "registro-de-habitos-template":
+    "https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?auto=format&fit=crop&w=900&q=80",
+  "mapeamento-de-metas-e-habit-tracker":
+    "https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?auto=format&fit=crop&w=900&q=80",
+  "segunda-via-contas":
+    "https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&w=900&q=80",
+  "laminacao-e-plastificacao":
+    "https://images.unsplash.com/photo-1586075010923-2dd4570fb338?auto=format&fit=crop&w=900&q=80",
 };
 
 // Mapeamento de imagens padrão por nome de arquivo quando o banco traz referências do tipo __l5e ou paths legados
@@ -654,69 +780,69 @@ export function resolveProductImage(
     return PHYSICAL_PRODUCT_IMAGES[normKey];
   }
 
-  // 3. Se houver configuração dedicada para capa gerada de software/serviço
-  if (normKey && PRODUCT_CUSTOM_COVERS[normKey]) {
-    return renderProductSvg(PRODUCT_CUSTOM_COVERS[normKey]);
+  // 3. Se for um serviço técnico ou solução digital com foto real de alta definição dedicada
+  if (normKey && SERVICE_REAL_PHOTOS[normKey]) {
+    return SERVICE_REAL_PHOTOS[normKey];
   }
 
-  // 4. Mapeamento heurístico inteligente por termos no slug ou nome
+  // 4. Mapeamento heurístico inteligente de fotografias reais por termos no slug ou nome
   if (normKey) {
-    if (normKey.includes("office") || normKey.includes("365")) {
-      return renderProductSvg(PRODUCT_CUSTOM_COVERS["pacote-office-365-personal-plus"]);
+    if (normKey.includes("android")) {
+      return SERVICE_REAL_PHOTOS["formatacao-de-android"];
     }
     if (normKey.includes("iphone") || normKey.includes("ios") || normKey.includes("apple")) {
-      return renderProductSvg(PRODUCT_CUSTOM_COVERS["formatacao-de-ios-iphone-com-backup"]);
-    }
-    if (normKey.includes("android")) {
-      return renderProductSvg(PRODUCT_CUSTOM_COVERS["formatacao-de-android"]);
+      return SERVICE_REAL_PHOTOS["formatacao-de-ios-iphone-com-backup"];
     }
     if (normKey.includes("formatacao") || normKey.includes("backup")) {
-      return renderProductSvg(PRODUCT_CUSTOM_COVERS["formatacao-de-computadores-e-notebooks-com-backup"]);
+      return SERVICE_REAL_PHOTOS["formatacao-de-computadores-e-notebooks-com-backup"];
     }
     if (normKey.includes("ssd") || normKey.includes("ram") || normKey.includes("upgrade")) {
-      return renderProductSvg(PRODUCT_CUSTOM_COVERS["upgrade-ssd-ram"]);
+      return SERVICE_REAL_PHOTOS["upgrade-ssd-ram"];
     }
     if (normKey.includes("pasta-termica") || normKey.includes("limpeza")) {
-      return renderProductSvg(PRODUCT_CUSTOM_COVERS["limpeza-pasta-termica"]);
+      return SERVICE_REAL_PHOTOS["limpeza-pasta-termica"];
     }
     if (normKey.includes("hardware") || normKey.includes("diagnostico")) {
-      return renderProductSvg(PRODUCT_CUSTOM_COVERS["diagnostico-hardware"]);
+      return SERVICE_REAL_PHOTOS["diagnostico-hardware"];
+    }
+    if (normKey.includes("office") || normKey.includes("365")) {
+      return SERVICE_REAL_PHOTOS["pacote-office-365-personal-plus"];
     }
     if (normKey.includes("chatgpt") || normKey.includes("prompt") || normKey.includes("ia")) {
-      return renderProductSvg(PRODUCT_CUSTOM_COVERS["hackprompt-chatgpt"]);
+      return SERVICE_REAL_PHOTOS["hackprompt-chatgpt"];
     }
     if (normKey.includes("app") || normKey.includes("mobile")) {
-      return renderProductSvg(PRODUCT_CUSTOM_COVERS["criacao-de-apps"]);
+      return SERVICE_REAL_PHOTOS["criacao-de-apps"];
     }
     if (normKey.includes("landing") || normKey.includes("site") || normKey.includes("web")) {
-      return renderProductSvg(PRODUCT_CUSTOM_COVERS["criacao-de-sites"]);
+      return SERVICE_REAL_PHOTOS["criacao-de-sites"];
     }
     if (normKey.includes("loja") || normKey.includes("ecommerce")) {
-      return renderProductSvg(PRODUCT_CUSTOM_COVERS["loja-virtual"]);
+      return SERVICE_REAL_PHOTOS["loja-virtual"];
     }
     if (normKey.includes("reels") || normKey.includes("tiktok") || normKey.includes("video")) {
-      return renderProductSvg(PRODUCT_CUSTOM_COVERS["edicao-reels"]);
+      return SERVICE_REAL_PHOTOS["edicao-reels"];
     }
     if (normKey.includes("audio") || normKey.includes("podcast")) {
-      return renderProductSvg(PRODUCT_CUSTOM_COVERS["edicao-de-audio"]);
+      return SERVICE_REAL_PHOTOS["edicao-de-audio"];
     }
     if (normKey.includes("trafego") || normKey.includes("ads") || normKey.includes("meta")) {
-      return renderProductSvg(PRODUCT_CUSTOM_COVERS["trafego-pago"]);
+      return SERVICE_REAL_PHOTOS["trafego-pago"];
     }
     if (normKey.includes("segunda-via") || normKey.includes("contas")) {
-      return renderProductSvg(PRODUCT_CUSTOM_COVERS["segunda-via-contas"]);
+      return SERVICE_REAL_PHOTOS["segunda-via-contas"];
     }
     if (normKey.includes("planner")) {
-      return renderProductSvg(PRODUCT_CUSTOM_COVERS["planner-2025-administrando-sua-vida"]);
+      return SERVICE_REAL_PHOTOS["planner-2025-administrando-sua-vida"];
     }
     if (normKey.includes("habito") || normKey.includes("meta")) {
-      return renderProductSvg(PRODUCT_CUSTOM_COVERS["mapeamento-de-metas-e-habit-tracker"]);
+      return SERVICE_REAL_PHOTOS["mapeamento-de-metas-e-habit-tracker"];
     }
     if (normKey.includes("tcc") || normKey.includes("academico")) {
-      return renderProductSvg(PRODUCT_CUSTOM_COVERS["encadernacao-de-tcc-capa-mole"]);
+      return SERVICE_REAL_PHOTOS["encadernacao-de-tcc-capa-mole"];
     }
     if (normKey.includes("3d")) {
-      return renderProductSvg(PRODUCT_CUSTOM_COVERS["impressao-3d"]);
+      return imgBrindes;
     }
     if (normKey.includes("cracha") || normKey.includes("badge")) {
       return imgIdBadge;
@@ -754,6 +880,11 @@ export function resolveProductImage(
     if (normKey.includes("caneca-magica")) {
       return imgMagicMug;
     }
+  }
+
+  // 5. Se houver configuração legada para capa gerada de software/serviço
+  if (normKey && PRODUCT_CUSTOM_COVERS[normKey]) {
+    return renderProductSvg(PRODUCT_CUSTOM_COVERS[normKey]);
   }
 
   // 5. Fallback por categoria se nenhuma regra específica bateu
