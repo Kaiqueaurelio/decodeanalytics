@@ -3,6 +3,8 @@ import { useCart } from "@/lib/cart-context";
 import { brl } from "@/components/storefront/tokens";
 import { useShowPrices, useWaLink } from "@/hooks/useCompanyInfo";
 import { StoreShell } from "@/components/storefront/StoreShell";
+import { SmartImage } from "@/components/storefront/SmartImage";
+import { resolveProductFallbackImage } from "@/components/storefront/productImages";
 import { ShoppingCart, Trash2, Minus, Plus, ArrowRight, MessageCircle } from "lucide-react";
 import { useMemo } from "react";
 
@@ -84,15 +86,12 @@ function CartPage() {
                   className="flex items-center gap-4 rounded-[var(--store-radius-lg)] border border-[var(--store-border)] bg-white p-4 shadow-[var(--store-shadow-sm)]"
                 >
                   <div className="grid h-16 w-16 shrink-0 place-items-center rounded-[var(--store-radius-md)] bg-[var(--store-surface-soft)] text-2xl">
-                    {item.image_url ? (
-                      <img
-                        src={item.image_url}
-                        alt={item.name}
-                        className="h-full w-full rounded-[var(--store-radius-md)] object-cover"
-                      />
-                    ) : (
-                      "🛍️"
-                    )}
+                    <SmartImage
+                      src={item.image_url}
+                      fallbackSrc={resolveProductFallbackImage(item.category)}
+                      alt={item.name}
+                      className="h-full w-full rounded-[var(--store-radius-md)]"
+                    />
                   </div>
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-sm font-bold text-[var(--store-text)]">
