@@ -466,7 +466,7 @@ function renderProductSvg(config: CoverConfig): string {
   return themeImages[config.theme] || imgManutencao;
 }
 
-/**
+// Imagens específicas de produtos físicos, indexadas pelo slug normalizado.
 const PHYSICAL_PRODUCT_IMAGES: Record<string, string> = {
   // Adesivos & Rótulos
   "adesivo-chao": imgFloorSticker,
