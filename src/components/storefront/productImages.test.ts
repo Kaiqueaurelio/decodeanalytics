@@ -36,7 +36,7 @@ describe("resolveProductImage", () => {
   it("provides a local category photo as a secondary fallback for failed remote images", () => {
     const fallback = resolveProductFallbackImage("Manutenção de Computadores");
     expect(fallback).toBeTruthy();
-    expect(fallback).not.toMatch(/^https?:\\/\\//);
+    expect(fallback.startsWith("https://")).toBe(false);
   });
 
   it("always returns a final fallback even when the product has no metadata", () => {
