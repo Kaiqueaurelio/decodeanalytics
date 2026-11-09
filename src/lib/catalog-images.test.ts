@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { imagePathFor, inferCatalogCategory } from "./catalog-images";
+import { resolveProductImage } from "@/components/storefront/productImages";
 
 describe("catalog product image defaults", () => {
   it.each([
@@ -13,8 +14,12 @@ describe("catalog product image defaults", () => {
     ["Embalagens", "Caixa delivery", "/products/embalagens.jpg"],
     ["Plotagem", "Plotagem A3", "/products/plotagem.jpg"],
   ])("maps %s products to an existing JPG asset", (category, name, expected) => {
-    expect(imagePathFor(category, name)).toBe(expected);
+    const imagePath = imagePathFor(category, name);
+    expect(imagePath).toBe(expected);
     expect(expected.endsWith(".jpg")).toBe(true);
+    const resolvedImage = resolveProductImage(imagePath, category, name);
+    expect(resolvedImage).toBeTruthy();
+    expect(resolvedImage).not.toBe(imagePath);
   });
 
   it("infers categories from product names when the supplied category is generic", () => {
