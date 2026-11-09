@@ -658,26 +658,25 @@ const PHYSICAL_PRODUCT_IMAGES: Record<string, string> = {
   "poster-fine-art": imgPoster,
 };
 
-// Fotografias reais de referência (Unsplash), separadas por categoria.
 export const CATEGORY_IMAGES: Record<string, string> = {
-  Cartões: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=900&q=85",
-  Panfletos: "https://images.unsplash.com/photo-1586953208448-b95a79798f07?auto=format&fit=crop&w=900&q=85",
-  Adesivos: "https://images.unsplash.com/photo-1618005198919-d3d4b5a92ead?auto=format&fit=crop&w=900&q=85",
-  Banners: "https://images.unsplash.com/photo-1557683316-973673baf926?auto=format&fit=crop&w=900&q=85",
-  Camisetas: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=900&q=85",
-  Canecas: "https://images.unsplash.com/photo-1514228742587-6b1558fcae9e?auto=format&fit=crop&w=900&q=85",
-  Brindes: "https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&w=900&q=85",
-  Embalagens: "https://images.unsplash.com/photo-1607082349566-187342175e2f?auto=format&fit=crop&w=900&q=85",
-  Plotagem: "https://images.unsplash.com/photo-1541701494587-cb58502866ab?auto=format&fit=crop&w=900&q=85",
-  "Manutenção de Computadores": "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=900&q=85",
-  Programação: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=900&q=85",
-  "Social Media": "https://images.unsplash.com/photo-1611162616475-46b635cb6868?auto=format&fit=crop&w=900&q=85",
-  "Design Gráfico": "https://images.unsplash.com/photo-1626785774573-4b799315345d?auto=format&fit=crop&w=900&q=85",
-  Encadernação: "https://images.unsplash.com/photo-1531346878377-a5be20888e57?auto=format&fit=crop&w=900&q=85",
-  "Laminação e Plastificação": "https://images.unsplash.com/photo-1589330694653-ded6le3f8a6f?auto=format&fit=crop&w=900&q=85",
-  Cartazes: "https://images.unsplash.com/photo-1541701494587-cb58502866ab?auto=format&fit=crop&w=900&q=85",
-  Convites: "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&w=900&q=85",
-  "Copos Térmicos": "https://images.unsplash.com/photo-1602143407151-7111542de6e8?auto=format&fit=crop&w=900&q=85",
+  Cartões: imgCartoes,
+  Panfletos: imgPanfletos,
+  Adesivos: imgAdesivos,
+  Banners: imgBanners,
+  Camisetas: imgCamisetas,
+  Canecas: imgCanecas,
+  Brindes: imgBrindes,
+  Embalagens: imgEmbalagens,
+  Plotagem: imgPlotagem,
+  "Manutenção de Computadores": imgManutencao,
+  Programação: imgProgramacao,
+  "Social Media": imgSocialMedia,
+  "Design Gráfico": imgDesign,
+  Encadernação: imgNotebook,
+  "Laminação e Plastificação": imgLabelTransparent,
+  Cartazes: imgPoster,
+  Convites: imgWeddingInvite,
+  "Copos Térmicos": imgSqueeze,
 };
 
 function normalizeKey(str: string): string {
@@ -708,13 +707,14 @@ export function resolveProductImage(
       normalizedUrl.startsWith("/__l5e/") ||
       normalizedUrl.startsWith("/products/") ||
       normalizedUrl.startsWith("/assets/products/");
-    if (
-      !isLegacyAssetPath &&
-      (normalizedUrl.startsWith("https://") ||
-        normalizedUrl.startsWith("http://") ||
-        normalizedUrl.startsWith("data:") ||
-        normalizedUrl.startsWith("blob:"))
-    ) {
+    const isSupportedImageUrl =
+      normalizedUrl.startsWith("https://") ||
+      normalizedUrl.startsWith("http://") ||
+      normalizedUrl.startsWith("data:") ||
+      normalizedUrl.startsWith("blob:");
+    // Preserve paths stored in the catalog: the app's static server resolves
+    // legacy /__l5e assets as well as current product asset paths.
+    if (isLegacyAssetPath || isSupportedImageUrl) {
       return normalizedUrl;
     }
   }
