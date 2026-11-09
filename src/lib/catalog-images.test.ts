@@ -20,6 +20,7 @@ describe("catalog product image defaults", () => {
   it("infers categories from product names when the supplied category is generic", () => {
     expect(inferCatalogCategory("Banner lona personalizada", "Outros")).toBe("Banners");
     expect(inferCatalogCategory("Squeeze personalizado", "Outros")).toBe("Brindes");
+    expect(inferCatalogCategory("Cartão de visita", "Outros")).toBe("Cartões");
   });
 
   it("does not invent a path for an unsupported category", () => {
