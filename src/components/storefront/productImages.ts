@@ -455,122 +455,18 @@ const PRODUCT_CUSTOM_COVERS: Record<string, CoverConfig> = {
  * Gera uma capa gráfica em SVG com gradiente dinâmico, grid futurista e branding da Decode Analytics.
  */
 function renderProductSvg(config: CoverConfig): string {
-  const t = THEMES[config.theme] || THEMES.tech;
-  const safeName = (config.name || "Serviço").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-  const safeCat = (config.cat || t.tag || "DECODE").toUpperCase().replace(/&/g, "&amp;");
-  const safeSub = (config.sub || "SOLUÇÃO ESPECIALIZADA").toUpperCase().replace(/&/g, "&amp;");
-  const icon = config.icon || "⚡";
-
-  // Quebra de linha inteligente para títulos longos
-  let line1 = safeName;
-  let line2 = "";
-  if (safeName.length > 22) {
-    const words = safeName.split(" ");
-    let cur = "";
-    for (let i = 0; i < words.length; i++) {
-      if ((cur + " " + words[i]).trim().length <= 22) {
-        cur = (cur + " " + words[i]).trim();
-      } else {
-        line1 = cur;
-        line2 = words.slice(i).join(" ");
-        break;
-      }
-    }
-  }
-
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="800" height="800">
-  <defs>
-    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="${t.bg1}" />
-      <stop offset="100%" stop-color="${t.bg2}" />
-    </linearGradient>
-    <linearGradient id="acc" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" stop-color="${t.accent}" />
-      <stop offset="100%" stop-color="${t.secondary}" />
-    </linearGradient>
-    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(255,255,255,0.035)" stroke-width="1" />
-    </pattern>
-    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
-      <feGaussianBlur stdDeviation="70" result="blur" />
-      <feComposite in="SourceGraphic" in2="blur" operator="over" />
-    </filter>
-  </defs>
-
-  <rect width="800" height="800" fill="url(#bg)" />
-  <rect width="800" height="800" fill="url(#grid)" />
-
-  <!-- Ambient Glow -->
-  <circle cx="400" cy="330" r="260" fill="${t.glow}" opacity="0.16" filter="url(#glow)" />
-  <circle cx="680" cy="160" r="140" fill="${t.accent}" opacity="0.12" filter="url(#glow)" />
-  <circle cx="120" cy="680" r="140" fill="${t.secondary}" opacity="0.10" filter="url(#glow)" />
-
-  <!-- Outer Elegant Card Frame -->
-  <rect x="44" y="44" width="712" height="712" rx="36" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="2" />
-  <rect x="52" y="52" width="696" height="696" rx="28" fill="none" stroke="rgba(255,255,255,0.03)" stroke-width="1" />
-
-  <!-- Corner Accent Lights -->
-  <path d="M 44 94 L 44 44 L 94 44" fill="none" stroke="${t.accent}" stroke-width="3" stroke-linecap="round" />
-  <path d="M 756 94 L 756 44 L 706 44" fill="none" stroke="${t.accent}" stroke-width="3" stroke-linecap="round" />
-  <path d="M 44 706 L 44 756 L 94 756" fill="none" stroke="${t.accent}" stroke-width="3" stroke-linecap="round" />
-  <path d="M 756 706 L 756 756 L 706 756" fill="none" stroke="${t.accent}" stroke-width="3" stroke-linecap="round" />
-
-  <!-- Top Brand Pill -->
-  <g transform="translate(80, 84)">
-    <rect x="0" y="0" width="168" height="38" rx="19" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.12)" stroke-width="1" />
-    <circle cx="20" cy="19" r="5" fill="${t.accent}" />
-    <text x="96" y="24" fill="#FFFFFF" font-family="system-ui, -apple-system, sans-serif" font-size="11" font-weight="800" letter-spacing="2" text-anchor="middle">DECODE ANALYTICS</text>
-  </g>
-
-  <!-- Category Tag -->
-  <g transform="translate(720, 84)">
-    <text x="0" y="24" fill="${t.accent}" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="800" letter-spacing="2" text-anchor="end">${safeCat}</text>
-  </g>
-
-  <!-- Central Symbol Disc -->
-  <g transform="translate(400, 280)">
-    <circle cx="0" cy="0" r="92" fill="rgba(255,255,255,0.02)" stroke="url(#acc)" stroke-width="2" />
-    <circle cx="0" cy="0" r="80" fill="rgba(11,16,38,0.85)" stroke="rgba(255,255,255,0.06)" stroke-width="1" />
-    <text x="0" y="16" font-size="52" text-anchor="middle" dominant-baseline="middle">${icon}</text>
-  </g>
-
-  <!-- Subtitle / Tagline -->
-  <text x="400" y="425" fill="${t.accent}" font-family="system-ui, -apple-system, sans-serif" font-size="14" font-weight="800" letter-spacing="3" text-anchor="middle">${safeSub}</text>
-
-  <!-- Main Product Title -->
-  ${
-    line2
-      ? `
-  <text x="400" y="480" fill="#FFFFFF" font-family="system-ui, -apple-system, sans-serif" font-size="34" font-weight="800" text-anchor="middle">
-    ${line1}
-  </text>
-  <text x="400" y="525" fill="#FFFFFF" font-family="system-ui, -apple-system, sans-serif" font-size="30" font-weight="800" text-anchor="middle">
-    ${line2}
-  </text>
-  `
-      : `
-  <text x="400" y="500" fill="#FFFFFF" font-family="system-ui, -apple-system, sans-serif" font-size="36" font-weight="800" text-anchor="middle">
-    ${line1}
-  </text>
-  `
-  }
-
-  <!-- Bottom Accent Divider Bar -->
-  <rect x="260" y="580" width="280" height="4" rx="2" fill="url(#acc)" />
-
-  <!-- Bottom Badges / Trust Info -->
-  <g transform="translate(400, 680)">
-    <rect x="-180" y="-18" width="360" height="36" rx="18" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.08)" stroke-width="1" />
-    <text x="0" y="5" fill="rgba(255,255,255,0.7)" font-family="system-ui, -apple-system, sans-serif" font-size="11" font-weight="700" letter-spacing="1.5" text-anchor="middle">SOLUÇÃO EXCLUSIVA • SUPORTE DECODE</text>
-  </g>
-</svg>`;
-
-  return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
+  // Fallback fotográfico: não gerar capas SVG ou ícones para serviços.
+  const themeImages: Record<keyof typeof THEMES, string> = {
+    tech: imgManutencao, mobile: imgManutencao, apple: imgManutencao,
+    ai: imgProgramacao, code: imgProgramacao, design: imgDesign,
+    video: imgSocialMedia, social: imgSocialMedia, ads: imgSocialMedia,
+    academic: imgNotebook, print3d: imgBrindes, productivity: imgNotebook,
+    utility: imgDesign,
+  };
+  return themeImages[config.theme] || imgManutencao;
 }
 
 /**
- * Mapeamento fotográfico de produtos físicos do catálogo para imagens reais de alta definição.
- */
 const PHYSICAL_PRODUCT_IMAGES: Record<string, string> = {
   // Adesivos & Rótulos
   "adesivo-chao": imgFloorSticker,
