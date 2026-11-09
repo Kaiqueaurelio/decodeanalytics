@@ -7,6 +7,16 @@ interface SmartImageProps extends Omit<React.ImgHTMLAttributes<HTMLImageElement>
   fallbackSrc?: string | null;
 }
 
+export function resolveSmartImageSrc(
+  src?: string | null,
+  fallbackSrc?: string | null,
+  fallbackAttempted = false,
+): string | undefined {
+  const primary = src?.trim() || undefined;
+  const fallback = fallbackSrc?.trim() || undefined;
+  return fallbackAttempted ? fallback ?? primary : primary ?? fallback;
+}
+
 export const SmartImage = memo(function SmartImage({
   src,
   alt,
@@ -21,15 +31,17 @@ export const SmartImage = memo(function SmartImage({
 }: SmartImageProps) {
   const [error, setError] = useState(false);
   const [fallbackAttempted, setFallbackAttempted] = useState(false);
-  const [imgLoading, setImgLoading] = useState(Boolean(src));
+  const [imgLoading, setImgLoading] = useState(Boolean(src?.trim() || fallbackSrc?.trim()));
+  const safeFallbackSrc = fallbackSrc?.trim() || undefined;
+  const finalSrc = resolveSmartImageSrc(src, fallbackSrc, fallbackAttempted);
 
   useEffect(() => {
     setError(false);
     setFallbackAttempted(false);
-    setImgLoading(Boolean(src || fallbackSrc));
+    setImgLoading(Boolean(src?.trim() || fallbackSrc?.trim()));
   }, [src, fallbackSrc]);
 
-  if (error || (!src && !fallbackSrc)) {
+  if (error || !finalSrc) {
     return (
       <div
         role="img"
@@ -48,8 +60,6 @@ export const SmartImage = memo(function SmartImage({
       </div>
     );
   }
-
-  const finalSrc = (fallbackAttempted ? (fallbackSrc ?? src) : (src ?? fallbackSrc)) ?? undefined;
 
   return (
     <div className={`relative h-full w-full overflow-hidden ${className ?? ""}`}>
@@ -72,7 +82,7 @@ export const SmartImage = memo(function SmartImage({
         }}
         onError={(event) => {
           setImgLoading(false);
-          if (fallbackSrc && !fallbackAttempted && src !== fallbackSrc) {
+          if (safeFallbackSrc && !fallbackAttempted && finalSrc !== safeFallbackSrc) {
             setFallbackAttempted(true);
             setImgLoading(true);
           } else {
