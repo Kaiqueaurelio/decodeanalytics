@@ -10,6 +10,7 @@ import {
   transcribeAttachment,
 } from "./ella.helpers.server";
 import { classifyAiError, logAiEvent, newTraceId } from "./ai-logs.server";
+import { inferCatalogCategory, imagePathFor } from "@/lib/catalog-images";
 
 const MessageSchema = z.object({
   role: z.enum(["user", "assistant"]),
@@ -47,36 +48,6 @@ function toNumber(value: unknown) {
     .replace(/\.(?=\d{3}(?:\D|$))/g, "")
     .replace(",", ".");
   return Number(clean) || 0;
-}
-
-function inferCategory(name: string, category?: string) {
-  const text = normalizeText(`${name} ${category ?? ""}`);
-  if (/cartao|cartoes|visita|card/.test(text)) return "Cartões";
-  if (/panfleto|flyer|folder|folheto/.test(text)) return "Panfletos";
-  if (/adesivo|etiqueta|recorte|sticker/.test(text)) return "Adesivos";
-  if (/banner|lona|faixa|cavalete/.test(text)) return "Banners";
-  if (/caneca|copo/.test(text)) return "Canecas";
-  if (/camiseta|camisa|uniforme/.test(text)) return "Camisetas";
-  if (/embalagem|caixa|sacola/.test(text)) return "Embalagens";
-  if (/plotagem|planta|projeto/.test(text)) return "Plotagem";
-  if (/brinde|chaveiro|squeeze|personalizado/.test(text)) return "Brindes";
-  return category?.trim() || "Outros";
-}
-
-function imagePathFor(category: string, name: string) {
-  const resolved = inferCategory(name, category);
-  const paths: Record<string, string> = {
-    Cartões: "/products/cartoes.jpg",
-    Panfletos: "/products/panfletos.jpg",
-    Adesivos: "/products/adesivos.jpg",
-    Banners: "/products/banners.webp",
-    Canecas: "/products/canecas.jpg",
-    Camisetas: "/products/camisetas.jpg",
-    Brindes: "/products/brindes.webp",
-    Embalagens: "/products/embalagens.webp",
-    Plotagem: "/products/plotagem.webp",
-  };
-  return paths[resolved] ?? null;
 }
 
 function buildServiceDescription(name: string, category: string, custom?: string) {
@@ -174,7 +145,7 @@ async function ellaLocalFallback({
   );
   if (createProductMatch && /(produto|servico|serviço|preco|preço|valor)/i.test(text)) {
     const name = createProductMatch[1].trim();
-    const category = inferCategory(name);
+    const category = inferCatalogCategory(name);
     const description = buildServiceDescription(name, category);
     const payload = {
       name,
