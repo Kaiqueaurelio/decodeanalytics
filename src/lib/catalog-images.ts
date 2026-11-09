@@ -13,7 +13,7 @@ const CATEGORY_IMAGE_PATHS: Record<string, string> = {
 function normalizeCatalogText(value: unknown): string {
   return String(value ?? "")
     .normalize("NFD")
-    .replace(/[\\u0300-\\u036f]/g, "")
+    .replace(/[\u0300-\u036f]/g, "")
     .toLowerCase()
     .trim();
 }
