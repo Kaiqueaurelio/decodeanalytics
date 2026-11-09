@@ -9,7 +9,6 @@ import { useShowPrices } from "@/hooks/useCompanyInfo";
 import { SmartImage } from "./SmartImage";
 import { resolveProductImage } from "./productImages";
 import { trackCardClick, trackCta, trackInfinitePage } from "@/lib/analytics";
-import { resolveProductImage } from "./productImages";
 
 const PAGE = 8;
 
