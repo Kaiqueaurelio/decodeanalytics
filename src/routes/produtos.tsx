@@ -43,7 +43,7 @@ function ProdutosPage() {
   const debouncedText = useDebounce(text, 250);
   const cat = search.cat ?? "todos";
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ["store-catalog"],
     staleTime: 60_000,
     gcTime: 10 * 60_000,
@@ -125,6 +125,22 @@ function ProdutosPage() {
               <ProductCardSkeleton key={i} />
             ))}
           </ProductGrid>
+        ) : isError ? (
+          <div role="alert" className="rounded-[var(--store-radius-lg)] border border-amber-400/30 bg-amber-400/5 p-8 text-center">
+            <p className="text-base font-bold text-[var(--store-text)]">
+              Não foi possível carregar os produtos agora.
+            </p>
+            <p className="mt-1 text-sm text-[var(--store-text-muted)]">
+              Tente novamente em instantes ou fale com a Decode pelo WhatsApp.
+            </p>
+            <button
+              type="button"
+              onClick={() => void refetch()}
+              className="mt-4 inline-flex min-h-10 items-center rounded-full bg-[var(--store-primary)] px-5 text-sm font-semibold text-white hover:bg-[var(--store-primary-light)]"
+            >
+              Tentar novamente
+            </button>
+          </div>
         ) : filtered.length ? (
           <ProductGrid>
             {filtered.map((p) => (
