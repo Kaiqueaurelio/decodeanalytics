@@ -44,7 +44,7 @@ export const WHATSAPP_NUMBER = "5511939222885";
 export const STORE_CONTACT = {
   phone: "+55 11 93922-2885",
   whatsapp: WHATSAPP_NUMBER,
-  email: "decoanalytics@outlook.com.br",
+  email: "contato@decodemail.linkpc.net",
   address: "Estrada do Cabreúva, 703 — Vila Santa Lúcia",
   city: "Carapicuíba — SP, CEP 06321-001",
   hours: [
