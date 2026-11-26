@@ -4,7 +4,7 @@
 
 As correções abaixo foram adicionadas diretamente à branch `main`. As migrations SQL estão versionadas no repositório, mas precisam ser aplicadas e verificadas no projeto Supabase correto antes de serem consideradas ativas em produção.
 
-- **Ordens:** trigger de proteção para impedir que os perfis financeiro e produção alterem o total da OS ou campos fora de suas responsabilidades. Atendimento e administração preservam o fluxo operacional; financeiro pode atualizar pagamento; produção pode atualizar andamento e dados técnicos.
+- **Ordens:** política UPDATE explicitada com `USING` e `WITH CHECK`; trigger lê o cargo canônico de `profiles.role` (em vez de depender de registros legados possivelmente desatualizados em `user_roles`) e impede que financeiro e produção alterem o total da OS ou campos fora de suas responsabilidades. Atendimento e administração preservam o fluxo operacional; financeiro pode atualizar pagamento; produção pode atualizar andamento e dados técnicos.
 - **Políticas RLS:** políticas de leitura de `services` e `company_settings` limitadas a funções internas autorizadas; políticas de briefing, arquivos e versões de arte reafirmadas para perfis internos aprovados, sem acesso irrestrito a qualquer conta autenticada.
 - **Storage:** removidas políticas antigas permissivas de INSERT/UPDATE/DELETE em `company-assets`; gravação e exclusão ficam restritas à administração.
 - **Consulta de cargos:** helpers de verificação de papel limitados à própria identidade autenticada, evitando consultar se outro usuário é administrador.
