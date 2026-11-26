@@ -22,11 +22,12 @@ describe('technology intake', () => {
   });
   test('customer PDF does not include unlock credentials or internal part costs', () => {
     const data=emptyTechnicalData();
-    data.password='secret-test-9482';data.pattern=[1,4,7,8];data.model='Notebook Pro';
+    data.password='secret-test-9482';data.pattern=[1,4,7,8];data.model='Notebook Pro';data.technical_status='pronto';
     data.parts=[{id:'p1',name:'Memória RAM 8 GB',brand:'Kingston',model:'DDR4',quantity:1,cost_price:90,sale_price:130}];
     const rows=customerTechnicalRows(data);
     expect(JSON.stringify(rows)).toContain('Notebook Pro');
     expect(JSON.stringify(rows)).toContain('Memória RAM 8 GB');
+    expect(rows.some(row => row[0] === 'Status técnico' && row[1] === 'Pronto para retirada')).toBe(true);
     expect(JSON.stringify(rows)).not.toContain('secret-test-9482');
     expect(JSON.stringify(rows)).not.toContain('[1,4,7,8]');
     expect(JSON.stringify(rows)).not.toContain('90');

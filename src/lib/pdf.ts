@@ -192,13 +192,27 @@ export async function generateOrderPDF(opts: {
   if (opts.order.description?.trim()) {
     autoTable(doc, {
       startY: y,
+      head: [["Detalhes do serviço"]],
       body: [[opts.order.description.trim()]],
-      theme: "plain",
-      styles: { fontSize: 9, cellPadding: 1, overflow: "linebreak" },
+      headStyles: { fillColor: [34, 38, 70], textColor: 255 },
+      styles: { fontSize: 9, cellPadding: 2, overflow: "linebreak" },
       columnStyles: { 0: { cellWidth: 180 } },
       margin: { left: 14, right: 14, bottom: 60 },
     });
-    y = (doc as any).lastAutoTable.finalY + 10;
+    y = (doc as any).lastAutoTable.finalY + 8;
+  }
+
+  if (opts.order.client_notes?.trim()) {
+    autoTable(doc, {
+      startY: y,
+      head: [["Observações do cliente"]],
+      body: [[opts.order.client_notes.trim()]],
+      headStyles: { fillColor: [34, 38, 70], textColor: 255 },
+      styles: { fontSize: 9, cellPadding: 2, overflow: "linebreak" },
+      columnStyles: { 0: { cellWidth: 180 } },
+      margin: { left: 14, right: 14, bottom: 60 },
+    });
+    y = (doc as any).lastAutoTable.finalY + 8;
   }
 
   if (y + 42 > 270) {

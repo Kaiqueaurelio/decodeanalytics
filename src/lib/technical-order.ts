@@ -234,6 +234,14 @@ export function customerTechnicalRows(data: TechnicalData): string[][] {
   const services = safe.services.filter(s => s.description.trim()).map(s => [
     "Serviço realizado", `${s.description} · Quantidade: ${s.quantity}`,
   ]);
+  const technicalStatus = ({
+    aguardando_avaliacao: "Aguardando avaliação",
+    em_diagnostico: "Em diagnóstico",
+    aguardando_aprovacao: "Aguardando aprovação",
+    aguardando_pecas: "Aguardando peças",
+    em_reparo: "Em reparo",
+    pronto: "Pronto para retirada",
+  })[safe.technical_status] || "Não informado";
   const approval = ({
     nao_solicitado: "Não solicitado",
     aguardando: "Aguardando aprovação",
@@ -244,6 +252,8 @@ export function customerTechnicalRows(data: TechnicalData): string[][] {
     ["Equipamento", [safe.equipment, safe.brand, safe.model].filter(Boolean).join(" · ")],
     ["Série / IMEI", safe.serial], ["Cor", safe.color], ["Defeito relatado", safe.complaint],
     ["Acessórios entregues", safe.accessories], ["Operadoras / memória", safe.carriers.join(", ")],
+    ["Status técnico", technicalStatus],
+    ["Concluído em", safe.completed_at ? new Date(safe.completed_at).toLocaleString("pt-BR") : ""],
     ["Diagnóstico", safe.diagnosis], ["Solução / reparo", safe.resolution],
     ["Garantia", `${safe.warranty_days} dias`], ["Termos acordados", safe.terms],
     ["Aprovação do orçamento", approval],
