@@ -43,6 +43,13 @@
       "when": 1794025830267,
       "tag": "0005_services_billing_type",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1795661131058,
+      "tag": "0006_private_technical_order_photos",
+      "breakpoints": true
     }
   ]
 }

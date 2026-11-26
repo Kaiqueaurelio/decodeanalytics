@@ -4,3 +4,4 @@
 - Resolve application privileges exclusively from public.user_roles; profile fields and email addresses must never grant access.
 - Role-check SQL helpers use a fixed search path and security-definer reads to avoid recursive RLS; order item replacement runs as the authenticated caller so table policies still apply.
 - The storefront progressively reveals the full available catalog with an intersection observer and a manual fallback, without duplicating products.
+- Technical photos use private storage paths in orders.technical_data and temporary signed URLs; PDF downloads use the caller's session so evidence is never public.

@@ -11,6 +11,34 @@ import {
 } from './technical-order';
 
 describe('technology intake', () => {
+  test('computers use a hardware checklist instead of phone accessories', () => {
+    const data = emptyTechnicalData(); data.equipment = 'Computador desktop';
+    const ids = visibleInspection(data).map(q => q.id);
+    expect(ids).toContain('cooler'); expect(ids).toContain('usb');
+    expect(ids).not.toContain('pelicula'); expect(ids).not.toContain('bateria');
+  });
+  test('a notebook keeps its battery test and hides functional tests when it does not turn on', () => {
+    const data = emptyTechnicalData(); data.equipment = 'Notebook';
+    expect(visibleInspection(data).some(q => q.id === 'bateria')).toBe(true);
+    data.inspection['liga'] = 'nao';
+    expect(visibleInspection(data).map(q => q.id)).toEqual(['carcaca', 'conector', 'liga']);
+  });
+  test('hardware, replacement reason and photographic evidence survive saving and reopening', () => {
+    const data = emptyTechnicalData();
+    data.hardware.processor = 'Ryzen 5'; data.hardware.memory = '16 GB';
+    data.parts = [{id:'p1',name:'SSD',brand:'Kingston',model:'NV2',quantity:1,cost_price:100,sale_price:150,replacement_reason:'HD com setores defeituosos',original_part:'HD 1 TB'}];
+    data.photos = [{id:'f1',storage_path:'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa/bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb.jpg',category:'defeito',caption:'HD danificado',part_id:'p1'}];
+    const loaded = readTechnicalData(JSON.parse(JSON.stringify(data)));
+    expect(loaded.hardware.processor).toBe('Ryzen 5');
+    expect(loaded.parts[0]?.replacement_reason).toBe('HD com setores defeituosos');
+    expect(loaded.photos[0]?.part_id).toBe('p1');
+    expect(customerTechnicalRows(loaded).some(row => row[1]?.includes('HD com setores defeituosos'))).toBe(true);
+  });
+  test('private file inventories and backup destinations stay out of customer PDFs', () => {
+    const data = emptyTechnicalData(); data.hardware.existing_contents = 'private-file-list'; data.hardware.backup_notes = 'private-backup-destination';
+    const serialized = JSON.stringify(customerTechnicalRows(data));
+    expect(serialized).not.toContain('private-file-list'); expect(serialized).not.toContain('private-backup-destination');
+  });
   test('a device that does not power on skips functional tests', () => {
     const data=emptyTechnicalData(); data.inspection['liga']='nao';
     expect(visibleInspection(data).map(q=>q.id)).toEqual(['pelicula','capinha','carcaca','tela','botoes','conector','chip','liga']);

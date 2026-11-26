@@ -13,7 +13,36 @@ export interface MaintenancePart {
   quantity: number;
   cost_price: number;
   sale_price: number;
+  replacement_reason?: string;
+  original_part?: string;
 }
+export const photoCategories = { antes: 'Entrada / antes', defeito: 'Peça danificada', nova: 'Peça nova / depois', teste: 'Testes finais' } as const;
+export interface TechnicalPhoto {
+  id: string; storage_path: string; caption: string;
+  category: keyof typeof photoCategories; part_id: string;
+}
+export const hardwareFields = [
+  { key: 'processor', label: 'Processador' }, { key: 'memory', label: 'Memória RAM instalada' },
+  { key: 'storage', label: 'Armazenamento instalado (HD / SSD)' }, { key: 'disk_health', label: 'Saúde do disco / resultado do teste' },
+  { key: 'gpu', label: 'Placa de vídeo' }, { key: 'power_supply', label: 'Fonte de alimentação' },
+  { key: 'operating_system', label: 'Sistema operacional' }, { key: 'existing_contents', label: 'Arquivos, programas e dados presentes' },
+  { key: 'backup_notes', label: 'Backup: pastas, destino e observações' },
+] as const;
+export type HardwareKey = (typeof hardwareFields)[number]['key'];
+export function isComputer(equipment: string) {
+  return ['Notebook', 'Computador desktop', 'All-in-one', 'Servidor', 'PC Gamer', 'Mini PC'].includes(equipment);
+}
+const computerQuestions = [
+  { id: 'carcaca', title: 'Carcaça, parafusos e dobradiças estão íntegros?' },
+  { id: 'conector', title: 'Fonte e conector de energia estão íntegros?' },
+  { id: 'liga', title: 'O computador liga?' }, { id: 'cooler', title: 'Coolers e ventoinhas funcionam sem ruídos anormais?' },
+  { id: 'imagem', title: 'O computador apresenta imagem?' }, { id: 'sistema', title: 'O sistema operacional inicia normalmente?' },
+  { id: 'toque', title: 'Teclado e mouse / touchpad funcionam?' }, { id: 'usb', title: 'As portas USB funcionam?' },
+  { id: 'video_ports', title: 'As saídas HDMI / DisplayPort / VGA funcionam?' },
+  { id: 'audio', title: 'O áudio funciona?' }, { id: 'wifi', title: 'Wi-Fi / rede cabeada funcionam?' },
+  { id: 'temperatura', title: 'Temperaturas e estabilidade estão normais?' },
+  { id: 'bateria', title: 'A bateria segura carga?' },
+] as const;
 export interface TechnicalData {
   equipment: string; brand: string; model: string; serial: string;
   unlock_mode: 'senha' | 'padrao'; password: string; pattern: number[];
@@ -31,6 +60,10 @@ export interface TechnicalData {
   approval_notes: string;
   completion_notes: string;
   completed_at: string;
+  hardware: Record<HardwareKey, string>;
+  format_authorization: 'nao_solicitado' | 'autorizado' | 'recusado';
+  backup_status: 'nao_informado' | 'cliente_possui' | 'solicitado' | 'concluido';
+  photos: TechnicalPhoto[];
 }
 export const inspectionQuestions = [
   { id: 'pelicula', title: 'O aparelho está com película?' },
@@ -56,6 +89,8 @@ export function emptyTechnicalData(): TechnicalData {
     technical_status: 'aguardando_avaliacao', services: [], parts: [], discount: 0,
     additional_expenses: 0, approval_status: 'nao_solicitado', approval_contact: '',
     approval_date: '', approval_notes: '', completion_notes: '', completed_at: '',
+    hardware: { processor: '', memory: '', storage: '', disk_health: '', gpu: '', power_supply: '', operating_system: '', existing_contents: '', backup_notes: '' },
+    format_authorization: 'nao_solicitado', backup_status: 'nao_informado', photos: [],
   };
 }
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -95,6 +130,8 @@ export function readTechnicalData(value: unknown): TechnicalData {
         quantity: safeQuantity(item.quantity),
         cost_price: money(item.cost_price),
         sale_price: money(item.sale_price),
+        replacement_reason: typeof item.replacement_reason === 'string' ? item.replacement_reason : '',
+        original_part: typeof item.original_part === 'string' ? item.original_part : '',
       }))
     : [];
   const rawInspection = isRecord(source.inspection) ? source.inspection : {};
@@ -110,6 +147,15 @@ export function readTechnicalData(value: unknown): TechnicalData {
 
   return {
     ...source,
+    hardware: Object.fromEntries(hardwareFields.map(({key}) => [key, isRecord(source.hardware) && typeof source.hardware[key] === 'string' ? source.hardware[key] : ''])) as Record<HardwareKey, string>,
+    format_authorization: source.format_authorization === 'autorizado' || source.format_authorization === 'recusado' ? source.format_authorization : 'nao_solicitado',
+    backup_status: source.backup_status === 'cliente_possui' || source.backup_status === 'solicitado' || source.backup_status === 'concluido' ? source.backup_status : 'nao_informado',
+    photos: Array.isArray(source.photos) ? source.photos.filter(isRecord).filter(p => typeof p.storage_path === 'string' && /^[a-f0-9-]+\/[a-f0-9-]+\.(jpg|png|webp)$/.test(p.storage_path)).map((p, i) => ({
+      id: typeof p.id === 'string' ? p.id : `photo-${i}`, storage_path: String(p.storage_path),
+      caption: typeof p.caption === 'string' ? p.caption : '',
+      category: p.category === 'defeito' || p.category === 'nova' || p.category === 'teste' ? p.category : 'antes',
+      part_id: typeof p.part_id === 'string' ? p.part_id : '',
+    })) : [],
     equipment: typeof source.equipment === "string" ? source.equipment : "",
     brand: typeof source.brand === "string" ? source.brand : "",
     model: typeof source.model === "string" ? source.model : "",
@@ -150,6 +196,12 @@ export function readTechnicalData(value: unknown): TechnicalData {
 export function visibleInspection(data: TechnicalData) {
   const stop = data.inspection['liga'] === 'nao';
   const noImage = data.inspection['imagem'] === 'nao';
+  if (isComputer(data.equipment)) return computerQuestions.filter(q => {
+    if (q.id === 'bateria' && data.equipment !== 'Notebook') return false;
+    if (stop) return ['carcaca', 'conector', 'liga'].includes(q.id);
+    if (noImage) return !['sistema', 'toque', 'video_ports'].includes(q.id);
+    return true;
+  });
   return inspectionQuestions.filter((q, index) => (!stop || index <= 7) && (!noImage || index <= 8));
 }
 export function maintenanceValidationErrors(data: TechnicalData): string[] {
@@ -243,7 +295,7 @@ export function customerTechnicalRows(data: TechnicalData): string[][] {
   const totals = maintenanceTotals(safe);
   const parts = safe.parts.filter(p => p.name.trim()).map(p => [
     `Peça substituída: ${p.name}`,
-    [p.brand, p.model, `Quantidade: ${p.quantity}`].filter(Boolean).join(" · "),
+    [p.brand, p.model, `Quantidade: ${p.quantity}`, p.original_part ? `Peça anterior: ${p.original_part}` : '', p.replacement_reason ? `Motivo: ${p.replacement_reason}` : ''].filter(Boolean).join(" · "),
   ]);
   const services = safe.services.filter(s => s.description.trim()).map(s => [
     "Serviço realizado", `${s.description} · Quantidade: ${s.quantity}`,
@@ -264,6 +316,9 @@ export function customerTechnicalRows(data: TechnicalData): string[][] {
   })[safe.approval_status] || "Não informado";
   return [
     ["Equipamento", [safe.equipment, safe.brand, safe.model].filter(Boolean).join(" · ")],
+    ...hardwareFields.filter(f => f.key !== 'existing_contents' && f.key !== 'backup_notes').map(f => [f.label, safe.hardware[f.key]]),
+    ['Autorização de formatação', ({nao_solicitado:'Não solicitada', autorizado:'Autorizada', recusado:'Recusada'})[safe.format_authorization]],
+    ['Backup', ({nao_informado:'Não informado', cliente_possui:'Cliente possui backup', solicitado:'Solicitado', concluido:'Concluído'})[safe.backup_status]],
     ["Série / IMEI", safe.serial], ["Cor", safe.color], ["Defeito relatado", safe.complaint],
     ["Acessórios entregues", safe.accessories], ["Operadoras / memória", safe.carriers.join(", ")],
     ["Status técnico", technicalStatus],

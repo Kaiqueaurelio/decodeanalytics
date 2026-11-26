@@ -1,4 +1,7 @@
 # Video-based technical service orders
+- [ ] Expand computer intake, hardware inventory and replacement reasons.
+- [ ] Add private technical photos with captions and PDF reports.
+- [ ] Verify saving, reopening and photos on desktop and mobile.
 - [x] Add technology/graphics segment and persist equipment, inspection, diagnostics and warranty.
 - [x] Add mobile-friendly staged intake with unlock pattern and conditional checklist.
 - [x] Add segment filter and safe technical information in customer PDF.

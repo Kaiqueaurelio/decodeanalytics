@@ -174,6 +174,7 @@ export function OrderEditor({
 }: OrderEditorProps) {
   const [step, setStep] = useState(0);
   const [technical, setTechnical] = useState<TechnicalData>(emptyTechnicalData);
+  const [photoBusy, setPhotoBusy] = useState(false);
   const [loading, setLoading] = useState(false);
   const [loadingOrder, setLoadingOrder] = useState(false);
   const [loadError, setLoadError] = useState(false);
@@ -407,6 +408,7 @@ export function OrderEditor({
   const total = isTech ? maintenance.total : items.reduce((s, i) => s + (Number(i.subtotal) || 0), 0);
 
   async function save() {
+    if (photoBusy) return toast.error('Aguarde o envio das fotos.');
     if (loadingOrder) return toast.error("Aguarde o carregamento dos dados.");
     if (loadError) return toast.error("Não foi possível carregar os dados. Feche a janela e tente novamente.");
     if (!form.client_id) return toast.error("Selecione um cliente");
@@ -812,7 +814,7 @@ export function OrderEditor({
 
           {isTech && step > 0 && (
             <>
-              <TechnicalIntake value={technical} onChange={setTechnical} step={step} team={team} />
+              <TechnicalIntake value={technical} onChange={setTechnical} step={step} team={team} onPhotoBusy={setPhotoBusy} />
               {step === 3 && (
                 <section className="space-y-3 rounded-lg border p-4">
                   <h3 className="font-semibold">Pagamento e recebimento</h3>
@@ -1083,7 +1085,7 @@ export function OrderEditor({
               PDF
             </Button>
           )}
-          <Button onClick={save} disabled={loading || loadingOrder || loadError} className={isTech && step < 3 ? "hidden" : ""}>
+          <Button onClick={save} disabled={photoBusy || loading || loadingOrder || loadError} className={isTech && step < 3 ? "hidden" : ""}>
             {loading ? "Salvando..." : loadingOrder ? "Carregando..." : loadError ? "Falha ao carregar" : "Salvar"}
           </Button>
         </DialogFooter>

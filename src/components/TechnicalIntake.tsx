@@ -5,9 +5,10 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Check, ChevronLeft, ChevronRight, RotateCcw, Smartphone, Laptop, ShieldCheck, Plus, Trash2, Wrench, Cpu } from 'lucide-react';
-import { visibleInspection, maintenanceTotals, type TechnicalData } from '@/lib/technical-order';
+import { visibleInspection, maintenanceTotals, hardwareFields, isComputer, type TechnicalData } from '@/lib/technical-order';
+import { TechnicalPhotoGallery } from './TechnicalPhotoGallery';
 
-export function TechnicalIntake({ value, onChange, step, team }: { value: TechnicalData; onChange: (v: TechnicalData) => void; step: number; team: {id: string; name: string | null; email: string | null}[] }) {
+export function TechnicalIntake({ value, onChange, step, team, onPhotoBusy }: { value: TechnicalData; onChange: (v: TechnicalData) => void; step: number; team: {id: string; name: string | null; email: string | null}[]; onPhotoBusy: (busy: boolean) => void }) {
   const [questionIndex, setQuestionIndex] = useState(0);
   const [showPassword, setShowPassword] = useState(false);
   const visibleQuestionIds = visibleInspection(value).map(question => question.id).join("|");
@@ -23,11 +24,12 @@ export function TechnicalIntake({ value, onChange, step, team }: { value: Techni
   const update = (patch: Partial<TechnicalData>) => onChange({...value, ...patch});
   const fields = (entries: {key: keyof TechnicalData; label: string; multiline?: boolean}[]) => entries.map(({key, label, multiline}) => <div key={key} className={multiline ? 'sm:col-span-2' : ''}><Label htmlFor={`tech-${key}`}>{label}</Label>{multiline ? <Textarea id={`tech-${key}`} value={String(value[key] ?? '')} onChange={e => update({[key]: e.target.value})} rows={3}/> : <Input id={`tech-${key}`} value={String(value[key] ?? '')} onChange={e => update({[key]: e.target.value})}/>}</div>);
   if (step === 1) return <div className="space-y-5">
-    <h3 className="flex items-center gap-2 font-semibold"><Smartphone className="h-5 w-5 text-brand-blue"/> Equipamento recebido</h3>
+    <h3 className="flex items-center gap-2 font-semibold">{isComputer(value.equipment) ? <Laptop className="h-5 w-5 text-brand-blue"/> : <Smartphone className="h-5 w-5 text-brand-blue"/>} Equipamento recebido</h3>
     <div className="grid gap-3 sm:grid-cols-2">
-      <div><Label>Tipo de equipamento *</Label><Select value={value.equipment} onValueChange={v => update({equipment:v})}><SelectTrigger aria-label="Tipo de equipamento"><SelectValue placeholder="Selecione o aparelho"/></SelectTrigger><SelectContent>{['Notebook','Computador desktop','All-in-one','Servidor','Smartphone','Tablet','Outro'].map(v=><SelectItem key={v} value={v}>{v}</SelectItem>)}</SelectContent></Select></div>
+      <div><Label>Tipo de equipamento *</Label><Select value={value.equipment} onValueChange={v => update({equipment:v})}><SelectTrigger aria-label="Tipo de equipamento"><SelectValue placeholder="Selecione o aparelho"/></SelectTrigger><SelectContent>{['Notebook','Computador desktop','PC Gamer','Mini PC','All-in-one','Servidor','Smartphone','Tablet','Outro'].map(v=><SelectItem key={v} value={v}>{v}</SelectItem>)}</SelectContent></Select></div>
       {fields([{key:'brand',label:'Marca'}, {key:'model',label:'Modelo'}, {key:'serial',label:'Nº de série'}, {key:'color',label:'Cor'}, {key:'accessories',label:'Acessórios entregues'}])}
     </div>
+    {isComputer(value.equipment) && <section className="space-y-3 border-t pt-4"><h3 className="font-semibold">Configuração e conteúdo recebido</h3><div className="grid gap-3 sm:grid-cols-2">{hardwareFields.map(({key, label}) => <div key={key} className={key === 'existing_contents' || key === 'backup_notes' ? 'sm:col-span-2' : ''}><Label htmlFor={`hardware-${key}`}>{label}</Label>{key === 'existing_contents' || key === 'backup_notes' ? <Textarea id={`hardware-${key}`} value={value.hardware[key]} onChange={e => update({hardware:{...value.hardware, [key]:e.target.value}})}/> : <Input id={`hardware-${key}`} value={value.hardware[key]} onChange={e => update({hardware:{...value.hardware, [key]:e.target.value}})}/>}</div>)}</div></section>}
     <div className="space-y-3 border-y py-4">
       <div className="flex flex-wrap items-center justify-between gap-2"><Label>Desbloqueio (opcional)</Label><div className="flex gap-1">{(['senha','padrao'] as const).map(mode=><Button key={mode} size="sm" variant={value.unlock_mode===mode?'default':'outline'} onClick={()=>update({unlock_mode:mode})}>{mode==='senha'?'Senha':'Padrão'}</Button>)}</div></div>
       {value.unlock_mode==='senha' ? <div className="flex gap-2"><Input aria-label="Senha do dispositivo" autoComplete="new-password" type={showPassword?'text':'password'} value={value.password} onChange={e=>update({password:e.target.value})}/><Button variant="outline" onClick={()=>setShowPassword(!showPassword)}>{showPassword?'Ocultar':'Mostrar'}</Button></div> : <div className="flex flex-col items-center gap-3"><div className="grid w-56 grid-cols-3 gap-3 rounded-md bg-muted p-4">{Array.from({length:9},(_,i)=>i+1).map(n=><Button aria-label={`Ponto ${n}`} aria-pressed={value.pattern.includes(n)} size="icon" className="h-12 w-12 shrink-0" variant={value.pattern.includes(n)?'default':'outline'} key={n} onClick={()=>{if(!value.pattern.includes(n)) update({pattern:[...value.pattern,n]});}}>{n}</Button>)}</div><div className="flex items-center gap-3"><span className="text-sm text-muted-foreground">{value.pattern.join(' → ') || 'Sem padrão registrado'}</span><Button size="icon" variant="ghost" aria-label="Limpar padrão" onClick={()=>update({pattern:[]})}><RotateCcw className="h-4 w-4"/></Button></div></div>}
@@ -44,6 +46,10 @@ export function TechnicalIntake({ value, onChange, step, team }: { value: Techni
       <div className="flex justify-between"><Button variant="ghost" disabled={index===0} onClick={()=>setQuestionIndex(index-1)}><ChevronLeft className="h-4 w-4"/>Anterior</Button><Button variant="ghost" disabled={index===questions.length-1} onClick={()=>setQuestionIndex(index+1)}>Próximo<ChevronRight className="h-4 w-4"/></Button></div>
       {value.inspection['liga']==='nao' && <p className="text-sm text-muted-foreground">Equipamento não liga: testes funcionais dispensados.</p>}
       <div className="grid gap-3 sm:grid-cols-2">{fields([{key:'inspection_notes',label:'Avarias, marcas e condições de entrada',multiline:true}])}</div>
+      {isComputer(value.equipment) && <div className="grid gap-3 sm:grid-cols-2">
+        <div><Label>Autorização de formatação</Label><Select value={value.format_authorization} onValueChange={v => update({format_authorization:v as TechnicalData['format_authorization']})}><SelectTrigger aria-label="Autorização de formatação"><SelectValue/></SelectTrigger><SelectContent><SelectItem value="nao_solicitado">Não solicitada</SelectItem><SelectItem value="autorizado">Autorizada pelo cliente</SelectItem><SelectItem value="recusado">Não autorizada</SelectItem></SelectContent></Select></div>
+        <div><Label>Backup dos arquivos</Label><Select value={value.backup_status} onValueChange={v => update({backup_status:v as TechnicalData['backup_status']})}><SelectTrigger aria-label="Backup dos arquivos"><SelectValue/></SelectTrigger><SelectContent><SelectItem value="nao_informado">Não informado</SelectItem><SelectItem value="cliente_possui">Cliente possui backup</SelectItem><SelectItem value="solicitado">Backup solicitado</SelectItem><SelectItem value="concluido">Backup concluído</SelectItem></SelectContent></Select></div>
+      </div>}
     </div>;
   }
   if (step === 3) {
@@ -51,6 +57,7 @@ export function TechnicalIntake({ value, onChange, step, team }: { value: Techni
     const updateService = (id: string, patch: Partial<TechnicalData['services'][number]>) => update({services:value.services.map(item=>item.id===id?{...item,...patch}:item)});
     const updatePart = (id: string, patch: Partial<TechnicalData['parts'][number]>) => update({parts:value.parts.map(item=>item.id===id?{...item,...patch}:item)});
     return <div className="space-y-6">
+      <section className="grid gap-3 sm:grid-cols-2">{fields([{key:'diagnosis',label:'Diagnóstico técnico constatado',multiline:true}, {key:'resolution',label:'Procedimentos e solução aplicada',multiline:true}])}</section>
       <section className="space-y-3">
         <h3 className="flex items-center gap-2 font-semibold"><Wrench className="h-5 w-5 text-brand-blue"/> Serviços e reparos executados</h3>
         {value.services.map(item=><div key={item.id} className="grid grid-cols-12 gap-2 rounded-lg border p-3">
@@ -67,6 +74,8 @@ export function TechnicalIntake({ value, onChange, step, team }: { value: Techni
           <div className="col-span-12 sm:col-span-5"><Label>Peça / componente</Label><Input value={item.name} placeholder="Ex.: Memória RAM DDR4 8 GB" onChange={e=>updatePart(item.id,{name:e.target.value})}/></div>
           <div className="col-span-6 sm:col-span-3"><Label>Marca</Label><Input value={item.brand} onChange={e=>updatePart(item.id,{brand:e.target.value})}/></div>
           <div className="col-span-6 sm:col-span-4"><Label>Modelo</Label><Input value={item.model} onChange={e=>updatePart(item.id,{model:e.target.value})}/></div>
+          <div className="col-span-12"><Label htmlFor={`original-${item.id}`}>Peça anterior / configuração original</Label><Input id={`original-${item.id}`} value={item.original_part ?? ''} onChange={e=>updatePart(item.id,{original_part:e.target.value})}/></div>
+          <div className="col-span-12"><Label htmlFor={`reason-${item.id}`}>Motivo da substituição</Label><Textarea id={`reason-${item.id}`} rows={3} value={item.replacement_reason ?? ''} onChange={e=>updatePart(item.id,{replacement_reason:e.target.value})}/></div>
           <div className="col-span-4"><Label>Qtd.</Label><Input type="number" min="1" step="1" value={item.quantity} onChange={e=>updatePart(item.id,{quantity:Math.max(1,Number(e.target.value)||1)})}/></div>
           <div className="col-span-4"><Label>Custo unitário (interno)</Label><Input type="number" min="0" step="0.01" value={item.cost_price} onChange={e=>updatePart(item.id,{cost_price:Math.max(0,Number(e.target.value)||0)})}/></div>
           <div className="col-span-4"><Label>Preço cobrado</Label><Input type="number" min="0" step="0.01" value={item.sale_price} onChange={e=>updatePart(item.id,{sale_price:Math.max(0,Number(e.target.value)||0)})}/></div>
@@ -83,6 +92,7 @@ export function TechnicalIntake({ value, onChange, step, team }: { value: Techni
           <div><Label>Observações da aprovação</Label><Input value={value.approval_notes} onChange={e=>update({approval_notes:e.target.value})}/></div>
         </div>
       </section>
+      <TechnicalPhotoGallery value={value} onChange={onChange} onBusy={onPhotoBusy}/>
       <section className="space-y-3 border-t pt-4">
         <h3 className="font-semibold">Resumo financeiro</h3>
         <div className="grid gap-3 sm:grid-cols-2">

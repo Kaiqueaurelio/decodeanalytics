@@ -1,4 +1,4 @@
-import { customerTechnicalRows, maintenanceTotals, readTechnicalData } from "./technical-order";
+import { customerTechnicalRows, maintenanceTotals, photoCategories, readTechnicalData, type TechnicalData } from "./technical-order";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import { brl, DEFAULT_COMPANY_DOCUMENT, fmtCnpj, fmtDate, fmtDateOnly } from "./format";
@@ -102,6 +102,42 @@ function footer(doc: jsPDF, company: Company) {
   doc.setTextColor(200);
   doc.setFontSize(7);
   doc.text(`Gerado em ${new Date().toLocaleString("pt-BR")}`, 196, h - 4, { align: "right" });
+}
+
+async function appendTechnicalPhotos(doc: jsPDF, company: Company, number: number, technical: TechnicalData, logo: string | null) {
+  if (!technical.photos.length) return;
+  const { supabase } = await import('@/integrations/supabase/client');
+  for (const [index, photo] of technical.photos.entries()) {
+    const {data, error} = await supabase.storage.from('technical-photos').download(photo.storage_path);
+    if (error || !data) throw new Error(`Não foi possível carregar a foto ${index + 1} para o laudo. Tente novamente.`);
+    const url = URL.createObjectURL(data);
+    try {
+      const image = new Image();
+      image.src = url;
+      await image.decode();
+      const canvas = document.createElement('canvas');
+      const ratio = Math.min(1, 1600 / Math.max(image.naturalWidth, image.naturalHeight));
+      canvas.width = Math.max(1, Math.round(image.naturalWidth * ratio));
+      canvas.height = Math.max(1, Math.round(image.naturalHeight * ratio));
+      const ctx = canvas.getContext('2d');
+      if (!ctx) throw new Error('Não foi possível preparar a foto.');
+      ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+      doc.addPage();
+      header(doc, company, `Laudo fotográfico — OS #${number}`, logo);
+      const part = technical.parts.find(p => p.id === photo.part_id);
+      autoTable(doc, {
+        startY: 52, head: [[`Foto ${index + 1} · ${photoCategories[photo.category]}`, 'Registro']],
+        body: [['Descrição', photo.caption || 'Sem descrição'], ...(part ? [['Peça relacionada', part.name], ['Motivo da substituição', part.replacement_reason || 'Não informado']] : [])],
+        styles: {fontSize: 9, overflow:'linebreak'}, margin: {top:52, bottom:35},
+        headStyles: {fillColor:[34,38,70], textColor:255},
+      });
+      let y = (doc as any).lastAutoTable.finalY + 8;
+      if (y > 180) { doc.addPage(); header(doc, company, `Foto ${index + 1} — OS #${number}`, logo); y = 52; }
+      const scale = Math.min(182 / canvas.width, (260 - y) / canvas.height);
+      const w = canvas.width * scale;
+      doc.addImage(canvas.toDataURL('image/jpeg', 0.85), 'JPEG', (210-w)/2, y, w, canvas.height*scale);
+    } finally { URL.revokeObjectURL(url); }
+  }
 }
 
 export async function generateOrderPDF(opts: {
@@ -241,6 +277,7 @@ export async function generateOrderPDF(opts: {
       margin: { top: 52, bottom: 30 },
       headStyles: { fillColor: [11, 16, 38], textColor: 255 },
     });
+    await appendTechnicalPhotos(doc, opts.company, opts.order.number, technical, logo);
   }
 
   for (let page = 1; page <= doc.getNumberOfPages(); page++) {
@@ -383,6 +420,15 @@ export async function generateTechnicalCompletionPDF(opts: {
   doc.setFontSize(9);
   doc.text("Assinatura do cliente", 14, signatureY + 6);
   doc.text("Responsável técnico", 110, signatureY + 6);
+
+  doc.addPage();
+  header(doc, opts.company, `Laudo técnico — OS #${opts.order.number}`, logo);
+  autoTable(doc, {
+    startY:52, head:[['Ficha técnica e reparos', 'Registro']], body:customerTechnicalRows(technical),
+    styles:{fontSize:9, overflow:'linebreak'}, columnStyles:{0:{cellWidth:58},1:{cellWidth:124}},
+    margin:{top:52,bottom:30}, headStyles:{fillColor:[34,38,70],textColor:255},
+  });
+  await appendTechnicalPhotos(doc, opts.company, opts.order.number, technical, logo);
 
   for (let page = 1; page <= doc.getNumberOfPages(); page++) {
     doc.setPage(page);
