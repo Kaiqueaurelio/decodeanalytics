@@ -326,7 +326,6 @@ export function OrderEditor({
           setForm((current: any) => ({
             ...current,
             client_id: quote.client_id,
-            title: quote.title ?? "",
             description: quote.description ?? "",
             total: Number(quote.total) || 0,
             quote_id: quote.id,
