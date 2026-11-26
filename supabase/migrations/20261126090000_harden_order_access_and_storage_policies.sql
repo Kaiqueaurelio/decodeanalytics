@@ -85,6 +85,27 @@ $function$;
 REVOKE ALL ON FUNCTION public.is_admin(uuid) FROM PUBLIC, anon;
 GRANT EXECUTE ON FUNCTION public.is_admin(uuid) TO authenticated, service_role;
 
+-- Older installations still expose has_role(uuid, app_role) alongside the
+-- scoped has_role(app_role, uuid) overload. Scope this legacy signature too.
+CREATE OR REPLACE FUNCTION public.has_role(_user_id uuid, _role public.app_role)
+RETURNS boolean
+LANGUAGE sql
+STABLE
+SECURITY DEFINER
+SET search_path TO ''
+AS $function$
+  SELECT auth.uid() = _user_id
+     AND EXISTS (
+       SELECT 1
+       FROM public.user_roles AS ur
+       WHERE ur.user_id = auth.uid()
+         AND ur.role = _role
+     );
+$function$;
+
+REVOKE ALL ON FUNCTION public.has_role(uuid, public.app_role) FROM PUBLIC, anon;
+GRANT EXECUTE ON FUNCTION public.has_role(uuid, public.app_role) TO authenticated, service_role;
+
 -- 4) Keep the existing staff UPDATE policy for operational workflows, but
 -- constrain which columns finance and production roles may change.
 CREATE OR REPLACE FUNCTION public.guard_order_sensitive_updates()
