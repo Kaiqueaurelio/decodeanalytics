@@ -19,35 +19,65 @@ export function TechnicalPhotoGallery({ value, onChange, onBusy }: { value: Tech
   useEffect(() => {
     let active = true;
     const list = paths ? paths.split('|') : [];
-    if (!list.length) { setUrls({}); return; }
-    void supabase.storage.from('technical-photos').createSignedUrls(list, 3600).then(({data, error: loadError}) => {
-      if (!active) return;
-      setError(Boolean(loadError));
-      setUrls(Object.fromEntries((data ?? []).filter(p => p.signedUrl && p.path).map(p => [p.path, p.signedUrl])));
-    });
+    if (!list.length) {
+      setUrls({});
+      setError(false);
+      return;
+    }
+    setError(false);
+    void supabase.storage.from('technical-photos').createSignedUrls(list, 3600)
+      .then(({ data, error: loadError }) => {
+        if (!active) return;
+        const valid = (data ?? []).filter((photo) => photo.signedUrl && photo.path);
+        setError(Boolean(loadError) || valid.length !== list.length);
+        setUrls(Object.fromEntries(valid.map((photo) => [photo.path, photo.signedUrl])));
+      })
+      .catch(() => {
+        if (!active) return;
+        setError(true);
+        setUrls({});
+      });
     return () => { active = false; };
   }, [paths]);
   async function upload(files: FileList | null) {
     if (!files?.length || busy) return;
     const selected = Array.from(files);
-    if (selected.some(f => !['image/jpeg', 'image/png', 'image/webp'].includes(f.type) || f.size > 10 * 1024 * 1024)) {
-      toast.error('Selecione fotos JPG, PNG ou WebP de até 10 MB.'); return;
+    if (selected.some((file) => !['image/jpeg', 'image/png', 'image/webp'].includes(file.type) || file.size > 10 * 1024 * 1024)) {
+      toast.error('Selecione fotos JPG, PNG ou WebP de até 10 MB.');
+      return;
     }
-    setBusy(true); onBusy(true);
+
+    setBusy(true);
+    onBusy(true);
+    const uploaded: TechnicalPhoto[] = [];
     try {
-      const {data: {user}} = await supabase.auth.getUser();
+      const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('Entre novamente para anexar fotos.');
+
       for (const file of selected) {
         const id = crypto.randomUUID();
         const ext = file.type === 'image/png' ? 'png' : file.type === 'image/webp' ? 'webp' : 'jpg';
         const path = `${user.id}/${id}.${ext}`;
-        const {error: uploadError} = await supabase.storage.from('technical-photos').upload(path, file, {contentType: file.type});
+        const { error: uploadError } = await supabase.storage.from('technical-photos').upload(path, file, { contentType: file.type });
         if (uploadError) throw uploadError;
-        onChange({...current.current, photos: [...current.current.photos, {id, storage_path: path, caption: '', category: 'antes', part_id: ''}]});
+        uploaded.push({ id, storage_path: path, caption: '', category: 'antes', part_id: '' });
       }
-      toast.success('Fotos anexadas. Salve a ordem para guardar o registro.');
-    } catch (e) { toast.error(e instanceof Error ? e.message : 'Não foi possível anexar a foto.'); }
-    finally { setBusy(false); onBusy(false); if (input.current) input.current.value = ''; }
+    } catch (error) {
+      if (uploaded.length) {
+        onChange({ ...current.current, photos: [...current.current.photos, ...uploaded] });
+      }
+      toast.error(error instanceof Error ? error.message : 'Não foi possível anexar todas as fotos.');
+      return;
+    } finally {
+      setBusy(false);
+      onBusy(false);
+      if (input.current) input.current.value = '';
+    }
+
+    if (uploaded.length) {
+      onChange({ ...current.current, photos: [...current.current.photos, ...uploaded] });
+      toast.success(`${uploaded.length} foto(s) anexada(s). Salve a ordem para guardar o registro.`);
+    }
   }
   function update(id: string, patch: Partial<TechnicalPhoto>) {
     onChange({...value, photos: value.photos.map(p => p.id === id ? {...p, ...patch} : p)});
