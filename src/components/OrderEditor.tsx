@@ -48,6 +48,88 @@ interface Item {
 
 const PROD_STATUSES = Object.keys(PRODUCTION_STATUS_LABEL);
 
+async function stageOrderItemsReplacement(orderId: string, items: Item[]) {
+  const { data: previousItems, error: readError } = await supabase
+    .from("order_items")
+    .select("id,description,quantity,unit_price,subtotal,service_id")
+    .eq("order_id", orderId);
+  if (readError) return { error: readError.message, rollback: async () => null as string | null };
+
+  const nextRows = items.map((item) => ({
+    order_id: orderId,
+    description: item.description,
+    quantity: item.quantity,
+    unit_price: item.unit_price,
+    subtotal: item.subtotal,
+    service_id: item.service_id ?? null,
+  }));
+  let insertedIds: string[] = [];
+  if (nextRows.length) {
+    const { data: insertedItems, error: insertError } = await supabase
+      .from("order_items")
+      .insert(nextRows)
+      .select("id");
+    if (insertError) return { error: insertError.message, rollback: async () => null as string | null };
+    insertedIds = (insertedItems ?? []).map((item) => item.id);
+  }
+
+  const previousIds = (previousItems ?? []).map((item) => item.id);
+  if (previousIds.length) {
+    const { error: deleteError } = await supabase
+      .from("order_items")
+      .delete()
+      .eq("order_id", orderId)
+      .in("id", previousIds);
+    if (deleteError) {
+      if (insertedIds.length) {
+        const { error: rollbackError } = await supabase
+          .from("order_items")
+          .delete()
+          .in("id", insertedIds);
+        return {
+          error: rollbackError
+            ? `${deleteError.message}. Também não foi possível limpar os novos itens: ${rollbackError.message}`
+            : deleteError.message,
+          rollback: async () => null as string | null,
+        };
+      }
+      return { error: deleteError.message, rollback: async () => null as string | null };
+    }
+  }
+
+  return {
+    error: null,
+    rollback: async () => {
+      let rollbackMessage: string | null = null;
+      if (insertedIds.length) {
+        const { error } = await supabase.from("order_items").delete().in("id", insertedIds);
+        if (error) rollbackMessage = error.message;
+      }
+      if (previousItems?.length) {
+        const { error } = await supabase.from("order_items").insert(
+          previousItems.map((item) => ({
+            id: item.id,
+            order_id: orderId,
+            description: item.description,
+            quantity: item.quantity,
+            unit_price: item.unit_price,
+            subtotal: item.subtotal,
+            service_id: item.service_id,
+          }))
+        );
+        if (error) rollbackMessage = [rollbackMessage, error.message].filter(Boolean).join("; ");
+      }
+      return rollbackMessage;
+    },
+  };
+}
+
+function clampPayment(value: unknown, total: number): number {
+  const amount = Number(value);
+  const safe = Number.isFinite(amount) ? Math.max(0, amount) : 0;
+  return Math.round(Math.min(total, safe) * 100) / 100;
+}
+
 export function OrderEditor({
   open,
   onOpenChange,
@@ -286,160 +368,210 @@ export function OrderEditor({
 
   async function save() {
     if (!form.client_id) return toast.error("Selecione um cliente");
-    if (
-      form.service_segment === "tecnologia" &&
-      (!technical.equipment || !technical.complaint.trim())
-    ) {
+    if (isTech && (!technical.equipment || !technical.complaint.trim())) {
       setStep(1);
       return toast.error("Informe o equipamento e o defeito relatado");
     }
-    const technicalToSave = { ...technical, completed_at: technical.technical_status === "pronto" ? (technical.completed_at || new Date().toISOString()) : technical.completed_at };
+
+    const technicalToSave = {
+      ...technical,
+      completed_at: technical.technical_status === "pronto"
+        ? (technical.completed_at || new Date().toISOString())
+        : "",
+    };
     if (isTech) {
       const maintenanceErrors = maintenanceValidationErrors(technicalToSave);
       if (maintenanceErrors.length) {
         setStep(3);
         return toast.error(maintenanceErrors[0]);
       }
-      if (technicalToSave.approval_status === "recusado" && maintenance.total > 0) {
-        return toast.error("O orçamento foi recusado. Ajuste a aprovação antes de salvar a cobrança.");
+      const workStarted = ["em_reparo", "pronto"].includes(technicalToSave.technical_status);
+      if (workStarted && maintenance.total > 0 && technicalToSave.approval_status === "aguardando") {
+        setStep(3);
+        return toast.error("Aguarde a aprovação do orçamento antes de iniciar o reparo.");
+      }
+      if (workStarted && maintenance.total > 0 && technicalToSave.approval_status === "recusado") {
+        setStep(3);
+        return toast.error("O orçamento foi recusado. Não é possível iniciar ou concluir o reparo.");
       }
     }
+
     const persistedItems = isTech ? technicalOrderItems(technicalToSave) : items;
-    if (!persistedItems.length) return toast.error("Adicione ao menos um serviço ou peça");
+    if (!isTech && !persistedItems.length) return toast.error("Adicione ao menos um serviço ou peça");
+
     setLoading(true);
-    const payload = {
-      service_segment: form.service_segment || "grafica",
-      technical_data: JSON.parse(JSON.stringify(technicalToSave)),
-      client_id: form.client_id,
-      title: form.title,
-      description: form.description,
-      measurements: form.measurements,
-      material: form.material,
-      finishing: form.finishing,
-      client_notes: form.client_notes,
-      internal_notes: form.internal_notes,
-      total,
-      paid: Math.min(total, Math.max(0, Number(form.paid) || 0)),
-      payment_method: form.payment_method || null,
-      production_status: form.production_status,
-      deadline: form.deadline || null,
-      performed_on: form.performed_on || null,
-      service_contract_id: form.service_contract_id || null,
-      urgent: !!form.urgent,
-      quote_id: form.quote_id ?? null,
-      assigned_to: form.assigned_to || null,
-      current_activity: form.current_activity || null,
-      progress: Number(form.progress) || 0,
-    };
-    let id = orderId;
-    if (id) {
-      const { error } = await (supabase
-        .from("orders" as any)
-        .update(payload)
-        .eq("id", id) as any);
-      if (error) {
-        setLoading(false);
-        return toast.error(error.message);
+    try {
+      const totalToSave = Number.isFinite(total) ? Math.max(0, total) : 0;
+      const paidToSave = clampPayment(form.paid, totalToSave);
+      const payload = {
+        service_segment: form.service_segment || "grafica",
+        technical_data: JSON.parse(JSON.stringify(technicalToSave)),
+        client_id: form.client_id,
+        title: form.title,
+        description: form.description,
+        measurements: form.measurements,
+        material: form.material,
+        finishing: form.finishing,
+        client_notes: form.client_notes,
+        internal_notes: form.internal_notes,
+        total: totalToSave,
+        paid: paidToSave,
+        payment_method: form.payment_method || null,
+        production_status: form.production_status,
+        deadline: form.deadline || null,
+        performed_on: form.performed_on || null,
+        service_contract_id: form.service_contract_id || null,
+        urgent: !!form.urgent,
+        quote_id: form.quote_id ?? null,
+        assigned_to: form.assigned_to || null,
+        current_activity: form.current_activity || null,
+        progress: Math.min(100, Math.max(0, Number(form.progress) || 0)),
+      };
+
+      if (orderId) {
+        const stagedItems = await stageOrderItemsReplacement(orderId, persistedItems);
+        if (stagedItems.error) return toast.error(stagedItems.error);
+
+        const { error } = await (supabase
+          .from("orders" as any)
+          .update(payload)
+          .eq("id", orderId) as any);
+        if (error) {
+          const rollbackError = await stagedItems.rollback();
+          return toast.error(
+            rollbackError
+              ? `${error.message}. Atenção: a restauração dos itens também falhou: ${rollbackError}`
+              : error.message
+          );
+        }
+      } else {
+        const { data, error } = await (supabase
+          .from("orders" as any)
+          .insert(payload)
+          .select("id")
+          .single() as any);
+        if (error || !data) return toast.error(error?.message || "Não foi possível criar a ordem.");
+        const newOrderId = data.id as string;
+        if (persistedItems.length) {
+          const { error: itemsError } = await supabase.from("order_items").insert(
+            persistedItems.map((item) => ({
+              order_id: newOrderId,
+              description: item.description,
+              quantity: item.quantity,
+              unit_price: item.unit_price,
+              subtotal: item.subtotal,
+              service_id: item.service_id ?? null,
+            }))
+          );
+          if (itemsError) {
+            const { error: cleanupError } = await (supabase
+              .from("orders" as any)
+              .delete()
+              .eq("id", newOrderId) as any);
+            return toast.error(
+              cleanupError
+                ? `A OS foi criada, mas os itens não foram salvos: ${itemsError.message}. Abra a OS ${newOrderId} e tente novamente.`
+                : itemsError.message
+            );
+          }
+        }
       }
-      // Substitui itens atomicamente via RPC (evita OS sem itens em caso de falha).
-      const { error: rpcErr } = await (supabase as any).rpc("replace_order_items", {
-        _order_id: id,
-        _items: persistedItems.map((i) => ({
-          description: i.description,
-          quantity: i.quantity,
-          unit_price: i.unit_price,
-          subtotal: i.subtotal,
-          service_id: i.service_id ?? null,
-        })),
-      });
-      setLoading(false);
-      if (rpcErr) return toast.error(rpcErr.message);
-      toast.success("Ordem salva");
+
+      toast.success(orderId ? "Ordem atualizada" : "Ordem salva");
       onOpenChange(false);
       onSaved?.();
-      return;
-    } else {
-      const { data, error } = await (supabase
-        .from("orders" as any)
-        .insert(payload)
-        .select("id")
-        .single() as any);
-      if (error || !data) {
-        setLoading(false);
-        return toast.error(error?.message || "Erro");
-      }
-      id = data.id;
-    }
-    if (!id) {
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Não foi possível salvar a ordem. Tente novamente.");
+    } finally {
       setLoading(false);
-      return toast.error("Não foi possível identificar a ordem salva.");
     }
-    const { error: e2 } = await supabase.from("order_items").insert(
-      persistedItems.map((i) => ({
-        order_id: id,
-        description: i.description,
-        quantity: i.quantity,
-        unit_price: i.unit_price,
-        subtotal: i.subtotal,
-        service_id: i.service_id ?? null,
-      })),
-    );
-    setLoading(false);
-    if (e2) return toast.error(e2.message);
-    toast.success("Ordem salva");
-    onOpenChange(false);
-    onSaved?.();
   }
 
   async function printCompletionReceipt() {
-    if (isTech) {
-      const validationErrors = maintenanceValidationErrors(technical);
-      if (validationErrors.length) {
-        setStep(3);
-        return toast.error(validationErrors[0]);
-      }
-      if (technical.approval_status === "recusado" && maintenance.total > 0)
-        return toast.error("O orçamento foi recusado. Ajuste a aprovação antes de emitir o comprovante.");
-    }
+    if (!isTech) return toast.error("O comprovante de conclusão está disponível para OS de informática.");
     if (!orderId) return toast.error("Salve a OS antes de gerar o comprovante");
-    if (technical.technical_status !== "pronto" && form.production_status !== "entregue")
+    if (technical.technical_status !== "pronto")
       return toast.error("Marque a manutenção como pronta antes de emitir o comprovante");
-    const [{ data: o }, { data: client }, { data: company }, { data: orderItems }] = await Promise.all([
-      supabase.from("orders").select("*").eq("id", orderId).single(),
-      supabase.from("clients").select("*").eq("id", form.client_id).single(),
-      supabase.from("company_settings").select("*").limit(1).single(),
-      supabase.from("order_items").select("*").eq("order_id", orderId),
-    ]);
-    if (!o || !client || !company) return toast.error("Dados incompletos para o comprovante");
-    const { generateTechnicalCompletionPDF } = await import("@/lib/pdf");
-    await generateTechnicalCompletionPDF({ company: company as any, order: { ...(o as any), technical_data: technical, total, paid: Number(form.paid) || 0, payment_method: form.payment_method || null }, client: client as any, items: (isTech ? technicalOrderItems(technical) : orderItems ?? []) as any });
+    if (maintenance.total > 0 && ["aguardando", "recusado"].includes(technical.approval_status))
+      return toast.error("O orçamento precisa estar aprovado ou marcado como não solicitado para emitir o comprovante.");
+
+    try {
+      const [{ data: order, error: orderError }, { data: client, error: clientError }, { data: company, error: companyError }] = await Promise.all([
+        supabase.from("orders").select("*").eq("id", orderId).single(),
+        supabase.from("clients").select("*").eq("id", form.client_id).single(),
+        supabase.from("company_settings").select("*").limit(1).single(),
+      ]);
+      if (orderError || clientError || companyError || !order || !client || !company)
+        return toast.error(orderError?.message || clientError?.message || companyError?.message || "Dados incompletos para o comprovante");
+
+      const savedTechnical = readTechnicalData((order as any).technical_data);
+      const currentTechnical = readTechnicalData({
+        ...technical,
+        completed_at: savedTechnical.completed_at,
+      });
+      if (JSON.stringify(savedTechnical) !== JSON.stringify(currentTechnical) ||
+          Number((order as any).total) !== total ||
+          Number((order as any).paid) !== clampPayment(form.paid, total)) {
+        return toast.error("Salve as alterações da OS antes de emitir o comprovante.");
+      }
+      if (savedTechnical.technical_status !== "pronto")
+        return toast.error("A OS salva ainda não está marcada como pronta.");
+
+      const { generateTechnicalCompletionPDF } = await import("@/lib/pdf");
+      await generateTechnicalCompletionPDF({
+        company: company as any,
+        order: order as any,
+        client: client as any,
+        items: technicalOrderItems(savedTechnical) as any,
+      });
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Não foi possível gerar o comprovante.");
+    }
   }
 
   async function printPDF() {
+    if (!orderId) return toast.error("Salve a OS antes de gerar o PDF");
     if (isTech) {
       const validationErrors = maintenanceValidationErrors(technical);
       if (validationErrors.length) {
         setStep(3);
         return toast.error(validationErrors[0]);
       }
-      if (technical.approval_status === "recusado" && maintenance.total > 0)
-        return toast.error("O orçamento foi recusado. Ajuste a aprovação antes de emitir o PDF.");
     }
-    if (!orderId) return toast.error("Salve a OS antes de gerar o PDF");
-    const [{ data: o }, { data: c }, { data: its }, { data: comp }] = await Promise.all([
-      supabase.from("orders").select("*").eq("id", orderId).single(),
-      supabase.from("clients").select("*").eq("id", form.client_id).single(),
-      supabase.from("order_items").select("*").eq("order_id", orderId),
-      supabase.from("company_settings").select("*").limit(1).single(),
-    ]);
-    if (!o || !c || !comp) return toast.error("Dados incompletos");
-    const { generateOrderPDF } = await import("@/lib/pdf");
-    generateOrderPDF({
-      company: comp as any,
-      order: { ...(o as any), technical_data: isTech ? technical : (o as any).technical_data, total, paid: Number(form.paid) || 0, payment_method: form.payment_method || null },
-      client: c as any,
-      items: (isTech ? technicalOrderItems(technical) : its ?? []) as any,
-    });
+
+    try {
+      const [{ data: order, error: orderError }, { data: client, error: clientError }, { data: itemsFromDb, error: itemsError }, { data: company, error: companyError }] = await Promise.all([
+        supabase.from("orders").select("*").eq("id", orderId).single(),
+        supabase.from("clients").select("*").eq("id", form.client_id).single(),
+        supabase.from("order_items").select("*").eq("order_id", orderId),
+        supabase.from("company_settings").select("*").limit(1).single(),
+      ]);
+      if (orderError || clientError || itemsError || companyError || !order || !client || !company)
+        return toast.error(orderError?.message || clientError?.message || itemsError?.message || companyError?.message || "Dados incompletos para o PDF");
+
+      if (isTech) {
+        const savedTechnical = readTechnicalData((order as any).technical_data);
+        const currentTechnical = readTechnicalData({
+          ...technical,
+          completed_at: savedTechnical.completed_at,
+        });
+        if (JSON.stringify(savedTechnical) !== JSON.stringify(currentTechnical) ||
+            Number((order as any).total) !== total ||
+            Number((order as any).paid) !== clampPayment(form.paid, total)) {
+          return toast.error("Salve as alterações da OS antes de gerar o PDF.");
+        }
+      }
+
+      const { generateOrderPDF } = await import("@/lib/pdf");
+      await generateOrderPDF({
+        company: company as any,
+        order: order as any,
+        client: client as any,
+        items: (isTech ? technicalOrderItems(readTechnicalData((order as any).technical_data)) : itemsFromDb ?? []) as any,
+      });
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Não foi possível gerar o PDF.");
+    }
   }
 
   const steps = ["Cliente", "Equipamento", "Checklist", "Manutenção e valores"];

@@ -5,6 +5,7 @@ import {
   customerTechnicalRows,
   maintenanceTotals,
   maintenanceValidationErrors,
+  readTechnicalData,
   technicalOrderItems,
 } from './technical-order';
 
@@ -73,4 +74,33 @@ describe('technology intake', () => {
     expect(items.some(item => !Number.isFinite(item.subtotal))).toBe(false);
   });
 
+
+  test("normalizes malformed legacy JSON without crashing calculations or PDFs", () => {
+    const data = readTechnicalData({
+      services: [null, { id: 7, description: 42, quantity: "Infinity", unit_price: 50 }],
+      parts: [null, { name: "SSD", quantity: 1, cost_price: "NaN", sale_price: 120 }],
+      carriers: "not-an-array",
+      pattern: [1, 1, 10, "3", 9],
+      inspection: ["invalid"],
+      discount: Number.POSITIVE_INFINITY,
+      additional_expenses: -50,
+    });
+    expect(data.services).toHaveLength(1);
+    expect(data.services[0].description).toBe("");
+    expect(data.services[0].quantity).toBe(1);
+    expect(data.parts[0].cost_price).toBe(0);
+    expect(data.carriers).toEqual([]);
+    expect(data.pattern).toEqual([1, 9]);
+    expect(maintenanceTotals(data).total).toBe(120);
+    expect(customerTechnicalRows(data).length).toBeGreaterThan(0);
+    expect(technicalOrderItems(data).every(item => Number.isFinite(item.subtotal))).toBe(true);
+  });
+
+  test("allows an equipment intake to be saved before services or parts are entered", () => {
+    const data = emptyTechnicalData();
+    data.equipment = "Notebook";
+    data.complaint = "Não liga";
+    expect(technicalOrderItems(data)).toEqual([]);
+    expect(maintenanceTotals(data).total).toBe(0);
+  });
 });
