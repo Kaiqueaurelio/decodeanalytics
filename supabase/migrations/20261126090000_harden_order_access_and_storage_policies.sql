@@ -14,6 +14,93 @@ CREATE POLICY "services_read_staff" ON public.services
     OR public.has_role(auth.uid(), 'financeiro'::public.app_role)
   );
 
+-- The first version of the briefing workflow granted every authenticated
+-- account access. Reassert role-scoped policies here as a defense-in-depth fix.
+DROP POLICY IF EXISTS "briefing_links_staff" ON public.briefing_links;
+DROP POLICY IF EXISTS "briefing_links_staff_roles" ON public.briefing_links;
+CREATE POLICY "briefing_links_staff_roles" ON public.briefing_links
+  FOR ALL TO authenticated
+  USING (
+    public.is_admin(auth.uid())
+    OR public.has_role(auth.uid(), 'atendente'::public.app_role)
+    OR public.has_role(auth.uid(), 'producao'::public.app_role)
+    OR public.has_role(auth.uid(), 'financeiro'::public.app_role)
+  )
+  WITH CHECK (
+    public.is_admin(auth.uid())
+    OR public.has_role(auth.uid(), 'atendente'::public.app_role)
+    OR public.has_role(auth.uid(), 'producao'::public.app_role)
+    OR public.has_role(auth.uid(), 'financeiro'::public.app_role)
+  );
+
+DROP POLICY IF EXISTS "client_briefings_staff" ON public.client_briefings;
+DROP POLICY IF EXISTS "client_briefings_staff_roles" ON public.client_briefings;
+CREATE POLICY "client_briefings_staff_roles" ON public.client_briefings
+  FOR ALL TO authenticated
+  USING (
+    public.is_admin(auth.uid())
+    OR public.has_role(auth.uid(), 'atendente'::public.app_role)
+    OR public.has_role(auth.uid(), 'producao'::public.app_role)
+    OR public.has_role(auth.uid(), 'financeiro'::public.app_role)
+  )
+  WITH CHECK (
+    public.is_admin(auth.uid())
+    OR public.has_role(auth.uid(), 'atendente'::public.app_role)
+    OR public.has_role(auth.uid(), 'producao'::public.app_role)
+    OR public.has_role(auth.uid(), 'financeiro'::public.app_role)
+  );
+
+DROP POLICY IF EXISTS "briefing_files_staff" ON public.briefing_files;
+DROP POLICY IF EXISTS "briefing_files_staff_roles" ON public.briefing_files;
+CREATE POLICY "briefing_files_staff_roles" ON public.briefing_files
+  FOR ALL TO authenticated
+  USING (
+    public.is_admin(auth.uid())
+    OR public.has_role(auth.uid(), 'atendente'::public.app_role)
+    OR public.has_role(auth.uid(), 'producao'::public.app_role)
+    OR public.has_role(auth.uid(), 'financeiro'::public.app_role)
+  )
+  WITH CHECK (
+    public.is_admin(auth.uid())
+    OR public.has_role(auth.uid(), 'atendente'::public.app_role)
+    OR public.has_role(auth.uid(), 'producao'::public.app_role)
+    OR public.has_role(auth.uid(), 'financeiro'::public.app_role)
+  );
+
+DROP POLICY IF EXISTS "art_versions_staff" ON public.art_versions;
+DROP POLICY IF EXISTS "art_versions_staff_roles" ON public.art_versions;
+CREATE POLICY "art_versions_staff_roles" ON public.art_versions
+  FOR ALL TO authenticated
+  USING (
+    public.is_admin(auth.uid())
+    OR public.has_role(auth.uid(), 'atendente'::public.app_role)
+    OR public.has_role(auth.uid(), 'producao'::public.app_role)
+    OR public.has_role(auth.uid(), 'financeiro'::public.app_role)
+  )
+  WITH CHECK (
+    public.is_admin(auth.uid())
+    OR public.has_role(auth.uid(), 'atendente'::public.app_role)
+    OR public.has_role(auth.uid(), 'producao'::public.app_role)
+    OR public.has_role(auth.uid(), 'financeiro'::public.app_role)
+  );
+
+DROP POLICY IF EXISTS "art_comments_staff" ON public.art_comments;
+DROP POLICY IF EXISTS "art_comments_staff_roles" ON public.art_comments;
+CREATE POLICY "art_comments_staff_roles" ON public.art_comments
+  FOR ALL TO authenticated
+  USING (
+    public.is_admin(auth.uid())
+    OR public.has_role(auth.uid(), 'atendente'::public.app_role)
+    OR public.has_role(auth.uid(), 'producao'::public.app_role)
+    OR public.has_role(auth.uid(), 'financeiro'::public.app_role)
+  )
+  WITH CHECK (
+    public.is_admin(auth.uid())
+    OR public.has_role(auth.uid(), 'atendente'::public.app_role)
+    OR public.has_role(auth.uid(), 'producao'::public.app_role)
+    OR public.has_role(auth.uid(), 'financeiro'::public.app_role)
+  );
+
 -- Company settings must never fall back to the original unrestricted policy.
 DROP POLICY IF EXISTS "cs_read" ON public.company_settings;
 DROP POLICY IF EXISTS "cs_read_staff" ON public.company_settings;
