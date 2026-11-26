@@ -360,14 +360,15 @@ function ClientsPage() {
               <Plus className="w-4 h-4 mr-1.5" /> Novo cliente
             </Button>
           </DialogTrigger>
-          <DialogContent className="max-h-[92dvh] w-[calc(100%-1rem)] max-w-2xl overflow-y-auto p-4 sm:p-6">
-            <DialogHeader>
+          <DialogContent className="flex max-h-[calc(100dvh-2rem)] w-[calc(100%-1rem)] max-w-2xl flex-col overflow-hidden p-0 sm:max-h-[calc(100dvh-3rem)] sm:p-0">
+            <DialogHeader className="shrink-0 border-b px-4 pb-3 pt-5 text-left sm:px-6">
               <DialogTitle>{editing?.id ? "Editar cliente" : "Novo cliente"}</DialogTitle>
               <DialogDescription>
                 Preencha os dados do cliente para ordens de serviço, contratos e notas.
               </DialogDescription>
             </DialogHeader>
-            <div className="grid min-w-0 grid-cols-1 gap-3 pt-2 sm:grid-cols-2">
+            <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 py-4 sm:px-6">
+              <div className="grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-2">
               <div className="sm:col-span-2">
                 <Label>Nome / Razão Social *</Label>
                 <Input
@@ -434,12 +435,15 @@ function ClientsPage() {
                   onChange={(e) => setEditing({ ...editing, notes: e.target.value })}
                 />
               </div>
+              </div>
             </div>
-            <DialogFooter className="sticky bottom-0 -mx-4 -mb-4 sm:-mx-6 sm:-mb-6 border-t bg-background/95 p-4 backdrop-blur-sm">
-              <Button type="button" variant="outline" onClick={() => setOpen(false)}>
+            <DialogFooter className="shrink-0 flex-col-reverse gap-2 border-t bg-background px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:flex-row sm:justify-end sm:px-6">
+              <Button type="button" variant="outline" className="w-full sm:w-auto" onClick={() => setOpen(false)}>
                 Cancelar
               </Button>
-              <Button onClick={save}>Salvar cliente</Button>
+              <Button type="button" className="w-full sm:w-auto" onClick={save}>
+                Salvar cliente
+              </Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
