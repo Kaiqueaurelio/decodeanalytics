@@ -25,7 +25,7 @@ import { brl, PAYMENT_METHODS, PRODUCTION_STATUS_LABEL, toIsoDate } from "@/lib/
 import { OSStatusBadge } from "@/components/OSStatusBadge";
 
 import { TechnicalIntake } from "@/components/TechnicalIntake";
-import { emptyTechnicalData, readTechnicalData, type TechnicalData } from "@/lib/technical-order";
+import { emptyTechnicalData, readTechnicalData, maintenanceTotals, maintenanceValidationErrors, technicalOrderItems, type TechnicalData } from "@/lib/technical-order";
 
 export interface OrderEditorProps {
   open: boolean;
@@ -146,7 +146,22 @@ export function OrderEditor({
           performed_on: o.performed_on ?? "",
           service_contract_id: o.service_contract_id ?? "",
         });
-        setTechnical(readTechnicalData(o.technical_data));
+        const loadedTechnical = readTechnicalData(o.technical_data);
+        const hasStructuredMaintenance = !!o.technical_data &&
+          typeof o.technical_data === "object" &&
+          (Object.prototype.hasOwnProperty.call(o.technical_data, "services") ||
+            Object.prototype.hasOwnProperty.call(o.technical_data, "parts"));
+        // Importa itens antigos somente quando a OS ainda não possui o formato estruturado.
+        // Arrays vazios são um estado válido e não podem duplicar despesas adicionais.
+        if (!hasStructuredMaintenance) {
+          loadedTechnical.services = (its ?? []).map((item: any) => ({
+            id: crypto.randomUUID(),
+            description: item.description,
+            quantity: Number(item.quantity) || 1,
+            unit_price: Number(item.unit_price) || 0,
+          }));
+        }
+        setTechnical(loadedTechnical);
         setItems(
           (its ?? []).map((i: any) => ({
             id: i.id,
@@ -265,7 +280,9 @@ export function OrderEditor({
       return next;
     });
   }
-  const total = items.reduce((s, i) => s + (Number(i.subtotal) || 0), 0);
+  const isTech = form.service_segment === "tecnologia";
+  const maintenance = maintenanceTotals(technical);
+  const total = isTech ? maintenance.total : items.reduce((s, i) => s + (Number(i.subtotal) || 0), 0);
 
   async function save() {
     if (!form.client_id) return toast.error("Selecione um cliente");
@@ -276,11 +293,23 @@ export function OrderEditor({
       setStep(1);
       return toast.error("Informe o equipamento e o defeito relatado");
     }
-    if (!items.length) return toast.error("Adicione ao menos um item");
+    const technicalToSave = { ...technical, completed_at: technical.technical_status === "pronto" ? (technical.completed_at || new Date().toISOString()) : technical.completed_at };
+    if (isTech) {
+      const maintenanceErrors = maintenanceValidationErrors(technicalToSave);
+      if (maintenanceErrors.length) {
+        setStep(3);
+        return toast.error(maintenanceErrors[0]);
+      }
+      if (technicalToSave.approval_status === "recusado" && maintenance.total > 0) {
+        return toast.error("O orçamento foi recusado. Ajuste a aprovação antes de salvar a cobrança.");
+      }
+    }
+    const persistedItems = isTech ? technicalOrderItems(technicalToSave) : items;
+    if (!persistedItems.length) return toast.error("Adicione ao menos um serviço ou peça");
     setLoading(true);
     const payload = {
       service_segment: form.service_segment || "grafica",
-      technical_data: JSON.parse(JSON.stringify(technical)),
+      technical_data: JSON.parse(JSON.stringify(technicalToSave)),
       client_id: form.client_id,
       title: form.title,
       description: form.description,
@@ -290,7 +319,7 @@ export function OrderEditor({
       client_notes: form.client_notes,
       internal_notes: form.internal_notes,
       total,
-      paid: Number(form.paid) || 0,
+      paid: Math.min(total, Math.max(0, Number(form.paid) || 0)),
       payment_method: form.payment_method || null,
       production_status: form.production_status,
       deadline: form.deadline || null,
@@ -315,7 +344,7 @@ export function OrderEditor({
       // Substitui itens atomicamente via RPC (evita OS sem itens em caso de falha).
       const { error: rpcErr } = await (supabase as any).rpc("replace_order_items", {
         _order_id: id,
-        _items: items.map((i) => ({
+        _items: persistedItems.map((i) => ({
           description: i.description,
           quantity: i.quantity,
           unit_price: i.unit_price,
@@ -346,7 +375,7 @@ export function OrderEditor({
       return toast.error("Não foi possível identificar a ordem salva.");
     }
     const { error: e2 } = await supabase.from("order_items").insert(
-      items.map((i) => ({
+      persistedItems.map((i) => ({
         order_id: id,
         description: i.description,
         quantity: i.quantity,
@@ -362,7 +391,40 @@ export function OrderEditor({
     onSaved?.();
   }
 
+  async function printCompletionReceipt() {
+    if (isTech) {
+      const validationErrors = maintenanceValidationErrors(technical);
+      if (validationErrors.length) {
+        setStep(3);
+        return toast.error(validationErrors[0]);
+      }
+      if (technical.approval_status === "recusado" && maintenance.total > 0)
+        return toast.error("O orçamento foi recusado. Ajuste a aprovação antes de emitir o comprovante.");
+    }
+    if (!orderId) return toast.error("Salve a OS antes de gerar o comprovante");
+    if (technical.technical_status !== "pronto" && form.production_status !== "entregue")
+      return toast.error("Marque a manutenção como pronta antes de emitir o comprovante");
+    const [{ data: o }, { data: client }, { data: company }, { data: orderItems }] = await Promise.all([
+      supabase.from("orders").select("*").eq("id", orderId).single(),
+      supabase.from("clients").select("*").eq("id", form.client_id).single(),
+      supabase.from("company_settings").select("*").limit(1).single(),
+      supabase.from("order_items").select("*").eq("order_id", orderId),
+    ]);
+    if (!o || !client || !company) return toast.error("Dados incompletos para o comprovante");
+    const { generateTechnicalCompletionPDF } = await import("@/lib/pdf");
+    await generateTechnicalCompletionPDF({ company: company as any, order: { ...(o as any), technical_data: technical, total, paid: Number(form.paid) || 0, payment_method: form.payment_method || null }, client: client as any, items: (isTech ? technicalOrderItems(technical) : orderItems ?? []) as any });
+  }
+
   async function printPDF() {
+    if (isTech) {
+      const validationErrors = maintenanceValidationErrors(technical);
+      if (validationErrors.length) {
+        setStep(3);
+        return toast.error(validationErrors[0]);
+      }
+      if (technical.approval_status === "recusado" && maintenance.total > 0)
+        return toast.error("O orçamento foi recusado. Ajuste a aprovação antes de emitir o PDF.");
+    }
     if (!orderId) return toast.error("Salve a OS antes de gerar o PDF");
     const [{ data: o }, { data: c }, { data: its }, { data: comp }] = await Promise.all([
       supabase.from("orders").select("*").eq("id", orderId).single(),
@@ -374,14 +436,13 @@ export function OrderEditor({
     const { generateOrderPDF } = await import("@/lib/pdf");
     generateOrderPDF({
       company: comp as any,
-      order: o as any,
+      order: { ...(o as any), technical_data: isTech ? technical : (o as any).technical_data, total, paid: Number(form.paid) || 0, payment_method: form.payment_method || null },
       client: c as any,
-      items: (its ?? []) as any,
+      items: (isTech ? technicalOrderItems(technical) : its ?? []) as any,
     });
   }
 
-  const isTech = form.service_segment === "tecnologia";
-  const steps = ["Cliente", "Equipamento", "Checklist", "Finalização"];
+  const steps = ["Cliente", "Equipamento", "Checklist", "Manutenção e valores"];
   function nextStep() {
     if (step === 0 && !form.client_id) return toast.error("Selecione um cliente");
     if (step === 1 && (!technical.equipment || !technical.complaint.trim()))
@@ -562,9 +623,35 @@ export function OrderEditor({
           </div>
 
           {isTech && step > 0 && (
-            <TechnicalIntake value={technical} onChange={setTechnical} step={step} team={team} />
+            <>
+              <TechnicalIntake value={technical} onChange={setTechnical} step={step} team={team} />
+              {step === 3 && (
+                <section className="space-y-3 rounded-lg border p-4">
+                  <h3 className="font-semibold">Pagamento e recebimento</h3>
+                  <div className="grid gap-3 sm:grid-cols-3">
+                    <div>
+                      <Label>Valor total</Label>
+                      <div className="rounded-md bg-muted px-3 py-2 text-lg font-bold">{brl(total)}</div>
+                    </div>
+                    <div>
+                      <Label>Entrada / valor já pago (R$)</Label>
+                      <Input type="number" min="0" max={total} step="0.01" value={form.paid ?? 0}
+                        onChange={(e) => setForm({ ...form, paid: Math.min(total, Math.max(0, Number(e.target.value) || 0)) })} />
+                    </div>
+                    <div>
+                      <Label>Forma de pagamento</Label>
+                      <Select value={form.payment_method ?? ""} onValueChange={(v) => setForm({ ...form, payment_method: v })}>
+                        <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
+                        <SelectContent>{PAYMENT_METHODS.map((p) => <SelectItem key={p} value={p}>{p}</SelectItem>)}</SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                  <p className="text-sm text-muted-foreground">Saldo restante: {brl(Math.max(0, total - (Number(form.paid) || 0)))}</p>
+                </section>
+              )}
+            </>
           )}
-          <div className={isTech && step !== 3 ? "hidden" : "space-y-4"}>
+          <div className={isTech ? "hidden" : "space-y-4"}>
             <div>
               <div className="flex items-center justify-between mb-2">
                 <Label>Itens</Label>
@@ -794,6 +881,12 @@ export function OrderEditor({
             <Button onClick={nextStep}>
               Próximo
               <ChevronRight className="h-4 w-4" />
+            </Button>
+          )}
+          {orderId && isTech && technical.technical_status === "pronto" && (
+            <Button variant="outline" onClick={printCompletionReceipt}>
+              <FileText className="w-4 h-4 mr-1" />
+              Comprovante de conclusão
             </Button>
           )}
           {orderId && (

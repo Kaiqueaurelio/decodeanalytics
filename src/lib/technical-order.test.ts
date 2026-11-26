@@ -1,5 +1,13 @@
 import { describe, test, expect } from 'vitest';
-import { emptyTechnicalData, visibleInspection, customerTechnicalRows } from './technical-order';
+import {
+  emptyTechnicalData,
+  visibleInspection,
+  customerTechnicalRows,
+  maintenanceTotals,
+  maintenanceValidationErrors,
+  technicalOrderItems,
+} from './technical-order';
+
 describe('technology intake', () => {
   test('a device that does not power on skips functional tests', () => {
     const data=emptyTechnicalData(); data.inspection['liga']='nao';
@@ -10,11 +18,57 @@ describe('technology intake', () => {
     expect(visibleInspection(data).some(q=>q.id==='toque')).toBe(false);
     expect(visibleInspection(data).some(q=>q.id==='imagem')).toBe(true);
   });
-  test('customer PDF does not include unlock credentials', () => {
-    const data=emptyTechnicalData();data.password='secret-test-9482';data.pattern=[1,4,7,8];data.model='iPhone 11';
+  test('customer PDF does not include unlock credentials or internal part costs', () => {
+    const data=emptyTechnicalData();
+    data.password='secret-test-9482';data.pattern=[1,4,7,8];data.model='Notebook Pro';
+    data.parts=[{id:'p1',name:'Memória RAM 8 GB',brand:'Kingston',model:'DDR4',quantity:1,cost_price:90,sale_price:130}];
     const rows=customerTechnicalRows(data);
-    expect(JSON.stringify(rows)).toContain('iPhone 11');
+    expect(JSON.stringify(rows)).toContain('Notebook Pro');
+    expect(JSON.stringify(rows)).toContain('Memória RAM 8 GB');
     expect(JSON.stringify(rows)).not.toContain('secret-test-9482');
     expect(JSON.stringify(rows)).not.toContain('[1,4,7,8]');
+    expect(JSON.stringify(rows)).not.toContain('90');
   });
+  test('calculates labor, parts, extra expenses and discount without exposing cost price', () => {
+    const data=emptyTechnicalData();
+    data.services=[{id:'s1',description:'Limpeza interna',quantity:1,unit_price:80}];
+    data.parts=[{id:'p1',name:'SSD 240 GB',brand:'Kingston',model:'A400',quantity:2,cost_price:100,sale_price:150}];
+    data.additional_expenses=20;
+    data.discount=30;
+    expect(maintenanceTotals(data)).toEqual({services:80,parts:300,additional:20,discount:30,total:370});
+    const items=technicalOrderItems(data);
+    expect(items.reduce((sum,item)=>sum+item.subtotal,0)).toBe(400);
+    expect(JSON.stringify(items)).not.toContain('cost_price');
+    expect(JSON.stringify(items)).not.toContain('100');
+  });
+  test('caps discount at the gross total and never returns a negative total', () => {
+    const data=emptyTechnicalData();
+    data.services=[{id:'s1',description:'Diagnóstico',quantity:1,unit_price:50}];
+    data.discount=500;
+    expect(maintenanceTotals(data).total).toBe(0);
+    expect(maintenanceTotals(data).discount).toBe(50);
+  });
+ 
+  test('rejects priced unnamed rows and excludes them from customer totals', () => {
+    const data = emptyTechnicalData();
+    data.services = [
+      { id: 's1', description: 'Reparo identificado', quantity: 1, unit_price: 80 },
+      { id: 's2', description: '', quantity: 1, unit_price: 50 },
+    ];
+    data.parts = [
+      { id: 'p1', name: '', brand: '', model: '', quantity: 1, cost_price: 20, sale_price: 40 },
+    ];
+    expect(maintenanceValidationErrors(data)).toHaveLength(2);
+    expect(maintenanceTotals(data).total).toBe(80);
+    expect(technicalOrderItems(data).reduce((sum, item) => sum + item.subtotal, 0)).toBe(80);
+  });
+
+  test('normalizes negative and non-finite values consistently', () => {
+    const data = emptyTechnicalData();
+    data.services = [{ id: 's1', description: 'Diagnóstico', quantity: -2, unit_price: 100 }];
+    data.additional_expenses = Number.POSITIVE_INFINITY;
+    expect(maintenanceTotals(data).total).toBe(0);
+    expect(technicalOrderItems(data)[0].subtotal).toBe(0);
+  });
+
 });
