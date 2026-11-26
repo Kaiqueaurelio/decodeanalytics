@@ -175,6 +175,8 @@ export function OrderEditor({
   const [step, setStep] = useState(0);
   const [technical, setTechnical] = useState<TechnicalData>(emptyTechnicalData);
   const [loading, setLoading] = useState(false);
+  const [loadingOrder, setLoadingOrder] = useState(false);
+  const [loadError, setLoadError] = useState(false);
   const [clients, setClients] = useState<{ id: string; name: string }[]>([]);
   const [services, setServices] = useState<{ id: string; name: string; base_price: number }[]>([]);
   const [contracts, setContracts] = useState<
@@ -196,11 +198,14 @@ export function OrderEditor({
   useEffect(() => {
     if (!open) return;
     let cancelled = false;
+    const needsLoad = !!orderId || !!fromQuoteId || !!initialContractId;
     setStep(0);
     setTechnical(emptyTechnicalData());
     setForm(createEmptyOrderForm(initialSegment, initialContractId));
     setItems([]);
     setLoading(false);
+    setLoadingOrder(needsLoad);
+    setLoadError(false);
 
     supabase.from("clients").select("id,name").order("name").then(({ data, error }) => {
       if (cancelled) return;
@@ -229,127 +234,159 @@ export function OrderEditor({
 
     if (orderId) {
       (async () => {
-        const { data: order, error: orderError } = await (supabase
-          .from("orders" as any)
-          .select("*")
-          .eq("id", orderId)
-          .single() as any);
-        if (cancelled) return;
-        if (orderError || !order) {
-          toast.error(orderError?.message || "Não consegui carregar a OS. Feche e tente novamente.");
-          return;
-        }
+        try {
+          const { data: order, error: orderError } = await (supabase
+            .from("orders" as any)
+            .select("*")
+            .eq("id", orderId)
+            .single() as any);
+          if (cancelled) return;
+          if (orderError || !order) {
+            setLoadError(true);
+            toast.error(orderError?.message || "Não consegui carregar a OS. Feche e tente novamente.");
+            return;
+          }
 
-        const { data: orderItems, error: itemsError } = await supabase
-          .from("order_items")
-          .select("*")
-          .eq("order_id", orderId);
-        if (cancelled) return;
-        if (itemsError) {
-          toast.error("Não foi possível carregar os itens da OS. Nenhum dado foi alterado.");
-          return;
-        }
+          const { data: orderItems, error: itemsError } = await supabase
+            .from("order_items")
+            .select("*")
+            .eq("order_id", orderId);
+          if (cancelled) return;
+          if (itemsError) {
+            setLoadError(true);
+            toast.error("Não foi possível carregar os itens da OS. Nenhum dado foi alterado.");
+            return;
+          }
 
-        setForm({
-          ...order,
-          deadline: order.deadline ?? "",
-          performed_on: order.performed_on ?? "",
-          service_contract_id: order.service_contract_id ?? "",
-        });
-        const loadedTechnical = readTechnicalData(order.technical_data);
-        const rawTechnical = order.technical_data as Record<string, unknown> | null;
-        const hasStructuredMaintenance = !!rawTechnical &&
-          typeof rawTechnical === "object" &&
-          !Array.isArray(rawTechnical) &&
-          (Array.isArray(rawTechnical.services) || Array.isArray(rawTechnical.parts));
-        // Arrays vazios são um estado estruturado válido; só importa itens antigos quando o formato ainda não existe.
-        if (!hasStructuredMaintenance) {
-          loadedTechnical.services = (orderItems ?? []).map((item) => ({
-            id: crypto.randomUUID(),
-            description: item.description,
-            quantity: Number(item.quantity) || 1,
-            unit_price: Number(item.unit_price) || 0,
-          }));
+          setForm({
+            ...order,
+            deadline: order.deadline ?? "",
+            performed_on: order.performed_on ?? "",
+            service_contract_id: order.service_contract_id ?? "",
+          });
+          const loadedTechnical = readTechnicalData(order.technical_data);
+          const rawTechnical = order.technical_data as Record<string, unknown> | null;
+          const hasStructuredMaintenance = !!rawTechnical &&
+            typeof rawTechnical === "object" &&
+            !Array.isArray(rawTechnical) &&
+            (Array.isArray(rawTechnical.services) || Array.isArray(rawTechnical.parts));
+          // Arrays vazios são um estado estruturado válido; só importa itens antigos quando o formato ainda não existe.
+          if (!hasStructuredMaintenance) {
+            loadedTechnical.services = (orderItems ?? []).map((item) => ({
+              id: crypto.randomUUID(),
+              description: item.description,
+              quantity: Number(item.quantity) || 1,
+              unit_price: Number(item.unit_price) || 0,
+            }));
+          }
+          setTechnical(loadedTechnical);
+          setItems(
+            (orderItems ?? []).map((item) => ({
+              id: item.id,
+              description: item.description,
+              quantity: Number(item.quantity) || 0,
+              unit_price: Number(item.unit_price) || 0,
+              subtotal: Number(item.subtotal) || 0,
+              service_id: item.service_id,
+            })),
+          );
+        } catch (error) {
+          if (!cancelled) {
+            setLoadError(true);
+            toast.error(error instanceof Error ? error.message : "Falha ao carregar a OS.");
+          }
+        } finally {
+          if (!cancelled) setLoadingOrder(false);
         }
-        setTechnical(loadedTechnical);
-        setItems(
-          (orderItems ?? []).map((item) => ({
-            id: item.id,
-            description: item.description,
-            quantity: Number(item.quantity) || 0,
-            unit_price: Number(item.unit_price) || 0,
-            subtotal: Number(item.subtotal) || 0,
-            service_id: item.service_id,
-          })),
-        );
       })();
     } else if (fromQuoteId) {
       (async () => {
-        const { data: quote, error: quoteError } = await supabase
-          .from("quotes")
-          .select("*")
-          .eq("id", fromQuoteId)
-          .single();
-        if (cancelled) return;
-        if (quoteError || !quote) {
-          toast.error(quoteError?.message || "Não foi possível carregar o orçamento.");
-          return;
+        try {
+          const { data: quote, error: quoteError } = await supabase
+            .from("quotes")
+            .select("*")
+            .eq("id", fromQuoteId)
+            .single();
+          if (cancelled) return;
+          if (quoteError || !quote) {
+            setLoadError(true);
+            toast.error(quoteError?.message || "Não foi possível carregar o orçamento.");
+            return;
+          }
+          const { data: quoteItems, error: quoteItemsError } = await supabase
+            .from("quote_items")
+            .select("*")
+            .eq("quote_id", fromQuoteId);
+          if (cancelled) return;
+          if (quoteItemsError) {
+            setLoadError(true);
+            toast.error("Não foi possível carregar os itens do orçamento.");
+            return;
+          }
+          setForm((current: any) => ({
+            ...current,
+            client_id: quote.client_id,
+            title: quote.title ?? "",
+            description: quote.description ?? "",
+            total: Number(quote.total) || 0,
+            quote_id: quote.id,
+          }));
+          setItems(
+            (quoteItems ?? []).map((item) => ({
+              description: item.description,
+              quantity: Number(item.quantity) || 1,
+              unit_price: Number(item.unit_price) || 0,
+              subtotal: Number(item.subtotal) || 0,
+              service_id: item.service_id,
+            })),
+          );
+        } catch (error) {
+          if (!cancelled) {
+            setLoadError(true);
+            toast.error(error instanceof Error ? error.message : "Falha ao carregar o orçamento.");
+          }
+        } finally {
+          if (!cancelled) setLoadingOrder(false);
         }
-        const { data: quoteItems, error: quoteItemsError } = await supabase
-          .from("quote_items")
-          .select("*")
-          .eq("quote_id", fromQuoteId);
-        if (cancelled) return;
-        if (quoteItemsError) {
-          toast.error("Não foi possível carregar os itens do orçamento.");
-          return;
-        }
-        setForm((current: any) => ({
-          ...current,
-          client_id: quote.client_id,
-          title: quote.title ?? "",
-          description: quote.description ?? "",
-          total: Number(quote.total) || 0,
-          quote_id: quote.id,
-        }));
-        setItems(
-          (quoteItems ?? []).map((item) => ({
-            description: item.description,
-            quantity: Number(item.quantity) || 1,
-            unit_price: Number(item.unit_price) || 0,
-            subtotal: Number(item.subtotal) || 0,
-            service_id: item.service_id,
-          })),
-        );
       })();
     } else if (initialContractId) {
       (async () => {
-        const { data: contract, error } = await (supabase
-          .from("service_contracts" as any)
-          .select("id,number,title,client_id,service_id,amount,billing_mode,scope")
-          .eq("id", initialContractId)
-          .eq("status", "aprovado")
-          .single() as any);
-        if (cancelled) return;
-        if (error || !contract) {
-          toast.error("Não consegui carregar o contrato aprovado.");
-          return;
+        try {
+          const { data: contract, error } = await (supabase
+            .from("service_contracts" as any)
+            .select("id,number,title,client_id,service_id,amount,billing_mode,scope")
+            .eq("id", initialContractId)
+            .eq("status", "aprovado")
+            .single() as any);
+          if (cancelled) return;
+          if (error || !contract) {
+            setLoadError(true);
+            toast.error("Não consegui carregar o contrato aprovado.");
+            return;
+          }
+          const unitPrice = contract.billing_mode === "mensal_fixo" ? 0 : Number(contract.amount) || 0;
+          setForm({
+            ...createEmptyOrderForm(initialSegment, contract.id),
+            client_id: contract.client_id,
+            title: contract.title,
+            description: contract.scope ?? "",
+            total: unitPrice,
+          });
+          setItems([{
+            description: contract.title,
+            quantity: 1,
+            unit_price: unitPrice,
+            subtotal: unitPrice,
+            service_id: contract.service_id,
+          }]);
+        } catch (error) {
+          if (!cancelled) {
+            setLoadError(true);
+            toast.error(error instanceof Error ? error.message : "Falha ao carregar o contrato.");
+          }
+        } finally {
+          if (!cancelled) setLoadingOrder(false);
         }
-        const unitPrice = contract.billing_mode === "mensal_fixo" ? 0 : Number(contract.amount) || 0;
-        setForm({
-          ...createEmptyOrderForm(initialSegment, contract.id),
-          client_id: contract.client_id,
-          title: contract.title,
-          description: contract.scope ?? "",
-          total: unitPrice,
-        });
-        setItems([{
-          description: contract.title,
-          quantity: 1,
-          unit_price: unitPrice,
-          subtotal: unitPrice,
-          service_id: contract.service_id,
-        }]);
       })();
     }
 
@@ -371,6 +408,8 @@ export function OrderEditor({
   const total = isTech ? maintenance.total : items.reduce((s, i) => s + (Number(i.subtotal) || 0), 0);
 
   async function save() {
+    if (loadingOrder) return toast.error("Aguarde o carregamento dos dados.");
+    if (loadError) return toast.error("Não foi possível carregar os dados. Feche a janela e tente novamente.");
     if (!form.client_id) return toast.error("Selecione um cliente");
     if (isTech && (!technical.equipment || !technical.complaint.trim())) {
       setStep(1);
@@ -492,6 +531,7 @@ export function OrderEditor({
   }
 
   async function printCompletionReceipt() {
+    if (loadingOrder || loadError) return toast.error("Aguarde o carregamento da OS ou feche e reabra a janela.");
     if (!isTech) return toast.error("O comprovante de conclusão está disponível para OS de informática.");
     if (!orderId) return toast.error("Salve a OS antes de gerar o comprovante");
     if (technical.technical_status !== "pronto")
@@ -534,6 +574,7 @@ export function OrderEditor({
   }
 
   async function printPDF() {
+    if (loadingOrder || loadError) return toast.error("Aguarde o carregamento da OS ou feche e reabra a janela.");
     if (!orderId) return toast.error("Salve a OS antes de gerar o PDF");
     if (isTech) {
       const validationErrors = maintenanceValidationErrors(technical);
@@ -1020,19 +1061,19 @@ export function OrderEditor({
             </Button>
           )}
           {orderId && isTech && technical.technical_status === "pronto" && (
-            <Button variant="outline" onClick={printCompletionReceipt}>
+            <Button variant="outline" onClick={printCompletionReceipt} disabled={loading || loadingOrder || loadError}>
               <FileText className="w-4 h-4 mr-1" />
               Comprovante de conclusão
             </Button>
           )}
           {orderId && (
-            <Button variant="outline" onClick={printPDF}>
+            <Button variant="outline" onClick={printPDF} disabled={loading || loadingOrder || loadError}>
               <FileText className="w-4 h-4 mr-1" />
               PDF
             </Button>
           )}
-          <Button onClick={save} disabled={loading} className={isTech && step < 3 ? "hidden" : ""}>
-            {loading ? "Salvando..." : "Salvar"}
+          <Button onClick={save} disabled={loading || loadingOrder || loadError} className={isTech && step < 3 ? "hidden" : ""}>
+            {loading ? "Salvando..." : loadingOrder ? "Carregando..." : loadError ? "Falha ao carregar" : "Salvar"}
           </Button>
         </DialogFooter>
       </DialogContent>
