@@ -171,11 +171,11 @@ export function maintenanceValidationErrors(data: TechnicalData): string[] {
 export function maintenanceTotals(data: TechnicalData) {
   const services = money((Array.isArray(data.services) ? data.services : []).reduce((sum, item) => {
     if (!item || typeof item.description !== "string" || !item.description.trim()) return sum;
-    return sum + nonNegativeNumber(item.quantity) * nonNegativeNumber(item.unit_price);
+    return sum + money(positiveQuantity(item.quantity) * money(item.unit_price));
   }, 0));
   const parts = money((Array.isArray(data.parts) ? data.parts : []).reduce((sum, item) => {
     if (!item || typeof item.name !== "string" || !item.name.trim()) return sum;
-    return sum + nonNegativeNumber(item.quantity) * nonNegativeNumber(item.sale_price);
+    return sum + money(positiveQuantity(item.quantity) * money(item.sale_price));
   }, 0));
   const additional = money(data.additional_expenses);
   const gross = money(services + parts + additional);

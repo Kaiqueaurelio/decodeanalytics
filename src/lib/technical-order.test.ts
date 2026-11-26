@@ -103,4 +103,15 @@ describe('technology intake', () => {
     expect(technicalOrderItems(data)).toEqual([]);
     expect(maintenanceTotals(data).total).toBe(0);
   });
+
+  test("uses the same rounded line subtotals in the order total", () => {
+    const data = emptyTechnicalData();
+    data.services = [
+      { id: "s1", description: "Serviço 1", quantity: 1, unit_price: 0.005 },
+      { id: "s2", description: "Serviço 2", quantity: 1, unit_price: 0.005 },
+    ];
+    const itemTotal = technicalOrderItems(data).reduce((sum, item) => sum + item.subtotal, 0);
+    expect(itemTotal).toBe(0.02);
+    expect(maintenanceTotals(data).total).toBe(itemTotal);
+  });
 });
