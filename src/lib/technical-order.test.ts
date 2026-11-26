@@ -7,6 +7,7 @@ import {
   maintenanceValidationErrors,
   readTechnicalData,
   technicalOrderItems,
+  type TechnicalData,
 } from './technical-order';
 
 describe('technology intake', () => {
