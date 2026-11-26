@@ -25,11 +25,12 @@ describe('technology intake', () => {
   });
   test('hardware, replacement reason and photographic evidence survive saving and reopening', () => {
     const data = emptyTechnicalData();
-    data.hardware.processor = 'Ryzen 5'; data.hardware.memory = '16 GB';
+    data.hardware.processor = 'Ryzen 5'; data.hardware.motherboard = 'B550M'; data.hardware.memory = '16 GB';
     data.parts = [{id:'p1',name:'SSD',brand:'Kingston',model:'NV2',quantity:1,cost_price:100,sale_price:150,replacement_reason:'HD com setores defeituosos',original_part:'HD 1 TB'}];
     data.photos = [{id:'f1',storage_path:'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa/bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb.jpg',category:'defeito',caption:'HD danificado',part_id:'p1'}];
     const loaded = readTechnicalData(JSON.parse(JSON.stringify(data)));
     expect(loaded.hardware.processor).toBe('Ryzen 5');
+    expect(loaded.hardware.motherboard).toBe('B550M');
     expect(loaded.parts[0]?.replacement_reason).toBe('HD com setores defeituosos');
     expect(loaded.photos[0]?.part_id).toBe('p1');
     expect(customerTechnicalRows(loaded).some(row => row[1]?.includes('HD com setores defeituosos'))).toBe(true);
