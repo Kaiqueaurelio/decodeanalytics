@@ -44,13 +44,11 @@
     padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
   }
 
-  /* Dismissible overlays and dialogs respect the top and bottom safe areas. */
+  /* Constrain dialogs to the mobile viewport without overriding Radix centering. */
   [role="dialog"],
   [role="alertdialog"] {
-    inset-block-start: max(0.5rem, env(safe-area-inset-top));
-    inset-block-end: max(0.5rem, env(safe-area-inset-bottom));
-    margin-block: auto;
-    max-height: calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 1rem);
+    max-width: calc(100vw - 1rem);
+    max-height: calc(100dvh - 1rem - env(safe-area-inset-top) - env(safe-area-inset-bottom));
     overflow-y: auto;
     overscroll-behavior: contain;
   }
