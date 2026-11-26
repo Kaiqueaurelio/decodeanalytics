@@ -146,7 +146,16 @@ export function OrderEditor({
           performed_on: o.performed_on ?? "",
           service_contract_id: o.service_contract_id ?? "",
         });
-        setTechnical(readTechnicalData(o.technical_data));
+        const loadedTechnical = readTechnicalData(o.technical_data);
+        if (!loadedTechnical.services.length && !loadedTechnical.parts.length) {
+          loadedTechnical.services = (its ?? []).map((item: any) => ({
+            id: crypto.randomUUID(),
+            description: item.description,
+            quantity: Number(item.quantity) || 1,
+            unit_price: Number(item.unit_price) || 0,
+          }));
+        }
+        setTechnical(loadedTechnical);
         setItems(
           (its ?? []).map((i: any) => ({
             id: i.id,
