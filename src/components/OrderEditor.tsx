@@ -288,7 +288,7 @@ export function OrderEditor({
       return toast.error("Informe o equipamento e o defeito relatado");
     }
     const technicalToSave = { ...technical, completed_at: technical.technical_status === "pronto" ? (technical.completed_at || new Date().toISOString()) : technical.completed_at };
-    const persistedItems = isTech ? (technicalOrderItems(technicalToSave).length ? technicalOrderItems(technicalToSave) : items) : items;
+    const persistedItems = isTech ? technicalOrderItems(technicalToSave) : items;
     if (!persistedItems.length) return toast.error("Adicione ao menos um serviço ou peça");
     setLoading(true);
     const payload = {
@@ -387,7 +387,7 @@ export function OrderEditor({
     ]);
     if (!o || !client || !company) return toast.error("Dados incompletos para o comprovante");
     const { generateTechnicalCompletionPDF } = await import("@/lib/pdf");
-    await generateTechnicalCompletionPDF({ company: company as any, order: o as any, client: client as any, items: (orderItems ?? []) as any });
+    await generateTechnicalCompletionPDF({ company: company as any, order: { ...(o as any), technical_data: technical, total, paid: Number(form.paid) || 0, payment_method: form.payment_method || null }, client: client as any, items: (isTech ? technicalOrderItems(technical) : orderItems ?? []) as any });
   }
 
   async function printPDF() {
@@ -402,9 +402,9 @@ export function OrderEditor({
     const { generateOrderPDF } = await import("@/lib/pdf");
     generateOrderPDF({
       company: comp as any,
-      order: o as any,
+      order: { ...(o as any), technical_data: isTech ? technical : (o as any).technical_data, total, paid: Number(form.paid) || 0, payment_method: form.payment_method || null },
       client: c as any,
-      items: (its ?? []) as any,
+      items: (isTech ? technicalOrderItems(technical) : its ?? []) as any,
     });
   }
 
