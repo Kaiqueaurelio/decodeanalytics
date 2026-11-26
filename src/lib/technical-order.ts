@@ -157,6 +157,20 @@ export function maintenanceValidationErrors(data: TechnicalData): string[] {
   const services = Array.isArray(data.services) ? data.services : [];
   const parts = Array.isArray(data.parts) ? data.parts : [];
   if (services.some(item =>
+    !!item &&
+    safeQuantity(item.quantity) <= 0 &&
+    ((typeof item.description === "string" && item.description.trim()) || nonNegativeNumber(item.unit_price) > 0)
+  )) {
+    errors.push("Informe uma quantidade maior que zero para cada serviço.");
+  }
+  if (parts.some(item =>
+    !!item &&
+    safeQuantity(item.quantity) <= 0 &&
+    ((typeof item.name === "string" && item.name.trim()) || nonNegativeNumber(item.sale_price) > 0 || nonNegativeNumber(item.cost_price) > 0)
+  )) {
+    errors.push("Informe uma quantidade maior que zero para cada peça.");
+  }
+  if (services.some(item =>
     nonNegativeNumber(item?.unit_price) > 0 &&
     !(typeof item?.description === "string" && item.description.trim())
   )) {
@@ -186,7 +200,7 @@ export function maintenanceTotals(data: TechnicalData) {
 }
 export function technicalOrderItems(data: TechnicalData) {
   const services = (Array.isArray(data.services) ? data.services : [])
-    .filter(item => typeof item?.description === "string" && item.description.trim())
+    .filter(item => typeof item?.description === "string" && item.description.trim() && safeQuantity(item.quantity) > 0)
     .map(item => {
       const quantity = safeQuantity(item.quantity);
       const unitPrice = money(item.unit_price);
@@ -199,7 +213,7 @@ export function technicalOrderItems(data: TechnicalData) {
       };
     });
   const parts = (Array.isArray(data.parts) ? data.parts : [])
-    .filter(item => typeof item?.name === "string" && item.name.trim())
+    .filter(item => typeof item?.name === "string" && item.name.trim() && safeQuantity(item.quantity) > 0)
     .map(item => {
       const quantity = safeQuantity(item.quantity);
       const unitPrice = money(item.sale_price);
