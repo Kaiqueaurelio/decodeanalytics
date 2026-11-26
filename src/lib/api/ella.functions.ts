@@ -380,7 +380,21 @@ export const ellaChat = createServerFn({ method: "POST" })
             .maybeSingle();
           if (error) return { error: error.message };
           if (!data) return { error: `OS #${number} não encontrada` };
-          return { order: data };
+          // Nunca envie credenciais de desbloqueio nem custo de aquisição interno ao provedor de IA.
+          const safeOrder = { ...data } as any;
+          if (safeOrder.technical_data && typeof safeOrder.technical_data === "object") {
+            const safeTechnical = { ...safeOrder.technical_data };
+            delete safeTechnical.password;
+            delete safeTechnical.pattern;
+            safeTechnical.parts = Array.isArray(safeTechnical.parts)
+              ? safeTechnical.parts.map((part: any) => {
+                  const { cost_price: _internalCost, ...customerSafePart } = part ?? {};
+                  return customerSafePart;
+                })
+              : [];
+            safeOrder.technical_data = safeTechnical;
+          }
+          return { order: safeOrder };
         },
       }),
       create_order: tool({
