@@ -90,7 +90,7 @@ GRANT EXECUTE ON FUNCTION public.is_admin(uuid) TO authenticated, service_role;
 CREATE OR REPLACE FUNCTION public.guard_order_sensitive_updates()
 RETURNS trigger
 LANGUAGE plpgsql
-SECURITY DEFINER
+SECURITY INVOKER
 SET search_path TO ''
 AS $function$
 DECLARE
