@@ -147,7 +147,13 @@ export function OrderEditor({
           service_contract_id: o.service_contract_id ?? "",
         });
         const loadedTechnical = readTechnicalData(o.technical_data);
-        if (!loadedTechnical.services.length && !loadedTechnical.parts.length) {
+        const hasStructuredMaintenance = !!o.technical_data &&
+          typeof o.technical_data === "object" &&
+          (Object.prototype.hasOwnProperty.call(o.technical_data, "services") ||
+            Object.prototype.hasOwnProperty.call(o.technical_data, "parts"));
+        // Importa itens antigos somente quando a OS ainda não possui o formato estruturado.
+        // Arrays vazios são um estado válido e não podem duplicar despesas adicionais.
+        if (!hasStructuredMaintenance) {
           loadedTechnical.services = (its ?? []).map((item: any) => ({
             id: crypto.randomUUID(),
             description: item.description,
@@ -288,6 +294,25 @@ export function OrderEditor({
       return toast.error("Informe o equipamento e o defeito relatado");
     }
     const technicalToSave = { ...technical, completed_at: technical.technical_status === "pronto" ? (technical.completed_at || new Date().toISOString()) : technical.completed_at };
+    if (isTech) {
+      const unnamedService = technicalToSave.services.some((item) =>
+        (Number(item.unit_price) > 0 || Number(item.quantity) > 0) && !item.description.trim() && Number(item.unit_price) > 0
+      );
+      const unnamedPart = technicalToSave.parts.some((item) =>
+        (Number(item.sale_price) > 0 || Number(item.cost_price) > 0) && !item.name.trim()
+      );
+      if (unnamedService) {
+        setStep(3);
+        return toast.error("Descreva cada serviço que possui valor cobrado.");
+      }
+      if (unnamedPart) {
+        setStep(3);
+        return toast.error("Informe o nome de cada peça que possui custo ou valor de venda.");
+      }
+      if (technicalToSave.approval_status === "recusado" && maintenance.total > 0) {
+        return toast.error("O orçamento foi recusado. Ajuste a aprovação antes de salvar a cobrança.");
+      }
+    }
     const persistedItems = isTech ? technicalOrderItems(technicalToSave) : items;
     if (!persistedItems.length) return toast.error("Adicione ao menos um serviço ou peça");
     setLoading(true);
@@ -589,7 +614,33 @@ export function OrderEditor({
           </div>
 
           {isTech && step > 0 && (
-            <TechnicalIntake value={technical} onChange={setTechnical} step={step} team={team} />
+            <>
+              <TechnicalIntake value={technical} onChange={setTechnical} step={step} team={team} />
+              {step === 3 && (
+                <section className="space-y-3 rounded-lg border p-4">
+                  <h3 className="font-semibold">Pagamento e recebimento</h3>
+                  <div className="grid gap-3 sm:grid-cols-3">
+                    <div>
+                      <Label>Valor total</Label>
+                      <div className="rounded-md bg-muted px-3 py-2 text-lg font-bold">{brl(total)}</div>
+                    </div>
+                    <div>
+                      <Label>Entrada / valor já pago (R$)</Label>
+                      <Input type="number" min="0" max={total} step="0.01" value={form.paid ?? 0}
+                        onChange={(e) => setForm({ ...form, paid: Math.min(total, Math.max(0, Number(e.target.value) || 0)) })} />
+                    </div>
+                    <div>
+                      <Label>Forma de pagamento</Label>
+                      <Select value={form.payment_method ?? ""} onValueChange={(v) => setForm({ ...form, payment_method: v })}>
+                        <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
+                        <SelectContent>{PAYMENT_METHODS.map((p) => <SelectItem key={p} value={p}>{p}</SelectItem>)}</SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                  <p className="text-sm text-muted-foreground">Saldo restante: {brl(Math.max(0, total - (Number(form.paid) || 0)))}</p>
+                </section>
+              )}
+            </>
           )}
           <div className={isTech ? "hidden" : "space-y-4"}>
             <div>
