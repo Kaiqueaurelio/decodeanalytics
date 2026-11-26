@@ -117,63 +117,122 @@ export async function generateOrderPDF(opts: {
 }) {
   const doc = new jsPDF();
   const logo = await loadLogo("/brand/decode-logo.png");
+  const isTechnical = opts.order.service_segment === "tecnologia";
+  const technical = isTechnical ? readTechnicalData(opts.order.technical_data) : null;
   header(doc, opts.company, `Ordem de Serviço #${opts.order.number}`, logo);
 
-  doc.setFontSize(10); doc.setFont("helvetica", "normal"); doc.setTextColor(50);
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.setTextColor(50);
   doc.text(`CNPJ: ${fmtCnpj(opts.company.document || DEFAULT_COMPANY_DOCUMENT)}`, 14, 51);
   doc.text(`Emissão: ${fmtDate(opts.order.created_at)}`, 14, 58);
   doc.text(`Prazo de entrega: ${fmtDateOnly(opts.order.deadline)}`, 80, 58);
   if (opts.order.urgent) {
-    doc.setTextColor(200, 30, 30); doc.setFont("helvetica", "bold");
+    doc.setTextColor(200, 30, 30);
+    doc.setFont("helvetica", "bold");
     doc.text("URGENTE", 170, 58);
-    doc.setTextColor(50); doc.setFont("helvetica", "normal");
+    doc.setTextColor(50);
+    doc.setFont("helvetica", "normal");
   }
 
-  doc.setFont("helvetica", "bold"); doc.text("Cliente", 14, 68);
+  doc.setFont("helvetica", "bold");
+  doc.text("Cliente", 14, 68);
   doc.setFont("helvetica", "normal");
   doc.text(opts.client.name, 14, 74);
   doc.text(
     [opts.client.document, opts.client.whatsapp, opts.client.email].filter(Boolean).join("  •  "),
-    14, 80,
+    14,
+    80,
   );
 
   autoTable(doc, {
     startY: 88,
     head: [["Descrição", "Qtd", "Unit.", "Subtotal"]],
-    body: opts.items.map((i) => [i.description, String(i.quantity), brl(i.unit_price), brl(i.subtotal)]),
+    body: opts.items.map((item) => [
+      item.description,
+      String(item.quantity),
+      brl(item.unit_price),
+      brl(item.subtotal),
+    ]),
     headStyles: { fillColor: [34, 38, 70], textColor: 255 },
-    styles: { fontSize: 9 },
+    styles: { fontSize: 9, overflow: "linebreak" },
+    margin: { bottom: 24 },
   });
 
-  const y = (doc as any).lastAutoTable.finalY + 8;
-  const remaining = (opts.order.total || 0) - (opts.order.paid || 0);
-  doc.setFont("helvetica", "bold");
-  doc.text(`Total: ${brl(opts.order.total)}`, 140, y);
-  doc.text(`Pago: ${brl(opts.order.paid)}`, 140, y + 6);
-  doc.text(`Restante: ${brl(remaining)}`, 140, y + 12);
-  if (opts.order.service_segment === "tecnologia") {
-    const maintenance = maintenanceTotals(readTechnicalData(opts.order.technical_data));
-    if (maintenance.discount > 0) doc.text(`Desconto: ${brl(maintenance.discount)}`, 140, y + 18);
-  }
-  doc.setFont("helvetica", "normal");
-  if (opts.order.payment_method) doc.text(`Pagamento: ${opts.order.payment_method}`, 14, y);
-
-  if (opts.order.description) {
-    doc.setFont("helvetica", "bold"); doc.text("Detalhes", 14, y + 24);
-    doc.setFont("helvetica", "normal");
-    doc.text(doc.splitTextToSize(opts.order.description, 180), 14, y + 30);
+  let y = (doc as any).lastAutoTable.finalY + 8;
+  if (y > 220) {
+    doc.addPage();
+    header(doc, opts.company, `Continuação da OS #${opts.order.number}`, logo);
+    y = 52;
   }
 
+  const remaining = Math.max(0, Number(opts.order.total || 0) - Number(opts.order.paid || 0));
+  const summaryRows: string[][] = [];
+  if (technical && maintenanceTotals(technical).discount > 0) {
+    summaryRows.push(["Desconto", brl(maintenanceTotals(technical).discount)]);
+  }
+  summaryRows.push(
+    ["Total", brl(opts.order.total)],
+    ["Pago", brl(opts.order.paid)],
+    ["Restante", brl(remaining)],
+  );
+  if (opts.order.payment_method) summaryRows.push(["Forma de pagamento", opts.order.payment_method]);
+
+  autoTable(doc, {
+    startY: y,
+    head: [["Resumo financeiro", "Valor"]],
+    body: summaryRows,
+    headStyles: { fillColor: [34, 38, 70], textColor: 255 },
+    styles: { fontSize: 9 },
+    columnStyles: { 0: { cellWidth: 120 }, 1: { cellWidth: 55, halign: "right" } },
+    margin: { bottom: 55 },
+  });
+  y = (doc as any).lastAutoTable.finalY + 8;
+
+  if (opts.order.description?.trim()) {
+    autoTable(doc, {
+      startY: y,
+      body: [[opts.order.description.trim()]],
+      theme: "plain",
+      styles: { fontSize: 9, cellPadding: 1, overflow: "linebreak" },
+      columnStyles: { 0: { cellWidth: 180 } },
+      margin: { left: 14, right: 14, bottom: 60 },
+    });
+    y = (doc as any).lastAutoTable.finalY + 10;
+  }
+
+  if (y + 42 > 270) {
+    doc.addPage();
+    header(doc, opts.company, `Assinaturas — OS #${opts.order.number}`, logo);
+    y = 60;
+  }
+  const signatureY = Math.max(y + 10, 160);
   doc.setDrawColor(180);
-  doc.line(14, 248, 90, 248); doc.setFontSize(9); doc.text("Assinatura do cliente", 14, 254);
-  doc.line(110, 248, 196, 248); doc.text("Assinatura responsável", 110, 254);
+  doc.line(14, signatureY, 90, signatureY);
+  doc.line(110, signatureY, 196, signatureY);
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(9);
+  doc.text("Assinatura do cliente", 14, signatureY + 6);
+  doc.text("Assinatura responsável", 110, signatureY + 6);
 
-  if (opts.order.service_segment === "tecnologia") {
+  if (isTechnical && technical) {
     doc.addPage();
     header(doc, opts.company, `Ficha técnica — OS #${opts.order.number}`, logo);
-    autoTable(doc, {startY: 52, head: [["Entrada e atendimento", "Registro"]], body: customerTechnicalRows(readTechnicalData(opts.order.technical_data)), styles: {fontSize: 9, cellWidth: 'wrap'}, columnStyles: {0: {cellWidth: 58}, 1: {cellWidth: 124}}, margin: {top: 52, bottom: 30}, headStyles: {fillColor: [11,16,38], textColor: 255} });
+    autoTable(doc, {
+      startY: 52,
+      head: [["Entrada e atendimento", "Registro"]],
+      body: customerTechnicalRows(technical),
+      styles: { fontSize: 9, overflow: "linebreak" },
+      columnStyles: { 0: { cellWidth: 58 }, 1: { cellWidth: 124 } },
+      margin: { top: 52, bottom: 30 },
+      headStyles: { fillColor: [11, 16, 38], textColor: 255 },
+    });
   }
-  for (let page=1; page<=doc.getNumberOfPages(); page++) {doc.setPage(page); footer(doc, opts.company);}
+
+  for (let page = 1; page <= doc.getNumberOfPages(); page++) {
+    doc.setPage(page);
+    footer(doc, opts.company);
+  }
   doc.save(`OS-${opts.order.number}.pdf`);
 }
 
@@ -194,17 +253,31 @@ export async function generateTechnicalCompletionPDF(opts: {
   const logo = await loadLogo("/brand/decode-logo.png");
   const technical = readTechnicalData(opts.order.technical_data);
   const totals = maintenanceTotals(technical);
+  const continuation = () => {
+    doc.addPage();
+    header(doc, opts.company, `Continuação — OS #${opts.order.number}`, logo);
+  };
+
   header(doc, opts.company, `Comprovante de Conclusão — OS #${opts.order.number}`, logo);
   doc.setFontSize(10);
   doc.setFont("helvetica", "normal");
   doc.setTextColor(50);
   doc.text(`Emissão da OS: ${fmtDate(opts.order.created_at)}`, 14, 52);
-  doc.text(`Conclusão: ${technical.completed_at ? new Date(technical.completed_at).toLocaleString("pt-BR") : new Date().toLocaleString("pt-BR")}`, 14, 59);
+  doc.text(
+    `Conclusão: ${technical.completed_at ? new Date(technical.completed_at).toLocaleString("pt-BR") : new Date().toLocaleString("pt-BR")}`,
+    14,
+    59,
+  );
   doc.setFont("helvetica", "bold");
   doc.text("Cliente", 14, 70);
   doc.setFont("helvetica", "normal");
   doc.text(opts.client.name, 14, 76);
-  doc.text([opts.client.document, opts.client.whatsapp, opts.client.email].filter(Boolean).join("  •  "), 14, 82);
+  doc.text(
+    [opts.client.document, opts.client.whatsapp, opts.client.email].filter(Boolean).join("  •  "),
+    14,
+    82,
+  );
+
   autoTable(doc, {
     startY: 91,
     head: [["Equipamento", "Identificação"]],
@@ -214,59 +287,89 @@ export async function generateTechnicalCompletionPDF(opts: {
     ]],
     headStyles: { fillColor: [34, 38, 70], textColor: 255 },
     styles: { fontSize: 9 },
+    margin: { bottom: 45 },
   });
   let y = (doc as any).lastAutoTable.finalY + 7;
+  if (y > 215) {
+    continuation();
+    y = 52;
+  }
+
   autoTable(doc, {
     startY: y,
     head: [["Serviços, peças e procedimentos", "Qtd.", "Valor"]],
-    body: opts.items.map(item => [
+    body: opts.items.map((item) => [
       item.description,
       String(item.quantity),
       brl(item.subtotal),
     ]),
     headStyles: { fillColor: [34, 38, 70], textColor: 255 },
-    styles: { fontSize: 8, cellWidth: "wrap" },
-    columnStyles: { 0: { cellWidth: 112 }, 1: { cellWidth: 20, halign: "center" }, 2: { cellWidth: 42, halign: "right" } },
-    margin: { bottom: 30 },
+    styles: { fontSize: 8, overflow: "linebreak" },
+    columnStyles: {
+      0: { cellWidth: 112 },
+      1: { cellWidth: 20, halign: "center" },
+      2: { cellWidth: 42, halign: "right" },
+    },
+    margin: { bottom: 55 },
   });
   y = (doc as any).lastAutoTable.finalY + 8;
+  if (y > 210) {
+    continuation();
+    y = 52;
+  }
+
+  const financialRows = [
+    ["Serviços", brl(totals.services)],
+    ["Peças e componentes", brl(totals.parts)],
+    ["Despesas adicionais", brl(totals.additional)],
+    ["Desconto", `- ${brl(totals.discount)}`],
+    ["Valor total", brl(opts.order.total)],
+    ["Valor pago", brl(opts.order.paid)],
+    ["Saldo restante", brl(Math.max(0, Number(opts.order.total) - Number(opts.order.paid)))],
+  ];
+  if (opts.order.payment_method) financialRows.push(["Forma de pagamento", opts.order.payment_method]);
   autoTable(doc, {
     startY: y,
     head: [["Resumo financeiro", "Valor"]],
-    body: [
-      ["Serviços", brl(totals.services)],
-      ["Peças e componentes", brl(totals.parts)],
-      ["Despesas adicionais", brl(totals.additional)],
-      ["Desconto", `- ${brl(totals.discount)}`],
-      ["Valor total", brl(opts.order.total)],
-      ["Valor pago", brl(opts.order.paid)],
-      ["Saldo restante", brl(Math.max(0, Number(opts.order.total) - Number(opts.order.paid)))],
-    ],
+    body: financialRows,
     headStyles: { fillColor: [34, 38, 70], textColor: 255 },
     styles: { fontSize: 9 },
     columnStyles: { 0: { cellWidth: 120 }, 1: { cellWidth: 55, halign: "right" } },
-    margin: { bottom: 30 },
+    margin: { bottom: 70 },
   });
   y = (doc as any).lastAutoTable.finalY + 8;
+
   const notes = [technical.resolution, technical.completion_notes].filter(Boolean).join("\n\n");
   if (notes) {
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(10);
-    doc.text("Serviço concluído e observações", 14, y);
-    doc.setFont("helvetica", "normal");
-    doc.setFontSize(9);
-    doc.text(doc.splitTextToSize(notes, 180), 14, y + 6);
+    autoTable(doc, {
+      startY: y,
+      head: [["Serviço concluído e observações"]],
+      body: [[notes]],
+      headStyles: { fillColor: [34, 38, 70], textColor: 255 },
+      styles: { fontSize: 9, cellPadding: 2, overflow: "linebreak" },
+      columnStyles: { 0: { cellWidth: 180 } },
+      margin: { left: 14, right: 14, bottom: 70 },
+    });
+    y = (doc as any).lastAutoTable.finalY + 10;
   }
-  const warrantyY = Math.min(Math.max(y + (notes ? 25 : 8), 210), 235);
+
+  if (y + 48 > 270) {
+    continuation();
+    y = 60;
+  }
+  const warrantyY = y + 6;
+  const signatureY = warrantyY + 30;
   doc.setFont("helvetica", "bold");
+  doc.setFontSize(10);
   doc.text(`Garantia informada: ${technical.warranty_days} dias`, 14, warrantyY);
   doc.setDrawColor(180);
-  doc.line(14, 258, 90, 258);
-  doc.line(110, 258, 196, 258);
+  doc.line(14, signatureY, 90, signatureY);
+  doc.line(110, signatureY, 196, signatureY);
   doc.setFont("helvetica", "normal");
   doc.setFontSize(9);
-  doc.text("Assinatura do cliente", 14, 264);
-  doc.text("Responsável técnico", 110, 264);
+  doc.text("Assinatura do cliente", 14, signatureY + 6);
+  doc.text("Responsável técnico", 110, signatureY + 6);
+
   for (let page = 1; page <= doc.getNumberOfPages(); page++) {
     doc.setPage(page);
     footer(doc, opts.company);
