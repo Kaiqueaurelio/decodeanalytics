@@ -72,7 +72,18 @@ function ClosuresPage() {
 
   function printOne(c: any) {
     const m = c.by_method || {};
-    const html = `<!doctype html><html><head><meta charset="utf-8"><title>Fechamento ${fmtDate(c.closure_date)}</title>
+    const escapeHtml = (value: unknown) =>
+      String(value ?? "").replace(/[&<>"']/g, (character) => {
+        const entities: Record<string, string> = {
+          "&": "&amp;",
+          "<": "&lt;",
+          ">": "&gt;",
+          '"': "&quot;",
+          "'": "&#39;",
+        };
+        return entities[character] ?? character;
+      });
+    const html = `<!doctype html><html><head><meta charset="utf-8"><title>Fechamento ${escapeHtml(fmtDate(c.closure_date))}</title>
     <style>body{font-family:system-ui,-apple-system,Arial;padding:24px;max-width:480px;margin:0 auto;color:#0f172a}
     h1{font-size:18px;margin:0 0 4px}h2{font-size:13px;margin:16px 0 6px;text-transform:uppercase;letter-spacing:.08em;color:#475569}
     table{width:100%;border-collapse:collapse;font-size:13px}td{padding:6px 0;border-bottom:1px dashed #cbd5e1}
@@ -82,7 +93,7 @@ function ClosuresPage() {
     .muted{color:#64748b;font-size:11px}@media print{button{display:none}}
     </style></head><body>
     <h1>Fechamento de Caixa</h1>
-    <p class="muted">${fmtDate(c.closure_date)} · ${fmtDateTime(c.closed_at)} · Operador: ${c.operator || "—"}</p>
+    <p class="muted">${fmtDate(c.closure_date)} · ${fmtDateTime(c.closed_at)} · Operador: ${escapeHtml(c.operator || "—")}</p>
     <h2>Resumo</h2>
     <table>
       <tr><td>Troco inicial</td><td class="right">${brl(c.initial_amount)}</td></tr>
@@ -104,7 +115,7 @@ function ClosuresPage() {
       <tr><td>Contado na gaveta</td><td class="right">${brl(c.counted_cash)}</td></tr>
       <tr class="total"><td>Diferença</td><td class="right ${Math.abs(c.difference) < 0.01 ? "diff-ok" : "diff-bad"}">${brl(c.difference)}</td></tr>
     </table>
-    ${c.notes ? `<h2>Observações</h2><p>${String(c.notes).replace(/</g, "&lt;")}</p>` : ""}
+    ${c.notes ? `<h2>Observações</h2><p>${escapeHtml(c.notes)}</p>` : ""}
     <p style="margin-top:32px"><button onclick="window.print()">Imprimir</button></p>
     <script>setTimeout(()=>window.print(),300)</script>
     </body></html>`;
