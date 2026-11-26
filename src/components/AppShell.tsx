@@ -567,9 +567,9 @@ export function AppShell({ children }: { children: ReactNode }) {
 
       <nav
         aria-label="Navegação rápida"
-        className="fixed inset-x-0 bottom-0 z-30 border-t border-white/10 bg-[#0B1026]/95 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl md:hidden"
+        className="fixed inset-x-0 bottom-0 z-30 border-t border-white/10 bg-[#0B1026]/98 pb-[env(safe-area-inset-bottom)] shadow-2xl backdrop-blur-2xl md:hidden"
       >
-        <ul className="mx-auto grid max-w-md grid-cols-5">
+        <ul className="mx-auto flex h-16 max-w-md items-center justify-around px-2">
           {["/dashboard", "/orders", "/production", "/pdv"]
             .map((to) => items.find((i) => i.to === to))
             .filter((i): i is NonNullable<typeof i> => Boolean(i))
@@ -578,29 +578,31 @@ export function AppShell({ children }: { children: ReactNode }) {
               const active = path === item.to || (item.to !== "/dashboard" && path.startsWith(item.to));
               const Icon = item.icon;
               return (
-                <li key={item.to}>
+                <li key={item.to} className="flex-1">
                   <Link
                     to={item.to}
                     aria-current={active ? "page" : undefined}
                     className={cn(
-                      "flex h-16 flex-col items-center justify-center gap-1 text-[11px] font-medium transition-colors",
-                      active ? "text-[#22D3EE]" : "text-[#94A3B8] active:text-white",
+                      "flex h-12 flex-col items-center justify-center rounded-xl py-1 transition-all",
+                      active
+                        ? "bg-[#22D3EE]/10 text-[#22D3EE] font-semibold"
+                        : "text-slate-400 hover:text-white active:scale-95",
                     )}
                   >
-                    <Icon className="h-5 w-5" />
-                    <span className="max-w-full truncate px-1">{item.label.split(" ")[0]}</span>
+                    <Icon className="mb-0.5 h-5 w-5" />
+                    <span className="text-[10px] leading-tight tracking-tight">{item.label.split(" ")[0]}</span>
                   </Link>
                 </li>
               );
             })}
-          <li className="col-start-5">
+          <li className="flex-1">
             <button
               type="button"
               onClick={() => setOpen(true)}
-              className="flex h-16 w-full flex-col items-center justify-center gap-1 text-[11px] font-medium text-[#94A3B8] active:text-white"
+              className="flex h-12 w-full flex-col items-center justify-center rounded-xl py-1 text-slate-400 transition-all hover:text-white active:scale-95"
             >
-              <MoreHorizontal className="h-5 w-5" />
-              <span className="text-[11px] leading-none">Menu</span>
+              <MoreHorizontal className="mb-0.5 h-5 w-5" />
+              <span className="text-[10px] leading-tight tracking-tight">Menu</span>
             </button>
           </li>
         </ul>
