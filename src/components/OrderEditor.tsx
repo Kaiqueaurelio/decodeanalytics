@@ -46,6 +46,35 @@ interface Item {
   service_id?: string | null;
 }
 
+function createEmptyOrderForm(
+  serviceSegment: "grafica" | "tecnologia" = "grafica",
+  contractId?: string | null,
+) {
+  return {
+    service_segment: serviceSegment,
+    client_id: "",
+    title: "",
+    description: "",
+    measurements: "",
+    material: "",
+    finishing: "",
+    client_notes: "",
+    internal_notes: "",
+    total: 0,
+    paid: 0,
+    payment_method: "",
+    production_status: "aguardando_arte",
+    deadline: "",
+    performed_on: "",
+    service_contract_id: contractId ?? "",
+    urgent: false,
+    assigned_to: "",
+    current_activity: "",
+    progress: 0,
+    quote_id: null,
+  };
+}
+
 const PROD_STATUSES = Object.keys(PRODUCTION_STATUS_LABEL);
 
 async function stageOrderItemsReplacement(orderId: string, items: Item[]) {
@@ -160,87 +189,82 @@ export function OrderEditor({
     }[]
   >([]);
   const [team, setTeam] = useState<{ id: string; name: string | null; email: string | null }[]>([]);
-  const [form, setForm] = useState<any>({
-    service_segment: "grafica",
-    client_id: "",
-    title: "",
-    description: "",
-    measurements: "",
-    material: "",
-    finishing: "",
-    client_notes: "",
-    internal_notes: "",
-    total: 0,
-    paid: 0,
-    payment_method: "",
-    production_status: "aguardando_arte",
-    deadline: "",
-    performed_on: "",
-    service_contract_id: "",
-    urgent: false,
-    assigned_to: "",
-    current_activity: "",
-    progress: 0,
-  });
+  const [form, setForm] = useState<any>(() => createEmptyOrderForm(initialSegment, initialContractId));
   const [items, setItems] = useState<Item[]>([]);
   const minDeadline = toIsoDate();
 
   useEffect(() => {
     if (!open) return;
+    let cancelled = false;
     setStep(0);
     setTechnical(emptyTechnicalData());
-    supabase
-      .from("clients")
-      .select("id,name")
-      .order("name")
-      .then(({ data }) => setClients(data ?? []));
-    supabase
-      .from("services")
-      .select("id,name,base_price")
-      .eq("active", true)
-      .order("name")
-      .then(({ data }) => setServices(data ?? []));
-    supabase
-      .from("profiles")
-      .select("id,name:full_name,email")
-      .order("full_name")
-      .then(({ data }) => setTeam(data ?? []));
-    (
-      supabase
-        .from("service_contracts" as any)
-        .select("id,number,title,client_id,service_id,amount,billing_mode")
-        .eq("status", "aprovado") as any
-    ).then(({ data }: any) => setContracts(data ?? []));
+    setForm(createEmptyOrderForm(initialSegment, initialContractId));
+    setItems([]);
+    setLoading(false);
+
+    supabase.from("clients").select("id,name").order("name").then(({ data, error }) => {
+      if (cancelled) return;
+      if (error) toast.error("Não foi possível carregar os clientes.");
+      else setClients(data ?? []);
+    });
+    supabase.from("services").select("id,name,base_price").eq("active", true).order("name").then(({ data, error }) => {
+      if (cancelled) return;
+      if (error) toast.error("Não foi possível carregar os serviços.");
+      else setServices(data ?? []);
+    });
+    supabase.from("profiles").select("id,name:full_name,email").order("full_name").then(({ data, error }) => {
+      if (cancelled) return;
+      if (error) toast.error("Não foi possível carregar a equipe.");
+      else setTeam(data ?? []);
+    });
+    (supabase
+      .from("service_contracts" as any)
+      .select("id,number,title,client_id,service_id,amount,billing_mode")
+      .eq("status", "aprovado") as any
+    ).then(({ data, error }: any) => {
+      if (cancelled) return;
+      if (error) toast.error("Não foi possível carregar os contratos.");
+      else setContracts(data ?? []);
+    });
+
     if (orderId) {
       (async () => {
-        const { data: o, error: oErr } = await (supabase
+        const { data: order, error: orderError } = await (supabase
           .from("orders" as any)
           .select("*")
           .eq("id", orderId)
           .single() as any);
-        if (oErr || !o) {
-          toast.error("Não consegui carregar a OS. Feche e tente novamente.");
+        if (cancelled) return;
+        if (orderError || !order) {
+          toast.error(orderError?.message || "Não consegui carregar a OS. Feche e tente novamente.");
           return;
         }
-        const { data: its } = await supabase
+
+        const { data: orderItems, error: itemsError } = await supabase
           .from("order_items")
           .select("*")
           .eq("order_id", orderId);
+        if (cancelled) return;
+        if (itemsError) {
+          toast.error("Não foi possível carregar os itens da OS. Nenhum dado foi alterado.");
+          return;
+        }
+
         setForm({
-          ...o,
-          deadline: o.deadline ?? "",
-          performed_on: o.performed_on ?? "",
-          service_contract_id: o.service_contract_id ?? "",
+          ...order,
+          deadline: order.deadline ?? "",
+          performed_on: order.performed_on ?? "",
+          service_contract_id: order.service_contract_id ?? "",
         });
-        const loadedTechnical = readTechnicalData(o.technical_data);
-        const hasStructuredMaintenance = !!o.technical_data &&
-          typeof o.technical_data === "object" &&
-          (Object.prototype.hasOwnProperty.call(o.technical_data, "services") ||
-            Object.prototype.hasOwnProperty.call(o.technical_data, "parts"));
-        // Importa itens antigos somente quando a OS ainda não possui o formato estruturado.
-        // Arrays vazios são um estado válido e não podem duplicar despesas adicionais.
+        const loadedTechnical = readTechnicalData(order.technical_data);
+        const rawTechnical = order.technical_data as Record<string, unknown> | null;
+        const hasStructuredMaintenance = !!rawTechnical &&
+          typeof rawTechnical === "object" &&
+          !Array.isArray(rawTechnical) &&
+          (Array.isArray(rawTechnical.services) || Array.isArray(rawTechnical.parts));
+        // Arrays vazios são um estado estruturado válido; só importa itens antigos quando o formato ainda não existe.
         if (!hasStructuredMaintenance) {
-          loadedTechnical.services = (its ?? []).map((item: any) => ({
+          loadedTechnical.services = (orderItems ?? []).map((item) => ({
             id: crypto.randomUUID(),
             description: item.description,
             quantity: Number(item.quantity) || 1,
@@ -249,42 +273,52 @@ export function OrderEditor({
         }
         setTechnical(loadedTechnical);
         setItems(
-          (its ?? []).map((i: any) => ({
-            id: i.id,
-            description: i.description,
-            quantity: +i.quantity,
-            unit_price: +i.unit_price,
-            subtotal: +i.subtotal,
-            service_id: i.service_id,
+          (orderItems ?? []).map((item) => ({
+            id: item.id,
+            description: item.description,
+            quantity: Number(item.quantity) || 0,
+            unit_price: Number(item.unit_price) || 0,
+            subtotal: Number(item.subtotal) || 0,
+            service_id: item.service_id,
           })),
         );
       })();
     } else if (fromQuoteId) {
       (async () => {
-        const { data: q } = await supabase
+        const { data: quote, error: quoteError } = await supabase
           .from("quotes")
           .select("*")
           .eq("id", fromQuoteId)
           .single();
-        const { data: qi } = await supabase
+        if (cancelled) return;
+        if (quoteError || !quote) {
+          toast.error(quoteError?.message || "Não foi possível carregar o orçamento.");
+          return;
+        }
+        const { data: quoteItems, error: quoteItemsError } = await supabase
           .from("quote_items")
           .select("*")
           .eq("quote_id", fromQuoteId);
-        if (q)
-          setForm((f: any) => ({
-            ...f,
-            client_id: q.client_id,
-            description: q.description ?? "",
-            total: +q.total,
-            quote_id: q.id,
-          }));
+        if (cancelled) return;
+        if (quoteItemsError) {
+          toast.error("Não foi possível carregar os itens do orçamento.");
+          return;
+        }
+        setForm((current: any) => ({
+          ...current,
+          client_id: quote.client_id,
+          title: quote.title ?? "",
+          description: quote.description ?? "",
+          total: Number(quote.total) || 0,
+          quote_id: quote.id,
+        }));
         setItems(
-          (qi ?? []).map((i: any) => ({
-            description: i.description,
-            quantity: +i.quantity,
-            unit_price: +i.unit_price,
-            subtotal: +i.subtotal,
-            service_id: i.service_id,
+          (quoteItems ?? []).map((item) => ({
+            description: item.description,
+            quantity: Number(item.quantity) || 1,
+            unit_price: Number(item.unit_price) || 0,
+            subtotal: Number(item.subtotal) || 0,
+            service_id: item.service_id,
           })),
         );
       })();
@@ -296,66 +330,32 @@ export function OrderEditor({
           .eq("id", initialContractId)
           .eq("status", "aprovado")
           .single() as any);
-        if (error || !contract) return toast.error("Não consegui carregar o contrato aprovado.");
-        const unitPrice =
-          contract.billing_mode === "mensal_fixo" ? 0 : Number(contract.amount) || 0;
+        if (cancelled) return;
+        if (error || !contract) {
+          toast.error("Não consegui carregar o contrato aprovado.");
+          return;
+        }
+        const unitPrice = contract.billing_mode === "mensal_fixo" ? 0 : Number(contract.amount) || 0;
         setForm({
-          service_segment: "grafica",
+          ...createEmptyOrderForm(initialSegment, contract.id),
           client_id: contract.client_id,
-          service_contract_id: contract.id,
           title: contract.title,
           description: contract.scope ?? "",
-          measurements: "",
-          material: "",
-          finishing: "",
-          client_notes: "",
-          internal_notes: "",
           total: unitPrice,
-          paid: 0,
-          payment_method: "",
-          production_status: "aguardando_arte",
-          deadline: "",
-          performed_on: "",
-          urgent: false,
-          assigned_to: "",
-          current_activity: "",
-          progress: 0,
         });
-        setItems([
-          {
-            description: contract.title,
-            quantity: 1,
-            unit_price: unitPrice,
-            subtotal: unitPrice,
-            service_id: contract.service_id,
-          },
-        ]);
+        setItems([{
+          description: contract.title,
+          quantity: 1,
+          unit_price: unitPrice,
+          subtotal: unitPrice,
+          service_id: contract.service_id,
+        }]);
       })();
-    } else {
-      setForm({
-        service_segment: initialSegment,
-        client_id: "",
-        title: "",
-        description: "",
-        measurements: "",
-        material: "",
-        finishing: "",
-        client_notes: "",
-        internal_notes: "",
-        total: 0,
-        paid: 0,
-        payment_method: "",
-        production_status: "aguardando_arte",
-        deadline: "",
-        performed_on: "",
-        service_contract_id: "",
-        urgent: false,
-        assigned_to: "",
-        current_activity: "",
-        progress: 0,
-      });
-      setItems([]);
     }
+
+    return () => {
+      cancelled = true;
+    };
   }, [open, orderId, fromQuoteId, initialSegment, initialContractId]);
 
   function updateItem(idx: number, patch: Partial<Item>) {

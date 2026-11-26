@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -10,6 +10,11 @@ import { visibleInspection, maintenanceTotals, type TechnicalData } from '@/lib/
 export function TechnicalIntake({ value, onChange, step, team }: { value: TechnicalData; onChange: (v: TechnicalData) => void; step: number; team: {id: string; name: string | null; email: string | null}[] }) {
   const [questionIndex, setQuestionIndex] = useState(0);
   const [showPassword, setShowPassword] = useState(false);
+  const visibleQuestionIds = visibleInspection(value).map(question => question.id).join("|");
+  useEffect(() => {
+    setQuestionIndex(0);
+    setShowPassword(false);
+  }, [step, visibleQuestionIds]);
   const update = (patch: Partial<TechnicalData>) => onChange({...value, ...patch});
   const fields = (entries: {key: keyof TechnicalData; label: string; multiline?: boolean}[]) => entries.map(({key, label, multiline}) => <div key={key} className={multiline ? 'sm:col-span-2' : ''}><Label htmlFor={`tech-${key}`}>{label}</Label>{multiline ? <Textarea id={`tech-${key}`} value={String(value[key] ?? '')} onChange={e => update({[key]: e.target.value})} rows={3}/> : <Input id={`tech-${key}`} value={String(value[key] ?? '')} onChange={e => update({[key]: e.target.value})}/>}</div>);
   if (step === 1) return <div className="space-y-5">
