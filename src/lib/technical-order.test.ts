@@ -114,4 +114,10 @@ describe('technology intake', () => {
     expect(itemTotal).toBe(0.02);
     expect(maintenanceTotals(data).total).toBe(itemTotal);
   });
+
+  test("preserves additional legacy fields while normalizing known fields", () => {
+    const data = readTechnicalData({ legacy_reference: "old-intake", equipment: "Notebook" });
+    expect((data as TechnicalData & { legacy_reference?: string }).legacy_reference).toBe("old-intake");
+    expect(data.equipment).toBe("Notebook");
+  });
 });

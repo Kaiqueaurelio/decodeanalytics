@@ -109,6 +109,7 @@ export function readTechnicalData(value: unknown): TechnicalData {
     : "nao_solicitado";
 
   return {
+    ...source,
     equipment: typeof source.equipment === "string" ? source.equipment : "",
     brand: typeof source.brand === "string" ? source.brand : "",
     model: typeof source.model === "string" ? source.model : "",
