@@ -25,7 +25,7 @@ import { brl, PAYMENT_METHODS, PRODUCTION_STATUS_LABEL, toIsoDate } from "@/lib/
 import { OSStatusBadge } from "@/components/OSStatusBadge";
 
 import { TechnicalIntake } from "@/components/TechnicalIntake";
-import { emptyTechnicalData, readTechnicalData, type TechnicalData } from "@/lib/technical-order";
+import { emptyTechnicalData, readTechnicalData, maintenanceTotals, technicalOrderItems, type TechnicalData } from "@/lib/technical-order";
 
 export interface OrderEditorProps {
   open: boolean;
@@ -265,7 +265,9 @@ export function OrderEditor({
       return next;
     });
   }
-  const total = items.reduce((s, i) => s + (Number(i.subtotal) || 0), 0);
+  const isTech = form.service_segment === "tecnologia";
+  const maintenance = maintenanceTotals(technical);
+  const total = isTech ? maintenance.total : items.reduce((s, i) => s + (Number(i.subtotal) || 0), 0);
 
   async function save() {
     if (!form.client_id) return toast.error("Selecione um cliente");
@@ -276,11 +278,13 @@ export function OrderEditor({
       setStep(1);
       return toast.error("Informe o equipamento e o defeito relatado");
     }
-    if (!items.length) return toast.error("Adicione ao menos um item");
+    const technicalToSave = { ...technical, completed_at: technical.technical_status === "pronto" ? (technical.completed_at || new Date().toISOString()) : technical.completed_at };
+    const persistedItems = isTech ? (technicalOrderItems(technicalToSave).length ? technicalOrderItems(technicalToSave) : items) : items;
+    if (!persistedItems.length) return toast.error("Adicione ao menos um serviço ou peça");
     setLoading(true);
     const payload = {
       service_segment: form.service_segment || "grafica",
-      technical_data: JSON.parse(JSON.stringify(technical)),
+      technical_data: JSON.parse(JSON.stringify(technicalToSave)),
       client_id: form.client_id,
       title: form.title,
       description: form.description,
@@ -315,7 +319,7 @@ export function OrderEditor({
       // Substitui itens atomicamente via RPC (evita OS sem itens em caso de falha).
       const { error: rpcErr } = await (supabase as any).rpc("replace_order_items", {
         _order_id: id,
-        _items: items.map((i) => ({
+        _items: persistedItems.map((i) => ({
           description: i.description,
           quantity: i.quantity,
           unit_price: i.unit_price,
@@ -346,7 +350,7 @@ export function OrderEditor({
       return toast.error("Não foi possível identificar a ordem salva.");
     }
     const { error: e2 } = await supabase.from("order_items").insert(
-      items.map((i) => ({
+      persistedItems.map((i) => ({
         order_id: id,
         description: i.description,
         quantity: i.quantity,
@@ -360,6 +364,21 @@ export function OrderEditor({
     toast.success("Ordem salva");
     onOpenChange(false);
     onSaved?.();
+  }
+
+  async function printCompletionReceipt() {
+    if (!orderId) return toast.error("Salve a OS antes de gerar o comprovante");
+    if (technical.technical_status !== "pronto" && form.production_status !== "entregue")
+      return toast.error("Marque a manutenção como pronta antes de emitir o comprovante");
+    const [{ data: o }, { data: client }, { data: company }, { data: orderItems }] = await Promise.all([
+      supabase.from("orders").select("*").eq("id", orderId).single(),
+      supabase.from("clients").select("*").eq("id", form.client_id).single(),
+      supabase.from("company_settings").select("*").limit(1).single(),
+      supabase.from("order_items").select("*").eq("order_id", orderId),
+    ]);
+    if (!o || !client || !company) return toast.error("Dados incompletos para o comprovante");
+    const { generateTechnicalCompletionPDF } = await import("@/lib/pdf");
+    await generateTechnicalCompletionPDF({ company: company as any, order: o as any, client: client as any, items: (orderItems ?? []) as any });
   }
 
   async function printPDF() {
@@ -380,8 +399,7 @@ export function OrderEditor({
     });
   }
 
-  const isTech = form.service_segment === "tecnologia";
-  const steps = ["Cliente", "Equipamento", "Checklist", "Finalização"];
+  const steps = ["Cliente", "Equipamento", "Checklist", "Manutenção e valores"];
   function nextStep() {
     if (step === 0 && !form.client_id) return toast.error("Selecione um cliente");
     if (step === 1 && (!technical.equipment || !technical.complaint.trim()))
@@ -564,7 +582,7 @@ export function OrderEditor({
           {isTech && step > 0 && (
             <TechnicalIntake value={technical} onChange={setTechnical} step={step} team={team} />
           )}
-          <div className={isTech && step !== 3 ? "hidden" : "space-y-4"}>
+          <div className={isTech ? "hidden" : "space-y-4"}>
             <div>
               <div className="flex items-center justify-between mb-2">
                 <Label>Itens</Label>
@@ -794,6 +812,12 @@ export function OrderEditor({
             <Button onClick={nextStep}>
               Próximo
               <ChevronRight className="h-4 w-4" />
+            </Button>
+          )}
+          {orderId && isTech && technical.technical_status === "pronto" && (
+            <Button variant="outline" onClick={printCompletionReceipt}>
+              <FileText className="w-4 h-4 mr-1" />
+              Comprovante de conclusão
             </Button>
           )}
           {orderId && (
