@@ -71,8 +71,9 @@ function money(value: unknown): number {
   return Math.round((nonNegativeNumber(value) + Number.EPSILON) * 100) / 100;
 }
 
-function positiveQuantity(value: unknown): number {
-  return Math.max(1, nonNegativeNumber(value, 1));
+function safeQuantity(value: unknown): number {
+  if (value === undefined || value === null || value === "") return 1;
+  return nonNegativeNumber(value);
 }
 
 export function readTechnicalData(value: unknown): TechnicalData {
@@ -81,7 +82,7 @@ export function readTechnicalData(value: unknown): TechnicalData {
     ? source.services.filter(isRecord).map((item, index) => ({
         id: typeof item.id === "string" && item.id.trim() ? item.id : `service-${index + 1}`,
         description: typeof item.description === "string" ? item.description : "",
-        quantity: positiveQuantity(item.quantity),
+        quantity: safeQuantity(item.quantity),
         unit_price: money(item.unit_price),
       }))
     : [];
@@ -91,7 +92,7 @@ export function readTechnicalData(value: unknown): TechnicalData {
         name: typeof item.name === "string" ? item.name : "",
         brand: typeof item.brand === "string" ? item.brand : "",
         model: typeof item.model === "string" ? item.model : "",
-        quantity: positiveQuantity(item.quantity),
+        quantity: safeQuantity(item.quantity),
         cost_price: money(item.cost_price),
         sale_price: money(item.sale_price),
       }))
@@ -171,11 +172,11 @@ export function maintenanceValidationErrors(data: TechnicalData): string[] {
 export function maintenanceTotals(data: TechnicalData) {
   const services = money((Array.isArray(data.services) ? data.services : []).reduce((sum, item) => {
     if (!item || typeof item.description !== "string" || !item.description.trim()) return sum;
-    return sum + money(positiveQuantity(item.quantity) * money(item.unit_price));
+    return sum + money(safeQuantity(item.quantity) * money(item.unit_price));
   }, 0));
   const parts = money((Array.isArray(data.parts) ? data.parts : []).reduce((sum, item) => {
     if (!item || typeof item.name !== "string" || !item.name.trim()) return sum;
-    return sum + money(positiveQuantity(item.quantity) * money(item.sale_price));
+    return sum + money(safeQuantity(item.quantity) * money(item.sale_price));
   }, 0));
   const additional = money(data.additional_expenses);
   const gross = money(services + parts + additional);
@@ -186,7 +187,7 @@ export function technicalOrderItems(data: TechnicalData) {
   const services = (Array.isArray(data.services) ? data.services : [])
     .filter(item => typeof item?.description === "string" && item.description.trim())
     .map(item => {
-      const quantity = positiveQuantity(item.quantity);
+      const quantity = safeQuantity(item.quantity);
       const unitPrice = money(item.unit_price);
       return {
         description: item.description.trim(),
@@ -199,7 +200,7 @@ export function technicalOrderItems(data: TechnicalData) {
   const parts = (Array.isArray(data.parts) ? data.parts : [])
     .filter(item => typeof item?.name === "string" && item.name.trim())
     .map(item => {
-      const quantity = positiveQuantity(item.quantity);
+      const quantity = safeQuantity(item.quantity);
       const unitPrice = money(item.sale_price);
       return {
         description: `Peça: ${item.name.trim()}${item.brand ? ` · ${item.brand}` : ""}${item.model ? ` · ${item.model}` : ""}`,

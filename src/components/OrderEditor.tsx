@@ -101,15 +101,11 @@ async function stageOrderItemsReplacement(orderId: string, items: Item[]) {
     error: null,
     rollback: async () => {
       let rollbackMessage: string | null = null;
-      let canRestorePrevious = true;
       if (insertedIds.length) {
         const { error } = await supabase.from("order_items").delete().in("id", insertedIds);
-        if (error) {
-          rollbackMessage = error.message;
-          canRestorePrevious = false;
-        }
+        if (error) rollbackMessage = error.message;
       }
-      if (canRestorePrevious && previousItems?.length) {
+      if (previousItems?.length) {
         const { error } = await supabase.from("order_items").insert(
           previousItems.map((item) => ({
             id: item.id,

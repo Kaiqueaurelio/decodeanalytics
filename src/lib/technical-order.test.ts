@@ -87,7 +87,7 @@ describe('technology intake', () => {
     });
     expect(data.services).toHaveLength(1);
     expect(data.services[0].description).toBe("");
-    expect(data.services[0].quantity).toBe(1);
+    expect(data.services[0].quantity).toBe(0);
     expect(data.parts[0].cost_price).toBe(0);
     expect(data.carriers).toEqual([]);
     expect(data.pattern).toEqual([1, 9]);
