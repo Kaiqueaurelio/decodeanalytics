@@ -156,10 +156,15 @@ export const ellaPublicChat = createServerFn({ method: "POST" })
         : "";
 
     // Client-supplied history is untrusted context; cap both turns and message size.
-    const history = (data.conversationHistory ?? []).slice(-20).map((m) => ({
-      role: m.role as "user" | "assistant",
-      content: m.content.slice(-1000),
-    }));
+    // The browser can forge both roles in submitted history. Keep only visitor
+    // messages; never promote client-controlled text to a trusted assistant turn.
+    const history = (data.conversationHistory ?? [])
+      .filter((message) => message.role === "user")
+      .slice(-8)
+      .map((message) => ({
+        role: "user" as const,
+        content: message.content.slice(-1000),
+      }));
 
     try {
       const result = await generateText({
@@ -167,7 +172,8 @@ export const ellaPublicChat = createServerFn({ method: "POST" })
         system: `${PUBLIC_SYSTEM_PROMPT}${kbBlock}`,
         messages: [...history, { role: "user", content: data.message }],
         tools,
-        stopWhen: stepCountIs(8),
+        maxOutputTokens: 700,
+        stopWhen: stepCountIs(4),
       });
       logAiEvent({
         provider: "lovable-ai-gateway",
