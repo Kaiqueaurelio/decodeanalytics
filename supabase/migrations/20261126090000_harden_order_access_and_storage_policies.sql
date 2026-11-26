@@ -193,8 +193,28 @@ $function$;
 REVOKE ALL ON FUNCTION public.has_role(uuid, public.app_role) FROM PUBLIC, anon;
 GRANT EXECUTE ON FUNCTION public.has_role(uuid, public.app_role) TO authenticated, service_role;
 
--- 4) Keep the existing staff UPDATE policy for operational workflows, but
--- constrain which columns finance and production roles may change.
+-- 4) Preserve the staff order-update workflow while making the allowed
+-- roles explicit. WITH CHECK prevents future row-identity changes from slipping
+-- through an UPDATE policy that only has USING.
+DROP POLICY IF EXISTS "orders_update" ON public.orders;
+CREATE POLICY "orders_update" ON public.orders
+  FOR UPDATE TO authenticated
+  USING (
+    public.is_admin(auth.uid())
+    OR public.has_role(auth.uid(), 'atendente'::public.app_role)
+    OR public.has_role(auth.uid(), 'producao'::public.app_role)
+    OR public.has_role(auth.uid(), 'financeiro'::public.app_role)
+  )
+  WITH CHECK (
+    public.is_admin(auth.uid())
+    OR public.has_role(auth.uid(), 'atendente'::public.app_role)
+    OR public.has_role(auth.uid(), 'producao'::public.app_role)
+    OR public.has_role(auth.uid(), 'financeiro'::public.app_role)
+  );
+
+-- The live application uses profiles.role as its canonical access source.
+-- Read that role directly here rather than depending on a possibly stale legacy
+-- user_roles row when deciding which order columns a staff member can change.
 CREATE OR REPLACE FUNCTION public.guard_order_sensitive_updates()
 RETURNS trigger
 LANGUAGE plpgsql
@@ -203,6 +223,7 @@ SET search_path TO ''
 AS $function$
 DECLARE
   v_user_id uuid := auth.uid();
+  v_role text;
   v_is_admin boolean := false;
   v_is_attendant boolean := false;
   v_is_finance boolean := false;
@@ -219,10 +240,16 @@ BEGIN
       USING ERRCODE = '42501';
   END IF;
 
-  v_is_admin := public.is_admin(v_user_id);
-  v_is_attendant := public.has_role(v_user_id, 'atendente'::public.app_role);
-  v_is_finance := public.has_role(v_user_id, 'financeiro'::public.app_role);
-  v_is_production := public.has_role(v_user_id, 'producao'::public.app_role);
+  SELECT lower(COALESCE(p.role, ''))
+    INTO v_role
+    FROM public.profiles AS p
+   WHERE p.id = v_user_id
+     AND COALESCE(p.is_active, true) = true;
+
+  v_is_admin := v_role IN ('admin', 'super_admin', 'administrador');
+  v_is_attendant := v_role = 'atendente';
+  v_is_finance := v_role = 'financeiro';
+  v_is_production := v_role = 'producao';
 
   IF v_is_admin OR v_is_attendant THEN
     RETURN NEW;
