@@ -262,6 +262,7 @@ export const ellaChat = createServerFn({ method: "POST" })
     if (!(roleRows ?? []).some((r) => staffRoles.includes(r.role))) {
       throw new Error("Acesso não liberado para esta conta.");
     }
+    const isAdmin = (roleRows ?? []).some((role) => role.role === "administrador");
 
     if (!nvidiaKey && !geminiKey && !lovableKey) {
       const fallback = await ellaLocalFallback({
@@ -647,14 +648,34 @@ export const ellaChat = createServerFn({ method: "POST" })
           search: z.string().optional(),
         }),
         execute: async ({ scope, search }) => {
+          // RLS is the final boundary; enforce the same visibility in the tool
+          // so a non-admin cannot ask Ella to search internal-only knowledge.
+          if (!isAdmin && scope === "admin") return { knowledge: [] };
+
           let q = supabase
             .from("ella_knowledge" as any)
             .select("id,title,content,scope,tags,updated_at")
             .order("updated_at", { ascending: false });
-          if (scope) q = q.eq("scope", scope);
-          if (search) q = q.or(`title.ilike.%${search}%,content.ilike.%${search}%`);
+
+          if (isAdmin) {
+            if (scope) q = q.eq("scope", scope);
+          } else if (scope) {
+            q = q.eq("scope", scope);
+          } else {
+            q = q.in("scope", ["public", "both"]);
+          }
+
+          const safeSearch = (search ?? "")
+            .normalize("NFKC")
+            .replace(/[^\\p{L}\\p{N}\\s-]/gu, "")
+            .trim()
+            .slice(0, 100);
+          if (safeSearch) {
+            q = q.or(`title.ilike.%${safeSearch}%,content.ilike.%${safeSearch}%`);
+          }
+
           const { data, error } = await q.limit(30);
-          if (error) return { error: error.message };
+          if (error) return { error: "Não foi possível pesquisar a base de conhecimento." };
           return { knowledge: data ?? [] };
         },
       }),
