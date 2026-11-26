@@ -131,7 +131,7 @@ export function EllaFab({ audience = "public" }: EllaFabProps) {
   return (
     <div
       ref={bubbleRef}
-      className="group fixed z-[9999] touch-none select-none"
+      className="group fixed z-40 touch-none select-none"
       style={{
         ...(position
           ? { left: position.left, top: position.top }
