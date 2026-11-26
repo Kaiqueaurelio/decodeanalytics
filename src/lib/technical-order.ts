@@ -22,7 +22,7 @@ export interface TechnicalPhoto {
   category: keyof typeof photoCategories; part_id: string;
 }
 export const hardwareFields = [
-  { key: 'processor', label: 'Processador' }, { key: 'memory', label: 'Memória RAM instalada' },
+  { key: 'processor', label: 'Processador' }, { key: 'motherboard', label: 'Placa-mãe' }, { key: 'memory', label: 'Memória RAM instalada' },
   { key: 'storage', label: 'Armazenamento instalado (HD / SSD)' }, { key: 'disk_health', label: 'Saúde do disco / resultado do teste' },
   { key: 'gpu', label: 'Placa de vídeo' }, { key: 'power_supply', label: 'Fonte de alimentação' },
   { key: 'operating_system', label: 'Sistema operacional' }, { key: 'existing_contents', label: 'Arquivos, programas e dados presentes' },
@@ -89,7 +89,7 @@ export function emptyTechnicalData(): TechnicalData {
     technical_status: 'aguardando_avaliacao', services: [], parts: [], discount: 0,
     additional_expenses: 0, approval_status: 'nao_solicitado', approval_contact: '',
     approval_date: '', approval_notes: '', completion_notes: '', completed_at: '',
-    hardware: { processor: '', memory: '', storage: '', disk_health: '', gpu: '', power_supply: '', operating_system: '', existing_contents: '', backup_notes: '' },
+    hardware: { processor: '', motherboard: '', memory: '', storage: '', disk_health: '', gpu: '', power_supply: '', operating_system: '', existing_contents: '', backup_notes: '' },
     format_authorization: 'nao_solicitado', backup_status: 'nao_informado', photos: [],
   };
 }
