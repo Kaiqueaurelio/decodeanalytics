@@ -178,6 +178,7 @@ export const ellaPublicChat = createServerFn({ method: "POST" })
         messages: [...history, { role: "user", content: data.message }],
         tools,
         maxOutputTokens: 700,
+        maxRetries: 0,
         stopWhen: stepCountIs(4),
       });
       logAiEvent({
