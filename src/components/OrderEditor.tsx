@@ -629,8 +629,8 @@ export function OrderEditor({
   }
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="w-[calc(100%-1rem)] max-w-4xl max-h-[92dvh] overflow-y-auto p-4 sm:p-6">
-        <DialogHeader>
+      <DialogContent className="flex max-h-[calc(100dvh-1.5rem)] w-[calc(100%-1rem)] max-w-4xl flex-col overflow-hidden p-0 sm:max-h-[92dvh] sm:p-6">
+        <DialogHeader className="shrink-0 border-b p-4 sm:border-0 sm:p-0">
           <DialogTitle className="flex items-center gap-3">
             <span>{orderId ? "Editar Ordem de Serviço" : "Nova Ordem de Serviço"}</span>
             {orderId && (
@@ -638,6 +638,7 @@ export function OrderEditor({
             )}
           </DialogTitle>
         </DialogHeader>
+        <div className="min-h-0 flex-1 space-y-4 overflow-y-auto overscroll-contain p-4 sm:p-0">
         {loadingOrder && (
           <p className="text-sm text-muted-foreground" role="status">
             Carregando os dados da ordem. Aguarde antes de editar ou salvar.
@@ -1060,7 +1061,8 @@ export function OrderEditor({
             </div>
           </div>
         </div>
-        <DialogFooter className="sticky bottom-0 gap-2 border-t bg-background py-3">
+        </div>
+        <DialogFooter className="shrink-0 gap-2 border-t bg-background px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:border-0 sm:px-0">
           {isTech && step > 0 && (
             <Button variant="outline" onClick={() => setStep(step - 1)}>
               <ChevronLeft className="h-4 w-4" />
