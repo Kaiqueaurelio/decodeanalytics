@@ -11,14 +11,15 @@ export function TechnicalIntake({ value, onChange, step, team }: { value: Techni
   const [questionIndex, setQuestionIndex] = useState(0);
   const [showPassword, setShowPassword] = useState(false);
   const visibleQuestionIds = visibleInspection(value).map(question => question.id).join("|");
+  const visibleQuestionCount = visibleQuestionIds ? visibleQuestionIds.split("|").length : 1;
   useEffect(() => {
     setQuestionIndex(0);
     setShowPassword(false);
   }, [step]);
   useEffect(() => {
-    const lastVisibleIndex = Math.max(0, visibleInspection(value).length - 1);
+    const lastVisibleIndex = Math.max(0, visibleQuestionCount - 1);
     setQuestionIndex(current => Math.min(current, lastVisibleIndex));
-  }, [visibleQuestionIds]);
+  }, [visibleQuestionCount]);
   const update = (patch: Partial<TechnicalData>) => onChange({...value, ...patch});
   const fields = (entries: {key: keyof TechnicalData; label: string; multiline?: boolean}[]) => entries.map(({key, label, multiline}) => <div key={key} className={multiline ? 'sm:col-span-2' : ''}><Label htmlFor={`tech-${key}`}>{label}</Label>{multiline ? <Textarea id={`tech-${key}`} value={String(value[key] ?? '')} onChange={e => update({[key]: e.target.value})} rows={3}/> : <Input id={`tech-${key}`} value={String(value[key] ?? '')} onChange={e => update({[key]: e.target.value})}/>}</div>);
   if (step === 1) return <div className="space-y-5">
