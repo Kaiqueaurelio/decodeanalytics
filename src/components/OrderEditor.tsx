@@ -636,6 +636,16 @@ export function OrderEditor({
             )}
           </DialogTitle>
         </DialogHeader>
+        {loadingOrder && (
+          <p className="text-sm text-muted-foreground" role="status">
+            Carregando os dados da ordem. Aguarde antes de editar ou salvar.
+          </p>
+        )}
+        {loadError && (
+          <p className="text-sm text-destructive" role="alert">
+            Não foi possível carregar todos os dados. Nenhuma alteração foi salva. Feche e reabra a OS para tentar novamente.
+          </p>
+        )}
         <div
           className="flex flex-wrap gap-2 border-b pb-3"
           role="group"
@@ -644,6 +654,7 @@ export function OrderEditor({
           <Button
             variant={!isTech ? "default" : "outline"}
             aria-pressed={!isTech}
+            disabled={loadingOrder || loadError}
             onClick={() => {
               setForm({ ...form, service_segment: "grafica" });
               setStep(0);
@@ -655,6 +666,7 @@ export function OrderEditor({
           <Button
             variant={isTech ? "default" : "outline"}
             aria-pressed={isTech}
+            disabled={loadingOrder || loadError}
             onClick={() => {
               setForm({ ...form, service_segment: "tecnologia" });
               setStep(0);
