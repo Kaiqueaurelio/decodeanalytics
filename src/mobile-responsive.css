@@ -48,7 +48,7 @@
   [role="dialog"],
   [role="alertdialog"] {
     max-width: calc(100vw - 1rem);
-    max-height: calc(100dvh - 1rem - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+    max-height: calc(100dvh - 1.5rem - env(safe-area-inset-top) - env(safe-area-inset-bottom));
     overflow-y: auto;
     overscroll-behavior: contain;
   }
@@ -59,15 +59,6 @@
     border-radius: 1rem;
   }
 
-  nav[aria-label="Navegação rápida"] a,
-  nav[aria-label="Navegação rápida"] button {
-    font-size: 0.625rem;
-  }
-
-  nav[aria-label="Navegação rápida"] svg {
-    width: 1.125rem;
-    height: 1.125rem;
-  }
 }
 
 @media (max-height: 520px) and (max-width: 767px) {
