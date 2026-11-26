@@ -102,29 +102,29 @@ export function maintenanceTotals(data: TechnicalData) {
 }
 export function technicalOrderItems(data: TechnicalData) {
   return [
-    ...data.services.filter(item => item.description.trim()).map(item => ({
+    ...data.services.filter(item => item?.description?.trim()).map(item => ({
       description: item.description.trim(), quantity: nonNegativeNumber(item.quantity),
       unit_price: nonNegativeNumber(item.unit_price), subtotal: nonNegativeNumber(item.quantity) * nonNegativeNumber(item.unit_price),
       service_id: null,
     })),
-    ...data.parts.filter(item => item.name.trim()).map(item => ({
+    ...data.parts.filter(item => item?.name?.trim()).map(item => ({
       description: `Peça: ${item.name.trim()}${item.brand ? ` · ${item.brand}` : ''}${item.model ? ` · ${item.model}` : ''}`,
       quantity: nonNegativeNumber(item.quantity), unit_price: nonNegativeNumber(item.sale_price),
       subtotal: nonNegativeNumber(item.quantity) * nonNegativeNumber(item.sale_price), service_id: null,
     })),
-    ...(Number(data.additional_expenses) > 0 ? [{
-      description: 'Despesas adicionais', quantity: 1, unit_price: Number(data.additional_expenses),
-      subtotal: Number(data.additional_expenses), service_id: null,
+    ...(nonNegativeNumber(data.additional_expenses) > 0 ? [{
+      description: 'Despesas adicionais', quantity: 1, unit_price: nonNegativeNumber(data.additional_expenses),
+      subtotal: nonNegativeNumber(data.additional_expenses), service_id: null,
     }] : []),
   ];
 }
 export function customerTechnicalRows(data: TechnicalData): string[][] {
   const totals = maintenanceTotals(data);
-  const parts = data.parts.filter(p => p.name.trim()).map(p => [
+  const parts = data.parts.filter(p => p?.name?.trim()).map(p => [
     `Peça substituída: ${p.name}`,
     [p.brand, p.model, `Quantidade: ${p.quantity}`].filter(Boolean).join(' · '),
   ]);
-  const services = data.services.filter(s => s.description.trim()).map(s => [
+  const services = data.services.filter(s => s?.description?.trim()).map(s => [
     'Serviço realizado', `${s.description} · Quantidade: ${s.quantity}`,
   ]);
   const approval = ({

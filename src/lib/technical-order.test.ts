@@ -68,7 +68,9 @@ describe('technology intake', () => {
     data.services = [{ id: 's1', description: 'Diagnóstico', quantity: -2, unit_price: 100 }];
     data.additional_expenses = Number.POSITIVE_INFINITY;
     expect(maintenanceTotals(data).total).toBe(0);
-    expect(technicalOrderItems(data)[0].subtotal).toBe(0);
+    const items = technicalOrderItems(data);
+    expect(items[0].subtotal).toBe(0);
+    expect(items.some(item => !Number.isFinite(item.subtotal))).toBe(false);
   });
 
 });
